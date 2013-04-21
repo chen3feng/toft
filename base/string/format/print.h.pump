@@ -1,0 +1,49 @@
+// Copyright (c) 2013, The TOFT Authors.
+// All rights reserved.
+//
+// Author: CHEN Feng <chen3feng@gmail.com>
+// Created: 2013-02-07
+
+#ifndef TOFT_BASE_STRING_FORMAT_PRINT_H
+#define TOFT_BASE_STRING_FORMAT_PRINT_H
+#pragma once
+
+#include <string>
+#include "toft/base/string/format/print_arg.h"
+
+namespace toft {
+
+//////////////////////////////////////////////////////////////////////////////
+// 0 arg
+
+int StringPrintTo(std::string* out, const char* format);
+int StringPrintAppend(std::string* out, const char* format);
+std::string StringPrint(const char* format);
+
+$var n = 16
+$range i 1..n
+
+$for i [[
+
+$range j 1..i
+
+//////////////////////////////////////////////////////////////////////////////
+// $i args
+
+int StringPrintTo(std::string* out, const char* format,
+                  $for j,
+                  [[const FormatPrintArg& arg$j]]);
+
+int StringPrintAppend(std::string* out, const char* format,
+                      $for j,
+                      [[const FormatPrintArg& arg$j]]);
+
+std::string StringPrint(const char* format,
+                        $for j,
+                        [[const FormatPrintArg& arg$j]]);
+
+]]
+
+} // namespace toft
+
+#endif // TOFT_BASE_STRING_FORMAT_PRINT_H

@@ -1,0 +1,91 @@
+// Copyright (c) 2013, The TOFT Authors.
+// All rights reserved.
+//
+// Author: CHEN Feng <chen3feng@gmail.com>
+// Created: 2013-02-07
+
+#include "toft/base/string/format/print.h"
+#include "toft/base/string/format/vprint.h"
+
+namespace toft {
+
+//////////////////////////////////////////////////////////////////////////////
+// 0 arg
+
+int StringPrintTo(std::string* out, const char* format)
+{
+    return StringVPrintTo(out, format, NULL, 0);
+}
+
+int StringPrintAppend(std::string* out, const char* format)
+{
+    return StringVPrintAppend(out, format, NULL, 0);
+}
+
+std::string StringPrint(const char* format)
+{
+    return StringVPrint(format, NULL, 0);
+}
+
+$var n = 16
+$range i 1..n
+
+$for i [[
+
+$range j 1..i
+
+//////////////////////////////////////////////////////////////////////////////
+// $i args
+
+int StringPrintTo(std::string* out, const char* format,
+                  $for j,
+                  [[const FormatPrintArg& arg$j]]
+)
+{
+    const FormatPrintArg* args[] = {
+
+$range j 1..i
+$for j [[
+        &arg$j,
+
+]]
+    };
+    return StringVPrintTo(out, format, args, $i);
+}
+
+int StringPrintAppend(std::string* out, const char* format,
+                      $for j,
+                      [[const FormatPrintArg& arg$j]]
+)
+{
+    const FormatPrintArg* args[] = {
+
+$range j 1..i
+$for j [[
+        &arg$j,
+
+]]
+    };
+    return StringVPrintAppend(out, format, args, $i);
+}
+
+std::string StringPrint(const char* format,
+                        $for j,
+                        [[const FormatPrintArg& arg$j]]
+)
+{
+    const FormatPrintArg* args[] = {
+
+$range j 1..i
+$for j [[
+        &arg$j,
+
+]]
+    };
+    return StringVPrint(format, args, $i);
+}
+
+]]
+
+} // namespace toft
+

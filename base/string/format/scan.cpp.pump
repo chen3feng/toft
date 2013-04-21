@@ -1,0 +1,40 @@
+// Copyright (c) 2013, The TOFT Authors.
+// All rights reserved.
+//
+// Author: CHEN Feng <chen3feng@gmail.com>
+// Created: 2013-02-06
+
+#include "toft/base/string/format/scan.h"
+#include "toft/base/string/format/vscan.h"
+
+namespace toft {
+
+$var n = 16
+$range i 1..n
+
+$for i [[
+
+$range j 1..i
+
+int StringScan(
+    const char* string, const char* format,
+    $for j,
+    [[const FormatScanArg& arg$j]]
+
+)
+{
+
+    const FormatScanArg* args[] = {
+
+$range j 1..i
+$for j [[
+        &arg$j,
+
+]]
+    };
+    return StringVScan(string, format, args, $i);
+}
+
+]]
+
+} // namespace toft
