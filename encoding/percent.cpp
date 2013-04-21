@@ -1,10 +1,6 @@
-// Copyright (c) 2011, Tencent.com
+// Copyright (c) 2011, The Toft Authors
 // All rights reserved.
-
-/// @file percent.cpp
-/// @brief percent encoding implementation
-/// @date  03/31/2011 03:57:46 PM
-/// @author CHEN Feng <chen3feng@gmail.com>
+// Author: CHEN Feng <chen3feng@gmail.com>
 
 #include "toft/encoding/percent.h"
 #include <iso646.h>

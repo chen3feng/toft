@@ -1,19 +1,19 @@
-// Copyright (c) 2011, Tencent Inc.
+// Copyright (c) 2011, The Toft Authors.
 // All rights reserved.
 //
-// Author: CHEN Feng <phongchen@tencent.com>
+// Author: CHEN Feng <chen3feng@gmail.com>
 // Created: 05/11/11
 // Description: bitmap based byte set class,
 //              optimized for both space and performance.
 
-#ifndef COMMON_BASE_STRING_BYTE_SET_H
-#define COMMON_BASE_STRING_BYTE_SET_H
+#ifndef TOFT_BASE_STRING_BYTE_SET_H
+#define TOFT_BASE_STRING_BYTE_SET_H
 
 #include <ctype.h>
 #include <limits.h>
 #include <string.h>
 
-// namespace common {
+namespace toft {
 
 #ifdef _WIN32
 #ifndef isblank_defined
@@ -254,6 +254,6 @@ inline const ByteSet operator&(const ByteSet& lhs, const ByteSet& rhs)
     return r &= rhs;
 }
 
-// } // namespace common
+} // namespace toft
 
-#endif // COMMON_BASE_STRING_BYTE_SET_H
+#endif // TOFT_BASE_STRING_BYTE_SET_H

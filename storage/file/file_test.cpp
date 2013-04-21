@@ -1,8 +1,6 @@
 // Copyright 2010, The Toft Authors.
-// Author: Yongqiang Zou <aaronzou@tencent.com>
-//
-// test functions of file.cc and local_file.cc
-// 2011-1-3    create the test file.
+// All rights reserved.
+// Author: CHEN Feng <chen3feng@gmail.com>
 
 #include "toft/base/scoped_ptr.h"
 #include "toft/storage/file/file.h"

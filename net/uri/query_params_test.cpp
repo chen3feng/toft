@@ -1,4 +1,4 @@
-// Copyright (c) 2011, Tencent.com
+// Copyright (c) 2011, The Toft Authors
 // All rights reserved.
 
 /// @file cgi_params_test.cc

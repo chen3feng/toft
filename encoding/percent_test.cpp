@@ -3,12 +3,6 @@
 //
 // Author: CHEN Feng <chen3feng@gmail.com>
 
-///////////////////////////////////////////////////////////////////////////
-/// @brief percent encoding test
-/// @author phongchen@tencent
-/// @date 2011-03-29
-///////////////////////////////////////////////////////////////////////////
-
 #include "toft/encoding/percent.h"
 #include "toft/base/array_size.h"
 #include "toft/base/string/algorithm.h"

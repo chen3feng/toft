@@ -572,7 +572,6 @@ http://s.taobao.com/search?q=%B9%AF&ex_q=&filterFineness=&atype=&fs=1&commend=al
 http://s.taobao.com/search?q=%CB%AE%D2%F8&commend=all&ssid=s5-e&search_type=item&atype=
 http://s.taobao.com/search?q=%D2%BA%CC%AC%B9%AF&ex_q=&filterFineness=&atype=&fs=1&commend=all&ssid=s5-e&bcoffset=2
 http://starvv.com/vp1.php
-https://tc-scm.tencent.com/setech/setech_infrastructure_rep/Infra_proj/trunk/src/common
 http://stereo-ssc.nascom.nasa.gov/browse/2010/11/15/behind/euvi/195/1024/20101115_055530_n7euB_195.jpg
 http://stockhtm.finance.qq.com/astock/ggcx/BIDU.OQ.htm?from=smartbox&_ver=1.16
 http://stockhtm.finance.qq.com/hk/ggcx/00360.htm
@@ -596,7 +595,6 @@ https://www.bocionline.com/NASApp/intl/newonlineweb?NextUrl=buysell&left=TRAD
 https://www.google.com/accounts/CheckCookie?continue=http%3A%2F%2Fgroups.google.com%2Fgroup%2Flinux.kernel%2Fbrowse_thread%2Fthread%2F18a59e3c9d8f6310%2Fcdfbcb70e9c48cd0&followup=http%3A%2F%2Fgroups.google.com%2Fgroup%2Flinux.kernel%2Fbrowse_thread%2Fthread%2F18a59e3c9d8f6310%2Fcdfbcb70e9c48cd0&service=groups2&chtml=LoginDoneHtml
 https://www.google.com/accounts/ServiceLoginAuth
 https://www.google.com/accounts/ServiceLogin?service=groups2&passive=1209600&continue=http://groups.google.com/group/linux.kernel/browse_thread/thread/18a59e3c9d8f6310/cdfbcb70e9c48cd0&followup=http://groups.google.com/group/linux.kernel/browse_thread/thread/18a59e3c9d8f6310/cdfbcb70e9c48cd0#cdfbcb70e9c48cd0
-http://tc-scm.tencent.com/setech/setech_infrastructure_rep/Infra_proj/trunk/src/common/
 http://tech.ccidnet.com/art/2853/20070703/1132609_1.html
 http://tech.sina.com.cn/i/2010-09-08/10244633159.shtml
 http://thedailyreviewer.com/windowsxp/view/is-there-an-api-call-for-filename-wildcard-parsing-102272213

@@ -2,7 +2,6 @@
 // All rights reserved.
 //
 // Author: CHEN Feng <chen3feng@gmail.com>
-// Author: Simon Wang <simonwang@tencent.com>
 // Created: 05/11/11
 // Description: test URI class
 

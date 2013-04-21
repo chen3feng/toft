@@ -1,10 +1,7 @@
 // Copyright 2011, The Toft Authors.
 // All rights reserved.
-
-/// @author XiaoDong Chen <donniechen@tencent.com>
-///         CHEN Feng <chen3feng@gmail.com>
-/// @brief percent encoding process
-/// @date Mar 31, 2011
+//
+// Author: CHEN Feng <chen3feng@gmail.com>
 
 #ifndef TOFT_ENCODING_PERCENT_H
 #define TOFT_ENCODING_PERCENT_H

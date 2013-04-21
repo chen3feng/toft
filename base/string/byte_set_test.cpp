@@ -1,13 +1,13 @@
-// Copyright (c) 2011, Tencent Inc.
+// Copyright (c) 2011, The Toft Authors.
 // All rights reserved.
 //
-// Author: CHEN Feng <phongchen@tencent.com>
+// Author: CHEN Feng <chen3feng@gmail.com>
 // Created: 05/11/11
 
-#include "common/base/string/byte_set.h"
+#include "toft/base/string/byte_set.h"
 #include "thirdparty/gtest/gtest.h"
 
-// namespace common {
+namespace toft {
 
 TEST(ByteSet, Empty)
 {
@@ -17,4 +17,4 @@ TEST(ByteSet, Empty)
     EXPECT_TRUE(bs.Find('A'));
 }
 
-// } // namespace common
+} // namespace toft
