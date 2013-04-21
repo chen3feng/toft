@@ -348,7 +348,7 @@ void StringTrimLeft(std::string* str)
 {
     size_t start_pos = 0;
     size_t end_pos = str->length();
-    while (start_pos != end_pos && isascii(str->at(start_pos)))
+    while (start_pos != end_pos && isspace(str->at(start_pos)))
         start_pos++;
     *str = str->substr(start_pos);
 }
@@ -363,7 +363,7 @@ std::string StringTrimLeft(const StringPiece& str)
 void StringTrimRight(std::string* str)
 {
     int end_pos = static_cast<int>(str->length()) - 1;
-    while (end_pos >= 0 && isascii(str->at(end_pos)))
+    while (end_pos >= 0 && isspace(str->at(end_pos)))
         end_pos--;
     *str = str->substr(0, end_pos + 1);
 }
@@ -379,7 +379,7 @@ void StringTrim(std::string* str)
 {
     size_t start_pos = 0;
     size_t end_pos = str->length();
-    while (start_pos != end_pos && isascii(str->at(start_pos)))
+    while (start_pos != end_pos && isspace(str->at(start_pos)))
         start_pos++;
     if (start_pos == end_pos)
     {
@@ -387,7 +387,7 @@ void StringTrim(std::string* str)
         return;
     }
     end_pos--;
-    while (isascii(str->at(end_pos))) // end_pos always >= 0
+    while (isspace(str->at(end_pos))) // end_pos always >= 0
         end_pos--;
     *str = str->substr(start_pos, end_pos - start_pos + 1);
 }

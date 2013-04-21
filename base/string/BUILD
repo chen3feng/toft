@@ -25,6 +25,7 @@ cc_library(
 cc_library(
     name = 'string',
     deps = [
+        ':_algorithm',
         ':_compare',
         ':_string_piece',
         ':_number',
