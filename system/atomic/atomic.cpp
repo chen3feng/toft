@@ -8,7 +8,7 @@
 namespace toft {
 
 #ifndef NDEBUG
-void EnsureLinkedWithAtomicLibrary();
+void EnsureLinkedWithAtomicLibrary() {}
 #endif
 
 }

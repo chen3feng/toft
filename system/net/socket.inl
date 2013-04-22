@@ -229,7 +229,7 @@ inline void Socket::SetLastError(int error)
 
 inline void Socket::VerifyHandle(int fd)
 {
-    assert(fd != InvalidHandle);
+    assert(fd != kInvalidHandle);
 }
 
 inline bool Socket::IsInterruptedAndRestart(bool restart)
