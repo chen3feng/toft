@@ -172,9 +172,9 @@ TEST(Scan, FloatOverflow)
 {
     float f;
     EXPECT_EQ(1, StringScan("1e50", "%f", &f));
-    EXPECT_EQ(1, isinff(f));
+    EXPECT_EQ(1, isinf(f));
     EXPECT_EQ(1, StringScan("-1e50", "%f", &f));
-    EXPECT_EQ(-1, isinff(f)); // Bypass bug of inff in glibc
+    EXPECT_EQ(-1, isinf(f)); // Bypass bug of inff in glibc
     EXPECT_EQ(1, StringScan("1e-50", "%f", &f));
     EXPECT_FLOAT_EQ(0.0f, f);
 
@@ -188,9 +188,9 @@ TEST(Scan, FloatOverflow)
 
     long double ld;
     EXPECT_EQ(1, StringScan("1e5000", "%f", &ld));
-    EXPECT_EQ(1, isinfl(ld));
+    EXPECT_EQ(1, isinf(ld));
     EXPECT_EQ(1, StringScan("-1e5000", "%f", &ld));
-    EXPECT_EQ(-1, isinfl(ld));
+    EXPECT_EQ(-1, isinf(ld));
     EXPECT_EQ(1, StringScan("1e-5000", "%f", &ld));
     EXPECT_DOUBLE_EQ(0.0, ld);
 }
