@@ -24,7 +24,7 @@ TEST(ThisThread, GetId)
 TEST(ThisThread, GetHandle)
 {
 #if defined _WIN32 || defined __linux__
-    EXPECT_TRUE(ThisThread::GetHandle() != 0);
+    EXPECT_NE(ThisThread::GetHandle(), 0);
 #endif
 }
 

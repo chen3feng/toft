@@ -65,13 +65,9 @@ public:
     void Reset();
 
 private:
-#ifdef _WIN32
-    void* m_hEvent;
-#else
     Mutex m_mutex;
     ConditionVariable m_cond;
     bool m_signaled;
-#endif
 };
 
 // This class represents a local waitable event object that must be reset
