@@ -38,7 +38,7 @@
 #define TOFT_BASE_SCOPED_PTR_H
 
 #include <assert.h>
-#include <cstddef>
+#include <stddef.h>
 
 // ===================================================================
 // from google3/base/scoped_ptr.h

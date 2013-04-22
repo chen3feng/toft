@@ -8,6 +8,9 @@
 #define TOFT_BASE_SCOPED_ARRAY_H
 #pragma once
 
+#include <assert.h>
+#include <stddef.h>
+
 namespace toft {
 
 // scoped_array<C> is like scoped_ptr<C>, except that the caller must allocate
