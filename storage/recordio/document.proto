@@ -1,0 +1,23 @@
+message Links {
+    repeated int64 backward = 1;
+    repeated int64 forward = 2;
+}
+
+message Language {
+    required string code = 1;
+    optional string country = 2;
+}
+
+message Name {
+    repeated Language language = 1;
+    optional string url = 2;
+}
+
+message Document {
+    required int64 docid = 1;
+    optional Links links = 2;
+    repeated Name name = 3;
+}
+
+
+
