@@ -8,8 +8,8 @@
 // define static variable in inline function, they create a separate copy each
 // time it's included. We want to make sure it doesn't happen to us.
 
-#ifndef TOFT_BASE_CLASS_REGISTRY_TEST_HELPER_H
-#define TOFT_BASE_CLASS_REGISTRY_TEST_HELPER_H
+#ifndef TOFT_BASE_CLASS_REGISTRY_CLASS_REGISTRY_TEST_HELPER_H
+#define TOFT_BASE_CLASS_REGISTRY_CLASS_REGISTRY_TEST_HELPER_H
 
 #include <string>
 #include "toft/base/class_registry/class_registry.h"
@@ -39,7 +39,7 @@ TOFT_CLASS_REGISTRY_DEFINE(second_mapper_registry, Mapper);
 
 #define CREATE_SECONDARY_MAPPER(mapper_name_as_string) \
     TOFT_CLASS_REGISTRY_CREATE_OBJECT(second_mapper_registry, \
-                                 mapper_name_as_string)
+                                      mapper_name_as_string)
 
 class Reducer {
 public:
@@ -81,4 +81,4 @@ TOFT_CLASS_REGISTRY_DEFINE_SINGLETON(file_system_registry, FileSystem);
 #define FILE_SYSTEM_NAME(i) \
     TOFT_CLASS_REGISTRY_CLASS_NAME(file_system_registry, i)
 
-#endif  // TOFT_BASE_CLASS_REGISTRY_TEST_HELPER_H
+#endif  // TOFT_BASE_CLASS_REGISTRY_CLASS_REGISTRY_TEST_HELPER_H

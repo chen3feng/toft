@@ -2,10 +2,12 @@ cc_library(
     name = '_sync_object',
     srcs = [
         'condition_variable.cpp',
-        'mutex.cpp'
+        'event.cpp',
+        'mutex.cpp',
     ],
     deps = [
         '//toft/system:check_error',
+        '//toft/system/time:time',
         '#pthread'
     ]
 )
@@ -36,6 +38,12 @@ cc_library(
         ':_this_thread',
         ':_thread',
     ]
+)
+
+cc_test(
+    name = 'event_test',
+    srcs = 'event_test.cpp',
+    deps = ':_sync_object',
 )
 
 cc_test(

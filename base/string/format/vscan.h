@@ -17,6 +17,6 @@ namespace toft {
 // Return: number filelds of success scanned.
 int StringVScan(const char* string, const char* format, const FormatScanArg** args, int nargs);
 
-} // namespace cmmon
+} // namespace toft
 
 #endif // TOFT_BASE_STRING_FORMAT_VSCAN_H

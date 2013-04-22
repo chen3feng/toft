@@ -1,7 +1,6 @@
 // Copyright (c) 2011, The Toft Authors. All rights reserved.
 // Author: CHEN Feng <chen3feng@gmail.com>
 
-#undef NDEBUG
 #include "toft/system/threading/mutex.h"
 #include "thirdparty/gtest/gtest.h"
 
@@ -29,7 +28,7 @@ TEST(Mutex, Locker)
 }
 
 template <typename Type>
-void DestroyWithLockHolding()
+static void DestroyWithLockHolding()
 {
     Type mutex;
     mutex.Lock();
@@ -38,9 +37,12 @@ void DestroyWithLockHolding()
 TEST(MutexDeathTest, DestroyCheck)
 {
     testing::FLAGS_gtest_death_test_style = "threadsafe";
+#ifndef NDEBUG
+    // Checking of destry a locked mutex is only enabled in debug mode.
     EXPECT_DEATH(DestroyWithLockHolding<AdaptiveMutex>(), "");
     EXPECT_DEATH(DestroyWithLockHolding<Mutex>(), "");
     EXPECT_DEATH(DestroyWithLockHolding<RecursiveMutex>(), "");
+#endif
 }
 
 template <typename Type>
@@ -57,8 +59,10 @@ void RecursiveLocking()
 TEST(MutexDeathTest, SelfDeadLock)
 {
     testing::FLAGS_gtest_death_test_style = "threadsafe";
+#ifndef NDEBUG
     EXPECT_DEATH(RecursiveLocking<Mutex>(), "");
     EXPECT_DEATH(RecursiveLocking<AdaptiveMutex>(), "");
+#endif
     RecursiveLocking<RecursiveMutex>();
 }
 

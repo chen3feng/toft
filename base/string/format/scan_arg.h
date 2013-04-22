@@ -79,6 +79,6 @@ private:
     ParseFunction m_parse;
 };
 
-} // namespace cmmon
+} // namespace toft
 
 #endif // TOFT_BASE_STRING_FORMAT_SCAN_ARG_H

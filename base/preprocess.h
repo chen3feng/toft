@@ -13,8 +13,8 @@
 /// prevent macro substitution for function-like macros
 /// if macro 'min()' was defined:
 /// 'int min()' whill be substituted, but
-/// 'int min CFC_PP_PREVENT_MACRO_SUBSTITUTION()' will not be substituted.
-#define CFC_PP_PREVENT_MACRO_SUBSTITUTION
+/// 'int min TOFT_PP_PREVENT_MACRO_SUBSTITUTION()' will not be substituted.
+#define TOFT_PP_PREVENT_MACRO_SUBSTITUTION
 
 #endif // TOFT_BASE_PREPROCESS_H
 

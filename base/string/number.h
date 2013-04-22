@@ -3,8 +3,8 @@
 /// @author hsiaokangliu
 /// @date 2010-11-25
 
-#ifndef TOFT_BASE_STRING_STRING_NUMBER_H
-#define TOFT_BASE_STRING_STRING_NUMBER_H
+#ifndef TOFT_BASE_STRING_NUMBER_H
+#define TOFT_BASE_STRING_NUMBER_H
 
 #include <float.h>
 #include <stdint.h>
@@ -215,4 +215,4 @@ std::string FormatBinaryMeasure(int64_t n, const char* unit = "");
 
 } // namespace toft
 
-#endif // TOFT_BASE_STRING_STRING_NUMBER_H
+#endif // TOFT_BASE_STRING_NUMBER_H

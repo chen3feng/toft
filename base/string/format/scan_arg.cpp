@@ -5,12 +5,15 @@
 // Created: 2013-02-05
 
 #include "toft/base/string/format/scan.h"
+
 #include <errno.h>
 #include <limits.h>
 #include <stdlib.h>
 #include <string.h>
 #include <string>
+
 #include "toft/base/string/number.h"
+
 #include "thirdparty/glog/logging.h"
 
 // GLOBAL_NOLINT(runtime/int)

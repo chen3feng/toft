@@ -1,5 +1,10 @@
-#ifndef TOFT_BASE_FUNCTION_H
-#define TOFT_BASE_FUNCTION_H
+// Copyright (c) 2013, The Toft Authors.
+// All rights reserved.
+//
+// Author: CHEN Feng <chen3feng@gmail.com>
+
+#ifndef TOFT_BASE_FUNCTIONAL_H
+#define TOFT_BASE_FUNCTIONAL_H
 #pragma once
 
 #include "toft/base/cxx11.h"
@@ -21,4 +26,4 @@ namespace placeholders = tr1::placeholders;
 
 #endif // TOFT_CXX11_ENABLED
 
-#endif // TOFT_BASE_FUNCTION_H
+#endif // TOFT_BASE_FUNCTIONAL_H

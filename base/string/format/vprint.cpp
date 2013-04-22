@@ -5,11 +5,14 @@
 // Created: 2013-02-07
 
 #include "toft/base/string/format/vprint.h"
+
 #include <string.h>
 #include <string>
+
 #include "toft/base/string/format/print_arg.h"
 #include "toft/base/string/format/print_targets.h"
 #include "toft/base/string/format/specification.h"
+
 #include "thirdparty/glog/logging.h"
 
 namespace toft {

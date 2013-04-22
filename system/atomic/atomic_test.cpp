@@ -4,10 +4,11 @@
 // Author: CHEN Feng <chen3feng@gmail.com>
 
 // GLOBAL_NOLINT(readability/function)
+// GLOBAL_NOLINT(runtime/int)
 
 #include "toft/system/atomic/atomic.h"
-#include <stdio.h>
 #include <stdint.h>
+#include <stdio.h>
 #include "thirdparty/gtest/gtest.h"
 
 namespace toft {

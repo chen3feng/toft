@@ -5,12 +5,15 @@
 // Created: 2013-02-07
 
 #include "toft/base/string/format/print_arg.h"
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <algorithm>
+
 #include "toft/base/string/format/print_targets.h"
 #include "toft/base/string/number.h"
+
 #include "thirdparty/glog/logging.h"
 
 // GLOBAL_NOLINT(runtime/int)

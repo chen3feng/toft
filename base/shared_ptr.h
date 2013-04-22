@@ -1,3 +1,8 @@
+// Copyright (c) 2010, The Toft Authors.
+// All rights reserved.
+//
+// Author: CHEN Feng <chen3feng@gmail.com>
+
 #ifndef TOFT_BASE_SHARED_PTR_H
 #define TOFT_BASE_SHARED_PTR_H
 #pragma once

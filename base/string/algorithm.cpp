@@ -11,7 +11,6 @@
 #include <iterator>
 #include <limits>
 #include "toft/base/string/compare.h"
-#include "toft/base/scoped_ptr.h"
 
 namespace toft {
 

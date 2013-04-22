@@ -75,7 +75,7 @@ template <typename IntermediaType, typename T>
 bool ParseNumberT(const char* str, T* value, char** endptr, int base)
 {
     TOFT_STATIC_ASSERT(std::is_signed<T>::value ==
-                  std::is_signed<IntermediaType>::value);
+                       std::is_signed<IntermediaType>::value);
     TOFT_STATIC_ASSERT(sizeof(T) <= sizeof(IntermediaType));
 
     char* tmp_endptr;

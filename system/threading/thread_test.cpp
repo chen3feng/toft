@@ -7,6 +7,7 @@
 
 #include "toft/system/threading/thread.h"
 #include "toft/system/threading/this_thread.h"
+
 #include "thirdparty/gtest/gtest.h"
 
 namespace toft {

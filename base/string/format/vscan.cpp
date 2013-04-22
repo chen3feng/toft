@@ -5,9 +5,12 @@
 // Created: 2013-02-05
 
 #include "toft/base/string/format/vscan.h"
+
 #include <stdlib.h>
 #include <string.h>
+
 #include "toft/base/string/format/scan_arg.h"
+
 #include "thirdparty/glog/logging.h"
 
 namespace toft {
