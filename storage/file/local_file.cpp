@@ -47,7 +47,12 @@ LocalFile::~LocalFile()
 
 int64_t LocalFile::Read(void* buffer, int64_t size)
 {
-    return fread(buffer, 1, size, m_fp);
+    size_t nread = fread(buffer, 1, size, m_fp);
+    if (nread > 0 || size == 0)
+        return nread;
+    if (ferror(m_fp))
+        return -1;
+    return nread;
 }
 
 int64_t LocalFile::Write(const void* buffer,

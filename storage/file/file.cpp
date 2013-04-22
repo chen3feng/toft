@@ -16,6 +16,7 @@ FileSystem::~FileSystem() {}
 
 FileSystem* File::GetFileSystemByPath(const std::string& file_path)
 {
+    // "/mfs/abc" -> "mfs"
     if (file_path[0] == '/') {
         size_t next_slash = file_path.find(1, '/');
         std::string prefix = file_path.substr(1, next_slash);
