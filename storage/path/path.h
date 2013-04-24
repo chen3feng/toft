@@ -3,14 +3,18 @@
 //
 // Author: CHEN Feng <chen3feng@gmail.com>
 
-#ifndef TOFT_SYSTEM_IO_PATH_H
-#define TOFT_SYSTEM_IO_PATH_H
+#ifndef TOFT_STORAGE_PATH_PATH_H
+#define TOFT_STORAGE_PATH_PATH_H
 
 #include <string>
+#include "toft/base/static_class.h"
 
 namespace toft {
 
+// Path operation of file system.
 class Path {
+    TOFT_DECLARE_STATIC_CLASS(Path);
+
 public:
     static bool IsSeparator(char ch);
 
@@ -38,4 +42,4 @@ public:
 
 } // namespace toft
 
-#endif // TOFT_SYSTEM_IO_PATH_H
+#endif // TOFT_STORAGE_PATH_PATH_H

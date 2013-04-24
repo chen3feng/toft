@@ -88,8 +88,8 @@ std::string Path::Normalize(const std::string& path)
     int initial_slashes = path[0] == '/';
     // POSIX allows one or two initial slashes, but treats three or more
     // as single slash.
-    if (initial_slashes and
-        StringStartsWith(path, "//") and not StringStartsWith(path, "///"))
+    if (initial_slashes &&
+        StringStartsWith(path, "//") && !StringStartsWith(path, "///"))
     {
         initial_slashes = 2;
     }
@@ -101,12 +101,12 @@ std::string Path::Normalize(const std::string& path)
     for (std::vector<std::string>::iterator i = comps.begin(); i != comps.end(); ++i)
     {
         const std::string& comp = *i;
-        if (comp.empty() or comp == ".")
+        if (comp.empty() || comp == ".")
             continue;
-        if (comp != ".." or (not initial_slashes and new_comps.empty()) or
-            (not new_comps.empty() and new_comps.back() == ".."))
+        if (comp != ".." || (!initial_slashes && new_comps.empty()) ||
+            (!new_comps.empty() && new_comps.back() == ".."))
             new_comps.push_back(comp);
-        else if (not new_comps.empty())
+        else if (!new_comps.empty())
             new_comps.pop_back();
     }
 
