@@ -316,6 +316,67 @@ void SplitStringByDelimiter(const StringPiece& full,
     return SplitString(full, delim, result);
 }
 
+/** 功能: 把一个字符串划分成多个字符串
+ *  参数:
+ *  输入参数 const StringPiece& full         主字符串
+ *  输入参数 const StringPiece& delim     字符串分界符号
+ *  输出参数 std::vector<std::string>& result 分解后的结果
+ */
+void SplitStringKeepEmpty(
+    const StringPiece& full,
+    char delim,
+    std::vector<std::string>* result)
+{
+    result->clear();
+
+    if (full.empty())
+        return;
+
+    size_t prev_pos = 0;
+    size_t pos;
+    std::string token;
+    while ((pos = full.find(delim, prev_pos)) != std::string::npos)
+    {
+        token.assign(full.data() + prev_pos, pos - prev_pos);
+        result->push_back(token);
+        prev_pos = pos + 1;
+    }
+
+    token.assign(full.data() + prev_pos, full.length() - prev_pos);
+    result->push_back(token);
+}
+
+void SplitStringKeepEmpty(
+    const StringPiece& full,
+    const StringPiece& delim,
+    std::vector<std::string>* result)
+{
+    // 单个字符的分隔符转调字符版本的分割函数，要快一些
+    if (delim.length() == 1)
+    {
+        SplitStringKeepEmpty(full, delim[0], result);
+        return;
+    }
+
+    result->clear();
+
+    if (full.empty() || delim.empty())
+        return;
+
+    size_t prev_pos = 0;
+    size_t pos;
+    std::string token;
+    while ((pos = full.find(delim, prev_pos)) != std::string::npos)
+    {
+        token.assign(full.data() + prev_pos, pos - prev_pos);
+        result->push_back(token);
+        prev_pos = pos + delim.length();
+    }
+
+    token.assign(full.data() + prev_pos, full.length() - prev_pos);
+    result->push_back(token);
+}
+
 void SplitLines(
     const StringPiece& full,
     std::vector<std::string>* result,
