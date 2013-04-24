@@ -26,6 +26,11 @@ public:
     // 'dir/name.ext' -> '/data/dir/name.ext'
     static std::string ToAbsolute(const std::string& filepath);
 
+    static bool IsAbsolute(const std::string& filepath);
+    static bool IsRelative(const std::string& filepath) {
+        return !IsAbsolute(filepath);
+    }
+
     // Normalize a path, e.g. A//B, A/./B and A/foo/../B all become A/B.
     // Take the same behavior as os.path.normpath of python.
     static std::string Normalize(const std::string& filepath);

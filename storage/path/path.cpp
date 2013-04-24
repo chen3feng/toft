@@ -74,6 +74,11 @@ std::string Path::ToAbsolute(const std::string& filepath)
     return resolved;
 }
 
+bool Path::IsAbsolute(const std::string& filepath)
+{
+    return !filepath.empty() && IsSeparator(filepath[0]);
+}
+
 // Normalize path, eliminating double slashes, etc.
 std::string Path::Normalize(const std::string& path)
 {

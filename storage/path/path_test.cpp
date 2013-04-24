@@ -17,6 +17,22 @@ TEST(Path, ToAbsolute)
     EXPECT_EQ(fullpath, Path::ToAbsolute(filepath));
 }
 
+TEST(Path, IsAbsolute)
+{
+    EXPECT_TRUE(Path::IsAbsolute("/"));
+    EXPECT_TRUE(Path::IsAbsolute("/a"));
+    EXPECT_FALSE(Path::IsAbsolute("a"));
+    EXPECT_FALSE(Path::IsAbsolute("."));
+}
+
+TEST(Path, IsRelative)
+{
+    EXPECT_TRUE(Path::IsRelative("."));
+    EXPECT_TRUE(Path::IsRelative("a"));
+    EXPECT_FALSE(Path::IsRelative("/a"));
+    EXPECT_FALSE(Path::IsRelative("/"));
+}
+
 TEST(Path, GetBaseName)
 {
     EXPECT_EQ("", Path::GetBaseName("/"));
