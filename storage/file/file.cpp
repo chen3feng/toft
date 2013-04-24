@@ -45,6 +45,28 @@ bool File::Exists(const std::string& file_path)
     return fs->Exists(file_path);
 }
 
+bool File::Delete(const std::string& file_path)
+{
+    FileSystem* fs = GetFileSystemByPath(file_path);
+    return fs->Delete(file_path);
+}
+
+bool File::ReadAll(const std::string& file_path, std::string* buffer,
+                   size_t max_size)
+{
+    scoped_ptr<File> fp(File::Open(file_path, "r"));
+    if (!fp)
+        return false;
+    std::string tmp(max_size, '\0');
+    int64_t nread = fp->Read(&tmp[0], max_size);
+    if (nread < 0)
+        return false;
+    tmp.resize(nread);
+    buffer->swap(tmp);
+    return true;
+}
+
+
 bool File::ReadLines(const std::string& file_path, std::vector<std::string>* lines)
 {
     scoped_ptr<File> fp(File::Open(file_path, "r"));

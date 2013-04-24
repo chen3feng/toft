@@ -16,13 +16,18 @@ class LocalFileSystem : public FileSystem {
 public:
     virtual File* Open(const std::string& file_path, const char* mode);
     virtual bool Exists(const std::string& file_path);
+    virtual bool Delete(const std::string& file_path);
 };
 
+// Represent a file object on local mounted file system
 class LocalFile : public File {
     friend class LocalFileSystem;
     explicit LocalFile(FILE* fp);
 public:
     virtual ~LocalFile();
+
+    // Implement File interface.
+    //
     virtual int64_t Read(void* buffer, int64_t size);
     virtual int64_t Write(const void* buffer, int64_t size);
     virtual bool Flush();

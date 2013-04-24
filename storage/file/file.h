@@ -35,8 +35,7 @@ public:
     // Read at most size bytes into buffer.
     // Return the number of bytes read.
     // Return -1 if error occurs.
-    virtual int64_t Write(const void* buffer,
-                          int64_t     size) = 0;
+    virtual int64_t Write(const void* buffer, int64_t size) = 0;
     virtual bool Flush() = 0;
 
     // Close a file object. After close, all other operations are invalid.
@@ -62,6 +61,13 @@ public:
     // Check whether a path exists.
     static bool Exists(const std::string& file_path);
 
+    // Delete file
+    static bool Delete(const std::string& file_path);
+
+    // Read all bytes into *buffer, at most max_size if file too large.
+    static bool ReadAll(const std::string& file_path, std::string* buffer,
+                        size_t max_size = 64*1024*1024);
+
     // Read all lines into *lines. You must ensure the file is not to large
     // to fit into memory.
     static bool ReadLines(const std::string& file_path,
@@ -81,6 +87,7 @@ protected:
 public:
     virtual File* Open(const std::string& file_path, const char* mode) = 0;
     virtual bool Exists(const std::string& file_path) = 0;
+    virtual bool Delete(const std::string& file_path) = 0;
 };
 
 // Defile the file_system class registry, user can register their own
