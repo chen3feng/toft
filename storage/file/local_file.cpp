@@ -31,6 +31,11 @@ bool LocalFileSystem::Exists(const std::string& file_path)
     return access(file_path.c_str(), F_OK) == 0;
 }
 
+bool LocalFileSystem::Delete(const std::string& file_path)
+{
+    return remove(file_path.c_str()) == 0;
+}
+
 TOFT_REGISTER_FILE_SYSTEM("local", LocalFileSystem);
 
 /////////////////////////////////////////////////////////////////////////////
@@ -47,10 +52,8 @@ LocalFile::~LocalFile()
 
 int64_t LocalFile::Read(void* buffer, int64_t size)
 {
-    size_t nread = fread(buffer, 1, size, m_fp);
-    if (nread > 0 || size == 0)
-        return nread;
-    if (ferror(m_fp))
+    int64_t nread = fread(buffer, 1, size, m_fp);
+    if (nread == 0 && size > 0 && ferror(m_fp))
         return -1;
     return nread;
 }
@@ -58,7 +61,10 @@ int64_t LocalFile::Read(void* buffer, int64_t size)
 int64_t LocalFile::Write(const void* buffer,
                          int64_t size)
 {
-    return fwrite(buffer, 1, size, m_fp);
+    int64_t nwrite = fwrite(buffer, 1, size, m_fp);
+    if (nwrite == 0 && size > 0 && ferror(m_fp))
+        return -1;
+    return nwrite;
 }
 
 bool LocalFile::Flush()
