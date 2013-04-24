@@ -175,6 +175,21 @@ TEST(String, SplitStringByAnyOf)
     EXPECT_EQ("http://www.sina.com.cn?a=6", vec[2]);
 }
 
+TEST(String, SplitStringKeepEmpty)
+{
+    string str = " ab c  d   efg  end ";
+    vector<string> vec;
+    SplitStringKeepEmpty(str, " ", &vec);
+    ASSERT_EQ(11U, vec.size());
+
+    SplitStringKeepEmpty(str, "  ", &vec);
+    ASSERT_EQ(4U, vec.size());
+    ASSERT_EQ(" ab c", vec[0]);
+    ASSERT_EQ("d", vec[1]);
+    ASSERT_EQ(" efg", vec[2]);
+    ASSERT_EQ("end ", vec[3]);
+}
+
 TEST(String, SplitLines)
 {
     vector<string> lines;

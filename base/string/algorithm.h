@@ -169,6 +169,18 @@ void SplitStringToSet(const StringPiece& full,
                       const char* delim,
                       std::set<std::string>* result);
 
+void SplitStringKeepEmpty(
+    const StringPiece& full,
+    char delim,
+    std::vector<std::string>* result
+);
+
+void SplitStringKeepEmpty(
+    const StringPiece& full,
+    const StringPiece& delim,
+    std::vector<std::string>* result
+);
+
 void SplitLines(
     const StringPiece& full,
     std::vector<std::string>* result,
