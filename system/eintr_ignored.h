@@ -11,7 +11,7 @@
 
 #include <errno.h>
 
-/// @define EINTR_IGNORED(expr)
+/// @define TOFT_EINTR_IGNORED(expr)
 /// Ignore EINTR for system call, for example,
 /// EINTR_IGNORED(write(fd, buf, size)) will retry if EINTR occured
 

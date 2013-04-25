@@ -9,22 +9,18 @@ namespace toft {
 TEST(Mutex, Lock)
 {
     Mutex mutex;
-    ASSERT_FALSE(mutex.IsLocked());
     mutex.Lock();
-    ASSERT_TRUE(mutex.IsLocked());
+    mutex.AssertLocked();
     mutex.Unlock();
-    ASSERT_FALSE(mutex.IsLocked());
 }
 
 TEST(Mutex, Locker)
 {
     Mutex mutex;
     {
-        ASSERT_FALSE(mutex.IsLocked());
         MutexLocker locker(mutex);
-        ASSERT_TRUE(mutex.IsLocked());
+        mutex.AssertLocked();
     }
-    ASSERT_FALSE(mutex.IsLocked());
 }
 
 template <typename Type>
@@ -71,16 +67,14 @@ TEST(Mutex, LockerWithException)
     Mutex mutex;
     try
     {
-        ASSERT_FALSE(mutex.IsLocked());
         MutexLocker locker(mutex);
-        ASSERT_TRUE(mutex.IsLocked()) << "after locked constructed";
+        mutex.AssertLocked();
         throw 0;
     }
     catch (...)
     {
         // ignore
     }
-    ASSERT_FALSE(mutex.IsLocked()) << "after exception thrown";
 }
 
 } // namespace toft

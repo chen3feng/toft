@@ -36,24 +36,25 @@ public:
     void Lock()
     {
         TOFT_CHECK_PTHREAD_ERROR(pthread_mutex_lock(&m_mutex));
-        assert(IsLocked());
+        AssertLocked();
     }
 
     bool TryLock()
     {
-        return TOFT_CHECK_PTHREAD_TRYLOCK_ERROR(pthread_mutex_trylock(&m_mutex));
+        return TOFT_CHECK_PTHREAD_TRYLOCK_ERROR(
+            pthread_mutex_trylock(&m_mutex));
     }
 
     // for test and debug only
-    bool IsLocked() const
+    void AssertLocked() const
     {
         // by inspect internal data
-        return m_mutex.__data.__lock > 0;
+        assert(m_mutex.__data.__lock > 0);
     }
 
     void Unlock()
     {
-        assert(IsLocked());
+        AssertLocked();
         TOFT_CHECK_PTHREAD_ERROR(pthread_mutex_unlock(&m_mutex));
         // NOTE: can't check unlocked here, maybe already locked by other thread
     }
