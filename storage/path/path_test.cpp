@@ -75,4 +75,17 @@ TEST(Path, Normalize)
     EXPECT_EQ("/", Path::Normalize("/abc/../../../"));
 }
 
+TEST(Path, Join)
+{
+    EXPECT_EQ("a/b", Path::Join("a", "b"));
+    EXPECT_EQ("a/b/c", Path::Join("a", "b", "c"));
+    EXPECT_EQ("a/b/c/d", Path::Join("a", "b", "c", "d"));
+    EXPECT_EQ("a/b/c/d/e", Path::Join("a", "b", "c", "d", "e"));
+    EXPECT_EQ("a/b/c/d/e/f", Path::Join("a", "b/", "c", "d/", "e", "f"));
+    EXPECT_EQ("abc/def/", Path::Join("abc", "def/"));
+    EXPECT_EQ("/abc/def/", Path::Join("/abc", "def/"));
+    EXPECT_EQ("/abc/def/", Path::Join("/abc/", "def/"));
+    EXPECT_EQ("/def", Path::Join("/abc/", "/def"));
+}
+
 } // namespace toft
