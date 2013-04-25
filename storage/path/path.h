@@ -38,6 +38,24 @@ public:
     // Normalize a path, e.g. A//B, A/./B and A/foo/../B all become A/B.
     // Take the same behavior as os.path.normpath of python.
     static std::string Normalize(const std::string& filepath);
+
+    // Join two or more pathname components, inserting '/' as needed.
+    // If any component is an absolute path, all previous path components
+    // will be discarded.
+    static std::string Join(const std::string& p1, const std::string& p2);
+    static std::string Join(const std::string& p1, const std::string& p2,
+                            const std::string& p3);
+    static std::string Join(const std::string& p1, const std::string& p2,
+                            const std::string& p3, const std::string& p4);
+    static std::string Join(const std::string& p1, const std::string& p2,
+                            const std::string& p3, const std::string& p4,
+                            const std::string& p5);
+    static std::string Join(const std::string& p1, const std::string& p2,
+                            const std::string& p3, const std::string& p4,
+                            const std::string& p5, const std::string& p6);
+
+private:
+    static std::string DoJoin(const std::string** paths, size_t size);
 };
 
 } // namespace toft
