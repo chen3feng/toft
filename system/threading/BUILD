@@ -4,8 +4,12 @@ cc_library(
         'condition_variable.cpp',
         'event.cpp',
         'mutex.cpp',
+        'semaphore.cpp',
+        'rwlock.cpp',
+        'spinlock.cpp',
     ],
     deps = [
+        ':_this_thread',
         '//toft/system:check_error',
         '//toft/system/time:time',
         '#pthread'
@@ -32,11 +36,22 @@ cc_library(
 )
 
 cc_library(
+    name = '_thread_group',
+    srcs = [
+        'thread_group.cpp',
+    ],
+    deps = [
+        ':_thread',
+    ]
+)
+
+cc_library(
     name = 'threading',
     deps = [
         ':_sync_object',
         ':_this_thread',
         ':_thread',
+        ':_thread_group',
     ]
 )
 
@@ -50,6 +65,30 @@ cc_test(
     name = 'mutex_test',
     srcs = 'mutex_test.cpp',
     deps = ':_sync_object',
+)
+
+cc_test(
+    name = 'rwlock_test',
+    srcs = 'rwlock_test.cpp',
+    deps = [
+        ':_sync_object',
+        ':_thread_group',
+    ]
+)
+
+cc_test(
+    name = 'semaphore_test',
+    srcs = 'semaphore_test.cpp',
+    deps = ':_sync_object'
+)
+
+cc_test(
+    name = 'spinlock_test',
+    srcs = 'spinlock_test.cpp',
+    deps = [
+        ':_sync_object',
+        ':_thread_group',
+    ]
 )
 
 cc_test(
@@ -67,5 +106,14 @@ cc_test(
     deps = [
         ':_this_thread',
         ':_thread',
+    ]
+)
+
+cc_test(
+    name = 'thread_group_test',
+    srcs = 'thread_group_test.cpp',
+    deps = [
+        ':_sync_object',
+        ':_thread_group',
     ]
 )
