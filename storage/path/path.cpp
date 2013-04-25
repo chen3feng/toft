@@ -6,6 +6,7 @@
 #include "toft/storage/path/path.h"
 #include <errno.h>
 #include <stdlib.h>
+#include "toft/base/array_size.h"
 #include "toft/base/string/algorithm.h"
 
 namespace toft {
@@ -116,6 +117,62 @@ std::string Path::Normalize(const std::string& path)
         new_path = std::string(initial_slashes, '/') + new_path;
 
     return new_path.empty() ? "." : new_path;
+}
+
+std::string Path::Join(const std::string& p1, const std::string& p2)
+{
+    const std::string* paths[] = {&p1, &p2};
+    return DoJoin(paths, TOFT_ARRAY_SIZE(paths));
+}
+
+std::string Path::Join(const std::string& p1, const std::string& p2,
+                       const std::string& p3)
+{
+    const std::string* paths[] = {&p1, &p2, &p3};
+    return DoJoin(paths, TOFT_ARRAY_SIZE(paths));
+}
+
+
+std::string Path::Join(const std::string& p1, const std::string& p2,
+                       const std::string& p3, const std::string& p4)
+{
+    const std::string* paths[] = {&p1, &p2, &p3, &p4};
+    return DoJoin(paths, TOFT_ARRAY_SIZE(paths));
+}
+
+
+std::string Path::Join(const std::string& p1, const std::string& p2,
+                       const std::string& p3, const std::string& p4,
+                       const std::string& p5)
+{
+    const std::string* paths[] = {&p1, &p2, &p3, &p4, &p5};
+    return DoJoin(paths, TOFT_ARRAY_SIZE(paths));
+}
+
+std::string Path::Join(const std::string& p1, const std::string& p2,
+                       const std::string& p3, const std::string& p4,
+                       const std::string& p5, const std::string& p6)
+{
+    const std::string* paths[] = {&p1, &p2, &p3, &p4, &p5, &p6};
+    return DoJoin(paths, TOFT_ARRAY_SIZE(paths));
+}
+
+std::string Path::DoJoin(const std::string** paths, size_t size)
+{
+    std::string result = *paths[0];
+    for (size_t i = 1; i < size; ++i) {
+        const std::string& path = *paths[i];
+        if (!path.empty()) {
+            if (path[0] == '/') {
+                result = path;
+            } else {
+                if (!result.empty() && result[result.size() - 1] != '/')
+                    result += '/';
+                result += path;
+            }
+        }
+    }
+    return result;
 }
 
 } // namespace toft
