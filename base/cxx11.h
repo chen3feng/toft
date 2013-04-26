@@ -3,6 +3,8 @@
 //
 // Author: CHEN Feng <chen3feng@gmail.com>
 
+// Define macro to check C++11
+
 #ifndef TOFT_BASE_CXX11_H
 #define TOFT_BASE_CXX11_H
 #pragma once

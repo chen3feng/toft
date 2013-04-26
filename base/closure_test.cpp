@@ -200,345 +200,354 @@ public:
     }
 };
 
-TEST(Closure, Closure)
+TEST(Closure, ClosureVoid)
 {
-    printf("\r\n==============test NewClosure===============\r\n");
-
     // Closure0
-    Closure<void()> * pcb = NewClosure(test0);
-    ASSERT_TRUE(pcb->IsSelfDelete());
-    pcb->Run();
+    Closure<void()> * cb = NewClosure(test0);
+    ASSERT_TRUE(cb->IsSelfDelete());
+    cb->Run();
 
-    pcb = NewClosure(test1, 'a');
-    pcb->Run();
+    cb = NewClosure(test1, 'a');
+    cb->Run();
 
-    pcb = NewClosure(test2, char('a'), short(456));
-    pcb->Run();
+    cb = NewClosure(test2, 'a', 456);
+    cb->Run();
 
-    pcb = NewClosure(test3, char('a'), short(456), int(9800));
-    pcb->Run();
+    cb = NewClosure(test3, 'a', 456, 9800);
+    cb->Run();
 
     // Closure1
-    Closure<void (char)>* pcb0_1 = NewClosure(test0_1);
-    pcb0_1->Run('a');
+    Closure<void (char)>* cb0_1 = NewClosure(test0_1);
+    cb0_1->Run('a');
 
-    Closure<void (short)>* pcb1_1 = NewClosure(test1_1, 'a');
-    pcb1_1->Run(780);
+    Closure<void (short)>* cb1_1 = NewClosure(test1_1, 'a');
+    cb1_1->Run(780);
 
-    Closure<void (int)>* pcb2_1 = NewClosure(test2_1, 'a', 7800);
-    pcb2_1->Run(9800);
+    Closure<void (int)>* cb2_1 = NewClosure(test2_1, 'a', 7800);
+    cb2_1->Run(9800);
 
     // Closure2
-    Closure<void (char, short)>* pcb0_2 = NewClosure(test0_2);
-    pcb0_2->Run('a', 8900);
+    Closure<void (char, short)>* cb0_2 = NewClosure(test0_2);
+    cb0_2->Run('a', 8900);
 
-    Closure<void (char, int)>* pcb1_2 = NewClosure(test1_2, 'a');
-    pcb1_2->Run('b', 780);
+    Closure<void (char, int)>* cb1_2 = NewClosure(test1_2, 'a');
+    cb1_2->Run('b', 780);
 
     // Closure3
-    Closure<void (char, short, int)>* pcb0_3 = NewClosure(test0_3);
-    pcb0_3->Run('a', 456, 78909);
+    Closure<void (char, short, int)>* cb0_3 = NewClosure(test0_3);
+    cb0_3->Run('a', 456, 78909);
+}
 
-    //------Closure------------
-    printf("\r\n------Closure------------\r\n");
 
+TEST(Closure, ClosureReturn)
+{
     // Closure0
-    Closure<char ()>* pRcb = NewClosure(Rtest0);
-    char r0 = pRcb->Run();
+    Closure<char ()>* rcb = NewClosure(Rtest0);
+    char r0 = rcb->Run();
     EXPECT_EQ('a', r0);
 
-    pRcb = NewClosure(Rtest1, 'a');
-    r0 = pRcb->Run();
+    rcb = NewClosure(Rtest1, 'a');
+    r0 = rcb->Run();
     EXPECT_EQ('a', r0);
 
-    pRcb = NewClosure(Rtest2, 'a', 456);
-    r0 = pRcb->Run();
+    rcb = NewClosure(Rtest2, 'a', 456);
+    r0 = rcb->Run();
     EXPECT_EQ('a', r0);
 
-    pRcb = NewClosure(Rtest3, 'a', 456, 9800);
-    r0 = pRcb->Run();
+    rcb = NewClosure(Rtest3, 'a', 456, 9800);
+    r0 = rcb->Run();
     EXPECT_EQ('a', r0);
 
     // Closure1
-    Closure<short (char)>* pRcb0_1 = NewClosure(Rtest0_1);
-    short r1 = pRcb0_1->Run('a');
+    Closure<short (char)>* rcb0_1 = NewClosure(Rtest0_1);
+    short r1 = rcb0_1->Run('a');
     EXPECT_EQ(980, r1);
 
-    Closure<short (short)>* pRcb1_1 = NewClosure(Rtest1_1, 'a');
-    r1 = pRcb1_1->Run(780);
+    Closure<short (short)>* rcb1_1 = NewClosure(Rtest1_1, 'a');
+    r1 = rcb1_1->Run(780);
     EXPECT_EQ(780, r1);
 
-    Closure<short (int)>* pRcb2_1 = NewClosure(Rtest2_1, 'a', 7800);
-    r1 = pRcb2_1->Run(9800);
+    Closure<short (int)>* rcb2_1 = NewClosure(Rtest2_1, 'a', 7800);
+    r1 = rcb2_1->Run(9800);
     EXPECT_EQ(7800, r1);
 
     // Closure2
-    Closure<int (char, short)>* pRcb0_2 = NewClosure(Rtest0_2);
-    int r2 = pRcb0_2->Run('a', 8900);
+    Closure<int (char, short)>* rcb0_2 = NewClosure(Rtest0_2);
+    int r2 = rcb0_2->Run('a', 8900);
     EXPECT_EQ(9900, r2);
 
-    Closure<int (char, int)>* pRcb1_2 = NewClosure(Rtest1_2, 'a');
-    r2 = pRcb1_2->Run('b', 780);
+    Closure<int (char, int)>* rcb1_2 = NewClosure(Rtest1_2, 'a');
+    r2 = rcb1_2->Run('b', 780);
     EXPECT_EQ(780, r2);
 
     // Closure3
-    Closure<unsigned int (char, short, int)>* pRcb0_3 = NewClosure(Rtest0_3);
-    unsigned int r3 = pRcb0_3->Run('a', 456, 78909);
+    Closure<unsigned int (char, short, int)>* rcb0_3 = NewClosure(Rtest0_3);
+    unsigned int r3 = rcb0_3->Run('a', 456, 78909);
     EXPECT_EQ(78909U, r3);
 }
 
-TEST(Closure, PermanentClosure)
+TEST(Closure, PermanentVoidClosure)
 {
     // Closure0
-    scoped_ptr<Closure<void()> > pcb(NewPermanentClosure(test0));
-    ASSERT_FALSE(pcb->IsSelfDelete());
-    pcb->Run();
+    scoped_ptr<Closure<void()> > cb(NewPermanentClosure(test0));
+    ASSERT_FALSE(cb->IsSelfDelete());
+    cb->Run();
 
-    pcb.reset(NewPermanentClosure(test1, 'a'));
-    pcb->Run();
+    cb.reset(NewPermanentClosure(test1, 'a'));
+    cb->Run();
 
-    pcb.reset(NewPermanentClosure(test2, 'a', 456));
-    pcb->Run();
+    cb.reset(NewPermanentClosure(test2, 'a', 456));
+    cb->Run();
 
-    pcb.reset(NewPermanentClosure(test3, 'a', 456, 9800));
-    pcb->Run();
+    cb.reset(NewPermanentClosure(test3, 'a', 456, 9800));
+    cb->Run();
 
     // Closure1
-    scoped_ptr<Closure<void (char)> > pcb0_1(NewPermanentClosure(test0_1));
-    pcb0_1->Run('a');
+    scoped_ptr<Closure<void (char)> > cb0_1(NewPermanentClosure(test0_1));
+    cb0_1->Run('a');
 
-    scoped_ptr<Closure<void (short)> > pcb1_1(NewPermanentClosure(test1_1, 'a'));
-    pcb1_1->Run(780);
+    scoped_ptr<Closure<void (short)> > cb1_1(NewPermanentClosure(test1_1, 'a'));
+    cb1_1->Run(780);
 
-    scoped_ptr<Closure<void (int)> > pcb2_1(NewPermanentClosure(test2_1, 'a', 7800));
-    pcb2_1->Run(9800);
+    scoped_ptr<Closure<void (int)> > cb2_1(NewPermanentClosure(test2_1, 'a', 7800));
+    cb2_1->Run(9800);
 
     // Closure2
-    scoped_ptr<Closure<void (char, short)> > pcb0_2(NewPermanentClosure(test0_2));
-    pcb0_2->Run('a', 8900);
+    scoped_ptr<Closure<void (char, short)> > cb0_2(NewPermanentClosure(test0_2));
+    cb0_2->Run('a', 8900);
 
-    scoped_ptr<Closure<void (char, int)> > pcb1_2(NewPermanentClosure(test1_2, 'a'));
-    pcb1_2->Run('b', 780);
+    scoped_ptr<Closure<void (char, int)> > cb1_2(NewPermanentClosure(test1_2, 'a'));
+    cb1_2->Run('b', 780);
 
     // Closure3
-    scoped_ptr<Closure<void (char, short, int)> > pcb0_3(NewPermanentClosure(test0_3));
-    pcb0_3->Run('a', 456, 78909);
+    scoped_ptr<Closure<void (char, short, int)> > cb0_3(NewPermanentClosure(test0_3));
+    cb0_3->Run('a', 456, 78909);
+}
 
+
+TEST(Closure, PermanentClosureRetuen)
+{
     // Closure0
-    scoped_ptr<Closure<char ()> > pRcb(NewPermanentClosure(Rtest0));
-    char r0 = pRcb->Run();
+    scoped_ptr<Closure<char ()> > rcb(NewPermanentClosure(Rtest0));
+    char r0 = rcb->Run();
     EXPECT_EQ('a', r0);
 
-    pRcb.reset(NewPermanentClosure(Rtest1, 'a'));
-    r0 = pRcb->Run();
+    rcb.reset(NewPermanentClosure(Rtest1, 'a'));
+    r0 = rcb->Run();
     EXPECT_EQ('a', r0);
 
-    pRcb.reset(NewPermanentClosure(Rtest2, 'a', 456));
-    r0 = pRcb->Run();
+    rcb.reset(NewPermanentClosure(Rtest2, 'a', 456));
+    r0 = rcb->Run();
     EXPECT_EQ('a', r0);
 
-    pRcb.reset(NewPermanentClosure(Rtest3, 'a', 456, 9800));
-    r0 = pRcb->Run();
+    rcb.reset(NewPermanentClosure(Rtest3, 'a', 456, 9800));
+    r0 = rcb->Run();
     EXPECT_EQ('a', r0);
 
     // Closure1
-    scoped_ptr<Closure<short (char)> > pRcb0_1(NewPermanentClosure(Rtest0_1));
-    short r1 = pRcb0_1->Run('a');
+    scoped_ptr<Closure<short (char)> > rcb0_1(NewPermanentClosure(Rtest0_1));
+    short r1 = rcb0_1->Run('a');
     EXPECT_EQ(980, r1);
 
-    scoped_ptr<Closure<short (short)> > pRcb1_1(NewPermanentClosure(Rtest1_1, 'a'));
-    r1 = pRcb1_1->Run(780);
+    scoped_ptr<Closure<short (short)> > rcb1_1(NewPermanentClosure(Rtest1_1, 'a'));
+    r1 = rcb1_1->Run(780);
     EXPECT_EQ(780, r1);
 
-    scoped_ptr<Closure<short (int)> > pRcb2_1(NewPermanentClosure(Rtest2_1, 'a', 7800));
-    r1 = pRcb2_1->Run(9800);
+    scoped_ptr<Closure<short (int)> > rcb2_1(NewPermanentClosure(Rtest2_1, 'a', 7800));
+    r1 = rcb2_1->Run(9800);
     EXPECT_EQ(7800, r1);
 
     // Closure2
-    scoped_ptr<Closure<int (char, short)> > pRcb0_2(NewPermanentClosure(Rtest0_2));
-    int r2 = pRcb0_2->Run('a', 8900);
+    scoped_ptr<Closure<int (char, short)> > rcb0_2(NewPermanentClosure(Rtest0_2));
+    int r2 = rcb0_2->Run('a', 8900);
     EXPECT_EQ(9900, r2);
 
-    scoped_ptr<Closure<int (char, int)> > pRcb1_2(NewPermanentClosure(Rtest1_2, 'a'));
-    r2 = pRcb1_2->Run('b', 780);
+    scoped_ptr<Closure<int (char, int)> > rcb1_2(NewPermanentClosure(Rtest1_2, 'a'));
+    r2 = rcb1_2->Run('b', 780);
     EXPECT_EQ(780, r2);
 
     // Closure3
-    scoped_ptr<Closure<unsigned int (char, short, int)> > pRcb0_3(NewPermanentClosure(Rtest0_3));
-    unsigned int r3 = pRcb0_3->Run('a', 456, 78909);
+    scoped_ptr<Closure<unsigned int (char, short, int)> > rcb0_3(NewPermanentClosure(Rtest0_3));
+    unsigned int r3 = rcb0_3->Run('a', 456, 78909);
     EXPECT_EQ(78909U, r3);
 }
 
-TEST(Closure, MethodClosure)
+TEST(Closure, MethodClosureVoid)
 {
-    printf("\r\n==============test NewClosure(Class)===============\r\n");
-
     TestClass obj;
 
     // Closure0
-    Closure<void ()>* pcb = NewClosure(&obj, &TestClass::test0);
-    pcb->Run();
+    Closure<void ()>* cb = NewClosure(&obj, &TestClass::test0);
+    cb->Run();
 
-    pcb = NewClosure(&obj, &TestClass::test1, 'a');
-    pcb->Run();
+    cb = NewClosure(&obj, &TestClass::test1, 'a');
+    cb->Run();
 
-    pcb = NewClosure(&obj, &TestClass::test2, 'a', 456);
-    pcb->Run();
+    cb = NewClosure(&obj, &TestClass::test2, 'a', 456);
+    cb->Run();
 
-    pcb = NewClosure(&obj, &TestClass::test3, 'a', 456, 9800);
-    pcb->Run();
+    cb = NewClosure(&obj, &TestClass::test3, 'a', 456, 9800);
+    cb->Run();
+}
+
+TEST(Closure, MethodClosureReturn)
+{
+    TestClass obj;
 
     // Closure1
-    Closure<void (char)>* pcb0_1 = NewClosure(&obj, &TestClass::test0_1);
-    pcb0_1->Run('a');
+    Closure<void (char)>* cb0_1 = NewClosure(&obj, &TestClass::test0_1);
+    cb0_1->Run('a');
 
-    Closure<void (short)>* pcb1_1 = NewClosure(&obj, &TestClass::test1_1, 'a');
-    pcb1_1->Run(short(780));
+    Closure<void (short)>* cb1_1 = NewClosure(&obj, &TestClass::test1_1, 'a');
+    cb1_1->Run(short(780));
 
-    Closure<void (int)>* pcb2_1 = NewClosure(&obj, &TestClass::test2_1, 'a', 7800);
-    pcb2_1->Run(9800);
+    Closure<void (int)>* cb2_1 = NewClosure(&obj, &TestClass::test2_1, 'a', 7800);
+    cb2_1->Run(9800);
 
     // Closure2
-    Closure<void (char, short)>* pcb0_2 = NewClosure(&obj, &TestClass::test0_2);
-    pcb0_2->Run('a', 8900);
+    Closure<void (char, short)>* cb0_2 = NewClosure(&obj, &TestClass::test0_2);
+    cb0_2->Run('a', 8900);
 
-    Closure<void (char, int)>* pcb1_2 = NewClosure(&obj, &TestClass::test1_2, 'a');
-    pcb1_2->Run('b', 780);
+    Closure<void (char, int)>* cb1_2 = NewClosure(&obj, &TestClass::test1_2, 'a');
+    cb1_2->Run('b', 780);
 
     // Closure3
-    Closure<void (char, short, int)>* pcb0_3 = NewClosure(&obj, &TestClass::test0_3);
-    pcb0_3->Run('a', 456, 78909);
+    Closure<void (char, short, int)>* cb0_3 = NewClosure(&obj, &TestClass::test0_3);
+    cb0_3->Run('a', 456, 78909);
 
     //------Closure------------
     printf("\r\n------Closure------------\r\n");
 
     // Closure0
-    Closure<char ()>* pRcb = NewClosure(&obj, &TestClass::Rtest0);
-    char r0 = pRcb->Run();
+    Closure<char ()>* rcb = NewClosure(&obj, &TestClass::Rtest0);
+    char r0 = rcb->Run();
     EXPECT_EQ('a', r0);
 
-    pRcb = NewClosure(&obj, &TestClass::Rtest1, 'a');
-    r0 = pRcb->Run();
+    rcb = NewClosure(&obj, &TestClass::Rtest1, 'a');
+    r0 = rcb->Run();
     EXPECT_EQ('a', r0);
 
-    pRcb = NewClosure(&obj, &TestClass::Rtest2, 'a', 456);
-    r0 = pRcb->Run();
+    rcb = NewClosure(&obj, &TestClass::Rtest2, 'a', 456);
+    r0 = rcb->Run();
     EXPECT_EQ('a', r0);
 
-    pRcb = NewClosure(&obj, &TestClass::Rtest3, 'a', 456, 9800);
-    r0 = pRcb->Run();
+    rcb = NewClosure(&obj, &TestClass::Rtest3, 'a', 456, 9800);
+    r0 = rcb->Run();
     EXPECT_EQ('a', r0);
 
     // Closure1
-    Closure<short (char)>* pRcb0_1 = NewClosure(&obj, &TestClass::Rtest0_1);
-    short r1 = pRcb0_1->Run('a');
+    Closure<short (char)>* rcb0_1 = NewClosure(&obj, &TestClass::Rtest0_1);
+    short r1 = rcb0_1->Run('a');
     EXPECT_EQ(980, r1);
 
-    Closure<short (short)>* pRcb1_1 = NewClosure(&obj, &TestClass::Rtest1_1, 'a');
-    r1 = pRcb1_1->Run(780);
+    Closure<short (short)>* rcb1_1 = NewClosure(&obj, &TestClass::Rtest1_1, 'a');
+    r1 = rcb1_1->Run(780);
     EXPECT_EQ(780, r1);
 
-    Closure<short (int)>* pRcb2_1 = NewClosure(&obj, &TestClass::Rtest2_1, 'a', 7800);
-    r1 = pRcb2_1->Run(9800);
+    Closure<short (int)>* rcb2_1 = NewClosure(&obj, &TestClass::Rtest2_1, 'a', 7800);
+    r1 = rcb2_1->Run(9800);
     EXPECT_EQ(7800, r1);
 
     // Closure2
-    Closure<int (char, short)>* pRcb0_2 =
+    Closure<int (char, short)>* rcb0_2 =
         NewClosure(&obj, &TestClass::Rtest0_2);
-    int r2 = pRcb0_2->Run('a', 8900);
+    int r2 = rcb0_2->Run('a', 8900);
     EXPECT_EQ(9900, r2);
 
-    Closure<int (char, int)>* pRcb1_2 = NewClosure(&obj, &TestClass::Rtest1_2, 'a');
-    r2 = pRcb1_2->Run('b', 780);
+    Closure<int (char, int)>* rcb1_2 = NewClosure(&obj, &TestClass::Rtest1_2, 'a');
+    r2 = rcb1_2->Run('b', 780);
     EXPECT_EQ(780, r2);
 
     // Closure3
-    Closure<void (char, short, int)>* pRcb0_3 = NewClosure(&obj, &TestClass::test0_3);
-    pRcb0_3->Run('a', 456, 78909);
+    Closure<void (char, short, int)>* rcb0_3 = NewClosure(&obj, &TestClass::test0_3);
+    rcb0_3->Run('a', 456, 78909);
 }
 
-TEST(Closure, PermanentMethodClosure)
+TEST(Closure, PermanentMethodClosureVoid)
 {
-    printf("\r\n==============test NewClosure(Class)===============\r\n");
-
     TestClass obj;
 
     // Closure0
-    scoped_ptr<Closure<void()> > pcb(NewPermanentClosure(&obj, &TestClass::test0));
-    pcb->Run();
+    scoped_ptr<Closure<void()> > cb(NewPermanentClosure(&obj, &TestClass::test0));
+    cb->Run();
 
-    pcb.reset(NewPermanentClosure(&obj, &TestClass::test1, 'a'));
-    pcb->Run();
+    cb.reset(NewPermanentClosure(&obj, &TestClass::test1, 'a'));
+    cb->Run();
 
-    pcb.reset(NewPermanentClosure(&obj, &TestClass::test2, 'a', 456));
-    pcb->Run();
+    cb.reset(NewPermanentClosure(&obj, &TestClass::test2, 'a', 456));
+    cb->Run();
 
-    pcb.reset(NewPermanentClosure(&obj, &TestClass::test3, 'a', 456, 9800));
-    pcb->Run();
+    cb.reset(NewPermanentClosure(&obj, &TestClass::test3, 'a', 456, 9800));
+    cb->Run();
 
-    scoped_ptr<Closure<void (char)> > pcb0_1(NewPermanentClosure(&obj, &TestClass::test0_1));
-    pcb0_1->Run('a');
+    scoped_ptr<Closure<void (char)> > cb0_1(NewPermanentClosure(&obj, &TestClass::test0_1));
+    cb0_1->Run('a');
 
-    scoped_ptr<Closure<void (short)> > pcb1_1(NewPermanentClosure(&obj, &TestClass::test1_1, 'a'));
-    pcb1_1->Run(short(780));
+    scoped_ptr<Closure<void (short)> > cb1_1(NewPermanentClosure(&obj, &TestClass::test1_1, 'a'));
+    cb1_1->Run(short(780));
 
-    scoped_ptr<Closure<void (int)> > pcb2_1(
+    scoped_ptr<Closure<void (int)> > cb2_1(
         NewPermanentClosure(&obj, &TestClass::test2_1, 'a', 7800));
-    pcb2_1->Run(9800);
+    cb2_1->Run(9800);
 
     // Closure2
-    scoped_ptr<Closure<void (char, short)> > pcb0_2(NewPermanentClosure(&obj, &TestClass::test0_2));
-    pcb0_2->Run('a', 8900);
+    scoped_ptr<Closure<void (char, short)> > cb0_2(NewPermanentClosure(&obj, &TestClass::test0_2));
+    cb0_2->Run('a', 8900);
 
-    scoped_ptr<Closure<void (char, int)> > pcb1_2(NewPermanentClosure(&obj, &TestClass::test1_2, 'a'));
-    pcb1_2->Run('b', 780);
+    scoped_ptr<Closure<void (char, int)> > cb1_2(NewPermanentClosure(&obj, &TestClass::test1_2, 'a'));
+    cb1_2->Run('b', 780);
 
     // Closure3
-    scoped_ptr<Closure<void (char, short, int)> > pcb0_3(NewPermanentClosure(&obj, &TestClass::test0_3));
-    pcb0_3->Run('a', 456, 78909);
+    scoped_ptr<Closure<void (char, short, int)> > cb0_3(NewPermanentClosure(&obj, &TestClass::test0_3));
+    cb0_3->Run('a', 456, 78909);
+}
+
+TEST(Closure, PermanentMethodClosureReturn)
+{
+    TestClass obj;
 
     // Closure0
-    scoped_ptr<Closure<char ()> > pRcb(NewPermanentClosure(&obj, &TestClass::Rtest0));
-    char r0 = pRcb->Run();
+    scoped_ptr<Closure<char ()> > rcb(NewPermanentClosure(&obj, &TestClass::Rtest0));
+    char r0 = rcb->Run();
     EXPECT_EQ('a', r0);
 
-    pRcb.reset(NewPermanentClosure(&obj, &TestClass::Rtest1, 'a'));
-    r0 = pRcb->Run();
+    rcb.reset(NewPermanentClosure(&obj, &TestClass::Rtest1, 'a'));
+    r0 = rcb->Run();
     EXPECT_EQ('a', r0);
 
-    pRcb.reset(NewPermanentClosure(&obj, &TestClass::Rtest2, 'a', 456));
-    r0 = pRcb->Run();
+    rcb.reset(NewPermanentClosure(&obj, &TestClass::Rtest2, 'a', 456));
+    r0 = rcb->Run();
     EXPECT_EQ('a', r0);
 
-    pRcb.reset(NewPermanentClosure(&obj, &TestClass::Rtest3, 'a', 456, 9800));
-    r0 = pRcb->Run();
+    rcb.reset(NewPermanentClosure(&obj, &TestClass::Rtest3, 'a', 456, 9800));
+    r0 = rcb->Run();
     EXPECT_EQ('a', r0);
 
     // Closure1
-    scoped_ptr<Closure<short (char)> > pRcb0_1(NewPermanentClosure(&obj, &TestClass::Rtest0_1));
-    short r1 = pRcb0_1->Run('a');
+    scoped_ptr<Closure<short (char)> > rcb0_1(NewPermanentClosure(&obj, &TestClass::Rtest0_1));
+    short r1 = rcb0_1->Run('a');
     EXPECT_EQ(980, r1);
 
-    scoped_ptr<Closure<short (short)> > pRcb1_1(NewPermanentClosure(&obj, &TestClass::Rtest1_1, 'a'));
-    r1 = pRcb1_1->Run(780);
+    scoped_ptr<Closure<short (short)> > rcb1_1(NewPermanentClosure(&obj, &TestClass::Rtest1_1, 'a'));
+    r1 = rcb1_1->Run(780);
     EXPECT_EQ(780, r1);
 
-    scoped_ptr<Closure<short (int)> > pRcb2_1(
+    scoped_ptr<Closure<short (int)> > rcb2_1(
         NewPermanentClosure(&obj, &TestClass::Rtest2_1, 'a', 7800));
-    r1 = pRcb2_1->Run(9800);
+    r1 = rcb2_1->Run(9800);
     EXPECT_EQ(7800, r1);
 
     // Closure2
-    scoped_ptr<Closure<int (char, short)> > pRcb0_2(NewPermanentClosure(&obj, &TestClass::Rtest0_2));
-    int r2 = pRcb0_2->Run('a', 8900);
+    scoped_ptr<Closure<int (char, short)> > rcb0_2(NewPermanentClosure(&obj, &TestClass::Rtest0_2));
+    int r2 = rcb0_2->Run('a', 8900);
     EXPECT_EQ(9900, r2);
 
-    scoped_ptr<Closure<int (char, int)> > pRcb1_2(NewPermanentClosure(&obj, &TestClass::Rtest1_2, 'a'));
-    r2 = pRcb1_2->Run('b', 780);
+    scoped_ptr<Closure<int (char, int)> > rcb1_2(NewPermanentClosure(&obj, &TestClass::Rtest1_2, 'a'));
+    r2 = rcb1_2->Run('b', 780);
     EXPECT_EQ(780, r2);
 
-    scoped_ptr<Closure<unsigned int (char, short, int)> > pRcb0_3(NewPermanentClosure(&obj, &TestClass::Rtest0_3));
-    unsigned int r3 = pRcb0_3->Run('a', 456, 78909);
+    scoped_ptr<Closure<unsigned int (char, short, int)> > rcb0_3(NewPermanentClosure(&obj, &TestClass::Rtest0_3));
+    unsigned int r3 = rcb0_3->Run('a', 456, 78909);
     EXPECT_EQ(78909U, r3);
 }
 

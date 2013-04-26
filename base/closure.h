@@ -14,117 +14,106 @@
 namespace toft {
 
 // base class for all Closures
-class ClosureBase
-{
+class ClosureBase {
 public:
-    virtual ~ClosureBase() {}
+    virtual ~ClosureBase();
     virtual bool IsSelfDelete() const = 0;
 };
 
 // primary template
-template <typename Signature>class Closure : public ClosureBase
-{
+template <typename Signature>class Closure : public ClosureBase {
 };
 
 // specified for 0 arguments
 template <
-    typename R
-    >
+typename R
+>
 class Closure<R ()>
-    : public ClosureBase
-{
+        : public ClosureBase {
 public:
     virtual R Run() = 0;
 };
 
 // specified for 1 arguments
 template <
-    typename R
-    , typename A1>
+typename R
+, typename A1>
 class Closure<R (A1)>
-    : public ClosureBase
-{
+        : public ClosureBase {
 public:
     virtual R Run(A1 a1) = 0;
 };
 
 // specified for 2 arguments
 template <
-    typename R
-    , typename A1    , typename A2>
+typename R
+, typename A1    , typename A2>
 class Closure<R (A1,A2)>
-    : public ClosureBase
-{
+        : public ClosureBase {
 public:
     virtual R Run(A1 a1, A2 a2) = 0;
 };
 
 // specified for 3 arguments
 template <
-    typename R
-    , typename A1    , typename A2    , typename A3>
+typename R
+, typename A1    , typename A2    , typename A3>
 class Closure<R (A1,A2,A3)>
-    : public ClosureBase
-{
+        : public ClosureBase {
 public:
     virtual R Run(A1 a1, A2 a2, A3 a3) = 0;
 };
 
 // specified for 4 arguments
 template <
-    typename R
-    , typename A1    , typename A2    , typename A3    , typename A4>
+typename R
+, typename A1    , typename A2    , typename A3    , typename A4>
 class Closure<R (A1,A2,A3,A4)>
-    : public ClosureBase
-{
+        : public ClosureBase {
 public:
     virtual R Run(A1 a1, A2 a2, A3 a3, A4 a4) = 0;
 };
 
 // specified for 5 arguments
 template <
-    typename R
-    , typename A1    , typename A2    , typename A3    , typename A4    ,
-        typename A5>
+typename R
+, typename A1    , typename A2    , typename A3    , typename A4    ,
+typename A5>
 class Closure<R (A1,A2,A3,A4,A5)>
-    : public ClosureBase
-{
+        : public ClosureBase {
 public:
     virtual R Run(A1 a1, A2 a2, A3 a3, A4 a4, A5 a5) = 0;
 };
 
 // specified for 6 arguments
 template <
-    typename R
-    , typename A1    , typename A2    , typename A3    , typename A4    ,
-        typename A5    , typename A6>
+typename R
+, typename A1    , typename A2    , typename A3    , typename A4    ,
+typename A5    , typename A6>
 class Closure<R (A1,A2,A3,A4,A5,A6)>
-    : public ClosureBase
-{
+        : public ClosureBase {
 public:
     virtual R Run(A1 a1, A2 a2, A3 a3, A4 a4, A5 a5, A6 a6) = 0;
 };
 
 // specified for 7 arguments
 template <
-    typename R
-    , typename A1    , typename A2    , typename A3    , typename A4    ,
-        typename A5    , typename A6    , typename A7>
+typename R
+, typename A1    , typename A2    , typename A3    , typename A4    ,
+typename A5    , typename A6    , typename A7>
 class Closure<R (A1,A2,A3,A4,A5,A6,A7)>
-    : public ClosureBase
-{
+        : public ClosureBase {
 public:
     virtual R Run(A1 a1, A2 a2, A3 a3, A4 a4, A5 a5, A6 a6, A7 a7) = 0;
 };
 
 // specified for 8 arguments
 template <
-    typename R
-    , typename A1    , typename A2    , typename A3    , typename A4    ,
-        typename A5    , typename A6    , typename A7    , typename A8>
+typename R
+, typename A1    , typename A2    , typename A3    , typename A4    ,
+typename A5    , typename A6    , typename A7    , typename A8>
 class Closure<R (A1,A2,A3,A4,A5,A6,A7,A8)>
-    : public ClosureBase
-{
+        : public ClosureBase {
 public:
     virtual R Run(A1 a1, A2 a2, A3 a3, A4 a4, A5 a5, A6 a6, A7 a7, A8 a8) = 0;
 };
@@ -134,17 +123,13 @@ public:
 
 // delete p in dtor automatically if Enabled is true
 template <bool Enabled, typename T>
-class ConditionalAutoDeleter
-{
+class ConditionalAutoDeleter {
 public:
     explicit ConditionalAutoDeleter(T* p)
-        : m_p(p)
-    {
+        : m_p(p) {
     }
-    ~ConditionalAutoDeleter()
-    {
-        if (Enabled)
-        {
+    ~ConditionalAutoDeleter() {
+        if (Enabled) {
             delete m_p;
         }
     }
@@ -160,11 +145,11 @@ private:
 ////////////////////////////////////////////////////
 
 template <
-    bool SelfDeleting,
-    typename R,
-    typename Class,
-    typename MethodClass
-        >
+bool SelfDeleting,
+     typename R,
+     typename Class,
+     typename MethodClass
+     >
 class MethodClosure_Arg0_Bind0 : public Closure<R ()> {
     typedef R (MethodClass::*MethodType)();
 public:
@@ -172,31 +157,33 @@ public:
         m_object(object), m_method(method)  {}
     virtual R Run() {
         ConditionalAutoDeleter<SelfDeleting,
-            MethodClosure_Arg0_Bind0> self_deleter(this);
+                               MethodClosure_Arg0_Bind0> self_deleter(this);
         return (m_object->*m_method)( );
     }
-    virtual bool IsSelfDelete() const { return SelfDeleting; }
+    virtual bool IsSelfDelete() const {
+        return SelfDeleting;
+    }
 private:
     Class* m_object;
     MethodType m_method;
-    };
+};
 
 template <typename R, typename Class, typename MethodClass  >
 Closure<R ()>* NewClosure(
     Class *object,
     R (MethodClass::*method)()
-    ) {
+) {
     return new MethodClosure_Arg0_Bind0<true, R, Class, MethodClass  >(
-        object, method);
+               object, method);
 }
 
 template <typename R, typename Class, typename MethodClass  >
 Closure<R ()>* NewPermanentClosure(
     Class *object,
     R (MethodClass::*method)()
-    ) {
+) {
     return new MethodClosure_Arg0_Bind0<false, R, Class, MethodClass  >(
-        object, method);
+               object, method);
 }
 
 ////////////////////////////////////////////////////
@@ -204,9 +191,9 @@ Closure<R ()>* NewPermanentClosure(
 ////////////////////////////////////////////////////
 
 template <
-    bool SelfDeleting,
-    typename R
-        >
+bool SelfDeleting,
+     typename R
+     >
 class FunctionClosure_Arg0_Bind0 : public Closure<R ()> {
     typedef R (*FunctionType)();
 public:
@@ -214,32 +201,34 @@ public:
         m_function(function)  {}
     virtual R Run() {
         ConditionalAutoDeleter<SelfDeleting,
-            FunctionClosure_Arg0_Bind0> self_deleter(this);
+                               FunctionClosure_Arg0_Bind0> self_deleter(this);
         return m_function( );
     }
-    virtual bool IsSelfDelete() const { return SelfDeleting; }
+    virtual bool IsSelfDelete() const {
+        return SelfDeleting;
+    }
 private:
     FunctionType m_function;
-    };
+};
 
 template <typename R  >
 Closure<R ()>* NewClosure(R (*function)()
-                                          ) {
+                         ) {
     return new FunctionClosure_Arg0_Bind0<true, R  >(function );
 }
 
 template <typename R  >
 Closure<R ()>* NewPermanentClosure(R (*function)()
-                                          ) {
+                                  ) {
     return new FunctionClosure_Arg0_Bind0<false, R  >(function );
 }
 
 template <
-    bool SelfDeleting,
-    typename R,
-    typename Class,
-    typename MethodClass
-    , typename Arg1    , typename PreArg1>
+bool SelfDeleting,
+     typename R,
+     typename Class,
+     typename MethodClass
+     , typename Arg1    , typename PreArg1>
 class MethodClosure_Arg0_Bind1 : public Closure<R ()> {
     typedef R (MethodClass::*MethodType)(Arg1);
 public:
@@ -247,36 +236,38 @@ public:
         m_object(object), m_method(method) , m_pa1(pa1) {}
     virtual R Run() {
         ConditionalAutoDeleter<SelfDeleting,
-            MethodClosure_Arg0_Bind1> self_deleter(this);
+                               MethodClosure_Arg0_Bind1> self_deleter(this);
         return (m_object->*m_method)(m_pa1 );
     }
-    virtual bool IsSelfDelete() const { return SelfDeleting; }
+    virtual bool IsSelfDelete() const {
+        return SelfDeleting;
+    }
 private:
     Class* m_object;
     MethodType m_method;
-        PreArg1 m_pa1;
-    };
+    PreArg1 m_pa1;
+};
 
 template <typename R, typename Class, typename MethodClass ,typename Arg1 ,
-    typename PreArg1>
+         typename PreArg1>
 Closure<R ()>* NewClosure(
     Class *object,
     R (MethodClass::*method)(Arg1)
     , PreArg1 pa1) {
     return new MethodClosure_Arg0_Bind1<true, R, Class, MethodClass ,Arg1 ,
-        PreArg1>(
-        object, method, pa1);
+           PreArg1>(
+               object, method, pa1);
 }
 
 template <typename R, typename Class, typename MethodClass ,typename Arg1 ,
-    typename PreArg1>
+         typename PreArg1>
 Closure<R ()>* NewPermanentClosure(
     Class *object,
     R (MethodClass::*method)(Arg1)
     , PreArg1 pa1) {
     return new MethodClosure_Arg0_Bind1<false, R, Class, MethodClass ,Arg1 ,
-        PreArg1>(
-        object, method, pa1);
+           PreArg1>(
+               object, method, pa1);
 }
 
 ////////////////////////////////////////////////////
@@ -284,9 +275,9 @@ Closure<R ()>* NewPermanentClosure(
 ////////////////////////////////////////////////////
 
 template <
-    bool SelfDeleting,
-    typename R
-    , typename Arg1    , typename PreArg1>
+bool SelfDeleting,
+     typename R
+     , typename Arg1    , typename PreArg1>
 class FunctionClosure_Arg0_Bind1 : public Closure<R ()> {
     typedef R (*FunctionType)(Arg1);
 public:
@@ -294,75 +285,79 @@ public:
         m_function(function) , m_pa1(pa1) {}
     virtual R Run() {
         ConditionalAutoDeleter<SelfDeleting,
-            FunctionClosure_Arg0_Bind1> self_deleter(this);
+                               FunctionClosure_Arg0_Bind1> self_deleter(this);
         return m_function(m_pa1 );
     }
-    virtual bool IsSelfDelete() const { return SelfDeleting; }
+    virtual bool IsSelfDelete() const {
+        return SelfDeleting;
+    }
 private:
     FunctionType m_function;
-        PreArg1 m_pa1;
-    };
+    PreArg1 m_pa1;
+};
 
 template <typename R , typename Arg1 , typename PreArg1>
 Closure<R ()>* NewClosure(R (*function)(Arg1)
-                                          , PreArg1 pa1) {
+                          , PreArg1 pa1) {
     return new FunctionClosure_Arg0_Bind1<true, R , Arg1 , PreArg1>(function ,
-        pa1);
+            pa1);
 }
 
 template <typename R , typename Arg1 , typename PreArg1>
 Closure<R ()>* NewPermanentClosure(R (*function)(Arg1)
-                                          , PreArg1 pa1) {
+                                   , PreArg1 pa1) {
     return new FunctionClosure_Arg0_Bind1<false, R , Arg1 , PreArg1>(function ,
-        pa1);
+            pa1);
 }
 
 template <
-    bool SelfDeleting,
-    typename R,
-    typename Class,
-    typename MethodClass
-    , typename Arg1    , typename Arg2    , typename PreArg1    ,
-        typename PreArg2>
+bool SelfDeleting,
+     typename R,
+     typename Class,
+     typename MethodClass
+     , typename Arg1    , typename Arg2    , typename PreArg1    ,
+     typename PreArg2>
 class MethodClosure_Arg0_Bind2 : public Closure<R ()> {
     typedef R (MethodClass::*MethodType)(Arg1, Arg2);
 public:
     MethodClosure_Arg0_Bind2(Class *object, MethodType method , PreArg1 pa1,
-        PreArg2 pa2):
+                             PreArg2 pa2):
         m_object(object), m_method(method) , m_pa1(pa1), m_pa2(pa2) {}
     virtual R Run() {
         ConditionalAutoDeleter<SelfDeleting,
-            MethodClosure_Arg0_Bind2> self_deleter(this);
+                               MethodClosure_Arg0_Bind2> self_deleter(this);
         return (m_object->*m_method)(m_pa1, m_pa2 );
     }
-    virtual bool IsSelfDelete() const { return SelfDeleting; }
+    virtual bool IsSelfDelete() const {
+        return SelfDeleting;
+    }
 private:
     Class* m_object;
     MethodType m_method;
-        PreArg1 m_pa1;
-        PreArg2 m_pa2;
-    };
+    PreArg1 m_pa1;
+    PreArg2 m_pa2;
+};
 
 template <typename R, typename Class, typename MethodClass ,typename Arg1,
-    typename Arg2 , typename PreArg1, typename PreArg2>
+         typename Arg2 , typename PreArg1, typename PreArg2>
 Closure<R ()>* NewClosure(
     Class *object,
     R (MethodClass::*method)(Arg1, Arg2)
     , PreArg1 pa1, PreArg2 pa2) {
     return new MethodClosure_Arg0_Bind2<true, R, Class, MethodClass ,Arg1,
-        Arg2 , PreArg1, PreArg2>(
-        object, method, pa1, pa2);
+           Arg2 , PreArg1, PreArg2>(
+               object, method, pa1, pa2);
 }
 
 template <typename R, typename Class, typename MethodClass ,typename Arg1,
-    typename Arg2 , typename PreArg1, typename PreArg2>
+         typename Arg2 , typename PreArg1, typename PreArg2>
 Closure<R ()>* NewPermanentClosure(
     Class *object,
     R (MethodClass::*method)(Arg1, Arg2)
     , PreArg1 pa1, PreArg2 pa2) {
     return new MethodClosure_Arg0_Bind2<false, R, Class, MethodClass ,Arg1,
-        Arg2 , PreArg1, PreArg2>(
-        object, method, pa1, pa2);
+           Arg2 , PreArg1, PreArg2>(
+               object, method, pa1, pa2);
 }
 
 ////////////////////////////////////////////////////
@@ -370,94 +365,98 @@ Closure<R ()>* NewPermanentClosure(
 ////////////////////////////////////////////////////
 
 template <
-    bool SelfDeleting,
-    typename R
-    , typename Arg1    , typename Arg2    , typename PreArg1    ,
-        typename PreArg2>
+bool SelfDeleting,
+     typename R
+     , typename Arg1    , typename Arg2    , typename PreArg1    ,
+     typename PreArg2>
 class FunctionClosure_Arg0_Bind2 : public Closure<R ()> {
     typedef R (*FunctionType)(Arg1, Arg2);
 public:
     FunctionClosure_Arg0_Bind2(FunctionType function , PreArg1 pa1,
-        PreArg2 pa2):
+                               PreArg2 pa2):
         m_function(function) , m_pa1(pa1), m_pa2(pa2) {}
     virtual R Run() {
         ConditionalAutoDeleter<SelfDeleting,
-            FunctionClosure_Arg0_Bind2> self_deleter(this);
+                               FunctionClosure_Arg0_Bind2> self_deleter(this);
         return m_function(m_pa1, m_pa2 );
     }
-    virtual bool IsSelfDelete() const { return SelfDeleting; }
+    virtual bool IsSelfDelete() const {
+        return SelfDeleting;
+    }
 private:
     FunctionType m_function;
-        PreArg1 m_pa1;
-        PreArg2 m_pa2;
-    };
+    PreArg1 m_pa1;
+    PreArg2 m_pa2;
+};
 
 template <typename R , typename Arg1, typename Arg2 , typename PreArg1,
-    typename PreArg2>
+         typename PreArg2>
 Closure<R ()>* NewClosure(R (*function)(Arg1, Arg2)
-                                          , PreArg1 pa1, PreArg2 pa2) {
+                          , PreArg1 pa1, PreArg2 pa2) {
     return new FunctionClosure_Arg0_Bind2<true, R , Arg1, Arg2 , PreArg1,
-        PreArg2>(function , pa1, pa2);
+           PreArg2>(function , pa1, pa2);
 }
 
 template <typename R , typename Arg1, typename Arg2 , typename PreArg1,
-    typename PreArg2>
+         typename PreArg2>
 Closure<R ()>* NewPermanentClosure(R (*function)(Arg1, Arg2)
-                                          , PreArg1 pa1, PreArg2 pa2) {
+                                   , PreArg1 pa1, PreArg2 pa2) {
     return new FunctionClosure_Arg0_Bind2<false, R , Arg1, Arg2 , PreArg1,
-        PreArg2>(function , pa1, pa2);
+           PreArg2>(function , pa1, pa2);
 }
 
 template <
-    bool SelfDeleting,
-    typename R,
-    typename Class,
-    typename MethodClass
-    , typename Arg1    , typename Arg2    , typename Arg3    ,
-        typename PreArg1    , typename PreArg2    , typename PreArg3>
+bool SelfDeleting,
+     typename R,
+     typename Class,
+     typename MethodClass
+     , typename Arg1    , typename Arg2    , typename Arg3    ,
+     typename PreArg1    , typename PreArg2    , typename PreArg3>
 class MethodClosure_Arg0_Bind3 : public Closure<R ()> {
     typedef R (MethodClass::*MethodType)(Arg1, Arg2, Arg3);
 public:
     MethodClosure_Arg0_Bind3(Class *object, MethodType method , PreArg1 pa1,
-        PreArg2 pa2, PreArg3 pa3):
+                             PreArg2 pa2, PreArg3 pa3):
         m_object(object), m_method(method) , m_pa1(pa1), m_pa2(pa2),
-            m_pa3(pa3) {}
+        m_pa3(pa3) {}
     virtual R Run() {
         ConditionalAutoDeleter<SelfDeleting,
-            MethodClosure_Arg0_Bind3> self_deleter(this);
+                               MethodClosure_Arg0_Bind3> self_deleter(this);
         return (m_object->*m_method)(m_pa1, m_pa2, m_pa3 );
     }
-    virtual bool IsSelfDelete() const { return SelfDeleting; }
+    virtual bool IsSelfDelete() const {
+        return SelfDeleting;
+    }
 private:
     Class* m_object;
     MethodType m_method;
-        PreArg1 m_pa1;
-        PreArg2 m_pa2;
-        PreArg3 m_pa3;
-    };
+    PreArg1 m_pa1;
+    PreArg2 m_pa2;
+    PreArg3 m_pa3;
+};
 
 template <typename R, typename Class, typename MethodClass ,typename Arg1,
-    typename Arg2,typename Arg3 , typename PreArg1, typename PreArg2,
-    typename PreArg3>
+         typename Arg2,typename Arg3 , typename PreArg1, typename PreArg2,
+         typename PreArg3>
 Closure<R ()>* NewClosure(
     Class *object,
     R (MethodClass::*method)(Arg1, Arg2, Arg3)
     , PreArg1 pa1, PreArg2 pa2, PreArg3 pa3) {
     return new MethodClosure_Arg0_Bind3<true, R, Class, MethodClass ,Arg1,Arg2,
-        Arg3 , PreArg1, PreArg2, PreArg3>(
-        object, method, pa1, pa2, pa3);
+           Arg3 , PreArg1, PreArg2, PreArg3>(
+               object, method, pa1, pa2, pa3);
 }
 
 template <typename R, typename Class, typename MethodClass ,typename Arg1,
-    typename Arg2,typename Arg3 , typename PreArg1, typename PreArg2,
-    typename PreArg3>
+         typename Arg2,typename Arg3 , typename PreArg1, typename PreArg2,
+         typename PreArg3>
 Closure<R ()>* NewPermanentClosure(
     Class *object,
     R (MethodClass::*method)(Arg1, Arg2, Arg3)
     , PreArg1 pa1, PreArg2 pa2, PreArg3 pa3) {
     return new MethodClosure_Arg0_Bind3<false, R, Class, MethodClass ,Arg1,
-        Arg2,Arg3 , PreArg1, PreArg2, PreArg3>(
-        object, method, pa1, pa2, pa3);
+           Arg2,Arg3 , PreArg1, PreArg2, PreArg3>(
+               object, method, pa1, pa2, pa3);
 }
 
 ////////////////////////////////////////////////////
@@ -465,99 +464,103 @@ Closure<R ()>* NewPermanentClosure(
 ////////////////////////////////////////////////////
 
 template <
-    bool SelfDeleting,
-    typename R
-    , typename Arg1    , typename Arg2    , typename Arg3    ,
-        typename PreArg1    , typename PreArg2    , typename PreArg3>
+bool SelfDeleting,
+     typename R
+     , typename Arg1    , typename Arg2    , typename Arg3    ,
+     typename PreArg1    , typename PreArg2    , typename PreArg3>
 class FunctionClosure_Arg0_Bind3 : public Closure<R ()> {
     typedef R (*FunctionType)(Arg1, Arg2, Arg3);
 public:
     FunctionClosure_Arg0_Bind3(FunctionType function , PreArg1 pa1,
-        PreArg2 pa2, PreArg3 pa3):
+                               PreArg2 pa2, PreArg3 pa3):
         m_function(function) , m_pa1(pa1), m_pa2(pa2), m_pa3(pa3) {}
     virtual R Run() {
         ConditionalAutoDeleter<SelfDeleting,
-            FunctionClosure_Arg0_Bind3> self_deleter(this);
+                               FunctionClosure_Arg0_Bind3> self_deleter(this);
         return m_function(m_pa1, m_pa2, m_pa3 );
     }
-    virtual bool IsSelfDelete() const { return SelfDeleting; }
+    virtual bool IsSelfDelete() const {
+        return SelfDeleting;
+    }
 private:
     FunctionType m_function;
-        PreArg1 m_pa1;
-        PreArg2 m_pa2;
-        PreArg3 m_pa3;
-    };
+    PreArg1 m_pa1;
+    PreArg2 m_pa2;
+    PreArg3 m_pa3;
+};
 
 template <typename R , typename Arg1, typename Arg2, typename Arg3 ,
-    typename PreArg1, typename PreArg2, typename PreArg3>
+         typename PreArg1, typename PreArg2, typename PreArg3>
 Closure<R ()>* NewClosure(R (*function)(Arg1, Arg2, Arg3)
-                                          , PreArg1 pa1, PreArg2 pa2,
-                                              PreArg3 pa3) {
+                          , PreArg1 pa1, PreArg2 pa2,
+                          PreArg3 pa3) {
     return new FunctionClosure_Arg0_Bind3<true, R , Arg1, Arg2, Arg3 , PreArg1,
-        PreArg2, PreArg3>(function , pa1, pa2, pa3);
+           PreArg2, PreArg3>(function , pa1, pa2, pa3);
 }
 
 template <typename R , typename Arg1, typename Arg2, typename Arg3 ,
-    typename PreArg1, typename PreArg2, typename PreArg3>
+         typename PreArg1, typename PreArg2, typename PreArg3>
 Closure<R ()>* NewPermanentClosure(R (*function)(Arg1, Arg2, Arg3)
-                                          , PreArg1 pa1, PreArg2 pa2,
-                                              PreArg3 pa3) {
+                                   , PreArg1 pa1, PreArg2 pa2,
+                                   PreArg3 pa3) {
     return new FunctionClosure_Arg0_Bind3<false, R , Arg1, Arg2, Arg3 ,
-        PreArg1, PreArg2, PreArg3>(function , pa1, pa2, pa3);
+           PreArg1, PreArg2, PreArg3>(function , pa1, pa2, pa3);
 }
 
 template <
-    bool SelfDeleting,
-    typename R,
-    typename Class,
-    typename MethodClass
-    , typename Arg1    , typename Arg2    , typename Arg3    ,
-        typename Arg4    , typename PreArg1    , typename PreArg2    ,
-        typename PreArg3    , typename PreArg4>
+bool SelfDeleting,
+     typename R,
+     typename Class,
+     typename MethodClass
+     , typename Arg1    , typename Arg2    , typename Arg3    ,
+     typename Arg4    , typename PreArg1    , typename PreArg2    ,
+     typename PreArg3    , typename PreArg4>
 class MethodClosure_Arg0_Bind4 : public Closure<R ()> {
     typedef R (MethodClass::*MethodType)(Arg1, Arg2, Arg3, Arg4);
 public:
     MethodClosure_Arg0_Bind4(Class *object, MethodType method , PreArg1 pa1,
-        PreArg2 pa2, PreArg3 pa3, PreArg4 pa4):
+                             PreArg2 pa2, PreArg3 pa3, PreArg4 pa4):
         m_object(object), m_method(method) , m_pa1(pa1), m_pa2(pa2),
-            m_pa3(pa3), m_pa4(pa4) {}
+        m_pa3(pa3), m_pa4(pa4) {}
     virtual R Run() {
         ConditionalAutoDeleter<SelfDeleting,
-            MethodClosure_Arg0_Bind4> self_deleter(this);
+                               MethodClosure_Arg0_Bind4> self_deleter(this);
         return (m_object->*m_method)(m_pa1, m_pa2, m_pa3, m_pa4 );
     }
-    virtual bool IsSelfDelete() const { return SelfDeleting; }
+    virtual bool IsSelfDelete() const {
+        return SelfDeleting;
+    }
 private:
     Class* m_object;
     MethodType m_method;
-        PreArg1 m_pa1;
-        PreArg2 m_pa2;
-        PreArg3 m_pa3;
-        PreArg4 m_pa4;
-    };
+    PreArg1 m_pa1;
+    PreArg2 m_pa2;
+    PreArg3 m_pa3;
+    PreArg4 m_pa4;
+};
 
 template <typename R, typename Class, typename MethodClass ,typename Arg1,
-    typename Arg2,typename Arg3,typename Arg4 , typename PreArg1,
-    typename PreArg2, typename PreArg3, typename PreArg4>
+         typename Arg2,typename Arg3,typename Arg4 , typename PreArg1,
+         typename PreArg2, typename PreArg3, typename PreArg4>
 Closure<R ()>* NewClosure(
     Class *object,
     R (MethodClass::*method)(Arg1, Arg2, Arg3, Arg4)
     , PreArg1 pa1, PreArg2 pa2, PreArg3 pa3, PreArg4 pa4) {
     return new MethodClosure_Arg0_Bind4<true, R, Class, MethodClass ,Arg1,Arg2,
-        Arg3,Arg4 , PreArg1, PreArg2, PreArg3, PreArg4>(
-        object, method, pa1, pa2, pa3, pa4);
+           Arg3,Arg4 , PreArg1, PreArg2, PreArg3, PreArg4>(
+               object, method, pa1, pa2, pa3, pa4);
 }
 
 template <typename R, typename Class, typename MethodClass ,typename Arg1,
-    typename Arg2,typename Arg3,typename Arg4 , typename PreArg1,
-    typename PreArg2, typename PreArg3, typename PreArg4>
+         typename Arg2,typename Arg3,typename Arg4 , typename PreArg1,
+         typename PreArg2, typename PreArg3, typename PreArg4>
 Closure<R ()>* NewPermanentClosure(
     Class *object,
     R (MethodClass::*method)(Arg1, Arg2, Arg3, Arg4)
     , PreArg1 pa1, PreArg2 pa2, PreArg3 pa3, PreArg4 pa4) {
     return new MethodClosure_Arg0_Bind4<false, R, Class, MethodClass ,Arg1,
-        Arg2,Arg3,Arg4 , PreArg1, PreArg2, PreArg3, PreArg4>(
-        object, method, pa1, pa2, pa3, pa4);
+           Arg2,Arg3,Arg4 , PreArg1, PreArg2, PreArg3, PreArg4>(
+               object, method, pa1, pa2, pa3, pa4);
 }
 
 ////////////////////////////////////////////////////
@@ -565,105 +568,109 @@ Closure<R ()>* NewPermanentClosure(
 ////////////////////////////////////////////////////
 
 template <
-    bool SelfDeleting,
-    typename R
-    , typename Arg1    , typename Arg2    , typename Arg3    ,
-        typename Arg4    , typename PreArg1    , typename PreArg2    ,
-        typename PreArg3    , typename PreArg4>
+bool SelfDeleting,
+     typename R
+     , typename Arg1    , typename Arg2    , typename Arg3    ,
+     typename Arg4    , typename PreArg1    , typename PreArg2    ,
+     typename PreArg3    , typename PreArg4>
 class FunctionClosure_Arg0_Bind4 : public Closure<R ()> {
     typedef R (*FunctionType)(Arg1, Arg2, Arg3, Arg4);
 public:
     FunctionClosure_Arg0_Bind4(FunctionType function , PreArg1 pa1,
-        PreArg2 pa2, PreArg3 pa3, PreArg4 pa4):
+                               PreArg2 pa2, PreArg3 pa3, PreArg4 pa4):
         m_function(function) , m_pa1(pa1), m_pa2(pa2), m_pa3(pa3), m_pa4(pa4) {}
     virtual R Run() {
         ConditionalAutoDeleter<SelfDeleting,
-            FunctionClosure_Arg0_Bind4> self_deleter(this);
+                               FunctionClosure_Arg0_Bind4> self_deleter(this);
         return m_function(m_pa1, m_pa2, m_pa3, m_pa4 );
     }
-    virtual bool IsSelfDelete() const { return SelfDeleting; }
+    virtual bool IsSelfDelete() const {
+        return SelfDeleting;
+    }
 private:
     FunctionType m_function;
-        PreArg1 m_pa1;
-        PreArg2 m_pa2;
-        PreArg3 m_pa3;
-        PreArg4 m_pa4;
-    };
+    PreArg1 m_pa1;
+    PreArg2 m_pa2;
+    PreArg3 m_pa3;
+    PreArg4 m_pa4;
+};
 
 template <typename R , typename Arg1, typename Arg2, typename Arg3,
-    typename Arg4 , typename PreArg1, typename PreArg2, typename PreArg3,
-    typename PreArg4>
+         typename Arg4 , typename PreArg1, typename PreArg2, typename PreArg3,
+         typename PreArg4>
 Closure<R ()>* NewClosure(R (*function)(Arg1, Arg2, Arg3, Arg4)
-                                          , PreArg1 pa1, PreArg2 pa2,
-                                              PreArg3 pa3, PreArg4 pa4) {
+                          , PreArg1 pa1, PreArg2 pa2,
+                          PreArg3 pa3, PreArg4 pa4) {
     return new FunctionClosure_Arg0_Bind4<true, R , Arg1, Arg2, Arg3, Arg4 ,
-        PreArg1, PreArg2, PreArg3, PreArg4>(function , pa1, pa2, pa3, pa4);
+           PreArg1, PreArg2, PreArg3, PreArg4>(function , pa1, pa2, pa3, pa4);
 }
 
 template <typename R , typename Arg1, typename Arg2, typename Arg3,
-    typename Arg4 , typename PreArg1, typename PreArg2, typename PreArg3,
-    typename PreArg4>
+         typename Arg4 , typename PreArg1, typename PreArg2, typename PreArg3,
+         typename PreArg4>
 Closure<R ()>* NewPermanentClosure(R (*function)(Arg1, Arg2, Arg3, Arg4)
-                                          , PreArg1 pa1, PreArg2 pa2,
-                                              PreArg3 pa3, PreArg4 pa4) {
+                                   , PreArg1 pa1, PreArg2 pa2,
+                                   PreArg3 pa3, PreArg4 pa4) {
     return new FunctionClosure_Arg0_Bind4<false, R , Arg1, Arg2, Arg3, Arg4 ,
-        PreArg1, PreArg2, PreArg3, PreArg4>(function , pa1, pa2, pa3, pa4);
+           PreArg1, PreArg2, PreArg3, PreArg4>(function , pa1, pa2, pa3, pa4);
 }
 
 template <
-    bool SelfDeleting,
-    typename R,
-    typename Class,
-    typename MethodClass
-    , typename Arg1    , typename Arg2    , typename Arg3    ,
-        typename Arg4    , typename Arg5    , typename PreArg1    ,
-        typename PreArg2    , typename PreArg3    , typename PreArg4    ,
-        typename PreArg5>
+bool SelfDeleting,
+     typename R,
+     typename Class,
+     typename MethodClass
+     , typename Arg1    , typename Arg2    , typename Arg3    ,
+     typename Arg4    , typename Arg5    , typename PreArg1    ,
+     typename PreArg2    , typename PreArg3    , typename PreArg4    ,
+     typename PreArg5>
 class MethodClosure_Arg0_Bind5 : public Closure<R ()> {
     typedef R (MethodClass::*MethodType)(Arg1, Arg2, Arg3, Arg4, Arg5);
 public:
     MethodClosure_Arg0_Bind5(Class *object, MethodType method , PreArg1 pa1,
-        PreArg2 pa2, PreArg3 pa3, PreArg4 pa4, PreArg5 pa5):
+                             PreArg2 pa2, PreArg3 pa3, PreArg4 pa4, PreArg5 pa5):
         m_object(object), m_method(method) , m_pa1(pa1), m_pa2(pa2),
-            m_pa3(pa3), m_pa4(pa4), m_pa5(pa5) {}
+        m_pa3(pa3), m_pa4(pa4), m_pa5(pa5) {}
     virtual R Run() {
         ConditionalAutoDeleter<SelfDeleting,
-            MethodClosure_Arg0_Bind5> self_deleter(this);
+                               MethodClosure_Arg0_Bind5> self_deleter(this);
         return (m_object->*m_method)(m_pa1, m_pa2, m_pa3, m_pa4, m_pa5 );
     }
-    virtual bool IsSelfDelete() const { return SelfDeleting; }
+    virtual bool IsSelfDelete() const {
+        return SelfDeleting;
+    }
 private:
     Class* m_object;
     MethodType m_method;
-        PreArg1 m_pa1;
-        PreArg2 m_pa2;
-        PreArg3 m_pa3;
-        PreArg4 m_pa4;
-        PreArg5 m_pa5;
-    };
+    PreArg1 m_pa1;
+    PreArg2 m_pa2;
+    PreArg3 m_pa3;
+    PreArg4 m_pa4;
+    PreArg5 m_pa5;
+};
 
 template <typename R, typename Class, typename MethodClass ,typename Arg1,
-    typename Arg2,typename Arg3,typename Arg4,typename Arg5 , typename PreArg1,
-    typename PreArg2, typename PreArg3, typename PreArg4, typename PreArg5>
+         typename Arg2,typename Arg3,typename Arg4,typename Arg5 , typename PreArg1,
+         typename PreArg2, typename PreArg3, typename PreArg4, typename PreArg5>
 Closure<R ()>* NewClosure(
     Class *object,
     R (MethodClass::*method)(Arg1, Arg2, Arg3, Arg4, Arg5)
     , PreArg1 pa1, PreArg2 pa2, PreArg3 pa3, PreArg4 pa4, PreArg5 pa5) {
     return new MethodClosure_Arg0_Bind5<true, R, Class, MethodClass ,Arg1,Arg2,
-        Arg3,Arg4,Arg5 , PreArg1, PreArg2, PreArg3, PreArg4, PreArg5>(
-        object, method, pa1, pa2, pa3, pa4, pa5);
+           Arg3,Arg4,Arg5 , PreArg1, PreArg2, PreArg3, PreArg4, PreArg5>(
+               object, method, pa1, pa2, pa3, pa4, pa5);
 }
 
 template <typename R, typename Class, typename MethodClass ,typename Arg1,
-    typename Arg2,typename Arg3,typename Arg4,typename Arg5 , typename PreArg1,
-    typename PreArg2, typename PreArg3, typename PreArg4, typename PreArg5>
+         typename Arg2,typename Arg3,typename Arg4,typename Arg5 , typename PreArg1,
+         typename PreArg2, typename PreArg3, typename PreArg4, typename PreArg5>
 Closure<R ()>* NewPermanentClosure(
     Class *object,
     R (MethodClass::*method)(Arg1, Arg2, Arg3, Arg4, Arg5)
     , PreArg1 pa1, PreArg2 pa2, PreArg3 pa3, PreArg4 pa4, PreArg5 pa5) {
     return new MethodClosure_Arg0_Bind5<false, R, Class, MethodClass ,Arg1,
-        Arg2,Arg3,Arg4,Arg5 , PreArg1, PreArg2, PreArg3, PreArg4, PreArg5>(
-        object, method, pa1, pa2, pa3, pa4, pa5);
+           Arg2,Arg3,Arg4,Arg5 , PreArg1, PreArg2, PreArg3, PreArg4, PreArg5>(
+               object, method, pa1, pa2, pa3, pa4, pa5);
 }
 
 ////////////////////////////////////////////////////
@@ -671,119 +678,123 @@ Closure<R ()>* NewPermanentClosure(
 ////////////////////////////////////////////////////
 
 template <
-    bool SelfDeleting,
-    typename R
-    , typename Arg1    , typename Arg2    , typename Arg3    ,
-        typename Arg4    , typename Arg5    , typename PreArg1    ,
-        typename PreArg2    , typename PreArg3    , typename PreArg4    ,
-        typename PreArg5>
+bool SelfDeleting,
+     typename R
+     , typename Arg1    , typename Arg2    , typename Arg3    ,
+     typename Arg4    , typename Arg5    , typename PreArg1    ,
+     typename PreArg2    , typename PreArg3    , typename PreArg4    ,
+     typename PreArg5>
 class FunctionClosure_Arg0_Bind5 : public Closure<R ()> {
     typedef R (*FunctionType)(Arg1, Arg2, Arg3, Arg4, Arg5);
 public:
     FunctionClosure_Arg0_Bind5(FunctionType function , PreArg1 pa1,
-        PreArg2 pa2, PreArg3 pa3, PreArg4 pa4, PreArg5 pa5):
+                               PreArg2 pa2, PreArg3 pa3, PreArg4 pa4, PreArg5 pa5):
         m_function(function) , m_pa1(pa1), m_pa2(pa2), m_pa3(pa3), m_pa4(pa4),
-            m_pa5(pa5) {}
+        m_pa5(pa5) {}
     virtual R Run() {
         ConditionalAutoDeleter<SelfDeleting,
-            FunctionClosure_Arg0_Bind5> self_deleter(this);
+                               FunctionClosure_Arg0_Bind5> self_deleter(this);
         return m_function(m_pa1, m_pa2, m_pa3, m_pa4, m_pa5 );
     }
-    virtual bool IsSelfDelete() const { return SelfDeleting; }
+    virtual bool IsSelfDelete() const {
+        return SelfDeleting;
+    }
 private:
     FunctionType m_function;
-        PreArg1 m_pa1;
-        PreArg2 m_pa2;
-        PreArg3 m_pa3;
-        PreArg4 m_pa4;
-        PreArg5 m_pa5;
-    };
+    PreArg1 m_pa1;
+    PreArg2 m_pa2;
+    PreArg3 m_pa3;
+    PreArg4 m_pa4;
+    PreArg5 m_pa5;
+};
 
 template <typename R , typename Arg1, typename Arg2, typename Arg3,
-    typename Arg4, typename Arg5 , typename PreArg1, typename PreArg2,
-    typename PreArg3, typename PreArg4, typename PreArg5>
+         typename Arg4, typename Arg5 , typename PreArg1, typename PreArg2,
+         typename PreArg3, typename PreArg4, typename PreArg5>
 Closure<R ()>* NewClosure(R (*function)(Arg1, Arg2, Arg3, Arg4, Arg5)
-                                          , PreArg1 pa1, PreArg2 pa2,
-                                              PreArg3 pa3, PreArg4 pa4,
-                                              PreArg5 pa5) {
+                          , PreArg1 pa1, PreArg2 pa2,
+                          PreArg3 pa3, PreArg4 pa4,
+                          PreArg5 pa5) {
     return new FunctionClosure_Arg0_Bind5<true, R , Arg1, Arg2, Arg3, Arg4,
-        Arg5 , PreArg1, PreArg2, PreArg3, PreArg4, PreArg5>(function , pa1,
-        pa2, pa3, pa4, pa5);
+           Arg5 , PreArg1, PreArg2, PreArg3, PreArg4, PreArg5>(function , pa1,
+                   pa2, pa3, pa4, pa5);
 }
 
 template <typename R , typename Arg1, typename Arg2, typename Arg3,
-    typename Arg4, typename Arg5 , typename PreArg1, typename PreArg2,
-    typename PreArg3, typename PreArg4, typename PreArg5>
+         typename Arg4, typename Arg5 , typename PreArg1, typename PreArg2,
+         typename PreArg3, typename PreArg4, typename PreArg5>
 Closure<R ()>* NewPermanentClosure(R (*function)(Arg1, Arg2, Arg3, Arg4, Arg5)
-                                          , PreArg1 pa1, PreArg2 pa2,
-                                              PreArg3 pa3, PreArg4 pa4,
-                                              PreArg5 pa5) {
+                                   , PreArg1 pa1, PreArg2 pa2,
+                                   PreArg3 pa3, PreArg4 pa4,
+                                   PreArg5 pa5) {
     return new FunctionClosure_Arg0_Bind5<false, R , Arg1, Arg2, Arg3, Arg4,
-        Arg5 , PreArg1, PreArg2, PreArg3, PreArg4, PreArg5>(function , pa1,
-        pa2, pa3, pa4, pa5);
+           Arg5 , PreArg1, PreArg2, PreArg3, PreArg4, PreArg5>(function , pa1,
+                   pa2, pa3, pa4, pa5);
 }
 
 template <
-    bool SelfDeleting,
-    typename R,
-    typename Class,
-    typename MethodClass
-    , typename Arg1    , typename Arg2    , typename Arg3    ,
-        typename Arg4    , typename Arg5    , typename Arg6    ,
-        typename PreArg1    , typename PreArg2    , typename PreArg3    ,
-        typename PreArg4    , typename PreArg5    , typename PreArg6>
+bool SelfDeleting,
+     typename R,
+     typename Class,
+     typename MethodClass
+     , typename Arg1    , typename Arg2    , typename Arg3    ,
+     typename Arg4    , typename Arg5    , typename Arg6    ,
+     typename PreArg1    , typename PreArg2    , typename PreArg3    ,
+     typename PreArg4    , typename PreArg5    , typename PreArg6>
 class MethodClosure_Arg0_Bind6 : public Closure<R ()> {
     typedef R (MethodClass::*MethodType)(Arg1, Arg2, Arg3, Arg4, Arg5, Arg6);
 public:
     MethodClosure_Arg0_Bind6(Class *object, MethodType method , PreArg1 pa1,
-        PreArg2 pa2, PreArg3 pa3, PreArg4 pa4, PreArg5 pa5, PreArg6 pa6):
+                             PreArg2 pa2, PreArg3 pa3, PreArg4 pa4, PreArg5 pa5, PreArg6 pa6):
         m_object(object), m_method(method) , m_pa1(pa1), m_pa2(pa2),
-            m_pa3(pa3), m_pa4(pa4), m_pa5(pa5), m_pa6(pa6) {}
+        m_pa3(pa3), m_pa4(pa4), m_pa5(pa5), m_pa6(pa6) {}
     virtual R Run() {
         ConditionalAutoDeleter<SelfDeleting,
-            MethodClosure_Arg0_Bind6> self_deleter(this);
+                               MethodClosure_Arg0_Bind6> self_deleter(this);
         return (m_object->*m_method)(m_pa1, m_pa2, m_pa3, m_pa4, m_pa5, m_pa6 );
     }
-    virtual bool IsSelfDelete() const { return SelfDeleting; }
+    virtual bool IsSelfDelete() const {
+        return SelfDeleting;
+    }
 private:
     Class* m_object;
     MethodType m_method;
-        PreArg1 m_pa1;
-        PreArg2 m_pa2;
-        PreArg3 m_pa3;
-        PreArg4 m_pa4;
-        PreArg5 m_pa5;
-        PreArg6 m_pa6;
-    };
+    PreArg1 m_pa1;
+    PreArg2 m_pa2;
+    PreArg3 m_pa3;
+    PreArg4 m_pa4;
+    PreArg5 m_pa5;
+    PreArg6 m_pa6;
+};
 
 template <typename R, typename Class, typename MethodClass ,typename Arg1,
-    typename Arg2,typename Arg3,typename Arg4,typename Arg5,typename Arg6 ,
-    typename PreArg1, typename PreArg2, typename PreArg3, typename PreArg4,
-    typename PreArg5, typename PreArg6>
+         typename Arg2,typename Arg3,typename Arg4,typename Arg5,typename Arg6 ,
+         typename PreArg1, typename PreArg2, typename PreArg3, typename PreArg4,
+         typename PreArg5, typename PreArg6>
 Closure<R ()>* NewClosure(
     Class *object,
     R (MethodClass::*method)(Arg1, Arg2, Arg3, Arg4, Arg5, Arg6)
     , PreArg1 pa1, PreArg2 pa2, PreArg3 pa3, PreArg4 pa4, PreArg5 pa5,
-        PreArg6 pa6) {
+    PreArg6 pa6) {
     return new MethodClosure_Arg0_Bind6<true, R, Class, MethodClass ,Arg1,Arg2,
-        Arg3,Arg4,Arg5,Arg6 , PreArg1, PreArg2, PreArg3, PreArg4, PreArg5,
-        PreArg6>(
-        object, method, pa1, pa2, pa3, pa4, pa5, pa6);
+           Arg3,Arg4,Arg5,Arg6 , PreArg1, PreArg2, PreArg3, PreArg4, PreArg5,
+           PreArg6>(
+               object, method, pa1, pa2, pa3, pa4, pa5, pa6);
 }
 
 template <typename R, typename Class, typename MethodClass ,typename Arg1,
-    typename Arg2,typename Arg3,typename Arg4,typename Arg5,typename Arg6 ,
-    typename PreArg1, typename PreArg2, typename PreArg3, typename PreArg4,
-    typename PreArg5, typename PreArg6>
+         typename Arg2,typename Arg3,typename Arg4,typename Arg5,typename Arg6 ,
+         typename PreArg1, typename PreArg2, typename PreArg3, typename PreArg4,
+         typename PreArg5, typename PreArg6>
 Closure<R ()>* NewPermanentClosure(
     Class *object,
     R (MethodClass::*method)(Arg1, Arg2, Arg3, Arg4, Arg5, Arg6)
     , PreArg1 pa1, PreArg2 pa2, PreArg3 pa3, PreArg4 pa4, PreArg5 pa5,
-        PreArg6 pa6) {
+    PreArg6 pa6) {
     return new MethodClosure_Arg0_Bind6<false, R, Class, MethodClass ,Arg1,
-        Arg2,Arg3,Arg4,Arg5,Arg6 , PreArg1, PreArg2, PreArg3, PreArg4, PreArg5,
-        PreArg6>(
-        object, method, pa1, pa2, pa3, pa4, pa5, pa6);
+           Arg2,Arg3,Arg4,Arg5,Arg6 , PreArg1, PreArg2, PreArg3, PreArg4, PreArg5,
+           PreArg6>(
+               object, method, pa1, pa2, pa3, pa4, pa5, pa6);
 }
 
 ////////////////////////////////////////////////////
@@ -791,128 +802,132 @@ Closure<R ()>* NewPermanentClosure(
 ////////////////////////////////////////////////////
 
 template <
-    bool SelfDeleting,
-    typename R
-    , typename Arg1    , typename Arg2    , typename Arg3    ,
-        typename Arg4    , typename Arg5    , typename Arg6    ,
-        typename PreArg1    , typename PreArg2    , typename PreArg3    ,
-        typename PreArg4    , typename PreArg5    , typename PreArg6>
+bool SelfDeleting,
+     typename R
+     , typename Arg1    , typename Arg2    , typename Arg3    ,
+     typename Arg4    , typename Arg5    , typename Arg6    ,
+     typename PreArg1    , typename PreArg2    , typename PreArg3    ,
+     typename PreArg4    , typename PreArg5    , typename PreArg6>
 class FunctionClosure_Arg0_Bind6 : public Closure<R ()> {
     typedef R (*FunctionType)(Arg1, Arg2, Arg3, Arg4, Arg5, Arg6);
 public:
     FunctionClosure_Arg0_Bind6(FunctionType function , PreArg1 pa1,
-        PreArg2 pa2, PreArg3 pa3, PreArg4 pa4, PreArg5 pa5, PreArg6 pa6):
+                               PreArg2 pa2, PreArg3 pa3, PreArg4 pa4, PreArg5 pa5, PreArg6 pa6):
         m_function(function) , m_pa1(pa1), m_pa2(pa2), m_pa3(pa3), m_pa4(pa4),
-            m_pa5(pa5), m_pa6(pa6) {}
+        m_pa5(pa5), m_pa6(pa6) {}
     virtual R Run() {
         ConditionalAutoDeleter<SelfDeleting,
-            FunctionClosure_Arg0_Bind6> self_deleter(this);
+                               FunctionClosure_Arg0_Bind6> self_deleter(this);
         return m_function(m_pa1, m_pa2, m_pa3, m_pa4, m_pa5, m_pa6 );
     }
-    virtual bool IsSelfDelete() const { return SelfDeleting; }
+    virtual bool IsSelfDelete() const {
+        return SelfDeleting;
+    }
 private:
     FunctionType m_function;
-        PreArg1 m_pa1;
-        PreArg2 m_pa2;
-        PreArg3 m_pa3;
-        PreArg4 m_pa4;
-        PreArg5 m_pa5;
-        PreArg6 m_pa6;
-    };
+    PreArg1 m_pa1;
+    PreArg2 m_pa2;
+    PreArg3 m_pa3;
+    PreArg4 m_pa4;
+    PreArg5 m_pa5;
+    PreArg6 m_pa6;
+};
 
 template <typename R , typename Arg1, typename Arg2, typename Arg3,
-    typename Arg4, typename Arg5, typename Arg6 , typename PreArg1,
-    typename PreArg2, typename PreArg3, typename PreArg4, typename PreArg5,
-    typename PreArg6>
+         typename Arg4, typename Arg5, typename Arg6 , typename PreArg1,
+         typename PreArg2, typename PreArg3, typename PreArg4, typename PreArg5,
+         typename PreArg6>
 Closure<R ()>* NewClosure(R (*function)(Arg1, Arg2, Arg3, Arg4, Arg5, Arg6)
-                                          , PreArg1 pa1, PreArg2 pa2,
-                                              PreArg3 pa3, PreArg4 pa4,
-                                              PreArg5 pa5, PreArg6 pa6) {
+                          , PreArg1 pa1, PreArg2 pa2,
+                          PreArg3 pa3, PreArg4 pa4,
+                          PreArg5 pa5, PreArg6 pa6) {
     return new FunctionClosure_Arg0_Bind6<true, R , Arg1, Arg2, Arg3, Arg4,
-        Arg5, Arg6 , PreArg1, PreArg2, PreArg3, PreArg4, PreArg5,
-        PreArg6>(function , pa1, pa2, pa3, pa4, pa5, pa6);
+           Arg5, Arg6 , PreArg1, PreArg2, PreArg3, PreArg4, PreArg5,
+           PreArg6>(function , pa1, pa2, pa3, pa4, pa5, pa6);
 }
 
 template <typename R , typename Arg1, typename Arg2, typename Arg3,
-    typename Arg4, typename Arg5, typename Arg6 , typename PreArg1,
-    typename PreArg2, typename PreArg3, typename PreArg4, typename PreArg5,
-    typename PreArg6>
+         typename Arg4, typename Arg5, typename Arg6 , typename PreArg1,
+         typename PreArg2, typename PreArg3, typename PreArg4, typename PreArg5,
+         typename PreArg6>
 Closure<R ()>* NewPermanentClosure(R (*function)(Arg1, Arg2, Arg3, Arg4, Arg5,
-    Arg6)
-                                          , PreArg1 pa1, PreArg2 pa2,
-                                              PreArg3 pa3, PreArg4 pa4,
-                                              PreArg5 pa5, PreArg6 pa6) {
+                                   Arg6)
+                                   , PreArg1 pa1, PreArg2 pa2,
+                                   PreArg3 pa3, PreArg4 pa4,
+                                   PreArg5 pa5, PreArg6 pa6) {
     return new FunctionClosure_Arg0_Bind6<false, R , Arg1, Arg2, Arg3, Arg4,
-        Arg5, Arg6 , PreArg1, PreArg2, PreArg3, PreArg4, PreArg5,
-        PreArg6>(function , pa1, pa2, pa3, pa4, pa5, pa6);
+           Arg5, Arg6 , PreArg1, PreArg2, PreArg3, PreArg4, PreArg5,
+           PreArg6>(function , pa1, pa2, pa3, pa4, pa5, pa6);
 }
 
 template <
-    bool SelfDeleting,
-    typename R,
-    typename Class,
-    typename MethodClass
-    , typename Arg1    , typename Arg2    , typename Arg3    ,
-        typename Arg4    , typename Arg5    , typename Arg6    ,
-        typename Arg7    , typename PreArg1    , typename PreArg2    ,
-        typename PreArg3    , typename PreArg4    , typename PreArg5    ,
-        typename PreArg6    , typename PreArg7>
+bool SelfDeleting,
+     typename R,
+     typename Class,
+     typename MethodClass
+     , typename Arg1    , typename Arg2    , typename Arg3    ,
+     typename Arg4    , typename Arg5    , typename Arg6    ,
+     typename Arg7    , typename PreArg1    , typename PreArg2    ,
+     typename PreArg3    , typename PreArg4    , typename PreArg5    ,
+     typename PreArg6    , typename PreArg7>
 class MethodClosure_Arg0_Bind7 : public Closure<R ()> {
     typedef R (MethodClass::*MethodType)(Arg1, Arg2, Arg3, Arg4, Arg5, Arg6,
-        Arg7);
+                                         Arg7);
 public:
     MethodClosure_Arg0_Bind7(Class *object, MethodType method , PreArg1 pa1,
-        PreArg2 pa2, PreArg3 pa3, PreArg4 pa4, PreArg5 pa5, PreArg6 pa6,
-        PreArg7 pa7):
+                             PreArg2 pa2, PreArg3 pa3, PreArg4 pa4, PreArg5 pa5, PreArg6 pa6,
+                             PreArg7 pa7):
         m_object(object), m_method(method) , m_pa1(pa1), m_pa2(pa2),
-            m_pa3(pa3), m_pa4(pa4), m_pa5(pa5), m_pa6(pa6), m_pa7(pa7) {}
+        m_pa3(pa3), m_pa4(pa4), m_pa5(pa5), m_pa6(pa6), m_pa7(pa7) {}
     virtual R Run() {
         ConditionalAutoDeleter<SelfDeleting,
-            MethodClosure_Arg0_Bind7> self_deleter(this);
+                               MethodClosure_Arg0_Bind7> self_deleter(this);
         return (m_object->*m_method)(m_pa1, m_pa2, m_pa3, m_pa4, m_pa5, m_pa6,
-            m_pa7 );
+                                     m_pa7 );
     }
-    virtual bool IsSelfDelete() const { return SelfDeleting; }
+    virtual bool IsSelfDelete() const {
+        return SelfDeleting;
+    }
 private:
     Class* m_object;
     MethodType m_method;
-        PreArg1 m_pa1;
-        PreArg2 m_pa2;
-        PreArg3 m_pa3;
-        PreArg4 m_pa4;
-        PreArg5 m_pa5;
-        PreArg6 m_pa6;
-        PreArg7 m_pa7;
-    };
+    PreArg1 m_pa1;
+    PreArg2 m_pa2;
+    PreArg3 m_pa3;
+    PreArg4 m_pa4;
+    PreArg5 m_pa5;
+    PreArg6 m_pa6;
+    PreArg7 m_pa7;
+};
 
 template <typename R, typename Class, typename MethodClass ,typename Arg1,
-    typename Arg2,typename Arg3,typename Arg4,typename Arg5,typename Arg6,
-    typename Arg7 , typename PreArg1, typename PreArg2, typename PreArg3,
-    typename PreArg4, typename PreArg5, typename PreArg6, typename PreArg7>
+         typename Arg2,typename Arg3,typename Arg4,typename Arg5,typename Arg6,
+         typename Arg7 , typename PreArg1, typename PreArg2, typename PreArg3,
+         typename PreArg4, typename PreArg5, typename PreArg6, typename PreArg7>
 Closure<R ()>* NewClosure(
     Class *object,
     R (MethodClass::*method)(Arg1, Arg2, Arg3, Arg4, Arg5, Arg6, Arg7)
     , PreArg1 pa1, PreArg2 pa2, PreArg3 pa3, PreArg4 pa4, PreArg5 pa5,
-        PreArg6 pa6, PreArg7 pa7) {
+    PreArg6 pa6, PreArg7 pa7) {
     return new MethodClosure_Arg0_Bind7<true, R, Class, MethodClass ,Arg1,Arg2,
-        Arg3,Arg4,Arg5,Arg6,Arg7 , PreArg1, PreArg2, PreArg3, PreArg4, PreArg5,
-        PreArg6, PreArg7>(
-        object, method, pa1, pa2, pa3, pa4, pa5, pa6, pa7);
+           Arg3,Arg4,Arg5,Arg6,Arg7 , PreArg1, PreArg2, PreArg3, PreArg4, PreArg5,
+           PreArg6, PreArg7>(
+               object, method, pa1, pa2, pa3, pa4, pa5, pa6, pa7);
 }
 
 template <typename R, typename Class, typename MethodClass ,typename Arg1,
-    typename Arg2,typename Arg3,typename Arg4,typename Arg5,typename Arg6,
-    typename Arg7 , typename PreArg1, typename PreArg2, typename PreArg3,
-    typename PreArg4, typename PreArg5, typename PreArg6, typename PreArg7>
+         typename Arg2,typename Arg3,typename Arg4,typename Arg5,typename Arg6,
+         typename Arg7 , typename PreArg1, typename PreArg2, typename PreArg3,
+         typename PreArg4, typename PreArg5, typename PreArg6, typename PreArg7>
 Closure<R ()>* NewPermanentClosure(
     Class *object,
     R (MethodClass::*method)(Arg1, Arg2, Arg3, Arg4, Arg5, Arg6, Arg7)
     , PreArg1 pa1, PreArg2 pa2, PreArg3 pa3, PreArg4 pa4, PreArg5 pa5,
-        PreArg6 pa6, PreArg7 pa7) {
+    PreArg6 pa6, PreArg7 pa7) {
     return new MethodClosure_Arg0_Bind7<false, R, Class, MethodClass ,Arg1,
-        Arg2,Arg3,Arg4,Arg5,Arg6,Arg7 , PreArg1, PreArg2, PreArg3, PreArg4,
-        PreArg5, PreArg6, PreArg7>(
-        object, method, pa1, pa2, pa3, pa4, pa5, pa6, pa7);
+           Arg2,Arg3,Arg4,Arg5,Arg6,Arg7 , PreArg1, PreArg2, PreArg3, PreArg4,
+           PreArg5, PreArg6, PreArg7>(
+               object, method, pa1, pa2, pa3, pa4, pa5, pa6, pa7);
 }
 
 ////////////////////////////////////////////////////
@@ -920,139 +935,143 @@ Closure<R ()>* NewPermanentClosure(
 ////////////////////////////////////////////////////
 
 template <
-    bool SelfDeleting,
-    typename R
-    , typename Arg1    , typename Arg2    , typename Arg3    ,
-        typename Arg4    , typename Arg5    , typename Arg6    ,
-        typename Arg7    , typename PreArg1    , typename PreArg2    ,
-        typename PreArg3    , typename PreArg4    , typename PreArg5    ,
-        typename PreArg6    , typename PreArg7>
+bool SelfDeleting,
+     typename R
+     , typename Arg1    , typename Arg2    , typename Arg3    ,
+     typename Arg4    , typename Arg5    , typename Arg6    ,
+     typename Arg7    , typename PreArg1    , typename PreArg2    ,
+     typename PreArg3    , typename PreArg4    , typename PreArg5    ,
+     typename PreArg6    , typename PreArg7>
 class FunctionClosure_Arg0_Bind7 : public Closure<R ()> {
     typedef R (*FunctionType)(Arg1, Arg2, Arg3, Arg4, Arg5, Arg6, Arg7);
 public:
     FunctionClosure_Arg0_Bind7(FunctionType function , PreArg1 pa1,
-        PreArg2 pa2, PreArg3 pa3, PreArg4 pa4, PreArg5 pa5, PreArg6 pa6,
-        PreArg7 pa7):
+                               PreArg2 pa2, PreArg3 pa3, PreArg4 pa4, PreArg5 pa5, PreArg6 pa6,
+                               PreArg7 pa7):
         m_function(function) , m_pa1(pa1), m_pa2(pa2), m_pa3(pa3), m_pa4(pa4),
-            m_pa5(pa5), m_pa6(pa6), m_pa7(pa7) {}
+        m_pa5(pa5), m_pa6(pa6), m_pa7(pa7) {}
     virtual R Run() {
         ConditionalAutoDeleter<SelfDeleting,
-            FunctionClosure_Arg0_Bind7> self_deleter(this);
+                               FunctionClosure_Arg0_Bind7> self_deleter(this);
         return m_function(m_pa1, m_pa2, m_pa3, m_pa4, m_pa5, m_pa6, m_pa7 );
     }
-    virtual bool IsSelfDelete() const { return SelfDeleting; }
+    virtual bool IsSelfDelete() const {
+        return SelfDeleting;
+    }
 private:
     FunctionType m_function;
-        PreArg1 m_pa1;
-        PreArg2 m_pa2;
-        PreArg3 m_pa3;
-        PreArg4 m_pa4;
-        PreArg5 m_pa5;
-        PreArg6 m_pa6;
-        PreArg7 m_pa7;
-    };
+    PreArg1 m_pa1;
+    PreArg2 m_pa2;
+    PreArg3 m_pa3;
+    PreArg4 m_pa4;
+    PreArg5 m_pa5;
+    PreArg6 m_pa6;
+    PreArg7 m_pa7;
+};
 
 template <typename R , typename Arg1, typename Arg2, typename Arg3,
-    typename Arg4, typename Arg5, typename Arg6, typename Arg7 ,
-    typename PreArg1, typename PreArg2, typename PreArg3, typename PreArg4,
-    typename PreArg5, typename PreArg6, typename PreArg7>
+         typename Arg4, typename Arg5, typename Arg6, typename Arg7 ,
+         typename PreArg1, typename PreArg2, typename PreArg3, typename PreArg4,
+         typename PreArg5, typename PreArg6, typename PreArg7>
 Closure<R ()>* NewClosure(R (*function)(Arg1, Arg2, Arg3, Arg4, Arg5, Arg6,
-    Arg7)
-                                          , PreArg1 pa1, PreArg2 pa2,
-                                              PreArg3 pa3, PreArg4 pa4,
-                                              PreArg5 pa5, PreArg6 pa6,
-                                              PreArg7 pa7) {
+                                        Arg7)
+                          , PreArg1 pa1, PreArg2 pa2,
+                          PreArg3 pa3, PreArg4 pa4,
+                          PreArg5 pa5, PreArg6 pa6,
+                          PreArg7 pa7) {
     return new FunctionClosure_Arg0_Bind7<true, R , Arg1, Arg2, Arg3, Arg4,
-        Arg5, Arg6, Arg7 , PreArg1, PreArg2, PreArg3, PreArg4, PreArg5,
-        PreArg6, PreArg7>(function , pa1, pa2, pa3, pa4, pa5, pa6, pa7);
+           Arg5, Arg6, Arg7 , PreArg1, PreArg2, PreArg3, PreArg4, PreArg5,
+           PreArg6, PreArg7>(function , pa1, pa2, pa3, pa4, pa5, pa6, pa7);
 }
 
 template <typename R , typename Arg1, typename Arg2, typename Arg3,
-    typename Arg4, typename Arg5, typename Arg6, typename Arg7 ,
-    typename PreArg1, typename PreArg2, typename PreArg3, typename PreArg4,
-    typename PreArg5, typename PreArg6, typename PreArg7>
+         typename Arg4, typename Arg5, typename Arg6, typename Arg7 ,
+         typename PreArg1, typename PreArg2, typename PreArg3, typename PreArg4,
+         typename PreArg5, typename PreArg6, typename PreArg7>
 Closure<R ()>* NewPermanentClosure(R (*function)(Arg1, Arg2, Arg3, Arg4, Arg5,
-    Arg6, Arg7)
-                                          , PreArg1 pa1, PreArg2 pa2,
-                                              PreArg3 pa3, PreArg4 pa4,
-                                              PreArg5 pa5, PreArg6 pa6,
-                                              PreArg7 pa7) {
+                                   Arg6, Arg7)
+                                   , PreArg1 pa1, PreArg2 pa2,
+                                   PreArg3 pa3, PreArg4 pa4,
+                                   PreArg5 pa5, PreArg6 pa6,
+                                   PreArg7 pa7) {
     return new FunctionClosure_Arg0_Bind7<false, R , Arg1, Arg2, Arg3, Arg4,
-        Arg5, Arg6, Arg7 , PreArg1, PreArg2, PreArg3, PreArg4, PreArg5,
-        PreArg6, PreArg7>(function , pa1, pa2, pa3, pa4, pa5, pa6, pa7);
+           Arg5, Arg6, Arg7 , PreArg1, PreArg2, PreArg3, PreArg4, PreArg5,
+           PreArg6, PreArg7>(function , pa1, pa2, pa3, pa4, pa5, pa6, pa7);
 }
 
 template <
-    bool SelfDeleting,
-    typename R,
-    typename Class,
-    typename MethodClass
-    , typename Arg1    , typename Arg2    , typename Arg3    ,
-        typename Arg4    , typename Arg5    , typename Arg6    ,
-        typename Arg7    , typename Arg8    , typename PreArg1    ,
-        typename PreArg2    , typename PreArg3    , typename PreArg4    ,
-        typename PreArg5    , typename PreArg6    , typename PreArg7    ,
-        typename PreArg8>
+bool SelfDeleting,
+     typename R,
+     typename Class,
+     typename MethodClass
+     , typename Arg1    , typename Arg2    , typename Arg3    ,
+     typename Arg4    , typename Arg5    , typename Arg6    ,
+     typename Arg7    , typename Arg8    , typename PreArg1    ,
+     typename PreArg2    , typename PreArg3    , typename PreArg4    ,
+     typename PreArg5    , typename PreArg6    , typename PreArg7    ,
+     typename PreArg8>
 class MethodClosure_Arg0_Bind8 : public Closure<R ()> {
     typedef R (MethodClass::*MethodType)(Arg1, Arg2, Arg3, Arg4, Arg5, Arg6,
-        Arg7, Arg8);
+                                         Arg7, Arg8);
 public:
     MethodClosure_Arg0_Bind8(Class *object, MethodType method , PreArg1 pa1,
-        PreArg2 pa2, PreArg3 pa3, PreArg4 pa4, PreArg5 pa5, PreArg6 pa6,
-        PreArg7 pa7, PreArg8 pa8):
+                             PreArg2 pa2, PreArg3 pa3, PreArg4 pa4, PreArg5 pa5, PreArg6 pa6,
+                             PreArg7 pa7, PreArg8 pa8):
         m_object(object), m_method(method) , m_pa1(pa1), m_pa2(pa2),
-            m_pa3(pa3), m_pa4(pa4), m_pa5(pa5), m_pa6(pa6), m_pa7(pa7),
-            m_pa8(pa8) {}
+        m_pa3(pa3), m_pa4(pa4), m_pa5(pa5), m_pa6(pa6), m_pa7(pa7),
+        m_pa8(pa8) {}
     virtual R Run() {
         ConditionalAutoDeleter<SelfDeleting,
-            MethodClosure_Arg0_Bind8> self_deleter(this);
+                               MethodClosure_Arg0_Bind8> self_deleter(this);
         return (m_object->*m_method)(m_pa1, m_pa2, m_pa3, m_pa4, m_pa5, m_pa6,
-            m_pa7, m_pa8 );
+                                     m_pa7, m_pa8 );
     }
-    virtual bool IsSelfDelete() const { return SelfDeleting; }
+    virtual bool IsSelfDelete() const {
+        return SelfDeleting;
+    }
 private:
     Class* m_object;
     MethodType m_method;
-        PreArg1 m_pa1;
-        PreArg2 m_pa2;
-        PreArg3 m_pa3;
-        PreArg4 m_pa4;
-        PreArg5 m_pa5;
-        PreArg6 m_pa6;
-        PreArg7 m_pa7;
-        PreArg8 m_pa8;
-    };
+    PreArg1 m_pa1;
+    PreArg2 m_pa2;
+    PreArg3 m_pa3;
+    PreArg4 m_pa4;
+    PreArg5 m_pa5;
+    PreArg6 m_pa6;
+    PreArg7 m_pa7;
+    PreArg8 m_pa8;
+};
 
 template <typename R, typename Class, typename MethodClass ,typename Arg1,
-    typename Arg2,typename Arg3,typename Arg4,typename Arg5,typename Arg6,
-    typename Arg7,typename Arg8 , typename PreArg1, typename PreArg2,
-    typename PreArg3, typename PreArg4, typename PreArg5, typename PreArg6,
-    typename PreArg7, typename PreArg8>
+         typename Arg2,typename Arg3,typename Arg4,typename Arg5,typename Arg6,
+         typename Arg7,typename Arg8 , typename PreArg1, typename PreArg2,
+         typename PreArg3, typename PreArg4, typename PreArg5, typename PreArg6,
+         typename PreArg7, typename PreArg8>
 Closure<R ()>* NewClosure(
     Class *object,
     R (MethodClass::*method)(Arg1, Arg2, Arg3, Arg4, Arg5, Arg6, Arg7, Arg8)
     , PreArg1 pa1, PreArg2 pa2, PreArg3 pa3, PreArg4 pa4, PreArg5 pa5,
-        PreArg6 pa6, PreArg7 pa7, PreArg8 pa8) {
+    PreArg6 pa6, PreArg7 pa7, PreArg8 pa8) {
     return new MethodClosure_Arg0_Bind8<true, R, Class, MethodClass ,Arg1,Arg2,
-        Arg3,Arg4,Arg5,Arg6,Arg7,Arg8 , PreArg1, PreArg2, PreArg3, PreArg4,
-        PreArg5, PreArg6, PreArg7, PreArg8>(
-        object, method, pa1, pa2, pa3, pa4, pa5, pa6, pa7, pa8);
+           Arg3,Arg4,Arg5,Arg6,Arg7,Arg8 , PreArg1, PreArg2, PreArg3, PreArg4,
+           PreArg5, PreArg6, PreArg7, PreArg8>(
+               object, method, pa1, pa2, pa3, pa4, pa5, pa6, pa7, pa8);
 }
 
 template <typename R, typename Class, typename MethodClass ,typename Arg1,
-    typename Arg2,typename Arg3,typename Arg4,typename Arg5,typename Arg6,
-    typename Arg7,typename Arg8 , typename PreArg1, typename PreArg2,
-    typename PreArg3, typename PreArg4, typename PreArg5, typename PreArg6,
-    typename PreArg7, typename PreArg8>
+         typename Arg2,typename Arg3,typename Arg4,typename Arg5,typename Arg6,
+         typename Arg7,typename Arg8 , typename PreArg1, typename PreArg2,
+         typename PreArg3, typename PreArg4, typename PreArg5, typename PreArg6,
+         typename PreArg7, typename PreArg8>
 Closure<R ()>* NewPermanentClosure(
     Class *object,
     R (MethodClass::*method)(Arg1, Arg2, Arg3, Arg4, Arg5, Arg6, Arg7, Arg8)
     , PreArg1 pa1, PreArg2 pa2, PreArg3 pa3, PreArg4 pa4, PreArg5 pa5,
-        PreArg6 pa6, PreArg7 pa7, PreArg8 pa8) {
+    PreArg6 pa6, PreArg7 pa7, PreArg8 pa8) {
     return new MethodClosure_Arg0_Bind8<false, R, Class, MethodClass ,Arg1,
-        Arg2,Arg3,Arg4,Arg5,Arg6,Arg7,Arg8 , PreArg1, PreArg2, PreArg3,
-        PreArg4, PreArg5, PreArg6, PreArg7, PreArg8>(
-        object, method, pa1, pa2, pa3, pa4, pa5, pa6, pa7, pa8);
+           Arg2,Arg3,Arg4,Arg5,Arg6,Arg7,Arg8 , PreArg1, PreArg2, PreArg3,
+           PreArg4, PreArg5, PreArg6, PreArg7, PreArg8>(
+               object, method, pa1, pa2, pa3, pa4, pa5, pa6, pa7, pa8);
 }
 
 ////////////////////////////////////////////////////
@@ -1060,79 +1079,81 @@ Closure<R ()>* NewPermanentClosure(
 ////////////////////////////////////////////////////
 
 template <
-    bool SelfDeleting,
-    typename R
-    , typename Arg1    , typename Arg2    , typename Arg3    ,
-        typename Arg4    , typename Arg5    , typename Arg6    ,
-        typename Arg7    , typename Arg8    , typename PreArg1    ,
-        typename PreArg2    , typename PreArg3    , typename PreArg4    ,
-        typename PreArg5    , typename PreArg6    , typename PreArg7    ,
-        typename PreArg8>
+bool SelfDeleting,
+     typename R
+     , typename Arg1    , typename Arg2    , typename Arg3    ,
+     typename Arg4    , typename Arg5    , typename Arg6    ,
+     typename Arg7    , typename Arg8    , typename PreArg1    ,
+     typename PreArg2    , typename PreArg3    , typename PreArg4    ,
+     typename PreArg5    , typename PreArg6    , typename PreArg7    ,
+     typename PreArg8>
 class FunctionClosure_Arg0_Bind8 : public Closure<R ()> {
     typedef R (*FunctionType)(Arg1, Arg2, Arg3, Arg4, Arg5, Arg6, Arg7, Arg8);
 public:
     FunctionClosure_Arg0_Bind8(FunctionType function , PreArg1 pa1,
-        PreArg2 pa2, PreArg3 pa3, PreArg4 pa4, PreArg5 pa5, PreArg6 pa6,
-        PreArg7 pa7, PreArg8 pa8):
+                               PreArg2 pa2, PreArg3 pa3, PreArg4 pa4, PreArg5 pa5, PreArg6 pa6,
+                               PreArg7 pa7, PreArg8 pa8):
         m_function(function) , m_pa1(pa1), m_pa2(pa2), m_pa3(pa3), m_pa4(pa4),
-            m_pa5(pa5), m_pa6(pa6), m_pa7(pa7), m_pa8(pa8) {}
+        m_pa5(pa5), m_pa6(pa6), m_pa7(pa7), m_pa8(pa8) {}
     virtual R Run() {
         ConditionalAutoDeleter<SelfDeleting,
-            FunctionClosure_Arg0_Bind8> self_deleter(this);
+                               FunctionClosure_Arg0_Bind8> self_deleter(this);
         return m_function(m_pa1, m_pa2, m_pa3, m_pa4, m_pa5, m_pa6, m_pa7,
-            m_pa8 );
+                          m_pa8 );
     }
-    virtual bool IsSelfDelete() const { return SelfDeleting; }
+    virtual bool IsSelfDelete() const {
+        return SelfDeleting;
+    }
 private:
     FunctionType m_function;
-        PreArg1 m_pa1;
-        PreArg2 m_pa2;
-        PreArg3 m_pa3;
-        PreArg4 m_pa4;
-        PreArg5 m_pa5;
-        PreArg6 m_pa6;
-        PreArg7 m_pa7;
-        PreArg8 m_pa8;
-    };
+    PreArg1 m_pa1;
+    PreArg2 m_pa2;
+    PreArg3 m_pa3;
+    PreArg4 m_pa4;
+    PreArg5 m_pa5;
+    PreArg6 m_pa6;
+    PreArg7 m_pa7;
+    PreArg8 m_pa8;
+};
 
 template <typename R , typename Arg1, typename Arg2, typename Arg3,
-    typename Arg4, typename Arg5, typename Arg6, typename Arg7, typename Arg8 ,
-    typename PreArg1, typename PreArg2, typename PreArg3, typename PreArg4,
-    typename PreArg5, typename PreArg6, typename PreArg7, typename PreArg8>
+         typename Arg4, typename Arg5, typename Arg6, typename Arg7, typename Arg8 ,
+         typename PreArg1, typename PreArg2, typename PreArg3, typename PreArg4,
+         typename PreArg5, typename PreArg6, typename PreArg7, typename PreArg8>
 Closure<R ()>* NewClosure(R (*function)(Arg1, Arg2, Arg3, Arg4, Arg5, Arg6,
-    Arg7, Arg8)
-                                          , PreArg1 pa1, PreArg2 pa2,
-                                              PreArg3 pa3, PreArg4 pa4,
-                                              PreArg5 pa5, PreArg6 pa6,
-                                              PreArg7 pa7, PreArg8 pa8) {
+                                        Arg7, Arg8)
+                          , PreArg1 pa1, PreArg2 pa2,
+                          PreArg3 pa3, PreArg4 pa4,
+                          PreArg5 pa5, PreArg6 pa6,
+                          PreArg7 pa7, PreArg8 pa8) {
     return new FunctionClosure_Arg0_Bind8<true, R , Arg1, Arg2, Arg3, Arg4,
-        Arg5, Arg6, Arg7, Arg8 , PreArg1, PreArg2, PreArg3, PreArg4, PreArg5,
-        PreArg6, PreArg7, PreArg8>(function , pa1, pa2, pa3, pa4, pa5, pa6,
-        pa7, pa8);
+           Arg5, Arg6, Arg7, Arg8 , PreArg1, PreArg2, PreArg3, PreArg4, PreArg5,
+           PreArg6, PreArg7, PreArg8>(function , pa1, pa2, pa3, pa4, pa5, pa6,
+                                      pa7, pa8);
 }
 
 template <typename R , typename Arg1, typename Arg2, typename Arg3,
-    typename Arg4, typename Arg5, typename Arg6, typename Arg7, typename Arg8 ,
-    typename PreArg1, typename PreArg2, typename PreArg3, typename PreArg4,
-    typename PreArg5, typename PreArg6, typename PreArg7, typename PreArg8>
+         typename Arg4, typename Arg5, typename Arg6, typename Arg7, typename Arg8 ,
+         typename PreArg1, typename PreArg2, typename PreArg3, typename PreArg4,
+         typename PreArg5, typename PreArg6, typename PreArg7, typename PreArg8>
 Closure<R ()>* NewPermanentClosure(R (*function)(Arg1, Arg2, Arg3, Arg4, Arg5,
-    Arg6, Arg7, Arg8)
-                                          , PreArg1 pa1, PreArg2 pa2,
-                                              PreArg3 pa3, PreArg4 pa4,
-                                              PreArg5 pa5, PreArg6 pa6,
-                                              PreArg7 pa7, PreArg8 pa8) {
+                                   Arg6, Arg7, Arg8)
+                                   , PreArg1 pa1, PreArg2 pa2,
+                                   PreArg3 pa3, PreArg4 pa4,
+                                   PreArg5 pa5, PreArg6 pa6,
+                                   PreArg7 pa7, PreArg8 pa8) {
     return new FunctionClosure_Arg0_Bind8<false, R , Arg1, Arg2, Arg3, Arg4,
-        Arg5, Arg6, Arg7, Arg8 , PreArg1, PreArg2, PreArg3, PreArg4, PreArg5,
-        PreArg6, PreArg7, PreArg8>(function , pa1, pa2, pa3, pa4, pa5, pa6,
-        pa7, pa8);
+           Arg5, Arg6, Arg7, Arg8 , PreArg1, PreArg2, PreArg3, PreArg4, PreArg5,
+           PreArg6, PreArg7, PreArg8>(function , pa1, pa2, pa3, pa4, pa5, pa6,
+                                      pa7, pa8);
 }
 
 template <
-    bool SelfDeleting,
-    typename R,
-    typename Class,
-    typename MethodClass
-    , typename Arg1    >
+bool SelfDeleting,
+     typename R,
+     typename Class,
+     typename MethodClass
+     , typename Arg1    >
 class MethodClosure_Arg1_Bind0 : public Closure<R (Arg1)> {
     typedef R (MethodClass::*MethodType)(Arg1);
 public:
@@ -1140,31 +1161,33 @@ public:
         m_object(object), m_method(method)  {}
     virtual R Run(Arg1 arg1) {
         ConditionalAutoDeleter<SelfDeleting,
-            MethodClosure_Arg1_Bind0> self_deleter(this);
+                               MethodClosure_Arg1_Bind0> self_deleter(this);
         return (m_object->*m_method)( arg1);
     }
-    virtual bool IsSelfDelete() const { return SelfDeleting; }
+    virtual bool IsSelfDelete() const {
+        return SelfDeleting;
+    }
 private:
     Class* m_object;
     MethodType m_method;
-    };
+};
 
 template <typename R, typename Class, typename MethodClass ,typename Arg1 >
 Closure<R (Arg1)>* NewClosure(
     Class *object,
     R (MethodClass::*method)(Arg1)
-    ) {
+) {
     return new MethodClosure_Arg1_Bind0<true, R, Class, MethodClass ,Arg1 >(
-        object, method);
+               object, method);
 }
 
 template <typename R, typename Class, typename MethodClass ,typename Arg1 >
 Closure<R (Arg1)>* NewPermanentClosure(
     Class *object,
     R (MethodClass::*method)(Arg1)
-    ) {
+) {
     return new MethodClosure_Arg1_Bind0<false, R, Class, MethodClass ,Arg1 >(
-        object, method);
+               object, method);
 }
 
 ////////////////////////////////////////////////////
@@ -1172,9 +1195,9 @@ Closure<R (Arg1)>* NewPermanentClosure(
 ////////////////////////////////////////////////////
 
 template <
-    bool SelfDeleting,
-    typename R
-    , typename Arg1    >
+bool SelfDeleting,
+     typename R
+     , typename Arg1    >
 class FunctionClosure_Arg1_Bind0 : public Closure<R (Arg1)> {
     typedef R (*FunctionType)(Arg1);
 public:
@@ -1182,32 +1205,34 @@ public:
         m_function(function)  {}
     virtual R Run(Arg1 arg1) {
         ConditionalAutoDeleter<SelfDeleting,
-            FunctionClosure_Arg1_Bind0> self_deleter(this);
+                               FunctionClosure_Arg1_Bind0> self_deleter(this);
         return m_function( arg1);
     }
-    virtual bool IsSelfDelete() const { return SelfDeleting; }
+    virtual bool IsSelfDelete() const {
+        return SelfDeleting;
+    }
 private:
     FunctionType m_function;
-    };
+};
 
 template <typename R , typename Arg1 >
 Closure<R (Arg1)>* NewClosure(R (*function)(Arg1)
-                                          ) {
+                             ) {
     return new FunctionClosure_Arg1_Bind0<true, R , Arg1 >(function );
 }
 
 template <typename R , typename Arg1 >
 Closure<R (Arg1)>* NewPermanentClosure(R (*function)(Arg1)
-                                          ) {
+                                      ) {
     return new FunctionClosure_Arg1_Bind0<false, R , Arg1 >(function );
 }
 
 template <
-    bool SelfDeleting,
-    typename R,
-    typename Class,
-    typename MethodClass
-    , typename Arg1    , typename Arg2    , typename PreArg1>
+bool SelfDeleting,
+     typename R,
+     typename Class,
+     typename MethodClass
+     , typename Arg1    , typename Arg2    , typename PreArg1>
 class MethodClosure_Arg1_Bind1 : public Closure<R (Arg2)> {
     typedef R (MethodClass::*MethodType)(Arg1, Arg2);
 public:
@@ -1215,36 +1240,38 @@ public:
         m_object(object), m_method(method) , m_pa1(pa1) {}
     virtual R Run(Arg2 arg2) {
         ConditionalAutoDeleter<SelfDeleting,
-            MethodClosure_Arg1_Bind1> self_deleter(this);
+                               MethodClosure_Arg1_Bind1> self_deleter(this);
         return (m_object->*m_method)(m_pa1 ,arg2);
     }
-    virtual bool IsSelfDelete() const { return SelfDeleting; }
+    virtual bool IsSelfDelete() const {
+        return SelfDeleting;
+    }
 private:
     Class* m_object;
     MethodType m_method;
-        PreArg1 m_pa1;
-    };
+    PreArg1 m_pa1;
+};
 
 template <typename R, typename Class, typename MethodClass ,typename Arg1,
-    typename Arg2 , typename PreArg1>
+         typename Arg2 , typename PreArg1>
 Closure<R (Arg2)>* NewClosure(
     Class *object,
     R (MethodClass::*method)(Arg1, Arg2)
     , PreArg1 pa1) {
     return new MethodClosure_Arg1_Bind1<true, R, Class, MethodClass ,Arg1,
-        Arg2 , PreArg1>(
-        object, method, pa1);
+           Arg2 , PreArg1>(
+               object, method, pa1);
 }
 
 template <typename R, typename Class, typename MethodClass ,typename Arg1,
-    typename Arg2 , typename PreArg1>
+         typename Arg2 , typename PreArg1>
 Closure<R (Arg2)>* NewPermanentClosure(
     Class *object,
     R (MethodClass::*method)(Arg1, Arg2)
     , PreArg1 pa1) {
     return new MethodClosure_Arg1_Bind1<false, R, Class, MethodClass ,Arg1,
-        Arg2 , PreArg1>(
-        object, method, pa1);
+           Arg2 , PreArg1>(
+               object, method, pa1);
 }
 
 ////////////////////////////////////////////////////
@@ -1252,9 +1279,9 @@ Closure<R (Arg2)>* NewPermanentClosure(
 ////////////////////////////////////////////////////
 
 template <
-    bool SelfDeleting,
-    typename R
-    , typename Arg1    , typename Arg2    , typename PreArg1>
+bool SelfDeleting,
+     typename R
+     , typename Arg1    , typename Arg2    , typename PreArg1>
 class FunctionClosure_Arg1_Bind1 : public Closure<R (Arg2)> {
     typedef R (*FunctionType)(Arg1, Arg2);
 public:
@@ -1262,75 +1289,79 @@ public:
         m_function(function) , m_pa1(pa1) {}
     virtual R Run(Arg2 arg2) {
         ConditionalAutoDeleter<SelfDeleting,
-            FunctionClosure_Arg1_Bind1> self_deleter(this);
+                               FunctionClosure_Arg1_Bind1> self_deleter(this);
         return m_function(m_pa1 ,arg2);
     }
-    virtual bool IsSelfDelete() const { return SelfDeleting; }
+    virtual bool IsSelfDelete() const {
+        return SelfDeleting;
+    }
 private:
     FunctionType m_function;
-        PreArg1 m_pa1;
-    };
+    PreArg1 m_pa1;
+};
 
 template <typename R , typename Arg1, typename Arg2 , typename PreArg1>
 Closure<R (Arg2)>* NewClosure(R (*function)(Arg1, Arg2)
-                                          , PreArg1 pa1) {
+                              , PreArg1 pa1) {
     return new FunctionClosure_Arg1_Bind1<true, R , Arg1, Arg2 ,
-        PreArg1>(function , pa1);
+           PreArg1>(function , pa1);
 }
 
 template <typename R , typename Arg1, typename Arg2 , typename PreArg1>
 Closure<R (Arg2)>* NewPermanentClosure(R (*function)(Arg1, Arg2)
-                                          , PreArg1 pa1) {
+                                       , PreArg1 pa1) {
     return new FunctionClosure_Arg1_Bind1<false, R , Arg1, Arg2 ,
-        PreArg1>(function , pa1);
+           PreArg1>(function , pa1);
 }
 
 template <
-    bool SelfDeleting,
-    typename R,
-    typename Class,
-    typename MethodClass
-    , typename Arg1    , typename Arg2    , typename Arg3    ,
-        typename PreArg1    , typename PreArg2>
+bool SelfDeleting,
+     typename R,
+     typename Class,
+     typename MethodClass
+     , typename Arg1    , typename Arg2    , typename Arg3    ,
+     typename PreArg1    , typename PreArg2>
 class MethodClosure_Arg1_Bind2 : public Closure<R (Arg3)> {
     typedef R (MethodClass::*MethodType)(Arg1, Arg2, Arg3);
 public:
     MethodClosure_Arg1_Bind2(Class *object, MethodType method , PreArg1 pa1,
-        PreArg2 pa2):
+                             PreArg2 pa2):
         m_object(object), m_method(method) , m_pa1(pa1), m_pa2(pa2) {}
     virtual R Run(Arg3 arg3) {
         ConditionalAutoDeleter<SelfDeleting,
-            MethodClosure_Arg1_Bind2> self_deleter(this);
+                               MethodClosure_Arg1_Bind2> self_deleter(this);
         return (m_object->*m_method)(m_pa1, m_pa2 ,arg3);
     }
-    virtual bool IsSelfDelete() const { return SelfDeleting; }
+    virtual bool IsSelfDelete() const {
+        return SelfDeleting;
+    }
 private:
     Class* m_object;
     MethodType m_method;
-        PreArg1 m_pa1;
-        PreArg2 m_pa2;
-    };
+    PreArg1 m_pa1;
+    PreArg2 m_pa2;
+};
 
 template <typename R, typename Class, typename MethodClass ,typename Arg1,
-    typename Arg2,typename Arg3 , typename PreArg1, typename PreArg2>
+         typename Arg2,typename Arg3 , typename PreArg1, typename PreArg2>
 Closure<R (Arg3)>* NewClosure(
     Class *object,
     R (MethodClass::*method)(Arg1, Arg2, Arg3)
     , PreArg1 pa1, PreArg2 pa2) {
     return new MethodClosure_Arg1_Bind2<true, R, Class, MethodClass ,Arg1,Arg2,
-        Arg3 , PreArg1, PreArg2>(
-        object, method, pa1, pa2);
+           Arg3 , PreArg1, PreArg2>(
+               object, method, pa1, pa2);
 }
 
 template <typename R, typename Class, typename MethodClass ,typename Arg1,
-    typename Arg2,typename Arg3 , typename PreArg1, typename PreArg2>
+         typename Arg2,typename Arg3 , typename PreArg1, typename PreArg2>
 Closure<R (Arg3)>* NewPermanentClosure(
     Class *object,
     R (MethodClass::*method)(Arg1, Arg2, Arg3)
     , PreArg1 pa1, PreArg2 pa2) {
     return new MethodClosure_Arg1_Bind2<false, R, Class, MethodClass ,Arg1,
-        Arg2,Arg3 , PreArg1, PreArg2>(
-        object, method, pa1, pa2);
+           Arg2,Arg3 , PreArg1, PreArg2>(
+               object, method, pa1, pa2);
 }
 
 ////////////////////////////////////////////////////
@@ -1338,95 +1369,99 @@ Closure<R (Arg3)>* NewPermanentClosure(
 ////////////////////////////////////////////////////
 
 template <
-    bool SelfDeleting,
-    typename R
-    , typename Arg1    , typename Arg2    , typename Arg3    ,
-        typename PreArg1    , typename PreArg2>
+bool SelfDeleting,
+     typename R
+     , typename Arg1    , typename Arg2    , typename Arg3    ,
+     typename PreArg1    , typename PreArg2>
 class FunctionClosure_Arg1_Bind2 : public Closure<R (Arg3)> {
     typedef R (*FunctionType)(Arg1, Arg2, Arg3);
 public:
     FunctionClosure_Arg1_Bind2(FunctionType function , PreArg1 pa1,
-        PreArg2 pa2):
+                               PreArg2 pa2):
         m_function(function) , m_pa1(pa1), m_pa2(pa2) {}
     virtual R Run(Arg3 arg3) {
         ConditionalAutoDeleter<SelfDeleting,
-            FunctionClosure_Arg1_Bind2> self_deleter(this);
+                               FunctionClosure_Arg1_Bind2> self_deleter(this);
         return m_function(m_pa1, m_pa2 ,arg3);
     }
-    virtual bool IsSelfDelete() const { return SelfDeleting; }
+    virtual bool IsSelfDelete() const {
+        return SelfDeleting;
+    }
 private:
     FunctionType m_function;
-        PreArg1 m_pa1;
-        PreArg2 m_pa2;
-    };
+    PreArg1 m_pa1;
+    PreArg2 m_pa2;
+};
 
 template <typename R , typename Arg1, typename Arg2, typename Arg3 ,
-    typename PreArg1, typename PreArg2>
+         typename PreArg1, typename PreArg2>
 Closure<R (Arg3)>* NewClosure(R (*function)(Arg1, Arg2, Arg3)
-                                          , PreArg1 pa1, PreArg2 pa2) {
+                              , PreArg1 pa1, PreArg2 pa2) {
     return new FunctionClosure_Arg1_Bind2<true, R , Arg1, Arg2, Arg3 , PreArg1,
-        PreArg2>(function , pa1, pa2);
+           PreArg2>(function , pa1, pa2);
 }
 
 template <typename R , typename Arg1, typename Arg2, typename Arg3 ,
-    typename PreArg1, typename PreArg2>
+         typename PreArg1, typename PreArg2>
 Closure<R (Arg3)>* NewPermanentClosure(R (*function)(Arg1, Arg2, Arg3)
-                                          , PreArg1 pa1, PreArg2 pa2) {
+                                       , PreArg1 pa1, PreArg2 pa2) {
     return new FunctionClosure_Arg1_Bind2<false, R , Arg1, Arg2, Arg3 ,
-        PreArg1, PreArg2>(function , pa1, pa2);
+           PreArg1, PreArg2>(function , pa1, pa2);
 }
 
 template <
-    bool SelfDeleting,
-    typename R,
-    typename Class,
-    typename MethodClass
-    , typename Arg1    , typename Arg2    , typename Arg3    ,
-        typename Arg4    , typename PreArg1    , typename PreArg2    ,
-        typename PreArg3>
+bool SelfDeleting,
+     typename R,
+     typename Class,
+     typename MethodClass
+     , typename Arg1    , typename Arg2    , typename Arg3    ,
+     typename Arg4    , typename PreArg1    , typename PreArg2    ,
+     typename PreArg3>
 class MethodClosure_Arg1_Bind3 : public Closure<R (Arg4)> {
     typedef R (MethodClass::*MethodType)(Arg1, Arg2, Arg3, Arg4);
 public:
     MethodClosure_Arg1_Bind3(Class *object, MethodType method , PreArg1 pa1,
-        PreArg2 pa2, PreArg3 pa3):
+                             PreArg2 pa2, PreArg3 pa3):
         m_object(object), m_method(method) , m_pa1(pa1), m_pa2(pa2),
-            m_pa3(pa3) {}
+        m_pa3(pa3) {}
     virtual R Run(Arg4 arg4) {
         ConditionalAutoDeleter<SelfDeleting,
-            MethodClosure_Arg1_Bind3> self_deleter(this);
+                               MethodClosure_Arg1_Bind3> self_deleter(this);
         return (m_object->*m_method)(m_pa1, m_pa2, m_pa3 ,arg4);
     }
-    virtual bool IsSelfDelete() const { return SelfDeleting; }
+    virtual bool IsSelfDelete() const {
+        return SelfDeleting;
+    }
 private:
     Class* m_object;
     MethodType m_method;
-        PreArg1 m_pa1;
-        PreArg2 m_pa2;
-        PreArg3 m_pa3;
-    };
+    PreArg1 m_pa1;
+    PreArg2 m_pa2;
+    PreArg3 m_pa3;
+};
 
 template <typename R, typename Class, typename MethodClass ,typename Arg1,
-    typename Arg2,typename Arg3,typename Arg4 , typename PreArg1,
-    typename PreArg2, typename PreArg3>
+         typename Arg2,typename Arg3,typename Arg4 , typename PreArg1,
+         typename PreArg2, typename PreArg3>
 Closure<R (Arg4)>* NewClosure(
     Class *object,
     R (MethodClass::*method)(Arg1, Arg2, Arg3, Arg4)
     , PreArg1 pa1, PreArg2 pa2, PreArg3 pa3) {
     return new MethodClosure_Arg1_Bind3<true, R, Class, MethodClass ,Arg1,Arg2,
-        Arg3,Arg4 , PreArg1, PreArg2, PreArg3>(
-        object, method, pa1, pa2, pa3);
+           Arg3,Arg4 , PreArg1, PreArg2, PreArg3>(
+               object, method, pa1, pa2, pa3);
 }
 
 template <typename R, typename Class, typename MethodClass ,typename Arg1,
-    typename Arg2,typename Arg3,typename Arg4 , typename PreArg1,
-    typename PreArg2, typename PreArg3>
+         typename Arg2,typename Arg3,typename Arg4 , typename PreArg1,
+         typename PreArg2, typename PreArg3>
 Closure<R (Arg4)>* NewPermanentClosure(
     Class *object,
     R (MethodClass::*method)(Arg1, Arg2, Arg3, Arg4)
     , PreArg1 pa1, PreArg2 pa2, PreArg3 pa3) {
     return new MethodClosure_Arg1_Bind3<false, R, Class, MethodClass ,Arg1,
-        Arg2,Arg3,Arg4 , PreArg1, PreArg2, PreArg3>(
-        object, method, pa1, pa2, pa3);
+           Arg2,Arg3,Arg4 , PreArg1, PreArg2, PreArg3>(
+               object, method, pa1, pa2, pa3);
 }
 
 ////////////////////////////////////////////////////
@@ -1434,100 +1469,104 @@ Closure<R (Arg4)>* NewPermanentClosure(
 ////////////////////////////////////////////////////
 
 template <
-    bool SelfDeleting,
-    typename R
-    , typename Arg1    , typename Arg2    , typename Arg3    ,
-        typename Arg4    , typename PreArg1    , typename PreArg2    ,
-        typename PreArg3>
+bool SelfDeleting,
+     typename R
+     , typename Arg1    , typename Arg2    , typename Arg3    ,
+     typename Arg4    , typename PreArg1    , typename PreArg2    ,
+     typename PreArg3>
 class FunctionClosure_Arg1_Bind3 : public Closure<R (Arg4)> {
     typedef R (*FunctionType)(Arg1, Arg2, Arg3, Arg4);
 public:
     FunctionClosure_Arg1_Bind3(FunctionType function , PreArg1 pa1,
-        PreArg2 pa2, PreArg3 pa3):
+                               PreArg2 pa2, PreArg3 pa3):
         m_function(function) , m_pa1(pa1), m_pa2(pa2), m_pa3(pa3) {}
     virtual R Run(Arg4 arg4) {
         ConditionalAutoDeleter<SelfDeleting,
-            FunctionClosure_Arg1_Bind3> self_deleter(this);
+                               FunctionClosure_Arg1_Bind3> self_deleter(this);
         return m_function(m_pa1, m_pa2, m_pa3 ,arg4);
     }
-    virtual bool IsSelfDelete() const { return SelfDeleting; }
+    virtual bool IsSelfDelete() const {
+        return SelfDeleting;
+    }
 private:
     FunctionType m_function;
-        PreArg1 m_pa1;
-        PreArg2 m_pa2;
-        PreArg3 m_pa3;
-    };
+    PreArg1 m_pa1;
+    PreArg2 m_pa2;
+    PreArg3 m_pa3;
+};
 
 template <typename R , typename Arg1, typename Arg2, typename Arg3,
-    typename Arg4 , typename PreArg1, typename PreArg2, typename PreArg3>
+         typename Arg4 , typename PreArg1, typename PreArg2, typename PreArg3>
 Closure<R (Arg4)>* NewClosure(R (*function)(Arg1, Arg2, Arg3, Arg4)
-                                          , PreArg1 pa1, PreArg2 pa2,
-                                              PreArg3 pa3) {
+                              , PreArg1 pa1, PreArg2 pa2,
+                              PreArg3 pa3) {
     return new FunctionClosure_Arg1_Bind3<true, R , Arg1, Arg2, Arg3, Arg4 ,
-        PreArg1, PreArg2, PreArg3>(function , pa1, pa2, pa3);
+           PreArg1, PreArg2, PreArg3>(function , pa1, pa2, pa3);
 }
 
 template <typename R , typename Arg1, typename Arg2, typename Arg3,
-    typename Arg4 , typename PreArg1, typename PreArg2, typename PreArg3>
+         typename Arg4 , typename PreArg1, typename PreArg2, typename PreArg3>
 Closure<R (Arg4)>* NewPermanentClosure(R (*function)(Arg1, Arg2, Arg3, Arg4)
-                                          , PreArg1 pa1, PreArg2 pa2,
-                                              PreArg3 pa3) {
+                                       , PreArg1 pa1, PreArg2 pa2,
+                                       PreArg3 pa3) {
     return new FunctionClosure_Arg1_Bind3<false, R , Arg1, Arg2, Arg3, Arg4 ,
-        PreArg1, PreArg2, PreArg3>(function , pa1, pa2, pa3);
+           PreArg1, PreArg2, PreArg3>(function , pa1, pa2, pa3);
 }
 
 template <
-    bool SelfDeleting,
-    typename R,
-    typename Class,
-    typename MethodClass
-    , typename Arg1    , typename Arg2    , typename Arg3    ,
-        typename Arg4    , typename Arg5    , typename PreArg1    ,
-        typename PreArg2    , typename PreArg3    , typename PreArg4>
+bool SelfDeleting,
+     typename R,
+     typename Class,
+     typename MethodClass
+     , typename Arg1    , typename Arg2    , typename Arg3    ,
+     typename Arg4    , typename Arg5    , typename PreArg1    ,
+     typename PreArg2    , typename PreArg3    , typename PreArg4>
 class MethodClosure_Arg1_Bind4 : public Closure<R (Arg5)> {
     typedef R (MethodClass::*MethodType)(Arg1, Arg2, Arg3, Arg4, Arg5);
 public:
     MethodClosure_Arg1_Bind4(Class *object, MethodType method , PreArg1 pa1,
-        PreArg2 pa2, PreArg3 pa3, PreArg4 pa4):
+                             PreArg2 pa2, PreArg3 pa3, PreArg4 pa4):
         m_object(object), m_method(method) , m_pa1(pa1), m_pa2(pa2),
-            m_pa3(pa3), m_pa4(pa4) {}
+        m_pa3(pa3), m_pa4(pa4) {}
     virtual R Run(Arg5 arg5) {
         ConditionalAutoDeleter<SelfDeleting,
-            MethodClosure_Arg1_Bind4> self_deleter(this);
+                               MethodClosure_Arg1_Bind4> self_deleter(this);
         return (m_object->*m_method)(m_pa1, m_pa2, m_pa3, m_pa4 ,arg5);
     }
-    virtual bool IsSelfDelete() const { return SelfDeleting; }
+    virtual bool IsSelfDelete() const {
+        return SelfDeleting;
+    }
 private:
     Class* m_object;
     MethodType m_method;
-        PreArg1 m_pa1;
-        PreArg2 m_pa2;
-        PreArg3 m_pa3;
-        PreArg4 m_pa4;
-    };
+    PreArg1 m_pa1;
+    PreArg2 m_pa2;
+    PreArg3 m_pa3;
+    PreArg4 m_pa4;
+};
 
 template <typename R, typename Class, typename MethodClass ,typename Arg1,
-    typename Arg2,typename Arg3,typename Arg4,typename Arg5 , typename PreArg1,
-    typename PreArg2, typename PreArg3, typename PreArg4>
+         typename Arg2,typename Arg3,typename Arg4,typename Arg5 , typename PreArg1,
+         typename PreArg2, typename PreArg3, typename PreArg4>
 Closure<R (Arg5)>* NewClosure(
     Class *object,
     R (MethodClass::*method)(Arg1, Arg2, Arg3, Arg4, Arg5)
     , PreArg1 pa1, PreArg2 pa2, PreArg3 pa3, PreArg4 pa4) {
     return new MethodClosure_Arg1_Bind4<true, R, Class, MethodClass ,Arg1,Arg2,
-        Arg3,Arg4,Arg5 , PreArg1, PreArg2, PreArg3, PreArg4>(
-        object, method, pa1, pa2, pa3, pa4);
+           Arg3,Arg4,Arg5 , PreArg1, PreArg2, PreArg3, PreArg4>(
+               object, method, pa1, pa2, pa3, pa4);
 }
 
 template <typename R, typename Class, typename MethodClass ,typename Arg1,
-    typename Arg2,typename Arg3,typename Arg4,typename Arg5 , typename PreArg1,
-    typename PreArg2, typename PreArg3, typename PreArg4>
+         typename Arg2,typename Arg3,typename Arg4,typename Arg5 , typename PreArg1,
+         typename PreArg2, typename PreArg3, typename PreArg4>
 Closure<R (Arg5)>* NewPermanentClosure(
     Class *object,
     R (MethodClass::*method)(Arg1, Arg2, Arg3, Arg4, Arg5)
     , PreArg1 pa1, PreArg2 pa2, PreArg3 pa3, PreArg4 pa4) {
     return new MethodClosure_Arg1_Bind4<false, R, Class, MethodClass ,Arg1,
-        Arg2,Arg3,Arg4,Arg5 , PreArg1, PreArg2, PreArg3, PreArg4>(
-        object, method, pa1, pa2, pa3, pa4);
+           Arg2,Arg3,Arg4,Arg5 , PreArg1, PreArg2, PreArg3, PreArg4>(
+               object, method, pa1, pa2, pa3, pa4);
 }
 
 ////////////////////////////////////////////////////
@@ -1535,111 +1574,115 @@ Closure<R (Arg5)>* NewPermanentClosure(
 ////////////////////////////////////////////////////
 
 template <
-    bool SelfDeleting,
-    typename R
-    , typename Arg1    , typename Arg2    , typename Arg3    ,
-        typename Arg4    , typename Arg5    , typename PreArg1    ,
-        typename PreArg2    , typename PreArg3    , typename PreArg4>
+bool SelfDeleting,
+     typename R
+     , typename Arg1    , typename Arg2    , typename Arg3    ,
+     typename Arg4    , typename Arg5    , typename PreArg1    ,
+     typename PreArg2    , typename PreArg3    , typename PreArg4>
 class FunctionClosure_Arg1_Bind4 : public Closure<R (Arg5)> {
     typedef R (*FunctionType)(Arg1, Arg2, Arg3, Arg4, Arg5);
 public:
     FunctionClosure_Arg1_Bind4(FunctionType function , PreArg1 pa1,
-        PreArg2 pa2, PreArg3 pa3, PreArg4 pa4):
+                               PreArg2 pa2, PreArg3 pa3, PreArg4 pa4):
         m_function(function) , m_pa1(pa1), m_pa2(pa2), m_pa3(pa3), m_pa4(pa4) {}
     virtual R Run(Arg5 arg5) {
         ConditionalAutoDeleter<SelfDeleting,
-            FunctionClosure_Arg1_Bind4> self_deleter(this);
+                               FunctionClosure_Arg1_Bind4> self_deleter(this);
         return m_function(m_pa1, m_pa2, m_pa3, m_pa4 ,arg5);
     }
-    virtual bool IsSelfDelete() const { return SelfDeleting; }
+    virtual bool IsSelfDelete() const {
+        return SelfDeleting;
+    }
 private:
     FunctionType m_function;
-        PreArg1 m_pa1;
-        PreArg2 m_pa2;
-        PreArg3 m_pa3;
-        PreArg4 m_pa4;
-    };
+    PreArg1 m_pa1;
+    PreArg2 m_pa2;
+    PreArg3 m_pa3;
+    PreArg4 m_pa4;
+};
 
 template <typename R , typename Arg1, typename Arg2, typename Arg3,
-    typename Arg4, typename Arg5 , typename PreArg1, typename PreArg2,
-    typename PreArg3, typename PreArg4>
+         typename Arg4, typename Arg5 , typename PreArg1, typename PreArg2,
+         typename PreArg3, typename PreArg4>
 Closure<R (Arg5)>* NewClosure(R (*function)(Arg1, Arg2, Arg3, Arg4, Arg5)
-                                          , PreArg1 pa1, PreArg2 pa2,
-                                              PreArg3 pa3, PreArg4 pa4) {
+                              , PreArg1 pa1, PreArg2 pa2,
+                              PreArg3 pa3, PreArg4 pa4) {
     return new FunctionClosure_Arg1_Bind4<true, R , Arg1, Arg2, Arg3, Arg4,
-        Arg5 , PreArg1, PreArg2, PreArg3, PreArg4>(function , pa1, pa2, pa3,
-        pa4);
+           Arg5 , PreArg1, PreArg2, PreArg3, PreArg4>(function , pa1, pa2, pa3,
+                   pa4);
 }
 
 template <typename R , typename Arg1, typename Arg2, typename Arg3,
-    typename Arg4, typename Arg5 , typename PreArg1, typename PreArg2,
-    typename PreArg3, typename PreArg4>
+         typename Arg4, typename Arg5 , typename PreArg1, typename PreArg2,
+         typename PreArg3, typename PreArg4>
 Closure<R (Arg5)>* NewPermanentClosure(R (*function)(Arg1, Arg2, Arg3, Arg4,
-    Arg5)
-                                          , PreArg1 pa1, PreArg2 pa2,
-                                              PreArg3 pa3, PreArg4 pa4) {
+                                       Arg5)
+                                       , PreArg1 pa1, PreArg2 pa2,
+                                       PreArg3 pa3, PreArg4 pa4) {
     return new FunctionClosure_Arg1_Bind4<false, R , Arg1, Arg2, Arg3, Arg4,
-        Arg5 , PreArg1, PreArg2, PreArg3, PreArg4>(function , pa1, pa2, pa3,
-        pa4);
+           Arg5 , PreArg1, PreArg2, PreArg3, PreArg4>(function , pa1, pa2, pa3,
+                   pa4);
 }
 
 template <
-    bool SelfDeleting,
-    typename R,
-    typename Class,
-    typename MethodClass
-    , typename Arg1    , typename Arg2    , typename Arg3    ,
-        typename Arg4    , typename Arg5    , typename Arg6    ,
-        typename PreArg1    , typename PreArg2    , typename PreArg3    ,
-        typename PreArg4    , typename PreArg5>
+bool SelfDeleting,
+     typename R,
+     typename Class,
+     typename MethodClass
+     , typename Arg1    , typename Arg2    , typename Arg3    ,
+     typename Arg4    , typename Arg5    , typename Arg6    ,
+     typename PreArg1    , typename PreArg2    , typename PreArg3    ,
+     typename PreArg4    , typename PreArg5>
 class MethodClosure_Arg1_Bind5 : public Closure<R (Arg6)> {
     typedef R (MethodClass::*MethodType)(Arg1, Arg2, Arg3, Arg4, Arg5, Arg6);
 public:
     MethodClosure_Arg1_Bind5(Class *object, MethodType method , PreArg1 pa1,
-        PreArg2 pa2, PreArg3 pa3, PreArg4 pa4, PreArg5 pa5):
+                             PreArg2 pa2, PreArg3 pa3, PreArg4 pa4, PreArg5 pa5):
         m_object(object), m_method(method) , m_pa1(pa1), m_pa2(pa2),
-            m_pa3(pa3), m_pa4(pa4), m_pa5(pa5) {}
+        m_pa3(pa3), m_pa4(pa4), m_pa5(pa5) {}
     virtual R Run(Arg6 arg6) {
         ConditionalAutoDeleter<SelfDeleting,
-            MethodClosure_Arg1_Bind5> self_deleter(this);
+                               MethodClosure_Arg1_Bind5> self_deleter(this);
         return (m_object->*m_method)(m_pa1, m_pa2, m_pa3, m_pa4, m_pa5 ,arg6);
     }
-    virtual bool IsSelfDelete() const { return SelfDeleting; }
+    virtual bool IsSelfDelete() const {
+        return SelfDeleting;
+    }
 private:
     Class* m_object;
     MethodType m_method;
-        PreArg1 m_pa1;
-        PreArg2 m_pa2;
-        PreArg3 m_pa3;
-        PreArg4 m_pa4;
-        PreArg5 m_pa5;
-    };
+    PreArg1 m_pa1;
+    PreArg2 m_pa2;
+    PreArg3 m_pa3;
+    PreArg4 m_pa4;
+    PreArg5 m_pa5;
+};
 
 template <typename R, typename Class, typename MethodClass ,typename Arg1,
-    typename Arg2,typename Arg3,typename Arg4,typename Arg5,typename Arg6 ,
-    typename PreArg1, typename PreArg2, typename PreArg3, typename PreArg4,
-    typename PreArg5>
+         typename Arg2,typename Arg3,typename Arg4,typename Arg5,typename Arg6 ,
+         typename PreArg1, typename PreArg2, typename PreArg3, typename PreArg4,
+         typename PreArg5>
 Closure<R (Arg6)>* NewClosure(
     Class *object,
     R (MethodClass::*method)(Arg1, Arg2, Arg3, Arg4, Arg5, Arg6)
     , PreArg1 pa1, PreArg2 pa2, PreArg3 pa3, PreArg4 pa4, PreArg5 pa5) {
     return new MethodClosure_Arg1_Bind5<true, R, Class, MethodClass ,Arg1,Arg2,
-        Arg3,Arg4,Arg5,Arg6 , PreArg1, PreArg2, PreArg3, PreArg4, PreArg5>(
-        object, method, pa1, pa2, pa3, pa4, pa5);
+           Arg3,Arg4,Arg5,Arg6 , PreArg1, PreArg2, PreArg3, PreArg4, PreArg5>(
+               object, method, pa1, pa2, pa3, pa4, pa5);
 }
 
 template <typename R, typename Class, typename MethodClass ,typename Arg1,
-    typename Arg2,typename Arg3,typename Arg4,typename Arg5,typename Arg6 ,
-    typename PreArg1, typename PreArg2, typename PreArg3, typename PreArg4,
-    typename PreArg5>
+         typename Arg2,typename Arg3,typename Arg4,typename Arg5,typename Arg6 ,
+         typename PreArg1, typename PreArg2, typename PreArg3, typename PreArg4,
+         typename PreArg5>
 Closure<R (Arg6)>* NewPermanentClosure(
     Class *object,
     R (MethodClass::*method)(Arg1, Arg2, Arg3, Arg4, Arg5, Arg6)
     , PreArg1 pa1, PreArg2 pa2, PreArg3 pa3, PreArg4 pa4, PreArg5 pa5) {
     return new MethodClosure_Arg1_Bind5<false, R, Class, MethodClass ,Arg1,
-        Arg2,Arg3,Arg4,Arg5,Arg6 , PreArg1, PreArg2, PreArg3, PreArg4,
-        PreArg5>(
-        object, method, pa1, pa2, pa3, pa4, pa5);
+           Arg2,Arg3,Arg4,Arg5,Arg6 , PreArg1, PreArg2, PreArg3, PreArg4,
+           PreArg5>(
+               object, method, pa1, pa2, pa3, pa4, pa5);
 }
 
 ////////////////////////////////////////////////////
@@ -1647,123 +1690,127 @@ Closure<R (Arg6)>* NewPermanentClosure(
 ////////////////////////////////////////////////////
 
 template <
-    bool SelfDeleting,
-    typename R
-    , typename Arg1    , typename Arg2    , typename Arg3    ,
-        typename Arg4    , typename Arg5    , typename Arg6    ,
-        typename PreArg1    , typename PreArg2    , typename PreArg3    ,
-        typename PreArg4    , typename PreArg5>
+bool SelfDeleting,
+     typename R
+     , typename Arg1    , typename Arg2    , typename Arg3    ,
+     typename Arg4    , typename Arg5    , typename Arg6    ,
+     typename PreArg1    , typename PreArg2    , typename PreArg3    ,
+     typename PreArg4    , typename PreArg5>
 class FunctionClosure_Arg1_Bind5 : public Closure<R (Arg6)> {
     typedef R (*FunctionType)(Arg1, Arg2, Arg3, Arg4, Arg5, Arg6);
 public:
     FunctionClosure_Arg1_Bind5(FunctionType function , PreArg1 pa1,
-        PreArg2 pa2, PreArg3 pa3, PreArg4 pa4, PreArg5 pa5):
+                               PreArg2 pa2, PreArg3 pa3, PreArg4 pa4, PreArg5 pa5):
         m_function(function) , m_pa1(pa1), m_pa2(pa2), m_pa3(pa3), m_pa4(pa4),
-            m_pa5(pa5) {}
+        m_pa5(pa5) {}
     virtual R Run(Arg6 arg6) {
         ConditionalAutoDeleter<SelfDeleting,
-            FunctionClosure_Arg1_Bind5> self_deleter(this);
+                               FunctionClosure_Arg1_Bind5> self_deleter(this);
         return m_function(m_pa1, m_pa2, m_pa3, m_pa4, m_pa5 ,arg6);
     }
-    virtual bool IsSelfDelete() const { return SelfDeleting; }
+    virtual bool IsSelfDelete() const {
+        return SelfDeleting;
+    }
 private:
     FunctionType m_function;
-        PreArg1 m_pa1;
-        PreArg2 m_pa2;
-        PreArg3 m_pa3;
-        PreArg4 m_pa4;
-        PreArg5 m_pa5;
-    };
+    PreArg1 m_pa1;
+    PreArg2 m_pa2;
+    PreArg3 m_pa3;
+    PreArg4 m_pa4;
+    PreArg5 m_pa5;
+};
 
 template <typename R , typename Arg1, typename Arg2, typename Arg3,
-    typename Arg4, typename Arg5, typename Arg6 , typename PreArg1,
-    typename PreArg2, typename PreArg3, typename PreArg4, typename PreArg5>
+         typename Arg4, typename Arg5, typename Arg6 , typename PreArg1,
+         typename PreArg2, typename PreArg3, typename PreArg4, typename PreArg5>
 Closure<R (Arg6)>* NewClosure(R (*function)(Arg1, Arg2, Arg3, Arg4, Arg5, Arg6)
-                                          , PreArg1 pa1, PreArg2 pa2,
-                                              PreArg3 pa3, PreArg4 pa4,
-                                              PreArg5 pa5) {
+                              , PreArg1 pa1, PreArg2 pa2,
+                              PreArg3 pa3, PreArg4 pa4,
+                              PreArg5 pa5) {
     return new FunctionClosure_Arg1_Bind5<true, R , Arg1, Arg2, Arg3, Arg4,
-        Arg5, Arg6 , PreArg1, PreArg2, PreArg3, PreArg4, PreArg5>(function ,
-        pa1, pa2, pa3, pa4, pa5);
+           Arg5, Arg6 , PreArg1, PreArg2, PreArg3, PreArg4, PreArg5>(function ,
+                   pa1, pa2, pa3, pa4, pa5);
 }
 
 template <typename R , typename Arg1, typename Arg2, typename Arg3,
-    typename Arg4, typename Arg5, typename Arg6 , typename PreArg1,
-    typename PreArg2, typename PreArg3, typename PreArg4, typename PreArg5>
+         typename Arg4, typename Arg5, typename Arg6 , typename PreArg1,
+         typename PreArg2, typename PreArg3, typename PreArg4, typename PreArg5>
 Closure<R (Arg6)>* NewPermanentClosure(R (*function)(Arg1, Arg2, Arg3, Arg4,
-    Arg5, Arg6)
-                                          , PreArg1 pa1, PreArg2 pa2,
-                                              PreArg3 pa3, PreArg4 pa4,
-                                              PreArg5 pa5) {
+                                       Arg5, Arg6)
+                                       , PreArg1 pa1, PreArg2 pa2,
+                                       PreArg3 pa3, PreArg4 pa4,
+                                       PreArg5 pa5) {
     return new FunctionClosure_Arg1_Bind5<false, R , Arg1, Arg2, Arg3, Arg4,
-        Arg5, Arg6 , PreArg1, PreArg2, PreArg3, PreArg4, PreArg5>(function ,
-        pa1, pa2, pa3, pa4, pa5);
+           Arg5, Arg6 , PreArg1, PreArg2, PreArg3, PreArg4, PreArg5>(function ,
+                   pa1, pa2, pa3, pa4, pa5);
 }
 
 template <
-    bool SelfDeleting,
-    typename R,
-    typename Class,
-    typename MethodClass
-    , typename Arg1    , typename Arg2    , typename Arg3    ,
-        typename Arg4    , typename Arg5    , typename Arg6    ,
-        typename Arg7    , typename PreArg1    , typename PreArg2    ,
-        typename PreArg3    , typename PreArg4    , typename PreArg5    ,
-        typename PreArg6>
+bool SelfDeleting,
+     typename R,
+     typename Class,
+     typename MethodClass
+     , typename Arg1    , typename Arg2    , typename Arg3    ,
+     typename Arg4    , typename Arg5    , typename Arg6    ,
+     typename Arg7    , typename PreArg1    , typename PreArg2    ,
+     typename PreArg3    , typename PreArg4    , typename PreArg5    ,
+     typename PreArg6>
 class MethodClosure_Arg1_Bind6 : public Closure<R (Arg7)> {
     typedef R (MethodClass::*MethodType)(Arg1, Arg2, Arg3, Arg4, Arg5, Arg6,
-        Arg7);
+                                         Arg7);
 public:
     MethodClosure_Arg1_Bind6(Class *object, MethodType method , PreArg1 pa1,
-        PreArg2 pa2, PreArg3 pa3, PreArg4 pa4, PreArg5 pa5, PreArg6 pa6):
+                             PreArg2 pa2, PreArg3 pa3, PreArg4 pa4, PreArg5 pa5, PreArg6 pa6):
         m_object(object), m_method(method) , m_pa1(pa1), m_pa2(pa2),
-            m_pa3(pa3), m_pa4(pa4), m_pa5(pa5), m_pa6(pa6) {}
+        m_pa3(pa3), m_pa4(pa4), m_pa5(pa5), m_pa6(pa6) {}
     virtual R Run(Arg7 arg7) {
         ConditionalAutoDeleter<SelfDeleting,
-            MethodClosure_Arg1_Bind6> self_deleter(this);
+                               MethodClosure_Arg1_Bind6> self_deleter(this);
         return (m_object->*m_method)(m_pa1, m_pa2, m_pa3, m_pa4, m_pa5, m_pa6 ,
-            arg7);
+                                     arg7);
     }
-    virtual bool IsSelfDelete() const { return SelfDeleting; }
+    virtual bool IsSelfDelete() const {
+        return SelfDeleting;
+    }
 private:
     Class* m_object;
     MethodType m_method;
-        PreArg1 m_pa1;
-        PreArg2 m_pa2;
-        PreArg3 m_pa3;
-        PreArg4 m_pa4;
-        PreArg5 m_pa5;
-        PreArg6 m_pa6;
-    };
+    PreArg1 m_pa1;
+    PreArg2 m_pa2;
+    PreArg3 m_pa3;
+    PreArg4 m_pa4;
+    PreArg5 m_pa5;
+    PreArg6 m_pa6;
+};
 
 template <typename R, typename Class, typename MethodClass ,typename Arg1,
-    typename Arg2,typename Arg3,typename Arg4,typename Arg5,typename Arg6,
-    typename Arg7 , typename PreArg1, typename PreArg2, typename PreArg3,
-    typename PreArg4, typename PreArg5, typename PreArg6>
+         typename Arg2,typename Arg3,typename Arg4,typename Arg5,typename Arg6,
+         typename Arg7 , typename PreArg1, typename PreArg2, typename PreArg3,
+         typename PreArg4, typename PreArg5, typename PreArg6>
 Closure<R (Arg7)>* NewClosure(
     Class *object,
     R (MethodClass::*method)(Arg1, Arg2, Arg3, Arg4, Arg5, Arg6, Arg7)
     , PreArg1 pa1, PreArg2 pa2, PreArg3 pa3, PreArg4 pa4, PreArg5 pa5,
-        PreArg6 pa6) {
+    PreArg6 pa6) {
     return new MethodClosure_Arg1_Bind6<true, R, Class, MethodClass ,Arg1,Arg2,
-        Arg3,Arg4,Arg5,Arg6,Arg7 , PreArg1, PreArg2, PreArg3, PreArg4, PreArg5,
-        PreArg6>(
-        object, method, pa1, pa2, pa3, pa4, pa5, pa6);
+           Arg3,Arg4,Arg5,Arg6,Arg7 , PreArg1, PreArg2, PreArg3, PreArg4, PreArg5,
+           PreArg6>(
+               object, method, pa1, pa2, pa3, pa4, pa5, pa6);
 }
 
 template <typename R, typename Class, typename MethodClass ,typename Arg1,
-    typename Arg2,typename Arg3,typename Arg4,typename Arg5,typename Arg6,
-    typename Arg7 , typename PreArg1, typename PreArg2, typename PreArg3,
-    typename PreArg4, typename PreArg5, typename PreArg6>
+         typename Arg2,typename Arg3,typename Arg4,typename Arg5,typename Arg6,
+         typename Arg7 , typename PreArg1, typename PreArg2, typename PreArg3,
+         typename PreArg4, typename PreArg5, typename PreArg6>
 Closure<R (Arg7)>* NewPermanentClosure(
     Class *object,
     R (MethodClass::*method)(Arg1, Arg2, Arg3, Arg4, Arg5, Arg6, Arg7)
     , PreArg1 pa1, PreArg2 pa2, PreArg3 pa3, PreArg4 pa4, PreArg5 pa5,
-        PreArg6 pa6) {
+    PreArg6 pa6) {
     return new MethodClosure_Arg1_Bind6<false, R, Class, MethodClass ,Arg1,
-        Arg2,Arg3,Arg4,Arg5,Arg6,Arg7 , PreArg1, PreArg2, PreArg3, PreArg4,
-        PreArg5, PreArg6>(
-        object, method, pa1, pa2, pa3, pa4, pa5, pa6);
+           Arg2,Arg3,Arg4,Arg5,Arg6,Arg7 , PreArg1, PreArg2, PreArg3, PreArg4,
+           PreArg5, PreArg6>(
+               object, method, pa1, pa2, pa3, pa4, pa5, pa6);
 }
 
 ////////////////////////////////////////////////////
@@ -1771,132 +1818,136 @@ Closure<R (Arg7)>* NewPermanentClosure(
 ////////////////////////////////////////////////////
 
 template <
-    bool SelfDeleting,
-    typename R
-    , typename Arg1    , typename Arg2    , typename Arg3    ,
-        typename Arg4    , typename Arg5    , typename Arg6    ,
-        typename Arg7    , typename PreArg1    , typename PreArg2    ,
-        typename PreArg3    , typename PreArg4    , typename PreArg5    ,
-        typename PreArg6>
+bool SelfDeleting,
+     typename R
+     , typename Arg1    , typename Arg2    , typename Arg3    ,
+     typename Arg4    , typename Arg5    , typename Arg6    ,
+     typename Arg7    , typename PreArg1    , typename PreArg2    ,
+     typename PreArg3    , typename PreArg4    , typename PreArg5    ,
+     typename PreArg6>
 class FunctionClosure_Arg1_Bind6 : public Closure<R (Arg7)> {
     typedef R (*FunctionType)(Arg1, Arg2, Arg3, Arg4, Arg5, Arg6, Arg7);
 public:
     FunctionClosure_Arg1_Bind6(FunctionType function , PreArg1 pa1,
-        PreArg2 pa2, PreArg3 pa3, PreArg4 pa4, PreArg5 pa5, PreArg6 pa6):
+                               PreArg2 pa2, PreArg3 pa3, PreArg4 pa4, PreArg5 pa5, PreArg6 pa6):
         m_function(function) , m_pa1(pa1), m_pa2(pa2), m_pa3(pa3), m_pa4(pa4),
-            m_pa5(pa5), m_pa6(pa6) {}
+        m_pa5(pa5), m_pa6(pa6) {}
     virtual R Run(Arg7 arg7) {
         ConditionalAutoDeleter<SelfDeleting,
-            FunctionClosure_Arg1_Bind6> self_deleter(this);
+                               FunctionClosure_Arg1_Bind6> self_deleter(this);
         return m_function(m_pa1, m_pa2, m_pa3, m_pa4, m_pa5, m_pa6 ,arg7);
     }
-    virtual bool IsSelfDelete() const { return SelfDeleting; }
+    virtual bool IsSelfDelete() const {
+        return SelfDeleting;
+    }
 private:
     FunctionType m_function;
-        PreArg1 m_pa1;
-        PreArg2 m_pa2;
-        PreArg3 m_pa3;
-        PreArg4 m_pa4;
-        PreArg5 m_pa5;
-        PreArg6 m_pa6;
-    };
+    PreArg1 m_pa1;
+    PreArg2 m_pa2;
+    PreArg3 m_pa3;
+    PreArg4 m_pa4;
+    PreArg5 m_pa5;
+    PreArg6 m_pa6;
+};
 
 template <typename R , typename Arg1, typename Arg2, typename Arg3,
-    typename Arg4, typename Arg5, typename Arg6, typename Arg7 ,
-    typename PreArg1, typename PreArg2, typename PreArg3, typename PreArg4,
-    typename PreArg5, typename PreArg6>
+         typename Arg4, typename Arg5, typename Arg6, typename Arg7 ,
+         typename PreArg1, typename PreArg2, typename PreArg3, typename PreArg4,
+         typename PreArg5, typename PreArg6>
 Closure<R (Arg7)>* NewClosure(R (*function)(Arg1, Arg2, Arg3, Arg4, Arg5, Arg6,
-    Arg7)
-                                          , PreArg1 pa1, PreArg2 pa2,
-                                              PreArg3 pa3, PreArg4 pa4,
-                                              PreArg5 pa5, PreArg6 pa6) {
+                              Arg7)
+                              , PreArg1 pa1, PreArg2 pa2,
+                              PreArg3 pa3, PreArg4 pa4,
+                              PreArg5 pa5, PreArg6 pa6) {
     return new FunctionClosure_Arg1_Bind6<true, R , Arg1, Arg2, Arg3, Arg4,
-        Arg5, Arg6, Arg7 , PreArg1, PreArg2, PreArg3, PreArg4, PreArg5,
-        PreArg6>(function , pa1, pa2, pa3, pa4, pa5, pa6);
+           Arg5, Arg6, Arg7 , PreArg1, PreArg2, PreArg3, PreArg4, PreArg5,
+           PreArg6>(function , pa1, pa2, pa3, pa4, pa5, pa6);
 }
 
 template <typename R , typename Arg1, typename Arg2, typename Arg3,
-    typename Arg4, typename Arg5, typename Arg6, typename Arg7 ,
-    typename PreArg1, typename PreArg2, typename PreArg3, typename PreArg4,
-    typename PreArg5, typename PreArg6>
+         typename Arg4, typename Arg5, typename Arg6, typename Arg7 ,
+         typename PreArg1, typename PreArg2, typename PreArg3, typename PreArg4,
+         typename PreArg5, typename PreArg6>
 Closure<R (Arg7)>* NewPermanentClosure(R (*function)(Arg1, Arg2, Arg3, Arg4,
-    Arg5, Arg6, Arg7)
-                                          , PreArg1 pa1, PreArg2 pa2,
-                                              PreArg3 pa3, PreArg4 pa4,
-                                              PreArg5 pa5, PreArg6 pa6) {
+                                       Arg5, Arg6, Arg7)
+                                       , PreArg1 pa1, PreArg2 pa2,
+                                       PreArg3 pa3, PreArg4 pa4,
+                                       PreArg5 pa5, PreArg6 pa6) {
     return new FunctionClosure_Arg1_Bind6<false, R , Arg1, Arg2, Arg3, Arg4,
-        Arg5, Arg6, Arg7 , PreArg1, PreArg2, PreArg3, PreArg4, PreArg5,
-        PreArg6>(function , pa1, pa2, pa3, pa4, pa5, pa6);
+           Arg5, Arg6, Arg7 , PreArg1, PreArg2, PreArg3, PreArg4, PreArg5,
+           PreArg6>(function , pa1, pa2, pa3, pa4, pa5, pa6);
 }
 
 template <
-    bool SelfDeleting,
-    typename R,
-    typename Class,
-    typename MethodClass
-    , typename Arg1    , typename Arg2    , typename Arg3    ,
-        typename Arg4    , typename Arg5    , typename Arg6    ,
-        typename Arg7    , typename Arg8    , typename PreArg1    ,
-        typename PreArg2    , typename PreArg3    , typename PreArg4    ,
-        typename PreArg5    , typename PreArg6    , typename PreArg7>
+bool SelfDeleting,
+     typename R,
+     typename Class,
+     typename MethodClass
+     , typename Arg1    , typename Arg2    , typename Arg3    ,
+     typename Arg4    , typename Arg5    , typename Arg6    ,
+     typename Arg7    , typename Arg8    , typename PreArg1    ,
+     typename PreArg2    , typename PreArg3    , typename PreArg4    ,
+     typename PreArg5    , typename PreArg6    , typename PreArg7>
 class MethodClosure_Arg1_Bind7 : public Closure<R (Arg8)> {
     typedef R (MethodClass::*MethodType)(Arg1, Arg2, Arg3, Arg4, Arg5, Arg6,
-        Arg7, Arg8);
+                                         Arg7, Arg8);
 public:
     MethodClosure_Arg1_Bind7(Class *object, MethodType method , PreArg1 pa1,
-        PreArg2 pa2, PreArg3 pa3, PreArg4 pa4, PreArg5 pa5, PreArg6 pa6,
-        PreArg7 pa7):
+                             PreArg2 pa2, PreArg3 pa3, PreArg4 pa4, PreArg5 pa5, PreArg6 pa6,
+                             PreArg7 pa7):
         m_object(object), m_method(method) , m_pa1(pa1), m_pa2(pa2),
-            m_pa3(pa3), m_pa4(pa4), m_pa5(pa5), m_pa6(pa6), m_pa7(pa7) {}
+        m_pa3(pa3), m_pa4(pa4), m_pa5(pa5), m_pa6(pa6), m_pa7(pa7) {}
     virtual R Run(Arg8 arg8) {
         ConditionalAutoDeleter<SelfDeleting,
-            MethodClosure_Arg1_Bind7> self_deleter(this);
+                               MethodClosure_Arg1_Bind7> self_deleter(this);
         return (m_object->*m_method)(m_pa1, m_pa2, m_pa3, m_pa4, m_pa5, m_pa6,
-            m_pa7 ,arg8);
+                                     m_pa7 ,arg8);
     }
-    virtual bool IsSelfDelete() const { return SelfDeleting; }
+    virtual bool IsSelfDelete() const {
+        return SelfDeleting;
+    }
 private:
     Class* m_object;
     MethodType m_method;
-        PreArg1 m_pa1;
-        PreArg2 m_pa2;
-        PreArg3 m_pa3;
-        PreArg4 m_pa4;
-        PreArg5 m_pa5;
-        PreArg6 m_pa6;
-        PreArg7 m_pa7;
-    };
+    PreArg1 m_pa1;
+    PreArg2 m_pa2;
+    PreArg3 m_pa3;
+    PreArg4 m_pa4;
+    PreArg5 m_pa5;
+    PreArg6 m_pa6;
+    PreArg7 m_pa7;
+};
 
 template <typename R, typename Class, typename MethodClass ,typename Arg1,
-    typename Arg2,typename Arg3,typename Arg4,typename Arg5,typename Arg6,
-    typename Arg7,typename Arg8 , typename PreArg1, typename PreArg2,
-    typename PreArg3, typename PreArg4, typename PreArg5, typename PreArg6,
-    typename PreArg7>
+         typename Arg2,typename Arg3,typename Arg4,typename Arg5,typename Arg6,
+         typename Arg7,typename Arg8 , typename PreArg1, typename PreArg2,
+         typename PreArg3, typename PreArg4, typename PreArg5, typename PreArg6,
+         typename PreArg7>
 Closure<R (Arg8)>* NewClosure(
     Class *object,
     R (MethodClass::*method)(Arg1, Arg2, Arg3, Arg4, Arg5, Arg6, Arg7, Arg8)
     , PreArg1 pa1, PreArg2 pa2, PreArg3 pa3, PreArg4 pa4, PreArg5 pa5,
-        PreArg6 pa6, PreArg7 pa7) {
+    PreArg6 pa6, PreArg7 pa7) {
     return new MethodClosure_Arg1_Bind7<true, R, Class, MethodClass ,Arg1,Arg2,
-        Arg3,Arg4,Arg5,Arg6,Arg7,Arg8 , PreArg1, PreArg2, PreArg3, PreArg4,
-        PreArg5, PreArg6, PreArg7>(
-        object, method, pa1, pa2, pa3, pa4, pa5, pa6, pa7);
+           Arg3,Arg4,Arg5,Arg6,Arg7,Arg8 , PreArg1, PreArg2, PreArg3, PreArg4,
+           PreArg5, PreArg6, PreArg7>(
+               object, method, pa1, pa2, pa3, pa4, pa5, pa6, pa7);
 }
 
 template <typename R, typename Class, typename MethodClass ,typename Arg1,
-    typename Arg2,typename Arg3,typename Arg4,typename Arg5,typename Arg6,
-    typename Arg7,typename Arg8 , typename PreArg1, typename PreArg2,
-    typename PreArg3, typename PreArg4, typename PreArg5, typename PreArg6,
-    typename PreArg7>
+         typename Arg2,typename Arg3,typename Arg4,typename Arg5,typename Arg6,
+         typename Arg7,typename Arg8 , typename PreArg1, typename PreArg2,
+         typename PreArg3, typename PreArg4, typename PreArg5, typename PreArg6,
+         typename PreArg7>
 Closure<R (Arg8)>* NewPermanentClosure(
     Class *object,
     R (MethodClass::*method)(Arg1, Arg2, Arg3, Arg4, Arg5, Arg6, Arg7, Arg8)
     , PreArg1 pa1, PreArg2 pa2, PreArg3 pa3, PreArg4 pa4, PreArg5 pa5,
-        PreArg6 pa6, PreArg7 pa7) {
+    PreArg6 pa6, PreArg7 pa7) {
     return new MethodClosure_Arg1_Bind7<false, R, Class, MethodClass ,Arg1,
-        Arg2,Arg3,Arg4,Arg5,Arg6,Arg7,Arg8 , PreArg1, PreArg2, PreArg3,
-        PreArg4, PreArg5, PreArg6, PreArg7>(
-        object, method, pa1, pa2, pa3, pa4, pa5, pa6, pa7);
+           Arg2,Arg3,Arg4,Arg5,Arg6,Arg7,Arg8 , PreArg1, PreArg2, PreArg3,
+           PreArg4, PreArg5, PreArg6, PreArg7>(
+               object, method, pa1, pa2, pa3, pa4, pa5, pa6, pa7);
 }
 
 ////////////////////////////////////////////////////
@@ -1904,142 +1955,145 @@ Closure<R (Arg8)>* NewPermanentClosure(
 ////////////////////////////////////////////////////
 
 template <
-    bool SelfDeleting,
-    typename R
-    , typename Arg1    , typename Arg2    , typename Arg3    ,
-        typename Arg4    , typename Arg5    , typename Arg6    ,
-        typename Arg7    , typename Arg8    , typename PreArg1    ,
-        typename PreArg2    , typename PreArg3    , typename PreArg4    ,
-        typename PreArg5    , typename PreArg6    , typename PreArg7>
+bool SelfDeleting,
+     typename R , typename Arg1    , typename Arg2    , typename Arg3    ,
+     typename Arg4    , typename Arg5    , typename Arg6    ,
+     typename Arg7    , typename Arg8    , typename PreArg1    ,
+     typename PreArg2    , typename PreArg3    , typename PreArg4    ,
+     typename PreArg5    , typename PreArg6    , typename PreArg7>
 class FunctionClosure_Arg1_Bind7 : public Closure<R (Arg8)> {
     typedef R (*FunctionType)(Arg1, Arg2, Arg3, Arg4, Arg5, Arg6, Arg7, Arg8);
 public:
     FunctionClosure_Arg1_Bind7(FunctionType function , PreArg1 pa1,
-        PreArg2 pa2, PreArg3 pa3, PreArg4 pa4, PreArg5 pa5, PreArg6 pa6,
-        PreArg7 pa7):
+                               PreArg2 pa2, PreArg3 pa3, PreArg4 pa4, PreArg5 pa5, PreArg6 pa6,
+                               PreArg7 pa7):
         m_function(function) , m_pa1(pa1), m_pa2(pa2), m_pa3(pa3), m_pa4(pa4),
-            m_pa5(pa5), m_pa6(pa6), m_pa7(pa7) {}
+        m_pa5(pa5), m_pa6(pa6), m_pa7(pa7) {}
     virtual R Run(Arg8 arg8) {
         ConditionalAutoDeleter<SelfDeleting,
-            FunctionClosure_Arg1_Bind7> self_deleter(this);
+                               FunctionClosure_Arg1_Bind7> self_deleter(this);
         return m_function(m_pa1, m_pa2, m_pa3, m_pa4, m_pa5, m_pa6, m_pa7 ,
-            arg8);
+                          arg8);
     }
-    virtual bool IsSelfDelete() const { return SelfDeleting; }
+    virtual bool IsSelfDelete() const {
+        return SelfDeleting;
+    }
 private:
     FunctionType m_function;
-        PreArg1 m_pa1;
-        PreArg2 m_pa2;
-        PreArg3 m_pa3;
-        PreArg4 m_pa4;
-        PreArg5 m_pa5;
-        PreArg6 m_pa6;
-        PreArg7 m_pa7;
-    };
+    PreArg1 m_pa1;
+    PreArg2 m_pa2;
+    PreArg3 m_pa3;
+    PreArg4 m_pa4;
+    PreArg5 m_pa5;
+    PreArg6 m_pa6;
+    PreArg7 m_pa7;
+};
 
 template <typename R , typename Arg1, typename Arg2, typename Arg3,
-    typename Arg4, typename Arg5, typename Arg6, typename Arg7, typename Arg8 ,
-    typename PreArg1, typename PreArg2, typename PreArg3, typename PreArg4,
-    typename PreArg5, typename PreArg6, typename PreArg7>
+         typename Arg4, typename Arg5, typename Arg6, typename Arg7, typename Arg8 ,
+         typename PreArg1, typename PreArg2, typename PreArg3, typename PreArg4,
+         typename PreArg5, typename PreArg6, typename PreArg7>
 Closure<R (Arg8)>* NewClosure(R (*function)(Arg1, Arg2, Arg3, Arg4, Arg5, Arg6,
-    Arg7, Arg8)
-                                          , PreArg1 pa1, PreArg2 pa2,
-                                              PreArg3 pa3, PreArg4 pa4,
-                                              PreArg5 pa5, PreArg6 pa6,
-                                              PreArg7 pa7) {
+                              Arg7, Arg8)
+                              , PreArg1 pa1, PreArg2 pa2,
+                              PreArg3 pa3, PreArg4 pa4,
+                              PreArg5 pa5, PreArg6 pa6,
+                              PreArg7 pa7) {
     return new FunctionClosure_Arg1_Bind7<true, R , Arg1, Arg2, Arg3, Arg4,
-        Arg5, Arg6, Arg7, Arg8 , PreArg1, PreArg2, PreArg3, PreArg4, PreArg5,
-        PreArg6, PreArg7>(function , pa1, pa2, pa3, pa4, pa5, pa6, pa7);
+           Arg5, Arg6, Arg7, Arg8 , PreArg1, PreArg2, PreArg3, PreArg4, PreArg5,
+           PreArg6, PreArg7>(function , pa1, pa2, pa3, pa4, pa5, pa6, pa7);
 }
 
 template <typename R , typename Arg1, typename Arg2, typename Arg3,
-    typename Arg4, typename Arg5, typename Arg6, typename Arg7, typename Arg8 ,
-    typename PreArg1, typename PreArg2, typename PreArg3, typename PreArg4,
-    typename PreArg5, typename PreArg6, typename PreArg7>
+         typename Arg4, typename Arg5, typename Arg6, typename Arg7, typename Arg8 ,
+         typename PreArg1, typename PreArg2, typename PreArg3, typename PreArg4,
+         typename PreArg5, typename PreArg6, typename PreArg7>
 Closure<R (Arg8)>* NewPermanentClosure(R (*function)(Arg1, Arg2, Arg3, Arg4,
-    Arg5, Arg6, Arg7, Arg8)
-                                          , PreArg1 pa1, PreArg2 pa2,
-                                              PreArg3 pa3, PreArg4 pa4,
-                                              PreArg5 pa5, PreArg6 pa6,
-                                              PreArg7 pa7) {
+                                       Arg5, Arg6, Arg7, Arg8)
+                                       , PreArg1 pa1, PreArg2 pa2,
+                                       PreArg3 pa3, PreArg4 pa4,
+                                       PreArg5 pa5, PreArg6 pa6,
+                                       PreArg7 pa7) {
     return new FunctionClosure_Arg1_Bind7<false, R , Arg1, Arg2, Arg3, Arg4,
-        Arg5, Arg6, Arg7, Arg8 , PreArg1, PreArg2, PreArg3, PreArg4, PreArg5,
-        PreArg6, PreArg7>(function , pa1, pa2, pa3, pa4, pa5, pa6, pa7);
+           Arg5, Arg6, Arg7, Arg8 , PreArg1, PreArg2, PreArg3, PreArg4, PreArg5,
+           PreArg6, PreArg7>(function , pa1, pa2, pa3, pa4, pa5, pa6, pa7);
 }
 
 template <
-    bool SelfDeleting,
-    typename R,
-    typename Class,
-    typename MethodClass
-    , typename Arg1    , typename Arg2    , typename Arg3    ,
-        typename Arg4    , typename Arg5    , typename Arg6    ,
-        typename Arg7    , typename Arg8    , typename Arg9    ,
-        typename PreArg1    , typename PreArg2    , typename PreArg3    ,
-        typename PreArg4    , typename PreArg5    , typename PreArg6    ,
-        typename PreArg7    , typename PreArg8>
+bool SelfDeleting,
+     typename R,
+     typename Class,
+     typename MethodClass
+     , typename Arg1    , typename Arg2    , typename Arg3    ,
+     typename Arg4    , typename Arg5    , typename Arg6    ,
+     typename Arg7    , typename Arg8    , typename Arg9    ,
+     typename PreArg1    , typename PreArg2    , typename PreArg3    ,
+     typename PreArg4    , typename PreArg5    , typename PreArg6    ,
+     typename PreArg7    , typename PreArg8>
 class MethodClosure_Arg1_Bind8 : public Closure<R (Arg9)> {
     typedef R (MethodClass::*MethodType)(Arg1, Arg2, Arg3, Arg4, Arg5, Arg6,
-        Arg7, Arg8, Arg9);
+                                         Arg7, Arg8, Arg9);
 public:
     MethodClosure_Arg1_Bind8(Class *object, MethodType method , PreArg1 pa1,
-        PreArg2 pa2, PreArg3 pa3, PreArg4 pa4, PreArg5 pa5, PreArg6 pa6,
-        PreArg7 pa7, PreArg8 pa8):
+                             PreArg2 pa2, PreArg3 pa3, PreArg4 pa4, PreArg5 pa5, PreArg6 pa6,
+                             PreArg7 pa7, PreArg8 pa8):
         m_object(object), m_method(method) , m_pa1(pa1), m_pa2(pa2),
-            m_pa3(pa3), m_pa4(pa4), m_pa5(pa5), m_pa6(pa6), m_pa7(pa7),
-            m_pa8(pa8) {}
+        m_pa3(pa3), m_pa4(pa4), m_pa5(pa5), m_pa6(pa6), m_pa7(pa7),
+        m_pa8(pa8) {}
     virtual R Run(Arg9 arg9) {
         ConditionalAutoDeleter<SelfDeleting,
-            MethodClosure_Arg1_Bind8> self_deleter(this);
+                               MethodClosure_Arg1_Bind8> self_deleter(this);
         return (m_object->*m_method)(m_pa1, m_pa2, m_pa3, m_pa4, m_pa5, m_pa6,
-            m_pa7, m_pa8 ,arg9);
+                                     m_pa7, m_pa8 ,arg9);
     }
-    virtual bool IsSelfDelete() const { return SelfDeleting; }
+    virtual bool IsSelfDelete() const {
+        return SelfDeleting;
+    }
 private:
     Class* m_object;
     MethodType m_method;
-        PreArg1 m_pa1;
-        PreArg2 m_pa2;
-        PreArg3 m_pa3;
-        PreArg4 m_pa4;
-        PreArg5 m_pa5;
-        PreArg6 m_pa6;
-        PreArg7 m_pa7;
-        PreArg8 m_pa8;
-    };
+    PreArg1 m_pa1;
+    PreArg2 m_pa2;
+    PreArg3 m_pa3;
+    PreArg4 m_pa4;
+    PreArg5 m_pa5;
+    PreArg6 m_pa6;
+    PreArg7 m_pa7;
+    PreArg8 m_pa8;
+};
 
 template <typename R, typename Class, typename MethodClass ,typename Arg1,
-    typename Arg2,typename Arg3,typename Arg4,typename Arg5,typename Arg6,
-    typename Arg7,typename Arg8,typename Arg9 , typename PreArg1,
-    typename PreArg2, typename PreArg3, typename PreArg4, typename PreArg5,
-    typename PreArg6, typename PreArg7, typename PreArg8>
+         typename Arg2,typename Arg3,typename Arg4,typename Arg5,typename Arg6,
+         typename Arg7,typename Arg8,typename Arg9 , typename PreArg1,
+         typename PreArg2, typename PreArg3, typename PreArg4, typename PreArg5,
+         typename PreArg6, typename PreArg7, typename PreArg8>
 Closure<R (Arg9)>* NewClosure(
     Class *object,
     R (MethodClass::*method)(Arg1, Arg2, Arg3, Arg4, Arg5, Arg6, Arg7, Arg8,
-        Arg9)
+                             Arg9)
     , PreArg1 pa1, PreArg2 pa2, PreArg3 pa3, PreArg4 pa4, PreArg5 pa5,
-        PreArg6 pa6, PreArg7 pa7, PreArg8 pa8) {
+    PreArg6 pa6, PreArg7 pa7, PreArg8 pa8) {
     return new MethodClosure_Arg1_Bind8<true, R, Class, MethodClass ,Arg1,Arg2,
-        Arg3,Arg4,Arg5,Arg6,Arg7,Arg8,Arg9 , PreArg1, PreArg2, PreArg3,
-        PreArg4, PreArg5, PreArg6, PreArg7, PreArg8>(
-        object, method, pa1, pa2, pa3, pa4, pa5, pa6, pa7, pa8);
+           Arg3,Arg4,Arg5,Arg6,Arg7,Arg8,Arg9 , PreArg1, PreArg2, PreArg3,
+           PreArg4, PreArg5, PreArg6, PreArg7, PreArg8>(
+               object, method, pa1, pa2, pa3, pa4, pa5, pa6, pa7, pa8);
 }
 
 template <typename R, typename Class, typename MethodClass ,typename Arg1,
-    typename Arg2,typename Arg3,typename Arg4,typename Arg5,typename Arg6,
-    typename Arg7,typename Arg8,typename Arg9 , typename PreArg1,
-    typename PreArg2, typename PreArg3, typename PreArg4, typename PreArg5,
-    typename PreArg6, typename PreArg7, typename PreArg8>
+         typename Arg2,typename Arg3,typename Arg4,typename Arg5,typename Arg6,
+         typename Arg7,typename Arg8,typename Arg9 , typename PreArg1,
+         typename PreArg2, typename PreArg3, typename PreArg4, typename PreArg5,
+         typename PreArg6, typename PreArg7, typename PreArg8>
 Closure<R (Arg9)>* NewPermanentClosure(
     Class *object,
     R (MethodClass::*method)(Arg1, Arg2, Arg3, Arg4, Arg5, Arg6, Arg7, Arg8,
-        Arg9)
+                             Arg9)
     , PreArg1 pa1, PreArg2 pa2, PreArg3 pa3, PreArg4 pa4, PreArg5 pa5,
-        PreArg6 pa6, PreArg7 pa7, PreArg8 pa8) {
+    PreArg6 pa6, PreArg7 pa7, PreArg8 pa8) {
     return new MethodClosure_Arg1_Bind8<false, R, Class, MethodClass ,Arg1,
-        Arg2,Arg3,Arg4,Arg5,Arg6,Arg7,Arg8,Arg9 , PreArg1, PreArg2, PreArg3,
-        PreArg4, PreArg5, PreArg6, PreArg7, PreArg8>(
-        object, method, pa1, pa2, pa3, pa4, pa5, pa6, pa7, pa8);
+           Arg2,Arg3,Arg4,Arg5,Arg6,Arg7,Arg8,Arg9 , PreArg1, PreArg2, PreArg3,
+           PreArg4, PreArg5, PreArg6, PreArg7, PreArg8>(
+               object, method, pa1, pa2, pa3, pa4, pa5, pa6, pa7, pa8);
 }
 
 ////////////////////////////////////////////////////
@@ -2047,82 +2101,84 @@ Closure<R (Arg9)>* NewPermanentClosure(
 ////////////////////////////////////////////////////
 
 template <
-    bool SelfDeleting,
-    typename R
-    , typename Arg1    , typename Arg2    , typename Arg3    ,
-        typename Arg4    , typename Arg5    , typename Arg6    ,
-        typename Arg7    , typename Arg8    , typename Arg9    ,
-        typename PreArg1    , typename PreArg2    , typename PreArg3    ,
-        typename PreArg4    , typename PreArg5    , typename PreArg6    ,
-        typename PreArg7    , typename PreArg8>
+bool SelfDeleting,
+     typename R
+     , typename Arg1    , typename Arg2    , typename Arg3    ,
+     typename Arg4    , typename Arg5    , typename Arg6    ,
+     typename Arg7    , typename Arg8    , typename Arg9    ,
+     typename PreArg1    , typename PreArg2    , typename PreArg3    ,
+     typename PreArg4    , typename PreArg5    , typename PreArg6    ,
+     typename PreArg7    , typename PreArg8>
 class FunctionClosure_Arg1_Bind8 : public Closure<R (Arg9)> {
     typedef R (*FunctionType)(Arg1, Arg2, Arg3, Arg4, Arg5, Arg6, Arg7, Arg8,
-        Arg9);
+                              Arg9);
 public:
     FunctionClosure_Arg1_Bind8(FunctionType function , PreArg1 pa1,
-        PreArg2 pa2, PreArg3 pa3, PreArg4 pa4, PreArg5 pa5, PreArg6 pa6,
-        PreArg7 pa7, PreArg8 pa8):
+                               PreArg2 pa2, PreArg3 pa3, PreArg4 pa4, PreArg5 pa5, PreArg6 pa6,
+                               PreArg7 pa7, PreArg8 pa8):
         m_function(function) , m_pa1(pa1), m_pa2(pa2), m_pa3(pa3), m_pa4(pa4),
-            m_pa5(pa5), m_pa6(pa6), m_pa7(pa7), m_pa8(pa8) {}
+        m_pa5(pa5), m_pa6(pa6), m_pa7(pa7), m_pa8(pa8) {}
     virtual R Run(Arg9 arg9) {
         ConditionalAutoDeleter<SelfDeleting,
-            FunctionClosure_Arg1_Bind8> self_deleter(this);
+                               FunctionClosure_Arg1_Bind8> self_deleter(this);
         return m_function(m_pa1, m_pa2, m_pa3, m_pa4, m_pa5, m_pa6, m_pa7,
-            m_pa8 ,arg9);
+                          m_pa8 ,arg9);
     }
-    virtual bool IsSelfDelete() const { return SelfDeleting; }
+    virtual bool IsSelfDelete() const {
+        return SelfDeleting;
+    }
 private:
     FunctionType m_function;
-        PreArg1 m_pa1;
-        PreArg2 m_pa2;
-        PreArg3 m_pa3;
-        PreArg4 m_pa4;
-        PreArg5 m_pa5;
-        PreArg6 m_pa6;
-        PreArg7 m_pa7;
-        PreArg8 m_pa8;
-    };
+    PreArg1 m_pa1;
+    PreArg2 m_pa2;
+    PreArg3 m_pa3;
+    PreArg4 m_pa4;
+    PreArg5 m_pa5;
+    PreArg6 m_pa6;
+    PreArg7 m_pa7;
+    PreArg8 m_pa8;
+};
 
 template <typename R , typename Arg1, typename Arg2, typename Arg3,
-    typename Arg4, typename Arg5, typename Arg6, typename Arg7, typename Arg8,
-    typename Arg9 , typename PreArg1, typename PreArg2, typename PreArg3,
-    typename PreArg4, typename PreArg5, typename PreArg6, typename PreArg7,
-    typename PreArg8>
+         typename Arg4, typename Arg5, typename Arg6, typename Arg7, typename Arg8,
+         typename Arg9 , typename PreArg1, typename PreArg2, typename PreArg3,
+         typename PreArg4, typename PreArg5, typename PreArg6, typename PreArg7,
+         typename PreArg8>
 Closure<R (Arg9)>* NewClosure(R (*function)(Arg1, Arg2, Arg3, Arg4, Arg5, Arg6,
-    Arg7, Arg8, Arg9)
-                                          , PreArg1 pa1, PreArg2 pa2,
-                                              PreArg3 pa3, PreArg4 pa4,
-                                              PreArg5 pa5, PreArg6 pa6,
-                                              PreArg7 pa7, PreArg8 pa8) {
+                              Arg7, Arg8, Arg9)
+                              , PreArg1 pa1, PreArg2 pa2,
+                              PreArg3 pa3, PreArg4 pa4,
+                              PreArg5 pa5, PreArg6 pa6,
+                              PreArg7 pa7, PreArg8 pa8) {
     return new FunctionClosure_Arg1_Bind8<true, R , Arg1, Arg2, Arg3, Arg4,
-        Arg5, Arg6, Arg7, Arg8, Arg9 , PreArg1, PreArg2, PreArg3, PreArg4,
-        PreArg5, PreArg6, PreArg7, PreArg8>(function , pa1, pa2, pa3, pa4, pa5,
-        pa6, pa7, pa8);
+           Arg5, Arg6, Arg7, Arg8, Arg9 , PreArg1, PreArg2, PreArg3, PreArg4,
+           PreArg5, PreArg6, PreArg7, PreArg8>(function , pa1, pa2, pa3, pa4, pa5,
+                   pa6, pa7, pa8);
 }
 
 template <typename R , typename Arg1, typename Arg2, typename Arg3,
-    typename Arg4, typename Arg5, typename Arg6, typename Arg7, typename Arg8,
-    typename Arg9 , typename PreArg1, typename PreArg2, typename PreArg3,
-    typename PreArg4, typename PreArg5, typename PreArg6, typename PreArg7,
-    typename PreArg8>
+         typename Arg4, typename Arg5, typename Arg6, typename Arg7, typename Arg8,
+         typename Arg9 , typename PreArg1, typename PreArg2, typename PreArg3,
+         typename PreArg4, typename PreArg5, typename PreArg6, typename PreArg7,
+         typename PreArg8>
 Closure<R (Arg9)>* NewPermanentClosure(R (*function)(Arg1, Arg2, Arg3, Arg4,
-    Arg5, Arg6, Arg7, Arg8, Arg9)
-                                          , PreArg1 pa1, PreArg2 pa2,
-                                              PreArg3 pa3, PreArg4 pa4,
-                                              PreArg5 pa5, PreArg6 pa6,
-                                              PreArg7 pa7, PreArg8 pa8) {
+                                       Arg5, Arg6, Arg7, Arg8, Arg9)
+                                       , PreArg1 pa1, PreArg2 pa2,
+                                       PreArg3 pa3, PreArg4 pa4,
+                                       PreArg5 pa5, PreArg6 pa6,
+                                       PreArg7 pa7, PreArg8 pa8) {
     return new FunctionClosure_Arg1_Bind8<false, R , Arg1, Arg2, Arg3, Arg4,
-        Arg5, Arg6, Arg7, Arg8, Arg9 , PreArg1, PreArg2, PreArg3, PreArg4,
-        PreArg5, PreArg6, PreArg7, PreArg8>(function , pa1, pa2, pa3, pa4, pa5,
-        pa6, pa7, pa8);
+           Arg5, Arg6, Arg7, Arg8, Arg9 , PreArg1, PreArg2, PreArg3, PreArg4,
+           PreArg5, PreArg6, PreArg7, PreArg8>(function , pa1, pa2, pa3, pa4, pa5,
+                   pa6, pa7, pa8);
 }
 
 template <
-    bool SelfDeleting,
-    typename R,
-    typename Class,
-    typename MethodClass
-    , typename Arg1    , typename Arg2    >
+bool SelfDeleting,
+     typename R,
+     typename Class,
+     typename MethodClass
+     , typename Arg1    , typename Arg2    >
 class MethodClosure_Arg2_Bind0 : public Closure<R (Arg1, Arg2)> {
     typedef R (MethodClass::*MethodType)(Arg1, Arg2);
 public:
@@ -2130,35 +2186,37 @@ public:
         m_object(object), m_method(method)  {}
     virtual R Run(Arg1 arg1, Arg2 arg2) {
         ConditionalAutoDeleter<SelfDeleting,
-            MethodClosure_Arg2_Bind0> self_deleter(this);
+                               MethodClosure_Arg2_Bind0> self_deleter(this);
         return (m_object->*m_method)( arg1, arg2);
     }
-    virtual bool IsSelfDelete() const { return SelfDeleting; }
+    virtual bool IsSelfDelete() const {
+        return SelfDeleting;
+    }
 private:
     Class* m_object;
     MethodType m_method;
-    };
+};
 
 template <typename R, typename Class, typename MethodClass ,typename Arg1,
-    typename Arg2 >
+         typename Arg2 >
 Closure<R (Arg1, Arg2)>* NewClosure(
     Class *object,
     R (MethodClass::*method)(Arg1, Arg2)
-    ) {
+) {
     return new MethodClosure_Arg2_Bind0<true, R, Class, MethodClass ,Arg1,
-        Arg2 >(
-        object, method);
+           Arg2 >(
+               object, method);
 }
 
 template <typename R, typename Class, typename MethodClass ,typename Arg1,
-    typename Arg2 >
+         typename Arg2 >
 Closure<R (Arg1, Arg2)>* NewPermanentClosure(
     Class *object,
     R (MethodClass::*method)(Arg1, Arg2)
-    ) {
+) {
     return new MethodClosure_Arg2_Bind0<false, R, Class, MethodClass ,Arg1,
-        Arg2 >(
-        object, method);
+           Arg2 >(
+               object, method);
 }
 
 ////////////////////////////////////////////////////
@@ -2166,9 +2224,9 @@ Closure<R (Arg1, Arg2)>* NewPermanentClosure(
 ////////////////////////////////////////////////////
 
 template <
-    bool SelfDeleting,
-    typename R
-    , typename Arg1    , typename Arg2    >
+bool SelfDeleting,
+     typename R
+     , typename Arg1    , typename Arg2    >
 class FunctionClosure_Arg2_Bind0 : public Closure<R (Arg1, Arg2)> {
     typedef R (*FunctionType)(Arg1, Arg2);
 public:
@@ -2176,32 +2234,34 @@ public:
         m_function(function)  {}
     virtual R Run(Arg1 arg1, Arg2 arg2) {
         ConditionalAutoDeleter<SelfDeleting,
-            FunctionClosure_Arg2_Bind0> self_deleter(this);
+                               FunctionClosure_Arg2_Bind0> self_deleter(this);
         return m_function( arg1, arg2);
     }
-    virtual bool IsSelfDelete() const { return SelfDeleting; }
+    virtual bool IsSelfDelete() const {
+        return SelfDeleting;
+    }
 private:
     FunctionType m_function;
-    };
+};
 
 template <typename R , typename Arg1, typename Arg2 >
 Closure<R (Arg1, Arg2)>* NewClosure(R (*function)(Arg1, Arg2)
-                                          ) {
+                                   ) {
     return new FunctionClosure_Arg2_Bind0<true, R , Arg1, Arg2 >(function );
 }
 
 template <typename R , typename Arg1, typename Arg2 >
 Closure<R (Arg1, Arg2)>* NewPermanentClosure(R (*function)(Arg1, Arg2)
-                                          ) {
+                                            ) {
     return new FunctionClosure_Arg2_Bind0<false, R , Arg1, Arg2 >(function );
 }
 
 template <
-    bool SelfDeleting,
-    typename R,
-    typename Class,
-    typename MethodClass
-    , typename Arg1    , typename Arg2    , typename Arg3    , typename PreArg1>
+bool SelfDeleting,
+     typename R,
+     typename Class,
+     typename MethodClass
+     , typename Arg1    , typename Arg2    , typename Arg3    , typename PreArg1>
 class MethodClosure_Arg2_Bind1 : public Closure<R (Arg2, Arg3)> {
     typedef R (MethodClass::*MethodType)(Arg1, Arg2, Arg3);
 public:
@@ -2209,36 +2269,38 @@ public:
         m_object(object), m_method(method) , m_pa1(pa1) {}
     virtual R Run(Arg2 arg2, Arg3 arg3) {
         ConditionalAutoDeleter<SelfDeleting,
-            MethodClosure_Arg2_Bind1> self_deleter(this);
+                               MethodClosure_Arg2_Bind1> self_deleter(this);
         return (m_object->*m_method)(m_pa1 ,arg2, arg3);
     }
-    virtual bool IsSelfDelete() const { return SelfDeleting; }
+    virtual bool IsSelfDelete() const {
+        return SelfDeleting;
+    }
 private:
     Class* m_object;
     MethodType m_method;
-        PreArg1 m_pa1;
-    };
+    PreArg1 m_pa1;
+};
 
 template <typename R, typename Class, typename MethodClass ,typename Arg1,
-    typename Arg2,typename Arg3 , typename PreArg1>
+         typename Arg2,typename Arg3 , typename PreArg1>
 Closure<R (Arg2, Arg3)>* NewClosure(
     Class *object,
     R (MethodClass::*method)(Arg1, Arg2, Arg3)
     , PreArg1 pa1) {
     return new MethodClosure_Arg2_Bind1<true, R, Class, MethodClass ,Arg1,Arg2,
-        Arg3 , PreArg1>(
-        object, method, pa1);
+           Arg3 , PreArg1>(
+               object, method, pa1);
 }
 
 template <typename R, typename Class, typename MethodClass ,typename Arg1,
-    typename Arg2,typename Arg3 , typename PreArg1>
+         typename Arg2,typename Arg3 , typename PreArg1>
 Closure<R (Arg2, Arg3)>* NewPermanentClosure(
     Class *object,
     R (MethodClass::*method)(Arg1, Arg2, Arg3)
     , PreArg1 pa1) {
     return new MethodClosure_Arg2_Bind1<false, R, Class, MethodClass ,Arg1,
-        Arg2,Arg3 , PreArg1>(
-        object, method, pa1);
+           Arg2,Arg3 , PreArg1>(
+               object, method, pa1);
 }
 
 ////////////////////////////////////////////////////
@@ -2246,9 +2308,9 @@ Closure<R (Arg2, Arg3)>* NewPermanentClosure(
 ////////////////////////////////////////////////////
 
 template <
-    bool SelfDeleting,
-    typename R
-    , typename Arg1    , typename Arg2    , typename Arg3    , typename PreArg1>
+bool SelfDeleting,
+     typename R
+     , typename Arg1    , typename Arg2    , typename Arg3    , typename PreArg1>
 class FunctionClosure_Arg2_Bind1 : public Closure<R (Arg2, Arg3)> {
     typedef R (*FunctionType)(Arg1, Arg2, Arg3);
 public:
@@ -2256,79 +2318,83 @@ public:
         m_function(function) , m_pa1(pa1) {}
     virtual R Run(Arg2 arg2, Arg3 arg3) {
         ConditionalAutoDeleter<SelfDeleting,
-            FunctionClosure_Arg2_Bind1> self_deleter(this);
+                               FunctionClosure_Arg2_Bind1> self_deleter(this);
         return m_function(m_pa1 ,arg2, arg3);
     }
-    virtual bool IsSelfDelete() const { return SelfDeleting; }
+    virtual bool IsSelfDelete() const {
+        return SelfDeleting;
+    }
 private:
     FunctionType m_function;
-        PreArg1 m_pa1;
-    };
+    PreArg1 m_pa1;
+};
 
 template <typename R , typename Arg1, typename Arg2, typename Arg3 ,
-    typename PreArg1>
+         typename PreArg1>
 Closure<R (Arg2, Arg3)>* NewClosure(R (*function)(Arg1, Arg2, Arg3)
-                                          , PreArg1 pa1) {
+                                    , PreArg1 pa1) {
     return new FunctionClosure_Arg2_Bind1<true, R , Arg1, Arg2, Arg3 ,
-        PreArg1>(function , pa1);
+           PreArg1>(function , pa1);
 }
 
 template <typename R , typename Arg1, typename Arg2, typename Arg3 ,
-    typename PreArg1>
+         typename PreArg1>
 Closure<R (Arg2, Arg3)>* NewPermanentClosure(R (*function)(Arg1, Arg2, Arg3)
-                                          , PreArg1 pa1) {
+        , PreArg1 pa1) {
     return new FunctionClosure_Arg2_Bind1<false, R , Arg1, Arg2, Arg3 ,
-        PreArg1>(function , pa1);
+           PreArg1>(function , pa1);
 }
 
 template <
-    bool SelfDeleting,
-    typename R,
-    typename Class,
-    typename MethodClass
-    , typename Arg1    , typename Arg2    , typename Arg3    ,
-        typename Arg4    , typename PreArg1    , typename PreArg2>
+bool SelfDeleting,
+     typename R,
+     typename Class,
+     typename MethodClass
+     , typename Arg1    , typename Arg2    , typename Arg3    ,
+     typename Arg4    , typename PreArg1    , typename PreArg2>
 class MethodClosure_Arg2_Bind2 : public Closure<R (Arg3, Arg4)> {
     typedef R (MethodClass::*MethodType)(Arg1, Arg2, Arg3, Arg4);
 public:
     MethodClosure_Arg2_Bind2(Class *object, MethodType method , PreArg1 pa1,
-        PreArg2 pa2):
+                             PreArg2 pa2):
         m_object(object), m_method(method) , m_pa1(pa1), m_pa2(pa2) {}
     virtual R Run(Arg3 arg3, Arg4 arg4) {
         ConditionalAutoDeleter<SelfDeleting,
-            MethodClosure_Arg2_Bind2> self_deleter(this);
+                               MethodClosure_Arg2_Bind2> self_deleter(this);
         return (m_object->*m_method)(m_pa1, m_pa2 ,arg3, arg4);
     }
-    virtual bool IsSelfDelete() const { return SelfDeleting; }
+    virtual bool IsSelfDelete() const {
+        return SelfDeleting;
+    }
 private:
     Class* m_object;
     MethodType m_method;
-        PreArg1 m_pa1;
-        PreArg2 m_pa2;
-    };
+    PreArg1 m_pa1;
+    PreArg2 m_pa2;
+};
 
 template <typename R, typename Class, typename MethodClass ,typename Arg1,
-    typename Arg2,typename Arg3,typename Arg4 , typename PreArg1,
-    typename PreArg2>
+         typename Arg2,typename Arg3,typename Arg4 , typename PreArg1,
+         typename PreArg2>
 Closure<R (Arg3, Arg4)>* NewClosure(
     Class *object,
     R (MethodClass::*method)(Arg1, Arg2, Arg3, Arg4)
     , PreArg1 pa1, PreArg2 pa2) {
     return new MethodClosure_Arg2_Bind2<true, R, Class, MethodClass ,Arg1,Arg2,
-        Arg3,Arg4 , PreArg1, PreArg2>(
-        object, method, pa1, pa2);
+           Arg3,Arg4 , PreArg1, PreArg2>(
+               object, method, pa1, pa2);
 }
 
 template <typename R, typename Class, typename MethodClass ,typename Arg1,
-    typename Arg2,typename Arg3,typename Arg4 , typename PreArg1,
-    typename PreArg2>
+         typename Arg2,typename Arg3,typename Arg4 , typename PreArg1,
+         typename PreArg2>
 Closure<R (Arg3, Arg4)>* NewPermanentClosure(
     Class *object,
     R (MethodClass::*method)(Arg1, Arg2, Arg3, Arg4)
     , PreArg1 pa1, PreArg2 pa2) {
     return new MethodClosure_Arg2_Bind2<false, R, Class, MethodClass ,Arg1,
-        Arg2,Arg3,Arg4 , PreArg1, PreArg2>(
-        object, method, pa1, pa2);
+           Arg2,Arg3,Arg4 , PreArg1, PreArg2>(
+               object, method, pa1, pa2);
 }
 
 ////////////////////////////////////////////////////
@@ -2336,96 +2402,100 @@ Closure<R (Arg3, Arg4)>* NewPermanentClosure(
 ////////////////////////////////////////////////////
 
 template <
-    bool SelfDeleting,
-    typename R
-    , typename Arg1    , typename Arg2    , typename Arg3    ,
-        typename Arg4    , typename PreArg1    , typename PreArg2>
+bool SelfDeleting,
+     typename R
+     , typename Arg1    , typename Arg2    , typename Arg3    ,
+     typename Arg4    , typename PreArg1    , typename PreArg2>
 class FunctionClosure_Arg2_Bind2 : public Closure<R (Arg3, Arg4)> {
     typedef R (*FunctionType)(Arg1, Arg2, Arg3, Arg4);
 public:
     FunctionClosure_Arg2_Bind2(FunctionType function , PreArg1 pa1,
-        PreArg2 pa2):
+                               PreArg2 pa2):
         m_function(function) , m_pa1(pa1), m_pa2(pa2) {}
     virtual R Run(Arg3 arg3, Arg4 arg4) {
         ConditionalAutoDeleter<SelfDeleting,
-            FunctionClosure_Arg2_Bind2> self_deleter(this);
+                               FunctionClosure_Arg2_Bind2> self_deleter(this);
         return m_function(m_pa1, m_pa2 ,arg3, arg4);
     }
-    virtual bool IsSelfDelete() const { return SelfDeleting; }
+    virtual bool IsSelfDelete() const {
+        return SelfDeleting;
+    }
 private:
     FunctionType m_function;
-        PreArg1 m_pa1;
-        PreArg2 m_pa2;
-    };
+    PreArg1 m_pa1;
+    PreArg2 m_pa2;
+};
 
 template <typename R , typename Arg1, typename Arg2, typename Arg3,
-    typename Arg4 , typename PreArg1, typename PreArg2>
+         typename Arg4 , typename PreArg1, typename PreArg2>
 Closure<R (Arg3, Arg4)>* NewClosure(R (*function)(Arg1, Arg2, Arg3, Arg4)
-                                          , PreArg1 pa1, PreArg2 pa2) {
+                                    , PreArg1 pa1, PreArg2 pa2) {
     return new FunctionClosure_Arg2_Bind2<true, R , Arg1, Arg2, Arg3, Arg4 ,
-        PreArg1, PreArg2>(function , pa1, pa2);
+           PreArg1, PreArg2>(function , pa1, pa2);
 }
 
 template <typename R , typename Arg1, typename Arg2, typename Arg3,
-    typename Arg4 , typename PreArg1, typename PreArg2>
+         typename Arg4 , typename PreArg1, typename PreArg2>
 Closure<R (Arg3, Arg4)>* NewPermanentClosure(R (*function)(Arg1, Arg2, Arg3,
-    Arg4)
-                                          , PreArg1 pa1, PreArg2 pa2) {
+        Arg4)
+        , PreArg1 pa1, PreArg2 pa2) {
     return new FunctionClosure_Arg2_Bind2<false, R , Arg1, Arg2, Arg3, Arg4 ,
-        PreArg1, PreArg2>(function , pa1, pa2);
+           PreArg1, PreArg2>(function , pa1, pa2);
 }
 
 template <
-    bool SelfDeleting,
-    typename R,
-    typename Class,
-    typename MethodClass
-    , typename Arg1    , typename Arg2    , typename Arg3    ,
-        typename Arg4    , typename Arg5    , typename PreArg1    ,
-        typename PreArg2    , typename PreArg3>
+bool SelfDeleting,
+     typename R,
+     typename Class,
+     typename MethodClass
+     , typename Arg1    , typename Arg2    , typename Arg3    ,
+     typename Arg4    , typename Arg5    , typename PreArg1    ,
+     typename PreArg2    , typename PreArg3>
 class MethodClosure_Arg2_Bind3 : public Closure<R (Arg4, Arg5)> {
     typedef R (MethodClass::*MethodType)(Arg1, Arg2, Arg3, Arg4, Arg5);
 public:
     MethodClosure_Arg2_Bind3(Class *object, MethodType method , PreArg1 pa1,
-        PreArg2 pa2, PreArg3 pa3):
+                             PreArg2 pa2, PreArg3 pa3):
         m_object(object), m_method(method) , m_pa1(pa1), m_pa2(pa2),
-            m_pa3(pa3) {}
+        m_pa3(pa3) {}
     virtual R Run(Arg4 arg4, Arg5 arg5) {
         ConditionalAutoDeleter<SelfDeleting,
-            MethodClosure_Arg2_Bind3> self_deleter(this);
+                               MethodClosure_Arg2_Bind3> self_deleter(this);
         return (m_object->*m_method)(m_pa1, m_pa2, m_pa3 ,arg4, arg5);
     }
-    virtual bool IsSelfDelete() const { return SelfDeleting; }
+    virtual bool IsSelfDelete() const {
+        return SelfDeleting;
+    }
 private:
     Class* m_object;
     MethodType m_method;
-        PreArg1 m_pa1;
-        PreArg2 m_pa2;
-        PreArg3 m_pa3;
-    };
+    PreArg1 m_pa1;
+    PreArg2 m_pa2;
+    PreArg3 m_pa3;
+};
 
 template <typename R, typename Class, typename MethodClass ,typename Arg1,
-    typename Arg2,typename Arg3,typename Arg4,typename Arg5 , typename PreArg1,
-    typename PreArg2, typename PreArg3>
+         typename Arg2,typename Arg3,typename Arg4,typename Arg5 , typename PreArg1,
+         typename PreArg2, typename PreArg3>
 Closure<R (Arg4, Arg5)>* NewClosure(
     Class *object,
     R (MethodClass::*method)(Arg1, Arg2, Arg3, Arg4, Arg5)
     , PreArg1 pa1, PreArg2 pa2, PreArg3 pa3) {
     return new MethodClosure_Arg2_Bind3<true, R, Class, MethodClass ,Arg1,Arg2,
-        Arg3,Arg4,Arg5 , PreArg1, PreArg2, PreArg3>(
-        object, method, pa1, pa2, pa3);
+           Arg3,Arg4,Arg5 , PreArg1, PreArg2, PreArg3>(
+               object, method, pa1, pa2, pa3);
 }
 
 template <typename R, typename Class, typename MethodClass ,typename Arg1,
-    typename Arg2,typename Arg3,typename Arg4,typename Arg5 , typename PreArg1,
-    typename PreArg2, typename PreArg3>
+         typename Arg2,typename Arg3,typename Arg4,typename Arg5 , typename PreArg1,
+         typename PreArg2, typename PreArg3>
 Closure<R (Arg4, Arg5)>* NewPermanentClosure(
     Class *object,
     R (MethodClass::*method)(Arg1, Arg2, Arg3, Arg4, Arg5)
     , PreArg1 pa1, PreArg2 pa2, PreArg3 pa3) {
     return new MethodClosure_Arg2_Bind3<false, R, Class, MethodClass ,Arg1,
-        Arg2,Arg3,Arg4,Arg5 , PreArg1, PreArg2, PreArg3>(
-        object, method, pa1, pa2, pa3);
+           Arg2,Arg3,Arg4,Arg5 , PreArg1, PreArg2, PreArg3>(
+               object, method, pa1, pa2, pa3);
 }
 
 ////////////////////////////////////////////////////
@@ -2433,104 +2503,108 @@ Closure<R (Arg4, Arg5)>* NewPermanentClosure(
 ////////////////////////////////////////////////////
 
 template <
-    bool SelfDeleting,
-    typename R
-    , typename Arg1    , typename Arg2    , typename Arg3    ,
-        typename Arg4    , typename Arg5    , typename PreArg1    ,
-        typename PreArg2    , typename PreArg3>
+bool SelfDeleting,
+     typename R
+     , typename Arg1    , typename Arg2    , typename Arg3    ,
+     typename Arg4    , typename Arg5    , typename PreArg1    ,
+     typename PreArg2    , typename PreArg3>
 class FunctionClosure_Arg2_Bind3 : public Closure<R (Arg4, Arg5)> {
     typedef R (*FunctionType)(Arg1, Arg2, Arg3, Arg4, Arg5);
 public:
     FunctionClosure_Arg2_Bind3(FunctionType function , PreArg1 pa1,
-        PreArg2 pa2, PreArg3 pa3):
+                               PreArg2 pa2, PreArg3 pa3):
         m_function(function) , m_pa1(pa1), m_pa2(pa2), m_pa3(pa3) {}
     virtual R Run(Arg4 arg4, Arg5 arg5) {
         ConditionalAutoDeleter<SelfDeleting,
-            FunctionClosure_Arg2_Bind3> self_deleter(this);
+                               FunctionClosure_Arg2_Bind3> self_deleter(this);
         return m_function(m_pa1, m_pa2, m_pa3 ,arg4, arg5);
     }
-    virtual bool IsSelfDelete() const { return SelfDeleting; }
+    virtual bool IsSelfDelete() const {
+        return SelfDeleting;
+    }
 private:
     FunctionType m_function;
-        PreArg1 m_pa1;
-        PreArg2 m_pa2;
-        PreArg3 m_pa3;
-    };
+    PreArg1 m_pa1;
+    PreArg2 m_pa2;
+    PreArg3 m_pa3;
+};
 
 template <typename R , typename Arg1, typename Arg2, typename Arg3,
-    typename Arg4, typename Arg5 , typename PreArg1, typename PreArg2,
-    typename PreArg3>
+         typename Arg4, typename Arg5 , typename PreArg1, typename PreArg2,
+         typename PreArg3>
 Closure<R (Arg4, Arg5)>* NewClosure(R (*function)(Arg1, Arg2, Arg3, Arg4, Arg5)
-                                          , PreArg1 pa1, PreArg2 pa2,
-                                              PreArg3 pa3) {
+                                    , PreArg1 pa1, PreArg2 pa2,
+                                    PreArg3 pa3) {
     return new FunctionClosure_Arg2_Bind3<true, R , Arg1, Arg2, Arg3, Arg4,
-        Arg5 , PreArg1, PreArg2, PreArg3>(function , pa1, pa2, pa3);
+           Arg5 , PreArg1, PreArg2, PreArg3>(function , pa1, pa2, pa3);
 }
 
 template <typename R , typename Arg1, typename Arg2, typename Arg3,
-    typename Arg4, typename Arg5 , typename PreArg1, typename PreArg2,
-    typename PreArg3>
+         typename Arg4, typename Arg5 , typename PreArg1, typename PreArg2,
+         typename PreArg3>
 Closure<R (Arg4, Arg5)>* NewPermanentClosure(R (*function)(Arg1, Arg2, Arg3,
-    Arg4, Arg5)
-                                          , PreArg1 pa1, PreArg2 pa2,
-                                              PreArg3 pa3) {
+        Arg4, Arg5)
+        , PreArg1 pa1, PreArg2 pa2,
+        PreArg3 pa3) {
     return new FunctionClosure_Arg2_Bind3<false, R , Arg1, Arg2, Arg3, Arg4,
-        Arg5 , PreArg1, PreArg2, PreArg3>(function , pa1, pa2, pa3);
+           Arg5 , PreArg1, PreArg2, PreArg3>(function , pa1, pa2, pa3);
 }
 
 template <
-    bool SelfDeleting,
-    typename R,
-    typename Class,
-    typename MethodClass
-    , typename Arg1    , typename Arg2    , typename Arg3    ,
-        typename Arg4    , typename Arg5    , typename Arg6    ,
-        typename PreArg1    , typename PreArg2    , typename PreArg3    ,
-        typename PreArg4>
+bool SelfDeleting,
+     typename R,
+     typename Class,
+     typename MethodClass
+     , typename Arg1    , typename Arg2    , typename Arg3    ,
+     typename Arg4    , typename Arg5    , typename Arg6    ,
+     typename PreArg1    , typename PreArg2    , typename PreArg3    ,
+     typename PreArg4>
 class MethodClosure_Arg2_Bind4 : public Closure<R (Arg5, Arg6)> {
     typedef R (MethodClass::*MethodType)(Arg1, Arg2, Arg3, Arg4, Arg5, Arg6);
 public:
     MethodClosure_Arg2_Bind4(Class *object, MethodType method , PreArg1 pa1,
-        PreArg2 pa2, PreArg3 pa3, PreArg4 pa4):
+                             PreArg2 pa2, PreArg3 pa3, PreArg4 pa4):
         m_object(object), m_method(method) , m_pa1(pa1), m_pa2(pa2),
-            m_pa3(pa3), m_pa4(pa4) {}
+        m_pa3(pa3), m_pa4(pa4) {}
     virtual R Run(Arg5 arg5, Arg6 arg6) {
         ConditionalAutoDeleter<SelfDeleting,
-            MethodClosure_Arg2_Bind4> self_deleter(this);
+                               MethodClosure_Arg2_Bind4> self_deleter(this);
         return (m_object->*m_method)(m_pa1, m_pa2, m_pa3, m_pa4 ,arg5, arg6);
     }
-    virtual bool IsSelfDelete() const { return SelfDeleting; }
+    virtual bool IsSelfDelete() const {
+        return SelfDeleting;
+    }
 private:
     Class* m_object;
     MethodType m_method;
-        PreArg1 m_pa1;
-        PreArg2 m_pa2;
-        PreArg3 m_pa3;
-        PreArg4 m_pa4;
-    };
+    PreArg1 m_pa1;
+    PreArg2 m_pa2;
+    PreArg3 m_pa3;
+    PreArg4 m_pa4;
+};
 
 template <typename R, typename Class, typename MethodClass ,typename Arg1,
-    typename Arg2,typename Arg3,typename Arg4,typename Arg5,typename Arg6 ,
-    typename PreArg1, typename PreArg2, typename PreArg3, typename PreArg4>
+         typename Arg2,typename Arg3,typename Arg4,typename Arg5,typename Arg6 ,
+         typename PreArg1, typename PreArg2, typename PreArg3, typename PreArg4>
 Closure<R (Arg5, Arg6)>* NewClosure(
     Class *object,
     R (MethodClass::*method)(Arg1, Arg2, Arg3, Arg4, Arg5, Arg6)
     , PreArg1 pa1, PreArg2 pa2, PreArg3 pa3, PreArg4 pa4) {
     return new MethodClosure_Arg2_Bind4<true, R, Class, MethodClass ,Arg1,Arg2,
-        Arg3,Arg4,Arg5,Arg6 , PreArg1, PreArg2, PreArg3, PreArg4>(
-        object, method, pa1, pa2, pa3, pa4);
+           Arg3,Arg4,Arg5,Arg6 , PreArg1, PreArg2, PreArg3, PreArg4>(
+               object, method, pa1, pa2, pa3, pa4);
 }
 
 template <typename R, typename Class, typename MethodClass ,typename Arg1,
-    typename Arg2,typename Arg3,typename Arg4,typename Arg5,typename Arg6 ,
-    typename PreArg1, typename PreArg2, typename PreArg3, typename PreArg4>
+         typename Arg2,typename Arg3,typename Arg4,typename Arg5,typename Arg6 ,
+         typename PreArg1, typename PreArg2, typename PreArg3, typename PreArg4>
 Closure<R (Arg5, Arg6)>* NewPermanentClosure(
     Class *object,
     R (MethodClass::*method)(Arg1, Arg2, Arg3, Arg4, Arg5, Arg6)
     , PreArg1 pa1, PreArg2 pa2, PreArg3 pa3, PreArg4 pa4) {
     return new MethodClosure_Arg2_Bind4<false, R, Class, MethodClass ,Arg1,
-        Arg2,Arg3,Arg4,Arg5,Arg6 , PreArg1, PreArg2, PreArg3, PreArg4>(
-        object, method, pa1, pa2, pa3, pa4);
+           Arg2,Arg3,Arg4,Arg5,Arg6 , PreArg1, PreArg2, PreArg3, PreArg4>(
+               object, method, pa1, pa2, pa3, pa4);
 }
 
 ////////////////////////////////////////////////////
@@ -2538,116 +2612,120 @@ Closure<R (Arg5, Arg6)>* NewPermanentClosure(
 ////////////////////////////////////////////////////
 
 template <
-    bool SelfDeleting,
-    typename R
-    , typename Arg1    , typename Arg2    , typename Arg3    ,
-        typename Arg4    , typename Arg5    , typename Arg6    ,
-        typename PreArg1    , typename PreArg2    , typename PreArg3    ,
-        typename PreArg4>
+bool SelfDeleting,
+     typename R
+     , typename Arg1    , typename Arg2    , typename Arg3    ,
+     typename Arg4    , typename Arg5    , typename Arg6    ,
+     typename PreArg1    , typename PreArg2    , typename PreArg3    ,
+     typename PreArg4>
 class FunctionClosure_Arg2_Bind4 : public Closure<R (Arg5, Arg6)> {
     typedef R (*FunctionType)(Arg1, Arg2, Arg3, Arg4, Arg5, Arg6);
 public:
     FunctionClosure_Arg2_Bind4(FunctionType function , PreArg1 pa1,
-        PreArg2 pa2, PreArg3 pa3, PreArg4 pa4):
+                               PreArg2 pa2, PreArg3 pa3, PreArg4 pa4):
         m_function(function) , m_pa1(pa1), m_pa2(pa2), m_pa3(pa3), m_pa4(pa4) {}
     virtual R Run(Arg5 arg5, Arg6 arg6) {
         ConditionalAutoDeleter<SelfDeleting,
-            FunctionClosure_Arg2_Bind4> self_deleter(this);
+                               FunctionClosure_Arg2_Bind4> self_deleter(this);
         return m_function(m_pa1, m_pa2, m_pa3, m_pa4 ,arg5, arg6);
     }
-    virtual bool IsSelfDelete() const { return SelfDeleting; }
+    virtual bool IsSelfDelete() const {
+        return SelfDeleting;
+    }
 private:
     FunctionType m_function;
-        PreArg1 m_pa1;
-        PreArg2 m_pa2;
-        PreArg3 m_pa3;
-        PreArg4 m_pa4;
-    };
+    PreArg1 m_pa1;
+    PreArg2 m_pa2;
+    PreArg3 m_pa3;
+    PreArg4 m_pa4;
+};
 
 template <typename R , typename Arg1, typename Arg2, typename Arg3,
-    typename Arg4, typename Arg5, typename Arg6 , typename PreArg1,
-    typename PreArg2, typename PreArg3, typename PreArg4>
+         typename Arg4, typename Arg5, typename Arg6 , typename PreArg1,
+         typename PreArg2, typename PreArg3, typename PreArg4>
 Closure<R (Arg5, Arg6)>* NewClosure(R (*function)(Arg1, Arg2, Arg3, Arg4, Arg5,
-    Arg6)
-                                          , PreArg1 pa1, PreArg2 pa2,
-                                              PreArg3 pa3, PreArg4 pa4) {
+                                    Arg6)
+                                    , PreArg1 pa1, PreArg2 pa2,
+                                    PreArg3 pa3, PreArg4 pa4) {
     return new FunctionClosure_Arg2_Bind4<true, R , Arg1, Arg2, Arg3, Arg4,
-        Arg5, Arg6 , PreArg1, PreArg2, PreArg3, PreArg4>(function , pa1, pa2,
-        pa3, pa4);
+           Arg5, Arg6 , PreArg1, PreArg2, PreArg3, PreArg4>(function , pa1, pa2,
+                   pa3, pa4);
 }
 
 template <typename R , typename Arg1, typename Arg2, typename Arg3,
-    typename Arg4, typename Arg5, typename Arg6 , typename PreArg1,
-    typename PreArg2, typename PreArg3, typename PreArg4>
+         typename Arg4, typename Arg5, typename Arg6 , typename PreArg1,
+         typename PreArg2, typename PreArg3, typename PreArg4>
 Closure<R (Arg5, Arg6)>* NewPermanentClosure(R (*function)(Arg1, Arg2, Arg3,
-    Arg4, Arg5, Arg6)
-                                          , PreArg1 pa1, PreArg2 pa2,
-                                              PreArg3 pa3, PreArg4 pa4) {
+        Arg4, Arg5, Arg6)
+        , PreArg1 pa1, PreArg2 pa2,
+        PreArg3 pa3, PreArg4 pa4) {
     return new FunctionClosure_Arg2_Bind4<false, R , Arg1, Arg2, Arg3, Arg4,
-        Arg5, Arg6 , PreArg1, PreArg2, PreArg3, PreArg4>(function , pa1, pa2,
-        pa3, pa4);
+           Arg5, Arg6 , PreArg1, PreArg2, PreArg3, PreArg4>(function , pa1, pa2,
+                   pa3, pa4);
 }
 
 template <
-    bool SelfDeleting,
-    typename R,
-    typename Class,
-    typename MethodClass
-    , typename Arg1    , typename Arg2    , typename Arg3    ,
-        typename Arg4    , typename Arg5    , typename Arg6    ,
-        typename Arg7    , typename PreArg1    , typename PreArg2    ,
-        typename PreArg3    , typename PreArg4    , typename PreArg5>
+bool SelfDeleting,
+     typename R,
+     typename Class,
+     typename MethodClass
+     , typename Arg1    , typename Arg2    , typename Arg3    ,
+     typename Arg4    , typename Arg5    , typename Arg6    ,
+     typename Arg7    , typename PreArg1    , typename PreArg2    ,
+     typename PreArg3    , typename PreArg4    , typename PreArg5>
 class MethodClosure_Arg2_Bind5 : public Closure<R (Arg6, Arg7)> {
     typedef R (MethodClass::*MethodType)(Arg1, Arg2, Arg3, Arg4, Arg5, Arg6,
-        Arg7);
+                                         Arg7);
 public:
     MethodClosure_Arg2_Bind5(Class *object, MethodType method , PreArg1 pa1,
-        PreArg2 pa2, PreArg3 pa3, PreArg4 pa4, PreArg5 pa5):
+                             PreArg2 pa2, PreArg3 pa3, PreArg4 pa4, PreArg5 pa5):
         m_object(object), m_method(method) , m_pa1(pa1), m_pa2(pa2),
-            m_pa3(pa3), m_pa4(pa4), m_pa5(pa5) {}
+        m_pa3(pa3), m_pa4(pa4), m_pa5(pa5) {}
     virtual R Run(Arg6 arg6, Arg7 arg7) {
         ConditionalAutoDeleter<SelfDeleting,
-            MethodClosure_Arg2_Bind5> self_deleter(this);
+                               MethodClosure_Arg2_Bind5> self_deleter(this);
         return (m_object->*m_method)(m_pa1, m_pa2, m_pa3, m_pa4, m_pa5 ,arg6,
-            arg7);
+                                     arg7);
     }
-    virtual bool IsSelfDelete() const { return SelfDeleting; }
+    virtual bool IsSelfDelete() const {
+        return SelfDeleting;
+    }
 private:
     Class* m_object;
     MethodType m_method;
-        PreArg1 m_pa1;
-        PreArg2 m_pa2;
-        PreArg3 m_pa3;
-        PreArg4 m_pa4;
-        PreArg5 m_pa5;
-    };
+    PreArg1 m_pa1;
+    PreArg2 m_pa2;
+    PreArg3 m_pa3;
+    PreArg4 m_pa4;
+    PreArg5 m_pa5;
+};
 
 template <typename R, typename Class, typename MethodClass ,typename Arg1,
-    typename Arg2,typename Arg3,typename Arg4,typename Arg5,typename Arg6,
-    typename Arg7 , typename PreArg1, typename PreArg2, typename PreArg3,
-    typename PreArg4, typename PreArg5>
+         typename Arg2,typename Arg3,typename Arg4,typename Arg5,typename Arg6,
+         typename Arg7 , typename PreArg1, typename PreArg2, typename PreArg3,
+         typename PreArg4, typename PreArg5>
 Closure<R (Arg6, Arg7)>* NewClosure(
     Class *object,
     R (MethodClass::*method)(Arg1, Arg2, Arg3, Arg4, Arg5, Arg6, Arg7)
     , PreArg1 pa1, PreArg2 pa2, PreArg3 pa3, PreArg4 pa4, PreArg5 pa5) {
     return new MethodClosure_Arg2_Bind5<true, R, Class, MethodClass ,Arg1,Arg2,
-        Arg3,Arg4,Arg5,Arg6,Arg7 , PreArg1, PreArg2, PreArg3, PreArg4,
-        PreArg5>(
-        object, method, pa1, pa2, pa3, pa4, pa5);
+           Arg3,Arg4,Arg5,Arg6,Arg7 , PreArg1, PreArg2, PreArg3, PreArg4,
+           PreArg5>(
+               object, method, pa1, pa2, pa3, pa4, pa5);
 }
 
 template <typename R, typename Class, typename MethodClass ,typename Arg1,
-    typename Arg2,typename Arg3,typename Arg4,typename Arg5,typename Arg6,
-    typename Arg7 , typename PreArg1, typename PreArg2, typename PreArg3,
-    typename PreArg4, typename PreArg5>
+         typename Arg2,typename Arg3,typename Arg4,typename Arg5,typename Arg6,
+         typename Arg7 , typename PreArg1, typename PreArg2, typename PreArg3,
+         typename PreArg4, typename PreArg5>
 Closure<R (Arg6, Arg7)>* NewPermanentClosure(
     Class *object,
     R (MethodClass::*method)(Arg1, Arg2, Arg3, Arg4, Arg5, Arg6, Arg7)
     , PreArg1 pa1, PreArg2 pa2, PreArg3 pa3, PreArg4 pa4, PreArg5 pa5) {
     return new MethodClosure_Arg2_Bind5<false, R, Class, MethodClass ,Arg1,
-        Arg2,Arg3,Arg4,Arg5,Arg6,Arg7 , PreArg1, PreArg2, PreArg3, PreArg4,
-        PreArg5>(
-        object, method, pa1, pa2, pa3, pa4, pa5);
+           Arg2,Arg3,Arg4,Arg5,Arg6,Arg7 , PreArg1, PreArg2, PreArg3, PreArg4,
+           PreArg5>(
+               object, method, pa1, pa2, pa3, pa4, pa5);
 }
 
 ////////////////////////////////////////////////////
@@ -2655,126 +2733,130 @@ Closure<R (Arg6, Arg7)>* NewPermanentClosure(
 ////////////////////////////////////////////////////
 
 template <
-    bool SelfDeleting,
-    typename R
-    , typename Arg1    , typename Arg2    , typename Arg3    ,
-        typename Arg4    , typename Arg5    , typename Arg6    ,
-        typename Arg7    , typename PreArg1    , typename PreArg2    ,
-        typename PreArg3    , typename PreArg4    , typename PreArg5>
+bool SelfDeleting,
+     typename R
+     , typename Arg1    , typename Arg2    , typename Arg3    ,
+     typename Arg4    , typename Arg5    , typename Arg6    ,
+     typename Arg7    , typename PreArg1    , typename PreArg2    ,
+     typename PreArg3    , typename PreArg4    , typename PreArg5>
 class FunctionClosure_Arg2_Bind5 : public Closure<R (Arg6, Arg7)> {
     typedef R (*FunctionType)(Arg1, Arg2, Arg3, Arg4, Arg5, Arg6, Arg7);
 public:
     FunctionClosure_Arg2_Bind5(FunctionType function , PreArg1 pa1,
-        PreArg2 pa2, PreArg3 pa3, PreArg4 pa4, PreArg5 pa5):
+                               PreArg2 pa2, PreArg3 pa3, PreArg4 pa4, PreArg5 pa5):
         m_function(function) , m_pa1(pa1), m_pa2(pa2), m_pa3(pa3), m_pa4(pa4),
-            m_pa5(pa5) {}
+        m_pa5(pa5) {}
     virtual R Run(Arg6 arg6, Arg7 arg7) {
         ConditionalAutoDeleter<SelfDeleting,
-            FunctionClosure_Arg2_Bind5> self_deleter(this);
+                               FunctionClosure_Arg2_Bind5> self_deleter(this);
         return m_function(m_pa1, m_pa2, m_pa3, m_pa4, m_pa5 ,arg6, arg7);
     }
-    virtual bool IsSelfDelete() const { return SelfDeleting; }
+    virtual bool IsSelfDelete() const {
+        return SelfDeleting;
+    }
 private:
     FunctionType m_function;
-        PreArg1 m_pa1;
-        PreArg2 m_pa2;
-        PreArg3 m_pa3;
-        PreArg4 m_pa4;
-        PreArg5 m_pa5;
-    };
+    PreArg1 m_pa1;
+    PreArg2 m_pa2;
+    PreArg3 m_pa3;
+    PreArg4 m_pa4;
+    PreArg5 m_pa5;
+};
 
 template <typename R , typename Arg1, typename Arg2, typename Arg3,
-    typename Arg4, typename Arg5, typename Arg6, typename Arg7 ,
-    typename PreArg1, typename PreArg2, typename PreArg3, typename PreArg4,
-    typename PreArg5>
+         typename Arg4, typename Arg5, typename Arg6, typename Arg7 ,
+         typename PreArg1, typename PreArg2, typename PreArg3, typename PreArg4,
+         typename PreArg5>
 Closure<R (Arg6, Arg7)>* NewClosure(R (*function)(Arg1, Arg2, Arg3, Arg4, Arg5,
-    Arg6, Arg7)
-                                          , PreArg1 pa1, PreArg2 pa2,
-                                              PreArg3 pa3, PreArg4 pa4,
-                                              PreArg5 pa5) {
+                                    Arg6, Arg7)
+                                    , PreArg1 pa1, PreArg2 pa2,
+                                    PreArg3 pa3, PreArg4 pa4,
+                                    PreArg5 pa5) {
     return new FunctionClosure_Arg2_Bind5<true, R , Arg1, Arg2, Arg3, Arg4,
-        Arg5, Arg6, Arg7 , PreArg1, PreArg2, PreArg3, PreArg4,
-        PreArg5>(function , pa1, pa2, pa3, pa4, pa5);
+           Arg5, Arg6, Arg7 , PreArg1, PreArg2, PreArg3, PreArg4,
+           PreArg5>(function , pa1, pa2, pa3, pa4, pa5);
 }
 
 template <typename R , typename Arg1, typename Arg2, typename Arg3,
-    typename Arg4, typename Arg5, typename Arg6, typename Arg7 ,
-    typename PreArg1, typename PreArg2, typename PreArg3, typename PreArg4,
-    typename PreArg5>
+         typename Arg4, typename Arg5, typename Arg6, typename Arg7 ,
+         typename PreArg1, typename PreArg2, typename PreArg3, typename PreArg4,
+         typename PreArg5>
 Closure<R (Arg6, Arg7)>* NewPermanentClosure(R (*function)(Arg1, Arg2, Arg3,
-    Arg4, Arg5, Arg6, Arg7)
-                                          , PreArg1 pa1, PreArg2 pa2,
-                                              PreArg3 pa3, PreArg4 pa4,
-                                              PreArg5 pa5) {
+        Arg4, Arg5, Arg6, Arg7)
+        , PreArg1 pa1, PreArg2 pa2,
+        PreArg3 pa3, PreArg4 pa4,
+        PreArg5 pa5) {
     return new FunctionClosure_Arg2_Bind5<false, R , Arg1, Arg2, Arg3, Arg4,
-        Arg5, Arg6, Arg7 , PreArg1, PreArg2, PreArg3, PreArg4,
-        PreArg5>(function , pa1, pa2, pa3, pa4, pa5);
+           Arg5, Arg6, Arg7 , PreArg1, PreArg2, PreArg3, PreArg4,
+           PreArg5>(function , pa1, pa2, pa3, pa4, pa5);
 }
 
 template <
-    bool SelfDeleting,
-    typename R,
-    typename Class,
-    typename MethodClass
-    , typename Arg1    , typename Arg2    , typename Arg3    ,
-        typename Arg4    , typename Arg5    , typename Arg6    ,
-        typename Arg7    , typename Arg8    , typename PreArg1    ,
-        typename PreArg2    , typename PreArg3    , typename PreArg4    ,
-        typename PreArg5    , typename PreArg6>
+bool SelfDeleting,
+     typename R,
+     typename Class,
+     typename MethodClass
+     , typename Arg1    , typename Arg2    , typename Arg3    ,
+     typename Arg4    , typename Arg5    , typename Arg6    ,
+     typename Arg7    , typename Arg8    , typename PreArg1    ,
+     typename PreArg2    , typename PreArg3    , typename PreArg4    ,
+     typename PreArg5    , typename PreArg6>
 class MethodClosure_Arg2_Bind6 : public Closure<R (Arg7, Arg8)> {
     typedef R (MethodClass::*MethodType)(Arg1, Arg2, Arg3, Arg4, Arg5, Arg6,
-        Arg7, Arg8);
+                                         Arg7, Arg8);
 public:
     MethodClosure_Arg2_Bind6(Class *object, MethodType method , PreArg1 pa1,
-        PreArg2 pa2, PreArg3 pa3, PreArg4 pa4, PreArg5 pa5, PreArg6 pa6):
+                             PreArg2 pa2, PreArg3 pa3, PreArg4 pa4, PreArg5 pa5, PreArg6 pa6):
         m_object(object), m_method(method) , m_pa1(pa1), m_pa2(pa2),
-            m_pa3(pa3), m_pa4(pa4), m_pa5(pa5), m_pa6(pa6) {}
+        m_pa3(pa3), m_pa4(pa4), m_pa5(pa5), m_pa6(pa6) {}
     virtual R Run(Arg7 arg7, Arg8 arg8) {
         ConditionalAutoDeleter<SelfDeleting,
-            MethodClosure_Arg2_Bind6> self_deleter(this);
+                               MethodClosure_Arg2_Bind6> self_deleter(this);
         return (m_object->*m_method)(m_pa1, m_pa2, m_pa3, m_pa4, m_pa5, m_pa6 ,
-            arg7, arg8);
+                                     arg7, arg8);
     }
-    virtual bool IsSelfDelete() const { return SelfDeleting; }
+    virtual bool IsSelfDelete() const {
+        return SelfDeleting;
+    }
 private:
     Class* m_object;
     MethodType m_method;
-        PreArg1 m_pa1;
-        PreArg2 m_pa2;
-        PreArg3 m_pa3;
-        PreArg4 m_pa4;
-        PreArg5 m_pa5;
-        PreArg6 m_pa6;
-    };
+    PreArg1 m_pa1;
+    PreArg2 m_pa2;
+    PreArg3 m_pa3;
+    PreArg4 m_pa4;
+    PreArg5 m_pa5;
+    PreArg6 m_pa6;
+};
 
 template <typename R, typename Class, typename MethodClass ,typename Arg1,
-    typename Arg2,typename Arg3,typename Arg4,typename Arg5,typename Arg6,
-    typename Arg7,typename Arg8 , typename PreArg1, typename PreArg2,
-    typename PreArg3, typename PreArg4, typename PreArg5, typename PreArg6>
+         typename Arg2,typename Arg3,typename Arg4,typename Arg5,typename Arg6,
+         typename Arg7,typename Arg8 , typename PreArg1, typename PreArg2,
+         typename PreArg3, typename PreArg4, typename PreArg5, typename PreArg6>
 Closure<R (Arg7, Arg8)>* NewClosure(
     Class *object,
     R (MethodClass::*method)(Arg1, Arg2, Arg3, Arg4, Arg5, Arg6, Arg7, Arg8)
     , PreArg1 pa1, PreArg2 pa2, PreArg3 pa3, PreArg4 pa4, PreArg5 pa5,
-        PreArg6 pa6) {
+    PreArg6 pa6) {
     return new MethodClosure_Arg2_Bind6<true, R, Class, MethodClass ,Arg1,Arg2,
-        Arg3,Arg4,Arg5,Arg6,Arg7,Arg8 , PreArg1, PreArg2, PreArg3, PreArg4,
-        PreArg5, PreArg6>(
-        object, method, pa1, pa2, pa3, pa4, pa5, pa6);
+           Arg3,Arg4,Arg5,Arg6,Arg7,Arg8 , PreArg1, PreArg2, PreArg3, PreArg4,
+           PreArg5, PreArg6>(
+               object, method, pa1, pa2, pa3, pa4, pa5, pa6);
 }
 
 template <typename R, typename Class, typename MethodClass ,typename Arg1,
-    typename Arg2,typename Arg3,typename Arg4,typename Arg5,typename Arg6,
-    typename Arg7,typename Arg8 , typename PreArg1, typename PreArg2,
-    typename PreArg3, typename PreArg4, typename PreArg5, typename PreArg6>
+         typename Arg2,typename Arg3,typename Arg4,typename Arg5,typename Arg6,
+         typename Arg7,typename Arg8 , typename PreArg1, typename PreArg2,
+         typename PreArg3, typename PreArg4, typename PreArg5, typename PreArg6>
 Closure<R (Arg7, Arg8)>* NewPermanentClosure(
     Class *object,
     R (MethodClass::*method)(Arg1, Arg2, Arg3, Arg4, Arg5, Arg6, Arg7, Arg8)
     , PreArg1 pa1, PreArg2 pa2, PreArg3 pa3, PreArg4 pa4, PreArg5 pa5,
-        PreArg6 pa6) {
+    PreArg6 pa6) {
     return new MethodClosure_Arg2_Bind6<false, R, Class, MethodClass ,Arg1,
-        Arg2,Arg3,Arg4,Arg5,Arg6,Arg7,Arg8 , PreArg1, PreArg2, PreArg3,
-        PreArg4, PreArg5, PreArg6>(
-        object, method, pa1, pa2, pa3, pa4, pa5, pa6);
+           Arg2,Arg3,Arg4,Arg5,Arg6,Arg7,Arg8 , PreArg1, PreArg2, PreArg3,
+           PreArg4, PreArg5, PreArg6>(
+               object, method, pa1, pa2, pa3, pa4, pa5, pa6);
 }
 
 ////////////////////////////////////////////////////
@@ -2782,135 +2864,139 @@ Closure<R (Arg7, Arg8)>* NewPermanentClosure(
 ////////////////////////////////////////////////////
 
 template <
-    bool SelfDeleting,
-    typename R
-    , typename Arg1    , typename Arg2    , typename Arg3    ,
-        typename Arg4    , typename Arg5    , typename Arg6    ,
-        typename Arg7    , typename Arg8    , typename PreArg1    ,
-        typename PreArg2    , typename PreArg3    , typename PreArg4    ,
-        typename PreArg5    , typename PreArg6>
+bool SelfDeleting,
+     typename R
+     , typename Arg1    , typename Arg2    , typename Arg3    ,
+     typename Arg4    , typename Arg5    , typename Arg6    ,
+     typename Arg7    , typename Arg8    , typename PreArg1    ,
+     typename PreArg2    , typename PreArg3    , typename PreArg4    ,
+     typename PreArg5    , typename PreArg6>
 class FunctionClosure_Arg2_Bind6 : public Closure<R (Arg7, Arg8)> {
     typedef R (*FunctionType)(Arg1, Arg2, Arg3, Arg4, Arg5, Arg6, Arg7, Arg8);
 public:
     FunctionClosure_Arg2_Bind6(FunctionType function , PreArg1 pa1,
-        PreArg2 pa2, PreArg3 pa3, PreArg4 pa4, PreArg5 pa5, PreArg6 pa6):
+                               PreArg2 pa2, PreArg3 pa3, PreArg4 pa4, PreArg5 pa5, PreArg6 pa6):
         m_function(function) , m_pa1(pa1), m_pa2(pa2), m_pa3(pa3), m_pa4(pa4),
-            m_pa5(pa5), m_pa6(pa6) {}
+        m_pa5(pa5), m_pa6(pa6) {}
     virtual R Run(Arg7 arg7, Arg8 arg8) {
         ConditionalAutoDeleter<SelfDeleting,
-            FunctionClosure_Arg2_Bind6> self_deleter(this);
+                               FunctionClosure_Arg2_Bind6> self_deleter(this);
         return m_function(m_pa1, m_pa2, m_pa3, m_pa4, m_pa5, m_pa6 ,arg7, arg8);
     }
-    virtual bool IsSelfDelete() const { return SelfDeleting; }
+    virtual bool IsSelfDelete() const {
+        return SelfDeleting;
+    }
 private:
     FunctionType m_function;
-        PreArg1 m_pa1;
-        PreArg2 m_pa2;
-        PreArg3 m_pa3;
-        PreArg4 m_pa4;
-        PreArg5 m_pa5;
-        PreArg6 m_pa6;
-    };
+    PreArg1 m_pa1;
+    PreArg2 m_pa2;
+    PreArg3 m_pa3;
+    PreArg4 m_pa4;
+    PreArg5 m_pa5;
+    PreArg6 m_pa6;
+};
 
 template <typename R , typename Arg1, typename Arg2, typename Arg3,
-    typename Arg4, typename Arg5, typename Arg6, typename Arg7, typename Arg8 ,
-    typename PreArg1, typename PreArg2, typename PreArg3, typename PreArg4,
-    typename PreArg5, typename PreArg6>
+         typename Arg4, typename Arg5, typename Arg6, typename Arg7, typename Arg8 ,
+         typename PreArg1, typename PreArg2, typename PreArg3, typename PreArg4,
+         typename PreArg5, typename PreArg6>
 Closure<R (Arg7, Arg8)>* NewClosure(R (*function)(Arg1, Arg2, Arg3, Arg4, Arg5,
-    Arg6, Arg7, Arg8)
-                                          , PreArg1 pa1, PreArg2 pa2,
-                                              PreArg3 pa3, PreArg4 pa4,
-                                              PreArg5 pa5, PreArg6 pa6) {
+                                    Arg6, Arg7, Arg8)
+                                    , PreArg1 pa1, PreArg2 pa2,
+                                    PreArg3 pa3, PreArg4 pa4,
+                                    PreArg5 pa5, PreArg6 pa6) {
     return new FunctionClosure_Arg2_Bind6<true, R , Arg1, Arg2, Arg3, Arg4,
-        Arg5, Arg6, Arg7, Arg8 , PreArg1, PreArg2, PreArg3, PreArg4, PreArg5,
-        PreArg6>(function , pa1, pa2, pa3, pa4, pa5, pa6);
+           Arg5, Arg6, Arg7, Arg8 , PreArg1, PreArg2, PreArg3, PreArg4, PreArg5,
+           PreArg6>(function , pa1, pa2, pa3, pa4, pa5, pa6);
 }
 
 template <typename R , typename Arg1, typename Arg2, typename Arg3,
-    typename Arg4, typename Arg5, typename Arg6, typename Arg7, typename Arg8 ,
-    typename PreArg1, typename PreArg2, typename PreArg3, typename PreArg4,
-    typename PreArg5, typename PreArg6>
+         typename Arg4, typename Arg5, typename Arg6, typename Arg7, typename Arg8 ,
+         typename PreArg1, typename PreArg2, typename PreArg3, typename PreArg4,
+         typename PreArg5, typename PreArg6>
 Closure<R (Arg7, Arg8)>* NewPermanentClosure(R (*function)(Arg1, Arg2, Arg3,
-    Arg4, Arg5, Arg6, Arg7, Arg8)
-                                          , PreArg1 pa1, PreArg2 pa2,
-                                              PreArg3 pa3, PreArg4 pa4,
-                                              PreArg5 pa5, PreArg6 pa6) {
+        Arg4, Arg5, Arg6, Arg7, Arg8)
+        , PreArg1 pa1, PreArg2 pa2,
+        PreArg3 pa3, PreArg4 pa4,
+        PreArg5 pa5, PreArg6 pa6) {
     return new FunctionClosure_Arg2_Bind6<false, R , Arg1, Arg2, Arg3, Arg4,
-        Arg5, Arg6, Arg7, Arg8 , PreArg1, PreArg2, PreArg3, PreArg4, PreArg5,
-        PreArg6>(function , pa1, pa2, pa3, pa4, pa5, pa6);
+           Arg5, Arg6, Arg7, Arg8 , PreArg1, PreArg2, PreArg3, PreArg4, PreArg5,
+           PreArg6>(function , pa1, pa2, pa3, pa4, pa5, pa6);
 }
 
 template <
-    bool SelfDeleting,
-    typename R,
-    typename Class,
-    typename MethodClass
-    , typename Arg1    , typename Arg2    , typename Arg3    ,
-        typename Arg4    , typename Arg5    , typename Arg6    ,
-        typename Arg7    , typename Arg8    , typename Arg9    ,
-        typename PreArg1    , typename PreArg2    , typename PreArg3    ,
-        typename PreArg4    , typename PreArg5    , typename PreArg6    ,
-        typename PreArg7>
+bool SelfDeleting,
+     typename R,
+     typename Class,
+     typename MethodClass
+     , typename Arg1    , typename Arg2    , typename Arg3    ,
+     typename Arg4    , typename Arg5    , typename Arg6    ,
+     typename Arg7    , typename Arg8    , typename Arg9    ,
+     typename PreArg1    , typename PreArg2    , typename PreArg3    ,
+     typename PreArg4    , typename PreArg5    , typename PreArg6    ,
+     typename PreArg7>
 class MethodClosure_Arg2_Bind7 : public Closure<R (Arg8, Arg9)> {
     typedef R (MethodClass::*MethodType)(Arg1, Arg2, Arg3, Arg4, Arg5, Arg6,
-        Arg7, Arg8, Arg9);
+                                         Arg7, Arg8, Arg9);
 public:
     MethodClosure_Arg2_Bind7(Class *object, MethodType method , PreArg1 pa1,
-        PreArg2 pa2, PreArg3 pa3, PreArg4 pa4, PreArg5 pa5, PreArg6 pa6,
-        PreArg7 pa7):
+                             PreArg2 pa2, PreArg3 pa3, PreArg4 pa4, PreArg5 pa5, PreArg6 pa6,
+                             PreArg7 pa7):
         m_object(object), m_method(method) , m_pa1(pa1), m_pa2(pa2),
-            m_pa3(pa3), m_pa4(pa4), m_pa5(pa5), m_pa6(pa6), m_pa7(pa7) {}
+        m_pa3(pa3), m_pa4(pa4), m_pa5(pa5), m_pa6(pa6), m_pa7(pa7) {}
     virtual R Run(Arg8 arg8, Arg9 arg9) {
         ConditionalAutoDeleter<SelfDeleting,
-            MethodClosure_Arg2_Bind7> self_deleter(this);
+                               MethodClosure_Arg2_Bind7> self_deleter(this);
         return (m_object->*m_method)(m_pa1, m_pa2, m_pa3, m_pa4, m_pa5, m_pa6,
-            m_pa7 ,arg8, arg9);
+                                     m_pa7 ,arg8, arg9);
     }
-    virtual bool IsSelfDelete() const { return SelfDeleting; }
+    virtual bool IsSelfDelete() const {
+        return SelfDeleting;
+    }
 private:
     Class* m_object;
     MethodType m_method;
-        PreArg1 m_pa1;
-        PreArg2 m_pa2;
-        PreArg3 m_pa3;
-        PreArg4 m_pa4;
-        PreArg5 m_pa5;
-        PreArg6 m_pa6;
-        PreArg7 m_pa7;
-    };
+    PreArg1 m_pa1;
+    PreArg2 m_pa2;
+    PreArg3 m_pa3;
+    PreArg4 m_pa4;
+    PreArg5 m_pa5;
+    PreArg6 m_pa6;
+    PreArg7 m_pa7;
+};
 
 template <typename R, typename Class, typename MethodClass ,typename Arg1,
-    typename Arg2,typename Arg3,typename Arg4,typename Arg5,typename Arg6,
-    typename Arg7,typename Arg8,typename Arg9 , typename PreArg1,
-    typename PreArg2, typename PreArg3, typename PreArg4, typename PreArg5,
-    typename PreArg6, typename PreArg7>
+         typename Arg2,typename Arg3,typename Arg4,typename Arg5,typename Arg6,
+         typename Arg7,typename Arg8,typename Arg9 , typename PreArg1,
+         typename PreArg2, typename PreArg3, typename PreArg4, typename PreArg5,
+         typename PreArg6, typename PreArg7>
 Closure<R (Arg8, Arg9)>* NewClosure(
     Class *object,
     R (MethodClass::*method)(Arg1, Arg2, Arg3, Arg4, Arg5, Arg6, Arg7, Arg8,
-        Arg9)
+                             Arg9)
     , PreArg1 pa1, PreArg2 pa2, PreArg3 pa3, PreArg4 pa4, PreArg5 pa5,
-        PreArg6 pa6, PreArg7 pa7) {
+    PreArg6 pa6, PreArg7 pa7) {
     return new MethodClosure_Arg2_Bind7<true, R, Class, MethodClass ,Arg1,Arg2,
-        Arg3,Arg4,Arg5,Arg6,Arg7,Arg8,Arg9 , PreArg1, PreArg2, PreArg3,
-        PreArg4, PreArg5, PreArg6, PreArg7>(
-        object, method, pa1, pa2, pa3, pa4, pa5, pa6, pa7);
+           Arg3,Arg4,Arg5,Arg6,Arg7,Arg8,Arg9 , PreArg1, PreArg2, PreArg3,
+           PreArg4, PreArg5, PreArg6, PreArg7>(
+               object, method, pa1, pa2, pa3, pa4, pa5, pa6, pa7);
 }
 
 template <typename R, typename Class, typename MethodClass ,typename Arg1,
-    typename Arg2,typename Arg3,typename Arg4,typename Arg5,typename Arg6,
-    typename Arg7,typename Arg8,typename Arg9 , typename PreArg1,
-    typename PreArg2, typename PreArg3, typename PreArg4, typename PreArg5,
-    typename PreArg6, typename PreArg7>
+         typename Arg2,typename Arg3,typename Arg4,typename Arg5,typename Arg6,
+         typename Arg7,typename Arg8,typename Arg9 , typename PreArg1,
+         typename PreArg2, typename PreArg3, typename PreArg4, typename PreArg5,
+         typename PreArg6, typename PreArg7>
 Closure<R (Arg8, Arg9)>* NewPermanentClosure(
     Class *object,
     R (MethodClass::*method)(Arg1, Arg2, Arg3, Arg4, Arg5, Arg6, Arg7, Arg8,
-        Arg9)
+                             Arg9)
     , PreArg1 pa1, PreArg2 pa2, PreArg3 pa3, PreArg4 pa4, PreArg5 pa5,
-        PreArg6 pa6, PreArg7 pa7) {
+    PreArg6 pa6, PreArg7 pa7) {
     return new MethodClosure_Arg2_Bind7<false, R, Class, MethodClass ,Arg1,
-        Arg2,Arg3,Arg4,Arg5,Arg6,Arg7,Arg8,Arg9 , PreArg1, PreArg2, PreArg3,
-        PreArg4, PreArg5, PreArg6, PreArg7>(
-        object, method, pa1, pa2, pa3, pa4, pa5, pa6, pa7);
+           Arg2,Arg3,Arg4,Arg5,Arg6,Arg7,Arg8,Arg9 , PreArg1, PreArg2, PreArg3,
+           PreArg4, PreArg5, PreArg6, PreArg7>(
+               object, method, pa1, pa2, pa3, pa4, pa5, pa6, pa7);
 }
 
 ////////////////////////////////////////////////////
@@ -2918,146 +3004,150 @@ Closure<R (Arg8, Arg9)>* NewPermanentClosure(
 ////////////////////////////////////////////////////
 
 template <
-    bool SelfDeleting,
-    typename R
-    , typename Arg1    , typename Arg2    , typename Arg3    ,
-        typename Arg4    , typename Arg5    , typename Arg6    ,
-        typename Arg7    , typename Arg8    , typename Arg9    ,
-        typename PreArg1    , typename PreArg2    , typename PreArg3    ,
-        typename PreArg4    , typename PreArg5    , typename PreArg6    ,
-        typename PreArg7>
+bool SelfDeleting,
+     typename R
+     , typename Arg1    , typename Arg2    , typename Arg3    ,
+     typename Arg4    , typename Arg5    , typename Arg6    ,
+     typename Arg7    , typename Arg8    , typename Arg9    ,
+     typename PreArg1    , typename PreArg2    , typename PreArg3    ,
+     typename PreArg4    , typename PreArg5    , typename PreArg6    ,
+     typename PreArg7>
 class FunctionClosure_Arg2_Bind7 : public Closure<R (Arg8, Arg9)> {
     typedef R (*FunctionType)(Arg1, Arg2, Arg3, Arg4, Arg5, Arg6, Arg7, Arg8,
-        Arg9);
+                              Arg9);
 public:
     FunctionClosure_Arg2_Bind7(FunctionType function , PreArg1 pa1,
-        PreArg2 pa2, PreArg3 pa3, PreArg4 pa4, PreArg5 pa5, PreArg6 pa6,
-        PreArg7 pa7):
+                               PreArg2 pa2, PreArg3 pa3, PreArg4 pa4, PreArg5 pa5, PreArg6 pa6,
+                               PreArg7 pa7):
         m_function(function) , m_pa1(pa1), m_pa2(pa2), m_pa3(pa3), m_pa4(pa4),
-            m_pa5(pa5), m_pa6(pa6), m_pa7(pa7) {}
+        m_pa5(pa5), m_pa6(pa6), m_pa7(pa7) {}
     virtual R Run(Arg8 arg8, Arg9 arg9) {
         ConditionalAutoDeleter<SelfDeleting,
-            FunctionClosure_Arg2_Bind7> self_deleter(this);
+                               FunctionClosure_Arg2_Bind7> self_deleter(this);
         return m_function(m_pa1, m_pa2, m_pa3, m_pa4, m_pa5, m_pa6, m_pa7 ,
-            arg8, arg9);
+                          arg8, arg9);
     }
-    virtual bool IsSelfDelete() const { return SelfDeleting; }
+    virtual bool IsSelfDelete() const {
+        return SelfDeleting;
+    }
 private:
     FunctionType m_function;
-        PreArg1 m_pa1;
-        PreArg2 m_pa2;
-        PreArg3 m_pa3;
-        PreArg4 m_pa4;
-        PreArg5 m_pa5;
-        PreArg6 m_pa6;
-        PreArg7 m_pa7;
-    };
+    PreArg1 m_pa1;
+    PreArg2 m_pa2;
+    PreArg3 m_pa3;
+    PreArg4 m_pa4;
+    PreArg5 m_pa5;
+    PreArg6 m_pa6;
+    PreArg7 m_pa7;
+};
 
 template <typename R , typename Arg1, typename Arg2, typename Arg3,
-    typename Arg4, typename Arg5, typename Arg6, typename Arg7, typename Arg8,
-    typename Arg9 , typename PreArg1, typename PreArg2, typename PreArg3,
-    typename PreArg4, typename PreArg5, typename PreArg6, typename PreArg7>
+         typename Arg4, typename Arg5, typename Arg6, typename Arg7, typename Arg8,
+         typename Arg9 , typename PreArg1, typename PreArg2, typename PreArg3,
+         typename PreArg4, typename PreArg5, typename PreArg6, typename PreArg7>
 Closure<R (Arg8, Arg9)>* NewClosure(R (*function)(Arg1, Arg2, Arg3, Arg4, Arg5,
-    Arg6, Arg7, Arg8, Arg9)
-                                          , PreArg1 pa1, PreArg2 pa2,
-                                              PreArg3 pa3, PreArg4 pa4,
-                                              PreArg5 pa5, PreArg6 pa6,
-                                              PreArg7 pa7) {
+                                    Arg6, Arg7, Arg8, Arg9)
+                                    , PreArg1 pa1, PreArg2 pa2,
+                                    PreArg3 pa3, PreArg4 pa4,
+                                    PreArg5 pa5, PreArg6 pa6,
+                                    PreArg7 pa7) {
     return new FunctionClosure_Arg2_Bind7<true, R , Arg1, Arg2, Arg3, Arg4,
-        Arg5, Arg6, Arg7, Arg8, Arg9 , PreArg1, PreArg2, PreArg3, PreArg4,
-        PreArg5, PreArg6, PreArg7>(function , pa1, pa2, pa3, pa4, pa5, pa6,
-        pa7);
+           Arg5, Arg6, Arg7, Arg8, Arg9 , PreArg1, PreArg2, PreArg3, PreArg4,
+           PreArg5, PreArg6, PreArg7>(function , pa1, pa2, pa3, pa4, pa5, pa6,
+                                      pa7);
 }
 
 template <typename R , typename Arg1, typename Arg2, typename Arg3,
-    typename Arg4, typename Arg5, typename Arg6, typename Arg7, typename Arg8,
-    typename Arg9 , typename PreArg1, typename PreArg2, typename PreArg3,
-    typename PreArg4, typename PreArg5, typename PreArg6, typename PreArg7>
+         typename Arg4, typename Arg5, typename Arg6, typename Arg7, typename Arg8,
+         typename Arg9 , typename PreArg1, typename PreArg2, typename PreArg3,
+         typename PreArg4, typename PreArg5, typename PreArg6, typename PreArg7>
 Closure<R (Arg8, Arg9)>* NewPermanentClosure(R (*function)(Arg1, Arg2, Arg3,
-    Arg4, Arg5, Arg6, Arg7, Arg8, Arg9)
-                                          , PreArg1 pa1, PreArg2 pa2,
-                                              PreArg3 pa3, PreArg4 pa4,
-                                              PreArg5 pa5, PreArg6 pa6,
-                                              PreArg7 pa7) {
+        Arg4, Arg5, Arg6, Arg7, Arg8, Arg9)
+        , PreArg1 pa1, PreArg2 pa2,
+        PreArg3 pa3, PreArg4 pa4,
+        PreArg5 pa5, PreArg6 pa6,
+        PreArg7 pa7) {
     return new FunctionClosure_Arg2_Bind7<false, R , Arg1, Arg2, Arg3, Arg4,
-        Arg5, Arg6, Arg7, Arg8, Arg9 , PreArg1, PreArg2, PreArg3, PreArg4,
-        PreArg5, PreArg6, PreArg7>(function , pa1, pa2, pa3, pa4, pa5, pa6,
-        pa7);
+           Arg5, Arg6, Arg7, Arg8, Arg9 , PreArg1, PreArg2, PreArg3, PreArg4,
+           PreArg5, PreArg6, PreArg7>(function , pa1, pa2, pa3, pa4, pa5, pa6,
+                                      pa7);
 }
 
 template <
-    bool SelfDeleting,
-    typename R,
-    typename Class,
-    typename MethodClass
-    , typename Arg1    , typename Arg2    , typename Arg3    ,
-        typename Arg4    , typename Arg5    , typename Arg6    ,
-        typename Arg7    , typename Arg8    , typename Arg9    ,
-        typename Arg10    , typename PreArg1    , typename PreArg2    ,
-        typename PreArg3    , typename PreArg4    , typename PreArg5    ,
-        typename PreArg6    , typename PreArg7    , typename PreArg8>
+bool SelfDeleting,
+     typename R,
+     typename Class,
+     typename MethodClass
+     , typename Arg1    , typename Arg2    , typename Arg3    ,
+     typename Arg4    , typename Arg5    , typename Arg6    ,
+     typename Arg7    , typename Arg8    , typename Arg9    ,
+     typename Arg10    , typename PreArg1    , typename PreArg2    ,
+     typename PreArg3    , typename PreArg4    , typename PreArg5    ,
+     typename PreArg6    , typename PreArg7    , typename PreArg8>
 class MethodClosure_Arg2_Bind8 : public Closure<R (Arg9, Arg10)> {
     typedef R (MethodClass::*MethodType)(Arg1, Arg2, Arg3, Arg4, Arg5, Arg6,
-        Arg7, Arg8, Arg9, Arg10);
+                                         Arg7, Arg8, Arg9, Arg10);
 public:
     MethodClosure_Arg2_Bind8(Class *object, MethodType method , PreArg1 pa1,
-        PreArg2 pa2, PreArg3 pa3, PreArg4 pa4, PreArg5 pa5, PreArg6 pa6,
-        PreArg7 pa7, PreArg8 pa8):
+                             PreArg2 pa2, PreArg3 pa3, PreArg4 pa4, PreArg5 pa5, PreArg6 pa6,
+                             PreArg7 pa7, PreArg8 pa8):
         m_object(object), m_method(method) , m_pa1(pa1), m_pa2(pa2),
-            m_pa3(pa3), m_pa4(pa4), m_pa5(pa5), m_pa6(pa6), m_pa7(pa7),
-            m_pa8(pa8) {}
+        m_pa3(pa3), m_pa4(pa4), m_pa5(pa5), m_pa6(pa6), m_pa7(pa7),
+        m_pa8(pa8) {}
     virtual R Run(Arg9 arg9, Arg10 arg10) {
         ConditionalAutoDeleter<SelfDeleting,
-            MethodClosure_Arg2_Bind8> self_deleter(this);
+                               MethodClosure_Arg2_Bind8> self_deleter(this);
         return (m_object->*m_method)(m_pa1, m_pa2, m_pa3, m_pa4, m_pa5, m_pa6,
-            m_pa7, m_pa8 ,arg9, arg10);
+                                     m_pa7, m_pa8 ,arg9, arg10);
     }
-    virtual bool IsSelfDelete() const { return SelfDeleting; }
+    virtual bool IsSelfDelete() const {
+        return SelfDeleting;
+    }
 private:
     Class* m_object;
     MethodType m_method;
-        PreArg1 m_pa1;
-        PreArg2 m_pa2;
-        PreArg3 m_pa3;
-        PreArg4 m_pa4;
-        PreArg5 m_pa5;
-        PreArg6 m_pa6;
-        PreArg7 m_pa7;
-        PreArg8 m_pa8;
-    };
+    PreArg1 m_pa1;
+    PreArg2 m_pa2;
+    PreArg3 m_pa3;
+    PreArg4 m_pa4;
+    PreArg5 m_pa5;
+    PreArg6 m_pa6;
+    PreArg7 m_pa7;
+    PreArg8 m_pa8;
+};
 
 template <typename R, typename Class, typename MethodClass ,typename Arg1,
-    typename Arg2,typename Arg3,typename Arg4,typename Arg5,typename Arg6,
-    typename Arg7,typename Arg8,typename Arg9,typename Arg10 ,
-    typename PreArg1, typename PreArg2, typename PreArg3, typename PreArg4,
-    typename PreArg5, typename PreArg6, typename PreArg7, typename PreArg8>
+         typename Arg2,typename Arg3,typename Arg4,typename Arg5,typename Arg6,
+         typename Arg7,typename Arg8,typename Arg9,typename Arg10 ,
+         typename PreArg1, typename PreArg2, typename PreArg3, typename PreArg4,
+         typename PreArg5, typename PreArg6, typename PreArg7, typename PreArg8>
 Closure<R (Arg9, Arg10)>* NewClosure(
     Class *object,
     R (MethodClass::*method)(Arg1, Arg2, Arg3, Arg4, Arg5, Arg6, Arg7, Arg8,
-        Arg9, Arg10)
+                             Arg9, Arg10)
     , PreArg1 pa1, PreArg2 pa2, PreArg3 pa3, PreArg4 pa4, PreArg5 pa5,
-        PreArg6 pa6, PreArg7 pa7, PreArg8 pa8) {
+    PreArg6 pa6, PreArg7 pa7, PreArg8 pa8) {
     return new MethodClosure_Arg2_Bind8<true, R, Class, MethodClass ,Arg1,Arg2,
-        Arg3,Arg4,Arg5,Arg6,Arg7,Arg8,Arg9,Arg10 , PreArg1, PreArg2, PreArg3,
-        PreArg4, PreArg5, PreArg6, PreArg7, PreArg8>(
-        object, method, pa1, pa2, pa3, pa4, pa5, pa6, pa7, pa8);
+           Arg3,Arg4,Arg5,Arg6,Arg7,Arg8,Arg9,Arg10 , PreArg1, PreArg2, PreArg3,
+           PreArg4, PreArg5, PreArg6, PreArg7, PreArg8>(
+               object, method, pa1, pa2, pa3, pa4, pa5, pa6, pa7, pa8);
 }
 
 template <typename R, typename Class, typename MethodClass ,typename Arg1,
-    typename Arg2,typename Arg3,typename Arg4,typename Arg5,typename Arg6,
-    typename Arg7,typename Arg8,typename Arg9,typename Arg10 ,
-    typename PreArg1, typename PreArg2, typename PreArg3, typename PreArg4,
-    typename PreArg5, typename PreArg6, typename PreArg7, typename PreArg8>
+         typename Arg2,typename Arg3,typename Arg4,typename Arg5,typename Arg6,
+         typename Arg7,typename Arg8,typename Arg9,typename Arg10 ,
+         typename PreArg1, typename PreArg2, typename PreArg3, typename PreArg4,
+         typename PreArg5, typename PreArg6, typename PreArg7, typename PreArg8>
 Closure<R (Arg9, Arg10)>* NewPermanentClosure(
     Class *object,
     R (MethodClass::*method)(Arg1, Arg2, Arg3, Arg4, Arg5, Arg6, Arg7, Arg8,
-        Arg9, Arg10)
+                             Arg9, Arg10)
     , PreArg1 pa1, PreArg2 pa2, PreArg3 pa3, PreArg4 pa4, PreArg5 pa5,
-        PreArg6 pa6, PreArg7 pa7, PreArg8 pa8) {
+    PreArg6 pa6, PreArg7 pa7, PreArg8 pa8) {
     return new MethodClosure_Arg2_Bind8<false, R, Class, MethodClass ,Arg1,
-        Arg2,Arg3,Arg4,Arg5,Arg6,Arg7,Arg8,Arg9,Arg10 , PreArg1, PreArg2,
-        PreArg3, PreArg4, PreArg5, PreArg6, PreArg7, PreArg8>(
-        object, method, pa1, pa2, pa3, pa4, pa5, pa6, pa7, pa8);
+           Arg2,Arg3,Arg4,Arg5,Arg6,Arg7,Arg8,Arg9,Arg10 , PreArg1, PreArg2,
+           PreArg3, PreArg4, PreArg5, PreArg6, PreArg7, PreArg8>(
+               object, method, pa1, pa2, pa3, pa4, pa5, pa6, pa7, pa8);
 }
 
 ////////////////////////////////////////////////////
@@ -3065,82 +3155,84 @@ Closure<R (Arg9, Arg10)>* NewPermanentClosure(
 ////////////////////////////////////////////////////
 
 template <
-    bool SelfDeleting,
-    typename R
-    , typename Arg1    , typename Arg2    , typename Arg3    ,
-        typename Arg4    , typename Arg5    , typename Arg6    ,
-        typename Arg7    , typename Arg8    , typename Arg9    ,
-        typename Arg10    , typename PreArg1    , typename PreArg2    ,
-        typename PreArg3    , typename PreArg4    , typename PreArg5    ,
-        typename PreArg6    , typename PreArg7    , typename PreArg8>
+bool SelfDeleting,
+     typename R
+     , typename Arg1    , typename Arg2    , typename Arg3    ,
+     typename Arg4    , typename Arg5    , typename Arg6    ,
+     typename Arg7    , typename Arg8    , typename Arg9    ,
+     typename Arg10    , typename PreArg1    , typename PreArg2    ,
+     typename PreArg3    , typename PreArg4    , typename PreArg5    ,
+     typename PreArg6    , typename PreArg7    , typename PreArg8>
 class FunctionClosure_Arg2_Bind8 : public Closure<R (Arg9, Arg10)> {
     typedef R (*FunctionType)(Arg1, Arg2, Arg3, Arg4, Arg5, Arg6, Arg7, Arg8,
-        Arg9, Arg10);
+                              Arg9, Arg10);
 public:
     FunctionClosure_Arg2_Bind8(FunctionType function , PreArg1 pa1,
-        PreArg2 pa2, PreArg3 pa3, PreArg4 pa4, PreArg5 pa5, PreArg6 pa6,
-        PreArg7 pa7, PreArg8 pa8):
+                               PreArg2 pa2, PreArg3 pa3, PreArg4 pa4, PreArg5 pa5, PreArg6 pa6,
+                               PreArg7 pa7, PreArg8 pa8):
         m_function(function) , m_pa1(pa1), m_pa2(pa2), m_pa3(pa3), m_pa4(pa4),
-            m_pa5(pa5), m_pa6(pa6), m_pa7(pa7), m_pa8(pa8) {}
+        m_pa5(pa5), m_pa6(pa6), m_pa7(pa7), m_pa8(pa8) {}
     virtual R Run(Arg9 arg9, Arg10 arg10) {
         ConditionalAutoDeleter<SelfDeleting,
-            FunctionClosure_Arg2_Bind8> self_deleter(this);
+                               FunctionClosure_Arg2_Bind8> self_deleter(this);
         return m_function(m_pa1, m_pa2, m_pa3, m_pa4, m_pa5, m_pa6, m_pa7,
-            m_pa8 ,arg9, arg10);
+                          m_pa8 ,arg9, arg10);
     }
-    virtual bool IsSelfDelete() const { return SelfDeleting; }
+    virtual bool IsSelfDelete() const {
+        return SelfDeleting;
+    }
 private:
     FunctionType m_function;
-        PreArg1 m_pa1;
-        PreArg2 m_pa2;
-        PreArg3 m_pa3;
-        PreArg4 m_pa4;
-        PreArg5 m_pa5;
-        PreArg6 m_pa6;
-        PreArg7 m_pa7;
-        PreArg8 m_pa8;
-    };
+    PreArg1 m_pa1;
+    PreArg2 m_pa2;
+    PreArg3 m_pa3;
+    PreArg4 m_pa4;
+    PreArg5 m_pa5;
+    PreArg6 m_pa6;
+    PreArg7 m_pa7;
+    PreArg8 m_pa8;
+};
 
 template <typename R , typename Arg1, typename Arg2, typename Arg3,
-    typename Arg4, typename Arg5, typename Arg6, typename Arg7, typename Arg8,
-    typename Arg9, typename Arg10 , typename PreArg1, typename PreArg2,
-    typename PreArg3, typename PreArg4, typename PreArg5, typename PreArg6,
-    typename PreArg7, typename PreArg8>
+         typename Arg4, typename Arg5, typename Arg6, typename Arg7, typename Arg8,
+         typename Arg9, typename Arg10 , typename PreArg1, typename PreArg2,
+         typename PreArg3, typename PreArg4, typename PreArg5, typename PreArg6,
+         typename PreArg7, typename PreArg8>
 Closure<R (Arg9, Arg10)>* NewClosure(R (*function)(Arg1, Arg2, Arg3, Arg4,
-    Arg5, Arg6, Arg7, Arg8, Arg9, Arg10)
-                                          , PreArg1 pa1, PreArg2 pa2,
-                                              PreArg3 pa3, PreArg4 pa4,
-                                              PreArg5 pa5, PreArg6 pa6,
-                                              PreArg7 pa7, PreArg8 pa8) {
+                                     Arg5, Arg6, Arg7, Arg8, Arg9, Arg10)
+                                     , PreArg1 pa1, PreArg2 pa2,
+                                     PreArg3 pa3, PreArg4 pa4,
+                                     PreArg5 pa5, PreArg6 pa6,
+                                     PreArg7 pa7, PreArg8 pa8) {
     return new FunctionClosure_Arg2_Bind8<true, R , Arg1, Arg2, Arg3, Arg4,
-        Arg5, Arg6, Arg7, Arg8, Arg9, Arg10 , PreArg1, PreArg2, PreArg3,
-        PreArg4, PreArg5, PreArg6, PreArg7, PreArg8>(function , pa1, pa2, pa3,
-        pa4, pa5, pa6, pa7, pa8);
+           Arg5, Arg6, Arg7, Arg8, Arg9, Arg10 , PreArg1, PreArg2, PreArg3,
+           PreArg4, PreArg5, PreArg6, PreArg7, PreArg8>(function , pa1, pa2, pa3,
+                   pa4, pa5, pa6, pa7, pa8);
 }
 
 template <typename R , typename Arg1, typename Arg2, typename Arg3,
-    typename Arg4, typename Arg5, typename Arg6, typename Arg7, typename Arg8,
-    typename Arg9, typename Arg10 , typename PreArg1, typename PreArg2,
-    typename PreArg3, typename PreArg4, typename PreArg5, typename PreArg6,
-    typename PreArg7, typename PreArg8>
+         typename Arg4, typename Arg5, typename Arg6, typename Arg7, typename Arg8,
+         typename Arg9, typename Arg10 , typename PreArg1, typename PreArg2,
+         typename PreArg3, typename PreArg4, typename PreArg5, typename PreArg6,
+         typename PreArg7, typename PreArg8>
 Closure<R (Arg9, Arg10)>* NewPermanentClosure(R (*function)(Arg1, Arg2, Arg3,
-    Arg4, Arg5, Arg6, Arg7, Arg8, Arg9, Arg10)
-                                          , PreArg1 pa1, PreArg2 pa2,
-                                              PreArg3 pa3, PreArg4 pa4,
-                                              PreArg5 pa5, PreArg6 pa6,
-                                              PreArg7 pa7, PreArg8 pa8) {
+        Arg4, Arg5, Arg6, Arg7, Arg8, Arg9, Arg10)
+        , PreArg1 pa1, PreArg2 pa2,
+        PreArg3 pa3, PreArg4 pa4,
+        PreArg5 pa5, PreArg6 pa6,
+        PreArg7 pa7, PreArg8 pa8) {
     return new FunctionClosure_Arg2_Bind8<false, R , Arg1, Arg2, Arg3, Arg4,
-        Arg5, Arg6, Arg7, Arg8, Arg9, Arg10 , PreArg1, PreArg2, PreArg3,
-        PreArg4, PreArg5, PreArg6, PreArg7, PreArg8>(function , pa1, pa2, pa3,
-        pa4, pa5, pa6, pa7, pa8);
+           Arg5, Arg6, Arg7, Arg8, Arg9, Arg10 , PreArg1, PreArg2, PreArg3,
+           PreArg4, PreArg5, PreArg6, PreArg7, PreArg8>(function , pa1, pa2, pa3,
+                   pa4, pa5, pa6, pa7, pa8);
 }
 
 template <
-    bool SelfDeleting,
-    typename R,
-    typename Class,
-    typename MethodClass
-    , typename Arg1    , typename Arg2    , typename Arg3    >
+bool SelfDeleting,
+     typename R,
+     typename Class,
+     typename MethodClass
+     , typename Arg1    , typename Arg2    , typename Arg3    >
 class MethodClosure_Arg3_Bind0 : public Closure<R (Arg1, Arg2, Arg3)> {
     typedef R (MethodClass::*MethodType)(Arg1, Arg2, Arg3);
 public:
@@ -3148,35 +3240,37 @@ public:
         m_object(object), m_method(method)  {}
     virtual R Run(Arg1 arg1, Arg2 arg2, Arg3 arg3) {
         ConditionalAutoDeleter<SelfDeleting,
-            MethodClosure_Arg3_Bind0> self_deleter(this);
+                               MethodClosure_Arg3_Bind0> self_deleter(this);
         return (m_object->*m_method)( arg1, arg2, arg3);
     }
-    virtual bool IsSelfDelete() const { return SelfDeleting; }
+    virtual bool IsSelfDelete() const {
+        return SelfDeleting;
+    }
 private:
     Class* m_object;
     MethodType m_method;
-    };
+};
 
 template <typename R, typename Class, typename MethodClass ,typename Arg1,
-    typename Arg2,typename Arg3 >
+         typename Arg2,typename Arg3 >
 Closure<R (Arg1, Arg2, Arg3)>* NewClosure(
     Class *object,
     R (MethodClass::*method)(Arg1, Arg2, Arg3)
-    ) {
+) {
     return new MethodClosure_Arg3_Bind0<true, R, Class, MethodClass ,Arg1,Arg2,
-        Arg3 >(
-        object, method);
+           Arg3 >(
+               object, method);
 }
 
 template <typename R, typename Class, typename MethodClass ,typename Arg1,
-    typename Arg2,typename Arg3 >
+         typename Arg2,typename Arg3 >
 Closure<R (Arg1, Arg2, Arg3)>* NewPermanentClosure(
     Class *object,
     R (MethodClass::*method)(Arg1, Arg2, Arg3)
-    ) {
+) {
     return new MethodClosure_Arg3_Bind0<false, R, Class, MethodClass ,Arg1,
-        Arg2,Arg3 >(
-        object, method);
+           Arg2,Arg3 >(
+               object, method);
 }
 
 ////////////////////////////////////////////////////
@@ -3184,9 +3278,9 @@ Closure<R (Arg1, Arg2, Arg3)>* NewPermanentClosure(
 ////////////////////////////////////////////////////
 
 template <
-    bool SelfDeleting,
-    typename R
-    , typename Arg1    , typename Arg2    , typename Arg3    >
+bool SelfDeleting,
+     typename R
+     , typename Arg1    , typename Arg2    , typename Arg3    >
 class FunctionClosure_Arg3_Bind0 : public Closure<R (Arg1, Arg2, Arg3)> {
     typedef R (*FunctionType)(Arg1, Arg2, Arg3);
 public:
@@ -3194,36 +3288,38 @@ public:
         m_function(function)  {}
     virtual R Run(Arg1 arg1, Arg2 arg2, Arg3 arg3) {
         ConditionalAutoDeleter<SelfDeleting,
-            FunctionClosure_Arg3_Bind0> self_deleter(this);
+                               FunctionClosure_Arg3_Bind0> self_deleter(this);
         return m_function( arg1, arg2, arg3);
     }
-    virtual bool IsSelfDelete() const { return SelfDeleting; }
+    virtual bool IsSelfDelete() const {
+        return SelfDeleting;
+    }
 private:
     FunctionType m_function;
-    };
+};
 
 template <typename R , typename Arg1, typename Arg2, typename Arg3 >
 Closure<R (Arg1, Arg2, Arg3)>* NewClosure(R (*function)(Arg1, Arg2, Arg3)
-                                          ) {
+                                         ) {
     return new FunctionClosure_Arg3_Bind0<true, R , Arg1, Arg2,
-        Arg3 >(function );
+           Arg3 >(function );
 }
 
 template <typename R , typename Arg1, typename Arg2, typename Arg3 >
 Closure<R (Arg1, Arg2, Arg3)>* NewPermanentClosure(R (*function)(Arg1, Arg2,
-    Arg3)
-                                          ) {
+        Arg3)
+                                                  ) {
     return new FunctionClosure_Arg3_Bind0<false, R , Arg1, Arg2,
-        Arg3 >(function );
+           Arg3 >(function );
 }
 
 template <
-    bool SelfDeleting,
-    typename R,
-    typename Class,
-    typename MethodClass
-    , typename Arg1    , typename Arg2    , typename Arg3    ,
-        typename Arg4    , typename PreArg1>
+bool SelfDeleting,
+     typename R,
+     typename Class,
+     typename MethodClass
+     , typename Arg1    , typename Arg2    , typename Arg3    ,
+     typename Arg4    , typename PreArg1>
 class MethodClosure_Arg3_Bind1 : public Closure<R (Arg2, Arg3, Arg4)> {
     typedef R (MethodClass::*MethodType)(Arg1, Arg2, Arg3, Arg4);
 public:
@@ -3231,36 +3327,38 @@ public:
         m_object(object), m_method(method) , m_pa1(pa1) {}
     virtual R Run(Arg2 arg2, Arg3 arg3, Arg4 arg4) {
         ConditionalAutoDeleter<SelfDeleting,
-            MethodClosure_Arg3_Bind1> self_deleter(this);
+                               MethodClosure_Arg3_Bind1> self_deleter(this);
         return (m_object->*m_method)(m_pa1 ,arg2, arg3, arg4);
     }
-    virtual bool IsSelfDelete() const { return SelfDeleting; }
+    virtual bool IsSelfDelete() const {
+        return SelfDeleting;
+    }
 private:
     Class* m_object;
     MethodType m_method;
-        PreArg1 m_pa1;
-    };
+    PreArg1 m_pa1;
+};
 
 template <typename R, typename Class, typename MethodClass ,typename Arg1,
-    typename Arg2,typename Arg3,typename Arg4 , typename PreArg1>
+         typename Arg2,typename Arg3,typename Arg4 , typename PreArg1>
 Closure<R (Arg2, Arg3, Arg4)>* NewClosure(
     Class *object,
     R (MethodClass::*method)(Arg1, Arg2, Arg3, Arg4)
     , PreArg1 pa1) {
     return new MethodClosure_Arg3_Bind1<true, R, Class, MethodClass ,Arg1,Arg2,
-        Arg3,Arg4 , PreArg1>(
-        object, method, pa1);
+           Arg3,Arg4 , PreArg1>(
+               object, method, pa1);
 }
 
 template <typename R, typename Class, typename MethodClass ,typename Arg1,
-    typename Arg2,typename Arg3,typename Arg4 , typename PreArg1>
+         typename Arg2,typename Arg3,typename Arg4 , typename PreArg1>
 Closure<R (Arg2, Arg3, Arg4)>* NewPermanentClosure(
     Class *object,
     R (MethodClass::*method)(Arg1, Arg2, Arg3, Arg4)
     , PreArg1 pa1) {
     return new MethodClosure_Arg3_Bind1<false, R, Class, MethodClass ,Arg1,
-        Arg2,Arg3,Arg4 , PreArg1>(
-        object, method, pa1);
+           Arg2,Arg3,Arg4 , PreArg1>(
+               object, method, pa1);
 }
 
 ////////////////////////////////////////////////////
@@ -3268,10 +3366,10 @@ Closure<R (Arg2, Arg3, Arg4)>* NewPermanentClosure(
 ////////////////////////////////////////////////////
 
 template <
-    bool SelfDeleting,
-    typename R
-    , typename Arg1    , typename Arg2    , typename Arg3    ,
-        typename Arg4    , typename PreArg1>
+bool SelfDeleting,
+     typename R
+     , typename Arg1    , typename Arg2    , typename Arg3    ,
+     typename Arg4    , typename PreArg1>
 class FunctionClosure_Arg3_Bind1 : public Closure<R (Arg2, Arg3, Arg4)> {
     typedef R (*FunctionType)(Arg1, Arg2, Arg3, Arg4);
 public:
@@ -3279,81 +3377,85 @@ public:
         m_function(function) , m_pa1(pa1) {}
     virtual R Run(Arg2 arg2, Arg3 arg3, Arg4 arg4) {
         ConditionalAutoDeleter<SelfDeleting,
-            FunctionClosure_Arg3_Bind1> self_deleter(this);
+                               FunctionClosure_Arg3_Bind1> self_deleter(this);
         return m_function(m_pa1 ,arg2, arg3, arg4);
     }
-    virtual bool IsSelfDelete() const { return SelfDeleting; }
+    virtual bool IsSelfDelete() const {
+        return SelfDeleting;
+    }
 private:
     FunctionType m_function;
-        PreArg1 m_pa1;
-    };
+    PreArg1 m_pa1;
+};
 
 template <typename R , typename Arg1, typename Arg2, typename Arg3,
-    typename Arg4 , typename PreArg1>
+         typename Arg4 , typename PreArg1>
 Closure<R (Arg2, Arg3, Arg4)>* NewClosure(R (*function)(Arg1, Arg2, Arg3, Arg4)
-                                          , PreArg1 pa1) {
+        , PreArg1 pa1) {
     return new FunctionClosure_Arg3_Bind1<true, R , Arg1, Arg2, Arg3, Arg4 ,
-        PreArg1>(function , pa1);
+           PreArg1>(function , pa1);
 }
 
 template <typename R , typename Arg1, typename Arg2, typename Arg3,
-    typename Arg4 , typename PreArg1>
+         typename Arg4 , typename PreArg1>
 Closure<R (Arg2, Arg3, Arg4)>* NewPermanentClosure(R (*function)(Arg1, Arg2,
-    Arg3, Arg4)
-                                          , PreArg1 pa1) {
+        Arg3, Arg4)
+        , PreArg1 pa1) {
     return new FunctionClosure_Arg3_Bind1<false, R , Arg1, Arg2, Arg3, Arg4 ,
-        PreArg1>(function , pa1);
+           PreArg1>(function , pa1);
 }
 
 template <
-    bool SelfDeleting,
-    typename R,
-    typename Class,
-    typename MethodClass
-    , typename Arg1    , typename Arg2    , typename Arg3    ,
-        typename Arg4    , typename Arg5    , typename PreArg1    ,
-        typename PreArg2>
+bool SelfDeleting,
+     typename R,
+     typename Class,
+     typename MethodClass
+     , typename Arg1    , typename Arg2    , typename Arg3    ,
+     typename Arg4    , typename Arg5    , typename PreArg1    ,
+     typename PreArg2>
 class MethodClosure_Arg3_Bind2 : public Closure<R (Arg3, Arg4, Arg5)> {
     typedef R (MethodClass::*MethodType)(Arg1, Arg2, Arg3, Arg4, Arg5);
 public:
     MethodClosure_Arg3_Bind2(Class *object, MethodType method , PreArg1 pa1,
-        PreArg2 pa2):
+                             PreArg2 pa2):
         m_object(object), m_method(method) , m_pa1(pa1), m_pa2(pa2) {}
     virtual R Run(Arg3 arg3, Arg4 arg4, Arg5 arg5) {
         ConditionalAutoDeleter<SelfDeleting,
-            MethodClosure_Arg3_Bind2> self_deleter(this);
+                               MethodClosure_Arg3_Bind2> self_deleter(this);
         return (m_object->*m_method)(m_pa1, m_pa2 ,arg3, arg4, arg5);
     }
-    virtual bool IsSelfDelete() const { return SelfDeleting; }
+    virtual bool IsSelfDelete() const {
+        return SelfDeleting;
+    }
 private:
     Class* m_object;
     MethodType m_method;
-        PreArg1 m_pa1;
-        PreArg2 m_pa2;
-    };
+    PreArg1 m_pa1;
+    PreArg2 m_pa2;
+};
 
 template <typename R, typename Class, typename MethodClass ,typename Arg1,
-    typename Arg2,typename Arg3,typename Arg4,typename Arg5 , typename PreArg1,
-    typename PreArg2>
+         typename Arg2,typename Arg3,typename Arg4,typename Arg5 , typename PreArg1,
+         typename PreArg2>
 Closure<R (Arg3, Arg4, Arg5)>* NewClosure(
     Class *object,
     R (MethodClass::*method)(Arg1, Arg2, Arg3, Arg4, Arg5)
     , PreArg1 pa1, PreArg2 pa2) {
     return new MethodClosure_Arg3_Bind2<true, R, Class, MethodClass ,Arg1,Arg2,
-        Arg3,Arg4,Arg5 , PreArg1, PreArg2>(
-        object, method, pa1, pa2);
+           Arg3,Arg4,Arg5 , PreArg1, PreArg2>(
+               object, method, pa1, pa2);
 }
 
 template <typename R, typename Class, typename MethodClass ,typename Arg1,
-    typename Arg2,typename Arg3,typename Arg4,typename Arg5 , typename PreArg1,
-    typename PreArg2>
+         typename Arg2,typename Arg3,typename Arg4,typename Arg5 , typename PreArg1,
+         typename PreArg2>
 Closure<R (Arg3, Arg4, Arg5)>* NewPermanentClosure(
     Class *object,
     R (MethodClass::*method)(Arg1, Arg2, Arg3, Arg4, Arg5)
     , PreArg1 pa1, PreArg2 pa2) {
     return new MethodClosure_Arg3_Bind2<false, R, Class, MethodClass ,Arg1,
-        Arg2,Arg3,Arg4,Arg5 , PreArg1, PreArg2>(
-        object, method, pa1, pa2);
+           Arg2,Arg3,Arg4,Arg5 , PreArg1, PreArg2>(
+               object, method, pa1, pa2);
 }
 
 ////////////////////////////////////////////////////
@@ -3361,98 +3463,102 @@ Closure<R (Arg3, Arg4, Arg5)>* NewPermanentClosure(
 ////////////////////////////////////////////////////
 
 template <
-    bool SelfDeleting,
-    typename R
-    , typename Arg1    , typename Arg2    , typename Arg3    ,
-        typename Arg4    , typename Arg5    , typename PreArg1    ,
-        typename PreArg2>
+bool SelfDeleting,
+     typename R
+     , typename Arg1    , typename Arg2    , typename Arg3    ,
+     typename Arg4    , typename Arg5    , typename PreArg1    ,
+     typename PreArg2>
 class FunctionClosure_Arg3_Bind2 : public Closure<R (Arg3, Arg4, Arg5)> {
     typedef R (*FunctionType)(Arg1, Arg2, Arg3, Arg4, Arg5);
 public:
     FunctionClosure_Arg3_Bind2(FunctionType function , PreArg1 pa1,
-        PreArg2 pa2):
+                               PreArg2 pa2):
         m_function(function) , m_pa1(pa1), m_pa2(pa2) {}
     virtual R Run(Arg3 arg3, Arg4 arg4, Arg5 arg5) {
         ConditionalAutoDeleter<SelfDeleting,
-            FunctionClosure_Arg3_Bind2> self_deleter(this);
+                               FunctionClosure_Arg3_Bind2> self_deleter(this);
         return m_function(m_pa1, m_pa2 ,arg3, arg4, arg5);
     }
-    virtual bool IsSelfDelete() const { return SelfDeleting; }
+    virtual bool IsSelfDelete() const {
+        return SelfDeleting;
+    }
 private:
     FunctionType m_function;
-        PreArg1 m_pa1;
-        PreArg2 m_pa2;
-    };
+    PreArg1 m_pa1;
+    PreArg2 m_pa2;
+};
 
 template <typename R , typename Arg1, typename Arg2, typename Arg3,
-    typename Arg4, typename Arg5 , typename PreArg1, typename PreArg2>
+         typename Arg4, typename Arg5 , typename PreArg1, typename PreArg2>
 Closure<R (Arg3, Arg4, Arg5)>* NewClosure(R (*function)(Arg1, Arg2, Arg3, Arg4,
-    Arg5)
-                                          , PreArg1 pa1, PreArg2 pa2) {
+        Arg5)
+        , PreArg1 pa1, PreArg2 pa2) {
     return new FunctionClosure_Arg3_Bind2<true, R , Arg1, Arg2, Arg3, Arg4,
-        Arg5 , PreArg1, PreArg2>(function , pa1, pa2);
+           Arg5 , PreArg1, PreArg2>(function , pa1, pa2);
 }
 
 template <typename R , typename Arg1, typename Arg2, typename Arg3,
-    typename Arg4, typename Arg5 , typename PreArg1, typename PreArg2>
+         typename Arg4, typename Arg5 , typename PreArg1, typename PreArg2>
 Closure<R (Arg3, Arg4, Arg5)>* NewPermanentClosure(R (*function)(Arg1, Arg2,
-    Arg3, Arg4, Arg5)
-                                          , PreArg1 pa1, PreArg2 pa2) {
+        Arg3, Arg4, Arg5)
+        , PreArg1 pa1, PreArg2 pa2) {
     return new FunctionClosure_Arg3_Bind2<false, R , Arg1, Arg2, Arg3, Arg4,
-        Arg5 , PreArg1, PreArg2>(function , pa1, pa2);
+           Arg5 , PreArg1, PreArg2>(function , pa1, pa2);
 }
 
 template <
-    bool SelfDeleting,
-    typename R,
-    typename Class,
-    typename MethodClass
-    , typename Arg1    , typename Arg2    , typename Arg3    ,
-        typename Arg4    , typename Arg5    , typename Arg6    ,
-        typename PreArg1    , typename PreArg2    , typename PreArg3>
+bool SelfDeleting,
+     typename R,
+     typename Class,
+     typename MethodClass
+     , typename Arg1    , typename Arg2    , typename Arg3    ,
+     typename Arg4    , typename Arg5    , typename Arg6    ,
+     typename PreArg1    , typename PreArg2    , typename PreArg3>
 class MethodClosure_Arg3_Bind3 : public Closure<R (Arg4, Arg5, Arg6)> {
     typedef R (MethodClass::*MethodType)(Arg1, Arg2, Arg3, Arg4, Arg5, Arg6);
 public:
     MethodClosure_Arg3_Bind3(Class *object, MethodType method , PreArg1 pa1,
-        PreArg2 pa2, PreArg3 pa3):
+                             PreArg2 pa2, PreArg3 pa3):
         m_object(object), m_method(method) , m_pa1(pa1), m_pa2(pa2),
-            m_pa3(pa3) {}
+        m_pa3(pa3) {}
     virtual R Run(Arg4 arg4, Arg5 arg5, Arg6 arg6) {
         ConditionalAutoDeleter<SelfDeleting,
-            MethodClosure_Arg3_Bind3> self_deleter(this);
+                               MethodClosure_Arg3_Bind3> self_deleter(this);
         return (m_object->*m_method)(m_pa1, m_pa2, m_pa3 ,arg4, arg5, arg6);
     }
-    virtual bool IsSelfDelete() const { return SelfDeleting; }
+    virtual bool IsSelfDelete() const {
+        return SelfDeleting;
+    }
 private:
     Class* m_object;
     MethodType m_method;
-        PreArg1 m_pa1;
-        PreArg2 m_pa2;
-        PreArg3 m_pa3;
-    };
+    PreArg1 m_pa1;
+    PreArg2 m_pa2;
+    PreArg3 m_pa3;
+};
 
 template <typename R, typename Class, typename MethodClass ,typename Arg1,
-    typename Arg2,typename Arg3,typename Arg4,typename Arg5,typename Arg6 ,
-    typename PreArg1, typename PreArg2, typename PreArg3>
+         typename Arg2,typename Arg3,typename Arg4,typename Arg5,typename Arg6 ,
+         typename PreArg1, typename PreArg2, typename PreArg3>
 Closure<R (Arg4, Arg5, Arg6)>* NewClosure(
     Class *object,
     R (MethodClass::*method)(Arg1, Arg2, Arg3, Arg4, Arg5, Arg6)
     , PreArg1 pa1, PreArg2 pa2, PreArg3 pa3) {
     return new MethodClosure_Arg3_Bind3<true, R, Class, MethodClass ,Arg1,Arg2,
-        Arg3,Arg4,Arg5,Arg6 , PreArg1, PreArg2, PreArg3>(
-        object, method, pa1, pa2, pa3);
+           Arg3,Arg4,Arg5,Arg6 , PreArg1, PreArg2, PreArg3>(
+               object, method, pa1, pa2, pa3);
 }
 
 template <typename R, typename Class, typename MethodClass ,typename Arg1,
-    typename Arg2,typename Arg3,typename Arg4,typename Arg5,typename Arg6 ,
-    typename PreArg1, typename PreArg2, typename PreArg3>
+         typename Arg2,typename Arg3,typename Arg4,typename Arg5,typename Arg6 ,
+         typename PreArg1, typename PreArg2, typename PreArg3>
 Closure<R (Arg4, Arg5, Arg6)>* NewPermanentClosure(
     Class *object,
     R (MethodClass::*method)(Arg1, Arg2, Arg3, Arg4, Arg5, Arg6)
     , PreArg1 pa1, PreArg2 pa2, PreArg3 pa3) {
     return new MethodClosure_Arg3_Bind3<false, R, Class, MethodClass ,Arg1,
-        Arg2,Arg3,Arg4,Arg5,Arg6 , PreArg1, PreArg2, PreArg3>(
-        object, method, pa1, pa2, pa3);
+           Arg2,Arg3,Arg4,Arg5,Arg6 , PreArg1, PreArg2, PreArg3>(
+               object, method, pa1, pa2, pa3);
 }
 
 ////////////////////////////////////////////////////
@@ -3460,109 +3566,113 @@ Closure<R (Arg4, Arg5, Arg6)>* NewPermanentClosure(
 ////////////////////////////////////////////////////
 
 template <
-    bool SelfDeleting,
-    typename R
-    , typename Arg1    , typename Arg2    , typename Arg3    ,
-        typename Arg4    , typename Arg5    , typename Arg6    ,
-        typename PreArg1    , typename PreArg2    , typename PreArg3>
+bool SelfDeleting,
+     typename R
+     , typename Arg1    , typename Arg2    , typename Arg3    ,
+     typename Arg4    , typename Arg5    , typename Arg6    ,
+     typename PreArg1    , typename PreArg2    , typename PreArg3>
 class FunctionClosure_Arg3_Bind3 : public Closure<R (Arg4, Arg5, Arg6)> {
     typedef R (*FunctionType)(Arg1, Arg2, Arg3, Arg4, Arg5, Arg6);
 public:
     FunctionClosure_Arg3_Bind3(FunctionType function , PreArg1 pa1,
-        PreArg2 pa2, PreArg3 pa3):
+                               PreArg2 pa2, PreArg3 pa3):
         m_function(function) , m_pa1(pa1), m_pa2(pa2), m_pa3(pa3) {}
     virtual R Run(Arg4 arg4, Arg5 arg5, Arg6 arg6) {
         ConditionalAutoDeleter<SelfDeleting,
-            FunctionClosure_Arg3_Bind3> self_deleter(this);
+                               FunctionClosure_Arg3_Bind3> self_deleter(this);
         return m_function(m_pa1, m_pa2, m_pa3 ,arg4, arg5, arg6);
     }
-    virtual bool IsSelfDelete() const { return SelfDeleting; }
+    virtual bool IsSelfDelete() const {
+        return SelfDeleting;
+    }
 private:
     FunctionType m_function;
-        PreArg1 m_pa1;
-        PreArg2 m_pa2;
-        PreArg3 m_pa3;
-    };
+    PreArg1 m_pa1;
+    PreArg2 m_pa2;
+    PreArg3 m_pa3;
+};
 
 template <typename R , typename Arg1, typename Arg2, typename Arg3,
-    typename Arg4, typename Arg5, typename Arg6 , typename PreArg1,
-    typename PreArg2, typename PreArg3>
+         typename Arg4, typename Arg5, typename Arg6 , typename PreArg1,
+         typename PreArg2, typename PreArg3>
 Closure<R (Arg4, Arg5, Arg6)>* NewClosure(R (*function)(Arg1, Arg2, Arg3, Arg4,
-    Arg5, Arg6)
-                                          , PreArg1 pa1, PreArg2 pa2,
-                                              PreArg3 pa3) {
+        Arg5, Arg6)
+        , PreArg1 pa1, PreArg2 pa2,
+        PreArg3 pa3) {
     return new FunctionClosure_Arg3_Bind3<true, R , Arg1, Arg2, Arg3, Arg4,
-        Arg5, Arg6 , PreArg1, PreArg2, PreArg3>(function , pa1, pa2, pa3);
+           Arg5, Arg6 , PreArg1, PreArg2, PreArg3>(function , pa1, pa2, pa3);
 }
 
 template <typename R , typename Arg1, typename Arg2, typename Arg3,
-    typename Arg4, typename Arg5, typename Arg6 , typename PreArg1,
-    typename PreArg2, typename PreArg3>
+         typename Arg4, typename Arg5, typename Arg6 , typename PreArg1,
+         typename PreArg2, typename PreArg3>
 Closure<R (Arg4, Arg5, Arg6)>* NewPermanentClosure(R (*function)(Arg1, Arg2,
-    Arg3, Arg4, Arg5, Arg6)
-                                          , PreArg1 pa1, PreArg2 pa2,
-                                              PreArg3 pa3) {
+        Arg3, Arg4, Arg5, Arg6)
+        , PreArg1 pa1, PreArg2 pa2,
+        PreArg3 pa3) {
     return new FunctionClosure_Arg3_Bind3<false, R , Arg1, Arg2, Arg3, Arg4,
-        Arg5, Arg6 , PreArg1, PreArg2, PreArg3>(function , pa1, pa2, pa3);
+           Arg5, Arg6 , PreArg1, PreArg2, PreArg3>(function , pa1, pa2, pa3);
 }
 
 template <
-    bool SelfDeleting,
-    typename R,
-    typename Class,
-    typename MethodClass
-    , typename Arg1    , typename Arg2    , typename Arg3    ,
-        typename Arg4    , typename Arg5    , typename Arg6    ,
-        typename Arg7    , typename PreArg1    , typename PreArg2    ,
-        typename PreArg3    , typename PreArg4>
+bool SelfDeleting,
+     typename R,
+     typename Class,
+     typename MethodClass
+     , typename Arg1    , typename Arg2    , typename Arg3    ,
+     typename Arg4    , typename Arg5    , typename Arg6    ,
+     typename Arg7    , typename PreArg1    , typename PreArg2    ,
+     typename PreArg3    , typename PreArg4>
 class MethodClosure_Arg3_Bind4 : public Closure<R (Arg5, Arg6, Arg7)> {
     typedef R (MethodClass::*MethodType)(Arg1, Arg2, Arg3, Arg4, Arg5, Arg6,
-        Arg7);
+                                         Arg7);
 public:
     MethodClosure_Arg3_Bind4(Class *object, MethodType method , PreArg1 pa1,
-        PreArg2 pa2, PreArg3 pa3, PreArg4 pa4):
+                             PreArg2 pa2, PreArg3 pa3, PreArg4 pa4):
         m_object(object), m_method(method) , m_pa1(pa1), m_pa2(pa2),
-            m_pa3(pa3), m_pa4(pa4) {}
+        m_pa3(pa3), m_pa4(pa4) {}
     virtual R Run(Arg5 arg5, Arg6 arg6, Arg7 arg7) {
         ConditionalAutoDeleter<SelfDeleting,
-            MethodClosure_Arg3_Bind4> self_deleter(this);
+                               MethodClosure_Arg3_Bind4> self_deleter(this);
         return (m_object->*m_method)(m_pa1, m_pa2, m_pa3, m_pa4 ,arg5, arg6,
-            arg7);
+                                     arg7);
     }
-    virtual bool IsSelfDelete() const { return SelfDeleting; }
+    virtual bool IsSelfDelete() const {
+        return SelfDeleting;
+    }
 private:
     Class* m_object;
     MethodType m_method;
-        PreArg1 m_pa1;
-        PreArg2 m_pa2;
-        PreArg3 m_pa3;
-        PreArg4 m_pa4;
-    };
+    PreArg1 m_pa1;
+    PreArg2 m_pa2;
+    PreArg3 m_pa3;
+    PreArg4 m_pa4;
+};
 
 template <typename R, typename Class, typename MethodClass ,typename Arg1,
-    typename Arg2,typename Arg3,typename Arg4,typename Arg5,typename Arg6,
-    typename Arg7 , typename PreArg1, typename PreArg2, typename PreArg3,
-    typename PreArg4>
+         typename Arg2,typename Arg3,typename Arg4,typename Arg5,typename Arg6,
+         typename Arg7 , typename PreArg1, typename PreArg2, typename PreArg3,
+         typename PreArg4>
 Closure<R (Arg5, Arg6, Arg7)>* NewClosure(
     Class *object,
     R (MethodClass::*method)(Arg1, Arg2, Arg3, Arg4, Arg5, Arg6, Arg7)
     , PreArg1 pa1, PreArg2 pa2, PreArg3 pa3, PreArg4 pa4) {
     return new MethodClosure_Arg3_Bind4<true, R, Class, MethodClass ,Arg1,Arg2,
-        Arg3,Arg4,Arg5,Arg6,Arg7 , PreArg1, PreArg2, PreArg3, PreArg4>(
-        object, method, pa1, pa2, pa3, pa4);
+           Arg3,Arg4,Arg5,Arg6,Arg7 , PreArg1, PreArg2, PreArg3, PreArg4>(
+               object, method, pa1, pa2, pa3, pa4);
 }
 
 template <typename R, typename Class, typename MethodClass ,typename Arg1,
-    typename Arg2,typename Arg3,typename Arg4,typename Arg5,typename Arg6,
-    typename Arg7 , typename PreArg1, typename PreArg2, typename PreArg3,
-    typename PreArg4>
+         typename Arg2,typename Arg3,typename Arg4,typename Arg5,typename Arg6,
+         typename Arg7 , typename PreArg1, typename PreArg2, typename PreArg3,
+         typename PreArg4>
 Closure<R (Arg5, Arg6, Arg7)>* NewPermanentClosure(
     Class *object,
     R (MethodClass::*method)(Arg1, Arg2, Arg3, Arg4, Arg5, Arg6, Arg7)
     , PreArg1 pa1, PreArg2 pa2, PreArg3 pa3, PreArg4 pa4) {
     return new MethodClosure_Arg3_Bind4<false, R, Class, MethodClass ,Arg1,
-        Arg2,Arg3,Arg4,Arg5,Arg6,Arg7 , PreArg1, PreArg2, PreArg3, PreArg4>(
-        object, method, pa1, pa2, pa3, pa4);
+           Arg2,Arg3,Arg4,Arg5,Arg6,Arg7 , PreArg1, PreArg2, PreArg3, PreArg4>(
+               object, method, pa1, pa2, pa3, pa4);
 }
 
 ////////////////////////////////////////////////////
@@ -3570,117 +3680,121 @@ Closure<R (Arg5, Arg6, Arg7)>* NewPermanentClosure(
 ////////////////////////////////////////////////////
 
 template <
-    bool SelfDeleting,
-    typename R
-    , typename Arg1    , typename Arg2    , typename Arg3    ,
-        typename Arg4    , typename Arg5    , typename Arg6    ,
-        typename Arg7    , typename PreArg1    , typename PreArg2    ,
-        typename PreArg3    , typename PreArg4>
+bool SelfDeleting,
+     typename R
+     , typename Arg1    , typename Arg2    , typename Arg3    ,
+     typename Arg4    , typename Arg5    , typename Arg6    ,
+     typename Arg7    , typename PreArg1    , typename PreArg2    ,
+     typename PreArg3    , typename PreArg4>
 class FunctionClosure_Arg3_Bind4 : public Closure<R (Arg5, Arg6, Arg7)> {
     typedef R (*FunctionType)(Arg1, Arg2, Arg3, Arg4, Arg5, Arg6, Arg7);
 public:
     FunctionClosure_Arg3_Bind4(FunctionType function , PreArg1 pa1,
-        PreArg2 pa2, PreArg3 pa3, PreArg4 pa4):
+                               PreArg2 pa2, PreArg3 pa3, PreArg4 pa4):
         m_function(function) , m_pa1(pa1), m_pa2(pa2), m_pa3(pa3), m_pa4(pa4) {}
     virtual R Run(Arg5 arg5, Arg6 arg6, Arg7 arg7) {
         ConditionalAutoDeleter<SelfDeleting,
-            FunctionClosure_Arg3_Bind4> self_deleter(this);
+                               FunctionClosure_Arg3_Bind4> self_deleter(this);
         return m_function(m_pa1, m_pa2, m_pa3, m_pa4 ,arg5, arg6, arg7);
     }
-    virtual bool IsSelfDelete() const { return SelfDeleting; }
+    virtual bool IsSelfDelete() const {
+        return SelfDeleting;
+    }
 private:
     FunctionType m_function;
-        PreArg1 m_pa1;
-        PreArg2 m_pa2;
-        PreArg3 m_pa3;
-        PreArg4 m_pa4;
-    };
+    PreArg1 m_pa1;
+    PreArg2 m_pa2;
+    PreArg3 m_pa3;
+    PreArg4 m_pa4;
+};
 
 template <typename R , typename Arg1, typename Arg2, typename Arg3,
-    typename Arg4, typename Arg5, typename Arg6, typename Arg7 ,
-    typename PreArg1, typename PreArg2, typename PreArg3, typename PreArg4>
+         typename Arg4, typename Arg5, typename Arg6, typename Arg7 ,
+         typename PreArg1, typename PreArg2, typename PreArg3, typename PreArg4>
 Closure<R (Arg5, Arg6, Arg7)>* NewClosure(R (*function)(Arg1, Arg2, Arg3, Arg4,
-    Arg5, Arg6, Arg7)
-                                          , PreArg1 pa1, PreArg2 pa2,
-                                              PreArg3 pa3, PreArg4 pa4) {
+        Arg5, Arg6, Arg7)
+        , PreArg1 pa1, PreArg2 pa2,
+        PreArg3 pa3, PreArg4 pa4) {
     return new FunctionClosure_Arg3_Bind4<true, R , Arg1, Arg2, Arg3, Arg4,
-        Arg5, Arg6, Arg7 , PreArg1, PreArg2, PreArg3, PreArg4>(function , pa1,
-        pa2, pa3, pa4);
+           Arg5, Arg6, Arg7 , PreArg1, PreArg2, PreArg3, PreArg4>(function , pa1,
+                   pa2, pa3, pa4);
 }
 
 template <typename R , typename Arg1, typename Arg2, typename Arg3,
-    typename Arg4, typename Arg5, typename Arg6, typename Arg7 ,
-    typename PreArg1, typename PreArg2, typename PreArg3, typename PreArg4>
+         typename Arg4, typename Arg5, typename Arg6, typename Arg7 ,
+         typename PreArg1, typename PreArg2, typename PreArg3, typename PreArg4>
 Closure<R (Arg5, Arg6, Arg7)>* NewPermanentClosure(R (*function)(Arg1, Arg2,
-    Arg3, Arg4, Arg5, Arg6, Arg7)
-                                          , PreArg1 pa1, PreArg2 pa2,
-                                              PreArg3 pa3, PreArg4 pa4) {
+        Arg3, Arg4, Arg5, Arg6, Arg7)
+        , PreArg1 pa1, PreArg2 pa2,
+        PreArg3 pa3, PreArg4 pa4) {
     return new FunctionClosure_Arg3_Bind4<false, R , Arg1, Arg2, Arg3, Arg4,
-        Arg5, Arg6, Arg7 , PreArg1, PreArg2, PreArg3, PreArg4>(function , pa1,
-        pa2, pa3, pa4);
+           Arg5, Arg6, Arg7 , PreArg1, PreArg2, PreArg3, PreArg4>(function , pa1,
+                   pa2, pa3, pa4);
 }
 
 template <
-    bool SelfDeleting,
-    typename R,
-    typename Class,
-    typename MethodClass
-    , typename Arg1    , typename Arg2    , typename Arg3    ,
-        typename Arg4    , typename Arg5    , typename Arg6    ,
-        typename Arg7    , typename Arg8    , typename PreArg1    ,
-        typename PreArg2    , typename PreArg3    , typename PreArg4    ,
-        typename PreArg5>
+bool SelfDeleting,
+     typename R,
+     typename Class,
+     typename MethodClass
+     , typename Arg1    , typename Arg2    , typename Arg3    ,
+     typename Arg4    , typename Arg5    , typename Arg6    ,
+     typename Arg7    , typename Arg8    , typename PreArg1    ,
+     typename PreArg2    , typename PreArg3    , typename PreArg4    ,
+     typename PreArg5>
 class MethodClosure_Arg3_Bind5 : public Closure<R (Arg6, Arg7, Arg8)> {
     typedef R (MethodClass::*MethodType)(Arg1, Arg2, Arg3, Arg4, Arg5, Arg6,
-        Arg7, Arg8);
+                                         Arg7, Arg8);
 public:
     MethodClosure_Arg3_Bind5(Class *object, MethodType method , PreArg1 pa1,
-        PreArg2 pa2, PreArg3 pa3, PreArg4 pa4, PreArg5 pa5):
+                             PreArg2 pa2, PreArg3 pa3, PreArg4 pa4, PreArg5 pa5):
         m_object(object), m_method(method) , m_pa1(pa1), m_pa2(pa2),
-            m_pa3(pa3), m_pa4(pa4), m_pa5(pa5) {}
+        m_pa3(pa3), m_pa4(pa4), m_pa5(pa5) {}
     virtual R Run(Arg6 arg6, Arg7 arg7, Arg8 arg8) {
         ConditionalAutoDeleter<SelfDeleting,
-            MethodClosure_Arg3_Bind5> self_deleter(this);
+                               MethodClosure_Arg3_Bind5> self_deleter(this);
         return (m_object->*m_method)(m_pa1, m_pa2, m_pa3, m_pa4, m_pa5 ,arg6,
-            arg7, arg8);
+                                     arg7, arg8);
     }
-    virtual bool IsSelfDelete() const { return SelfDeleting; }
+    virtual bool IsSelfDelete() const {
+        return SelfDeleting;
+    }
 private:
     Class* m_object;
     MethodType m_method;
-        PreArg1 m_pa1;
-        PreArg2 m_pa2;
-        PreArg3 m_pa3;
-        PreArg4 m_pa4;
-        PreArg5 m_pa5;
-    };
+    PreArg1 m_pa1;
+    PreArg2 m_pa2;
+    PreArg3 m_pa3;
+    PreArg4 m_pa4;
+    PreArg5 m_pa5;
+};
 
 template <typename R, typename Class, typename MethodClass ,typename Arg1,
-    typename Arg2,typename Arg3,typename Arg4,typename Arg5,typename Arg6,
-    typename Arg7,typename Arg8 , typename PreArg1, typename PreArg2,
-    typename PreArg3, typename PreArg4, typename PreArg5>
+         typename Arg2,typename Arg3,typename Arg4,typename Arg5,typename Arg6,
+         typename Arg7,typename Arg8 , typename PreArg1, typename PreArg2,
+         typename PreArg3, typename PreArg4, typename PreArg5>
 Closure<R (Arg6, Arg7, Arg8)>* NewClosure(
     Class *object,
     R (MethodClass::*method)(Arg1, Arg2, Arg3, Arg4, Arg5, Arg6, Arg7, Arg8)
     , PreArg1 pa1, PreArg2 pa2, PreArg3 pa3, PreArg4 pa4, PreArg5 pa5) {
     return new MethodClosure_Arg3_Bind5<true, R, Class, MethodClass ,Arg1,Arg2,
-        Arg3,Arg4,Arg5,Arg6,Arg7,Arg8 , PreArg1, PreArg2, PreArg3, PreArg4,
-        PreArg5>(
-        object, method, pa1, pa2, pa3, pa4, pa5);
+           Arg3,Arg4,Arg5,Arg6,Arg7,Arg8 , PreArg1, PreArg2, PreArg3, PreArg4,
+           PreArg5>(
+               object, method, pa1, pa2, pa3, pa4, pa5);
 }
 
 template <typename R, typename Class, typename MethodClass ,typename Arg1,
-    typename Arg2,typename Arg3,typename Arg4,typename Arg5,typename Arg6,
-    typename Arg7,typename Arg8 , typename PreArg1, typename PreArg2,
-    typename PreArg3, typename PreArg4, typename PreArg5>
+         typename Arg2,typename Arg3,typename Arg4,typename Arg5,typename Arg6,
+         typename Arg7,typename Arg8 , typename PreArg1, typename PreArg2,
+         typename PreArg3, typename PreArg4, typename PreArg5>
 Closure<R (Arg6, Arg7, Arg8)>* NewPermanentClosure(
     Class *object,
     R (MethodClass::*method)(Arg1, Arg2, Arg3, Arg4, Arg5, Arg6, Arg7, Arg8)
     , PreArg1 pa1, PreArg2 pa2, PreArg3 pa3, PreArg4 pa4, PreArg5 pa5) {
     return new MethodClosure_Arg3_Bind5<false, R, Class, MethodClass ,Arg1,
-        Arg2,Arg3,Arg4,Arg5,Arg6,Arg7,Arg8 , PreArg1, PreArg2, PreArg3,
-        PreArg4, PreArg5>(
-        object, method, pa1, pa2, pa3, pa4, pa5);
+           Arg2,Arg3,Arg4,Arg5,Arg6,Arg7,Arg8 , PreArg1, PreArg2, PreArg3,
+           PreArg4, PreArg5>(
+               object, method, pa1, pa2, pa3, pa4, pa5);
 }
 
 ////////////////////////////////////////////////////
@@ -3688,131 +3802,135 @@ Closure<R (Arg6, Arg7, Arg8)>* NewPermanentClosure(
 ////////////////////////////////////////////////////
 
 template <
-    bool SelfDeleting,
-    typename R
-    , typename Arg1    , typename Arg2    , typename Arg3    ,
-        typename Arg4    , typename Arg5    , typename Arg6    ,
-        typename Arg7    , typename Arg8    , typename PreArg1    ,
-        typename PreArg2    , typename PreArg3    , typename PreArg4    ,
-        typename PreArg5>
+bool SelfDeleting,
+     typename R
+     , typename Arg1    , typename Arg2    , typename Arg3    ,
+     typename Arg4    , typename Arg5    , typename Arg6    ,
+     typename Arg7    , typename Arg8    , typename PreArg1    ,
+     typename PreArg2    , typename PreArg3    , typename PreArg4    ,
+     typename PreArg5>
 class FunctionClosure_Arg3_Bind5 : public Closure<R (Arg6, Arg7, Arg8)> {
     typedef R (*FunctionType)(Arg1, Arg2, Arg3, Arg4, Arg5, Arg6, Arg7, Arg8);
 public:
     FunctionClosure_Arg3_Bind5(FunctionType function , PreArg1 pa1,
-        PreArg2 pa2, PreArg3 pa3, PreArg4 pa4, PreArg5 pa5):
+                               PreArg2 pa2, PreArg3 pa3, PreArg4 pa4, PreArg5 pa5):
         m_function(function) , m_pa1(pa1), m_pa2(pa2), m_pa3(pa3), m_pa4(pa4),
-            m_pa5(pa5) {}
+        m_pa5(pa5) {}
     virtual R Run(Arg6 arg6, Arg7 arg7, Arg8 arg8) {
         ConditionalAutoDeleter<SelfDeleting,
-            FunctionClosure_Arg3_Bind5> self_deleter(this);
+                               FunctionClosure_Arg3_Bind5> self_deleter(this);
         return m_function(m_pa1, m_pa2, m_pa3, m_pa4, m_pa5 ,arg6, arg7, arg8);
     }
-    virtual bool IsSelfDelete() const { return SelfDeleting; }
+    virtual bool IsSelfDelete() const {
+        return SelfDeleting;
+    }
 private:
     FunctionType m_function;
-        PreArg1 m_pa1;
-        PreArg2 m_pa2;
-        PreArg3 m_pa3;
-        PreArg4 m_pa4;
-        PreArg5 m_pa5;
-    };
+    PreArg1 m_pa1;
+    PreArg2 m_pa2;
+    PreArg3 m_pa3;
+    PreArg4 m_pa4;
+    PreArg5 m_pa5;
+};
 
 template <typename R , typename Arg1, typename Arg2, typename Arg3,
-    typename Arg4, typename Arg5, typename Arg6, typename Arg7, typename Arg8 ,
-    typename PreArg1, typename PreArg2, typename PreArg3, typename PreArg4,
-    typename PreArg5>
+         typename Arg4, typename Arg5, typename Arg6, typename Arg7, typename Arg8 ,
+         typename PreArg1, typename PreArg2, typename PreArg3, typename PreArg4,
+         typename PreArg5>
 Closure<R (Arg6, Arg7, Arg8)>* NewClosure(R (*function)(Arg1, Arg2, Arg3, Arg4,
-    Arg5, Arg6, Arg7, Arg8)
-                                          , PreArg1 pa1, PreArg2 pa2,
-                                              PreArg3 pa3, PreArg4 pa4,
-                                              PreArg5 pa5) {
+        Arg5, Arg6, Arg7, Arg8)
+        , PreArg1 pa1, PreArg2 pa2,
+        PreArg3 pa3, PreArg4 pa4,
+        PreArg5 pa5) {
     return new FunctionClosure_Arg3_Bind5<true, R , Arg1, Arg2, Arg3, Arg4,
-        Arg5, Arg6, Arg7, Arg8 , PreArg1, PreArg2, PreArg3, PreArg4,
-        PreArg5>(function , pa1, pa2, pa3, pa4, pa5);
+           Arg5, Arg6, Arg7, Arg8 , PreArg1, PreArg2, PreArg3, PreArg4,
+           PreArg5>(function , pa1, pa2, pa3, pa4, pa5);
 }
 
 template <typename R , typename Arg1, typename Arg2, typename Arg3,
-    typename Arg4, typename Arg5, typename Arg6, typename Arg7, typename Arg8 ,
-    typename PreArg1, typename PreArg2, typename PreArg3, typename PreArg4,
-    typename PreArg5>
+         typename Arg4, typename Arg5, typename Arg6, typename Arg7, typename Arg8 ,
+         typename PreArg1, typename PreArg2, typename PreArg3, typename PreArg4,
+         typename PreArg5>
 Closure<R (Arg6, Arg7, Arg8)>* NewPermanentClosure(R (*function)(Arg1, Arg2,
-    Arg3, Arg4, Arg5, Arg6, Arg7, Arg8)
-                                          , PreArg1 pa1, PreArg2 pa2,
-                                              PreArg3 pa3, PreArg4 pa4,
-                                              PreArg5 pa5) {
+        Arg3, Arg4, Arg5, Arg6, Arg7, Arg8)
+        , PreArg1 pa1, PreArg2 pa2,
+        PreArg3 pa3, PreArg4 pa4,
+        PreArg5 pa5) {
     return new FunctionClosure_Arg3_Bind5<false, R , Arg1, Arg2, Arg3, Arg4,
-        Arg5, Arg6, Arg7, Arg8 , PreArg1, PreArg2, PreArg3, PreArg4,
-        PreArg5>(function , pa1, pa2, pa3, pa4, pa5);
+           Arg5, Arg6, Arg7, Arg8 , PreArg1, PreArg2, PreArg3, PreArg4,
+           PreArg5>(function , pa1, pa2, pa3, pa4, pa5);
 }
 
 template <
-    bool SelfDeleting,
-    typename R,
-    typename Class,
-    typename MethodClass
-    , typename Arg1    , typename Arg2    , typename Arg3    ,
-        typename Arg4    , typename Arg5    , typename Arg6    ,
-        typename Arg7    , typename Arg8    , typename Arg9    ,
-        typename PreArg1    , typename PreArg2    , typename PreArg3    ,
-        typename PreArg4    , typename PreArg5    , typename PreArg6>
+bool SelfDeleting,
+     typename R,
+     typename Class,
+     typename MethodClass
+     , typename Arg1    , typename Arg2    , typename Arg3    ,
+     typename Arg4    , typename Arg5    , typename Arg6    ,
+     typename Arg7    , typename Arg8    , typename Arg9    ,
+     typename PreArg1    , typename PreArg2    , typename PreArg3    ,
+     typename PreArg4    , typename PreArg5    , typename PreArg6>
 class MethodClosure_Arg3_Bind6 : public Closure<R (Arg7, Arg8, Arg9)> {
     typedef R (MethodClass::*MethodType)(Arg1, Arg2, Arg3, Arg4, Arg5, Arg6,
-        Arg7, Arg8, Arg9);
+                                         Arg7, Arg8, Arg9);
 public:
     MethodClosure_Arg3_Bind6(Class *object, MethodType method , PreArg1 pa1,
-        PreArg2 pa2, PreArg3 pa3, PreArg4 pa4, PreArg5 pa5, PreArg6 pa6):
+                             PreArg2 pa2, PreArg3 pa3, PreArg4 pa4, PreArg5 pa5, PreArg6 pa6):
         m_object(object), m_method(method) , m_pa1(pa1), m_pa2(pa2),
-            m_pa3(pa3), m_pa4(pa4), m_pa5(pa5), m_pa6(pa6) {}
+        m_pa3(pa3), m_pa4(pa4), m_pa5(pa5), m_pa6(pa6) {}
     virtual R Run(Arg7 arg7, Arg8 arg8, Arg9 arg9) {
         ConditionalAutoDeleter<SelfDeleting,
-            MethodClosure_Arg3_Bind6> self_deleter(this);
+                               MethodClosure_Arg3_Bind6> self_deleter(this);
         return (m_object->*m_method)(m_pa1, m_pa2, m_pa3, m_pa4, m_pa5, m_pa6 ,
-            arg7, arg8, arg9);
+                                     arg7, arg8, arg9);
     }
-    virtual bool IsSelfDelete() const { return SelfDeleting; }
+    virtual bool IsSelfDelete() const {
+        return SelfDeleting;
+    }
 private:
     Class* m_object;
     MethodType m_method;
-        PreArg1 m_pa1;
-        PreArg2 m_pa2;
-        PreArg3 m_pa3;
-        PreArg4 m_pa4;
-        PreArg5 m_pa5;
-        PreArg6 m_pa6;
-    };
+    PreArg1 m_pa1;
+    PreArg2 m_pa2;
+    PreArg3 m_pa3;
+    PreArg4 m_pa4;
+    PreArg5 m_pa5;
+    PreArg6 m_pa6;
+};
 
 template <typename R, typename Class, typename MethodClass ,typename Arg1,
-    typename Arg2,typename Arg3,typename Arg4,typename Arg5,typename Arg6,
-    typename Arg7,typename Arg8,typename Arg9 , typename PreArg1,
-    typename PreArg2, typename PreArg3, typename PreArg4, typename PreArg5,
-    typename PreArg6>
+         typename Arg2,typename Arg3,typename Arg4,typename Arg5,typename Arg6,
+         typename Arg7,typename Arg8,typename Arg9 , typename PreArg1,
+         typename PreArg2, typename PreArg3, typename PreArg4, typename PreArg5,
+         typename PreArg6>
 Closure<R (Arg7, Arg8, Arg9)>* NewClosure(
     Class *object,
     R (MethodClass::*method)(Arg1, Arg2, Arg3, Arg4, Arg5, Arg6, Arg7, Arg8,
-        Arg9)
+                             Arg9)
     , PreArg1 pa1, PreArg2 pa2, PreArg3 pa3, PreArg4 pa4, PreArg5 pa5,
-        PreArg6 pa6) {
+    PreArg6 pa6) {
     return new MethodClosure_Arg3_Bind6<true, R, Class, MethodClass ,Arg1,Arg2,
-        Arg3,Arg4,Arg5,Arg6,Arg7,Arg8,Arg9 , PreArg1, PreArg2, PreArg3,
-        PreArg4, PreArg5, PreArg6>(
-        object, method, pa1, pa2, pa3, pa4, pa5, pa6);
+           Arg3,Arg4,Arg5,Arg6,Arg7,Arg8,Arg9 , PreArg1, PreArg2, PreArg3,
+           PreArg4, PreArg5, PreArg6>(
+               object, method, pa1, pa2, pa3, pa4, pa5, pa6);
 }
 
 template <typename R, typename Class, typename MethodClass ,typename Arg1,
-    typename Arg2,typename Arg3,typename Arg4,typename Arg5,typename Arg6,
-    typename Arg7,typename Arg8,typename Arg9 , typename PreArg1,
-    typename PreArg2, typename PreArg3, typename PreArg4, typename PreArg5,
-    typename PreArg6>
+         typename Arg2,typename Arg3,typename Arg4,typename Arg5,typename Arg6,
+         typename Arg7,typename Arg8,typename Arg9 , typename PreArg1,
+         typename PreArg2, typename PreArg3, typename PreArg4, typename PreArg5,
+         typename PreArg6>
 Closure<R (Arg7, Arg8, Arg9)>* NewPermanentClosure(
     Class *object,
     R (MethodClass::*method)(Arg1, Arg2, Arg3, Arg4, Arg5, Arg6, Arg7, Arg8,
-        Arg9)
+                             Arg9)
     , PreArg1 pa1, PreArg2 pa2, PreArg3 pa3, PreArg4 pa4, PreArg5 pa5,
-        PreArg6 pa6) {
+    PreArg6 pa6) {
     return new MethodClosure_Arg3_Bind6<false, R, Class, MethodClass ,Arg1,
-        Arg2,Arg3,Arg4,Arg5,Arg6,Arg7,Arg8,Arg9 , PreArg1, PreArg2, PreArg3,
-        PreArg4, PreArg5, PreArg6>(
-        object, method, pa1, pa2, pa3, pa4, pa5, pa6);
+           Arg2,Arg3,Arg4,Arg5,Arg6,Arg7,Arg8,Arg9 , PreArg1, PreArg2, PreArg3,
+           PreArg4, PreArg5, PreArg6>(
+               object, method, pa1, pa2, pa3, pa4, pa5, pa6);
 }
 
 ////////////////////////////////////////////////////
@@ -3820,137 +3938,141 @@ Closure<R (Arg7, Arg8, Arg9)>* NewPermanentClosure(
 ////////////////////////////////////////////////////
 
 template <
-    bool SelfDeleting,
-    typename R
-    , typename Arg1    , typename Arg2    , typename Arg3    ,
-        typename Arg4    , typename Arg5    , typename Arg6    ,
-        typename Arg7    , typename Arg8    , typename Arg9    ,
-        typename PreArg1    , typename PreArg2    , typename PreArg3    ,
-        typename PreArg4    , typename PreArg5    , typename PreArg6>
+bool SelfDeleting,
+     typename R
+     , typename Arg1    , typename Arg2    , typename Arg3    ,
+     typename Arg4    , typename Arg5    , typename Arg6    ,
+     typename Arg7    , typename Arg8    , typename Arg9    ,
+     typename PreArg1    , typename PreArg2    , typename PreArg3    ,
+     typename PreArg4    , typename PreArg5    , typename PreArg6>
 class FunctionClosure_Arg3_Bind6 : public Closure<R (Arg7, Arg8, Arg9)> {
     typedef R (*FunctionType)(Arg1, Arg2, Arg3, Arg4, Arg5, Arg6, Arg7, Arg8,
-        Arg9);
+                              Arg9);
 public:
     FunctionClosure_Arg3_Bind6(FunctionType function , PreArg1 pa1,
-        PreArg2 pa2, PreArg3 pa3, PreArg4 pa4, PreArg5 pa5, PreArg6 pa6):
+                               PreArg2 pa2, PreArg3 pa3, PreArg4 pa4, PreArg5 pa5, PreArg6 pa6):
         m_function(function) , m_pa1(pa1), m_pa2(pa2), m_pa3(pa3), m_pa4(pa4),
-            m_pa5(pa5), m_pa6(pa6) {}
+        m_pa5(pa5), m_pa6(pa6) {}
     virtual R Run(Arg7 arg7, Arg8 arg8, Arg9 arg9) {
         ConditionalAutoDeleter<SelfDeleting,
-            FunctionClosure_Arg3_Bind6> self_deleter(this);
+                               FunctionClosure_Arg3_Bind6> self_deleter(this);
         return m_function(m_pa1, m_pa2, m_pa3, m_pa4, m_pa5, m_pa6 ,arg7, arg8,
-            arg9);
+                          arg9);
     }
-    virtual bool IsSelfDelete() const { return SelfDeleting; }
+    virtual bool IsSelfDelete() const {
+        return SelfDeleting;
+    }
 private:
     FunctionType m_function;
-        PreArg1 m_pa1;
-        PreArg2 m_pa2;
-        PreArg3 m_pa3;
-        PreArg4 m_pa4;
-        PreArg5 m_pa5;
-        PreArg6 m_pa6;
-    };
+    PreArg1 m_pa1;
+    PreArg2 m_pa2;
+    PreArg3 m_pa3;
+    PreArg4 m_pa4;
+    PreArg5 m_pa5;
+    PreArg6 m_pa6;
+};
 
 template <typename R , typename Arg1, typename Arg2, typename Arg3,
-    typename Arg4, typename Arg5, typename Arg6, typename Arg7, typename Arg8,
-    typename Arg9 , typename PreArg1, typename PreArg2, typename PreArg3,
-    typename PreArg4, typename PreArg5, typename PreArg6>
+         typename Arg4, typename Arg5, typename Arg6, typename Arg7, typename Arg8,
+         typename Arg9 , typename PreArg1, typename PreArg2, typename PreArg3,
+         typename PreArg4, typename PreArg5, typename PreArg6>
 Closure<R (Arg7, Arg8, Arg9)>* NewClosure(R (*function)(Arg1, Arg2, Arg3, Arg4,
-    Arg5, Arg6, Arg7, Arg8, Arg9)
-                                          , PreArg1 pa1, PreArg2 pa2,
-                                              PreArg3 pa3, PreArg4 pa4,
-                                              PreArg5 pa5, PreArg6 pa6) {
+        Arg5, Arg6, Arg7, Arg8, Arg9)
+        , PreArg1 pa1, PreArg2 pa2,
+        PreArg3 pa3, PreArg4 pa4,
+        PreArg5 pa5, PreArg6 pa6) {
     return new FunctionClosure_Arg3_Bind6<true, R , Arg1, Arg2, Arg3, Arg4,
-        Arg5, Arg6, Arg7, Arg8, Arg9 , PreArg1, PreArg2, PreArg3, PreArg4,
-        PreArg5, PreArg6>(function , pa1, pa2, pa3, pa4, pa5, pa6);
+           Arg5, Arg6, Arg7, Arg8, Arg9 , PreArg1, PreArg2, PreArg3, PreArg4,
+           PreArg5, PreArg6>(function , pa1, pa2, pa3, pa4, pa5, pa6);
 }
 
 template <typename R , typename Arg1, typename Arg2, typename Arg3,
-    typename Arg4, typename Arg5, typename Arg6, typename Arg7, typename Arg8,
-    typename Arg9 , typename PreArg1, typename PreArg2, typename PreArg3,
-    typename PreArg4, typename PreArg5, typename PreArg6>
+         typename Arg4, typename Arg5, typename Arg6, typename Arg7, typename Arg8,
+         typename Arg9 , typename PreArg1, typename PreArg2, typename PreArg3,
+         typename PreArg4, typename PreArg5, typename PreArg6>
 Closure<R (Arg7, Arg8, Arg9)>* NewPermanentClosure(R (*function)(Arg1, Arg2,
-    Arg3, Arg4, Arg5, Arg6, Arg7, Arg8, Arg9)
-                                          , PreArg1 pa1, PreArg2 pa2,
-                                              PreArg3 pa3, PreArg4 pa4,
-                                              PreArg5 pa5, PreArg6 pa6) {
+        Arg3, Arg4, Arg5, Arg6, Arg7, Arg8, Arg9)
+        , PreArg1 pa1, PreArg2 pa2,
+        PreArg3 pa3, PreArg4 pa4,
+        PreArg5 pa5, PreArg6 pa6) {
     return new FunctionClosure_Arg3_Bind6<false, R , Arg1, Arg2, Arg3, Arg4,
-        Arg5, Arg6, Arg7, Arg8, Arg9 , PreArg1, PreArg2, PreArg3, PreArg4,
-        PreArg5, PreArg6>(function , pa1, pa2, pa3, pa4, pa5, pa6);
+           Arg5, Arg6, Arg7, Arg8, Arg9 , PreArg1, PreArg2, PreArg3, PreArg4,
+           PreArg5, PreArg6>(function , pa1, pa2, pa3, pa4, pa5, pa6);
 }
 
 template <
-    bool SelfDeleting,
-    typename R,
-    typename Class,
-    typename MethodClass
-    , typename Arg1    , typename Arg2    , typename Arg3    ,
-        typename Arg4    , typename Arg5    , typename Arg6    ,
-        typename Arg7    , typename Arg8    , typename Arg9    ,
-        typename Arg10    , typename PreArg1    , typename PreArg2    ,
-        typename PreArg3    , typename PreArg4    , typename PreArg5    ,
-        typename PreArg6    , typename PreArg7>
+bool SelfDeleting,
+     typename R,
+     typename Class,
+     typename MethodClass
+     , typename Arg1    , typename Arg2    , typename Arg3    ,
+     typename Arg4    , typename Arg5    , typename Arg6    ,
+     typename Arg7    , typename Arg8    , typename Arg9    ,
+     typename Arg10    , typename PreArg1    , typename PreArg2    ,
+     typename PreArg3    , typename PreArg4    , typename PreArg5    ,
+     typename PreArg6    , typename PreArg7>
 class MethodClosure_Arg3_Bind7 : public Closure<R (Arg8, Arg9, Arg10)> {
     typedef R (MethodClass::*MethodType)(Arg1, Arg2, Arg3, Arg4, Arg5, Arg6,
-        Arg7, Arg8, Arg9, Arg10);
+                                         Arg7, Arg8, Arg9, Arg10);
 public:
     MethodClosure_Arg3_Bind7(Class *object, MethodType method , PreArg1 pa1,
-        PreArg2 pa2, PreArg3 pa3, PreArg4 pa4, PreArg5 pa5, PreArg6 pa6,
-        PreArg7 pa7):
+                             PreArg2 pa2, PreArg3 pa3, PreArg4 pa4, PreArg5 pa5, PreArg6 pa6,
+                             PreArg7 pa7):
         m_object(object), m_method(method) , m_pa1(pa1), m_pa2(pa2),
-            m_pa3(pa3), m_pa4(pa4), m_pa5(pa5), m_pa6(pa6), m_pa7(pa7) {}
+        m_pa3(pa3), m_pa4(pa4), m_pa5(pa5), m_pa6(pa6), m_pa7(pa7) {}
     virtual R Run(Arg8 arg8, Arg9 arg9, Arg10 arg10) {
         ConditionalAutoDeleter<SelfDeleting,
-            MethodClosure_Arg3_Bind7> self_deleter(this);
+                               MethodClosure_Arg3_Bind7> self_deleter(this);
         return (m_object->*m_method)(m_pa1, m_pa2, m_pa3, m_pa4, m_pa5, m_pa6,
-            m_pa7 ,arg8, arg9, arg10);
+                                     m_pa7 ,arg8, arg9, arg10);
     }
-    virtual bool IsSelfDelete() const { return SelfDeleting; }
+    virtual bool IsSelfDelete() const {
+        return SelfDeleting;
+    }
 private:
     Class* m_object;
     MethodType m_method;
-        PreArg1 m_pa1;
-        PreArg2 m_pa2;
-        PreArg3 m_pa3;
-        PreArg4 m_pa4;
-        PreArg5 m_pa5;
-        PreArg6 m_pa6;
-        PreArg7 m_pa7;
-    };
+    PreArg1 m_pa1;
+    PreArg2 m_pa2;
+    PreArg3 m_pa3;
+    PreArg4 m_pa4;
+    PreArg5 m_pa5;
+    PreArg6 m_pa6;
+    PreArg7 m_pa7;
+};
 
 template <typename R, typename Class, typename MethodClass ,typename Arg1,
-    typename Arg2,typename Arg3,typename Arg4,typename Arg5,typename Arg6,
-    typename Arg7,typename Arg8,typename Arg9,typename Arg10 ,
-    typename PreArg1, typename PreArg2, typename PreArg3, typename PreArg4,
-    typename PreArg5, typename PreArg6, typename PreArg7>
+         typename Arg2,typename Arg3,typename Arg4,typename Arg5,typename Arg6,
+         typename Arg7,typename Arg8,typename Arg9,typename Arg10 ,
+         typename PreArg1, typename PreArg2, typename PreArg3, typename PreArg4,
+         typename PreArg5, typename PreArg6, typename PreArg7>
 Closure<R (Arg8, Arg9, Arg10)>* NewClosure(
     Class *object,
     R (MethodClass::*method)(Arg1, Arg2, Arg3, Arg4, Arg5, Arg6, Arg7, Arg8,
-        Arg9, Arg10)
+                             Arg9, Arg10)
     , PreArg1 pa1, PreArg2 pa2, PreArg3 pa3, PreArg4 pa4, PreArg5 pa5,
-        PreArg6 pa6, PreArg7 pa7) {
+    PreArg6 pa6, PreArg7 pa7) {
     return new MethodClosure_Arg3_Bind7<true, R, Class, MethodClass ,Arg1,Arg2,
-        Arg3,Arg4,Arg5,Arg6,Arg7,Arg8,Arg9,Arg10 , PreArg1, PreArg2, PreArg3,
-        PreArg4, PreArg5, PreArg6, PreArg7>(
-        object, method, pa1, pa2, pa3, pa4, pa5, pa6, pa7);
+           Arg3,Arg4,Arg5,Arg6,Arg7,Arg8,Arg9,Arg10 , PreArg1, PreArg2, PreArg3,
+           PreArg4, PreArg5, PreArg6, PreArg7>(
+               object, method, pa1, pa2, pa3, pa4, pa5, pa6, pa7);
 }
 
 template <typename R, typename Class, typename MethodClass ,typename Arg1,
-    typename Arg2,typename Arg3,typename Arg4,typename Arg5,typename Arg6,
-    typename Arg7,typename Arg8,typename Arg9,typename Arg10 ,
-    typename PreArg1, typename PreArg2, typename PreArg3, typename PreArg4,
-    typename PreArg5, typename PreArg6, typename PreArg7>
+         typename Arg2,typename Arg3,typename Arg4,typename Arg5,typename Arg6,
+         typename Arg7,typename Arg8,typename Arg9,typename Arg10 ,
+         typename PreArg1, typename PreArg2, typename PreArg3, typename PreArg4,
+         typename PreArg5, typename PreArg6, typename PreArg7>
 Closure<R (Arg8, Arg9, Arg10)>* NewPermanentClosure(
     Class *object,
     R (MethodClass::*method)(Arg1, Arg2, Arg3, Arg4, Arg5, Arg6, Arg7, Arg8,
-        Arg9, Arg10)
+                             Arg9, Arg10)
     , PreArg1 pa1, PreArg2 pa2, PreArg3 pa3, PreArg4 pa4, PreArg5 pa5,
-        PreArg6 pa6, PreArg7 pa7) {
+    PreArg6 pa6, PreArg7 pa7) {
     return new MethodClosure_Arg3_Bind7<false, R, Class, MethodClass ,Arg1,
-        Arg2,Arg3,Arg4,Arg5,Arg6,Arg7,Arg8,Arg9,Arg10 , PreArg1, PreArg2,
-        PreArg3, PreArg4, PreArg5, PreArg6, PreArg7>(
-        object, method, pa1, pa2, pa3, pa4, pa5, pa6, pa7);
+           Arg2,Arg3,Arg4,Arg5,Arg6,Arg7,Arg8,Arg9,Arg10 , PreArg1, PreArg2,
+           PreArg3, PreArg4, PreArg5, PreArg6, PreArg7>(
+               object, method, pa1, pa2, pa3, pa4, pa5, pa6, pa7);
 }
 
 ////////////////////////////////////////////////////
@@ -3958,149 +4080,153 @@ Closure<R (Arg8, Arg9, Arg10)>* NewPermanentClosure(
 ////////////////////////////////////////////////////
 
 template <
-    bool SelfDeleting,
-    typename R
-    , typename Arg1    , typename Arg2    , typename Arg3    ,
-        typename Arg4    , typename Arg5    , typename Arg6    ,
-        typename Arg7    , typename Arg8    , typename Arg9    ,
-        typename Arg10    , typename PreArg1    , typename PreArg2    ,
-        typename PreArg3    , typename PreArg4    , typename PreArg5    ,
-        typename PreArg6    , typename PreArg7>
+bool SelfDeleting,
+     typename R
+     , typename Arg1    , typename Arg2    , typename Arg3    ,
+     typename Arg4    , typename Arg5    , typename Arg6    ,
+     typename Arg7    , typename Arg8    , typename Arg9    ,
+     typename Arg10    , typename PreArg1    , typename PreArg2    ,
+     typename PreArg3    , typename PreArg4    , typename PreArg5    ,
+     typename PreArg6    , typename PreArg7>
 class FunctionClosure_Arg3_Bind7 : public Closure<R (Arg8, Arg9, Arg10)> {
     typedef R (*FunctionType)(Arg1, Arg2, Arg3, Arg4, Arg5, Arg6, Arg7, Arg8,
-        Arg9, Arg10);
+                              Arg9, Arg10);
 public:
     FunctionClosure_Arg3_Bind7(FunctionType function , PreArg1 pa1,
-        PreArg2 pa2, PreArg3 pa3, PreArg4 pa4, PreArg5 pa5, PreArg6 pa6,
-        PreArg7 pa7):
+                               PreArg2 pa2, PreArg3 pa3, PreArg4 pa4, PreArg5 pa5, PreArg6 pa6,
+                               PreArg7 pa7):
         m_function(function) , m_pa1(pa1), m_pa2(pa2), m_pa3(pa3), m_pa4(pa4),
-            m_pa5(pa5), m_pa6(pa6), m_pa7(pa7) {}
+        m_pa5(pa5), m_pa6(pa6), m_pa7(pa7) {}
     virtual R Run(Arg8 arg8, Arg9 arg9, Arg10 arg10) {
         ConditionalAutoDeleter<SelfDeleting,
-            FunctionClosure_Arg3_Bind7> self_deleter(this);
+                               FunctionClosure_Arg3_Bind7> self_deleter(this);
         return m_function(m_pa1, m_pa2, m_pa3, m_pa4, m_pa5, m_pa6, m_pa7 ,
-            arg8, arg9, arg10);
+                          arg8, arg9, arg10);
     }
-    virtual bool IsSelfDelete() const { return SelfDeleting; }
+    virtual bool IsSelfDelete() const {
+        return SelfDeleting;
+    }
 private:
     FunctionType m_function;
-        PreArg1 m_pa1;
-        PreArg2 m_pa2;
-        PreArg3 m_pa3;
-        PreArg4 m_pa4;
-        PreArg5 m_pa5;
-        PreArg6 m_pa6;
-        PreArg7 m_pa7;
-    };
+    PreArg1 m_pa1;
+    PreArg2 m_pa2;
+    PreArg3 m_pa3;
+    PreArg4 m_pa4;
+    PreArg5 m_pa5;
+    PreArg6 m_pa6;
+    PreArg7 m_pa7;
+};
 
 template <typename R , typename Arg1, typename Arg2, typename Arg3,
-    typename Arg4, typename Arg5, typename Arg6, typename Arg7, typename Arg8,
-    typename Arg9, typename Arg10 , typename PreArg1, typename PreArg2,
-    typename PreArg3, typename PreArg4, typename PreArg5, typename PreArg6,
-    typename PreArg7>
+         typename Arg4, typename Arg5, typename Arg6, typename Arg7, typename Arg8,
+         typename Arg9, typename Arg10 , typename PreArg1, typename PreArg2,
+         typename PreArg3, typename PreArg4, typename PreArg5, typename PreArg6,
+         typename PreArg7>
 Closure<R (Arg8, Arg9, Arg10)>* NewClosure(R (*function)(Arg1, Arg2, Arg3,
-    Arg4, Arg5, Arg6, Arg7, Arg8, Arg9, Arg10)
-                                          , PreArg1 pa1, PreArg2 pa2,
-                                              PreArg3 pa3, PreArg4 pa4,
-                                              PreArg5 pa5, PreArg6 pa6,
-                                              PreArg7 pa7) {
+        Arg4, Arg5, Arg6, Arg7, Arg8, Arg9, Arg10)
+        , PreArg1 pa1, PreArg2 pa2,
+        PreArg3 pa3, PreArg4 pa4,
+        PreArg5 pa5, PreArg6 pa6,
+        PreArg7 pa7) {
     return new FunctionClosure_Arg3_Bind7<true, R , Arg1, Arg2, Arg3, Arg4,
-        Arg5, Arg6, Arg7, Arg8, Arg9, Arg10 , PreArg1, PreArg2, PreArg3,
-        PreArg4, PreArg5, PreArg6, PreArg7>(function , pa1, pa2, pa3, pa4, pa5,
-        pa6, pa7);
+           Arg5, Arg6, Arg7, Arg8, Arg9, Arg10 , PreArg1, PreArg2, PreArg3,
+           PreArg4, PreArg5, PreArg6, PreArg7>(function , pa1, pa2, pa3, pa4, pa5,
+                   pa6, pa7);
 }
 
 template <typename R , typename Arg1, typename Arg2, typename Arg3,
-    typename Arg4, typename Arg5, typename Arg6, typename Arg7, typename Arg8,
-    typename Arg9, typename Arg10 , typename PreArg1, typename PreArg2,
-    typename PreArg3, typename PreArg4, typename PreArg5, typename PreArg6,
-    typename PreArg7>
+         typename Arg4, typename Arg5, typename Arg6, typename Arg7, typename Arg8,
+         typename Arg9, typename Arg10 , typename PreArg1, typename PreArg2,
+         typename PreArg3, typename PreArg4, typename PreArg5, typename PreArg6,
+         typename PreArg7>
 Closure<R (Arg8, Arg9, Arg10)>* NewPermanentClosure(R (*function)(Arg1, Arg2,
-    Arg3, Arg4, Arg5, Arg6, Arg7, Arg8, Arg9, Arg10)
-                                          , PreArg1 pa1, PreArg2 pa2,
-                                              PreArg3 pa3, PreArg4 pa4,
-                                              PreArg5 pa5, PreArg6 pa6,
-                                              PreArg7 pa7) {
+        Arg3, Arg4, Arg5, Arg6, Arg7, Arg8, Arg9, Arg10)
+        , PreArg1 pa1, PreArg2 pa2,
+        PreArg3 pa3, PreArg4 pa4,
+        PreArg5 pa5, PreArg6 pa6,
+        PreArg7 pa7) {
     return new FunctionClosure_Arg3_Bind7<false, R , Arg1, Arg2, Arg3, Arg4,
-        Arg5, Arg6, Arg7, Arg8, Arg9, Arg10 , PreArg1, PreArg2, PreArg3,
-        PreArg4, PreArg5, PreArg6, PreArg7>(function , pa1, pa2, pa3, pa4, pa5,
-        pa6, pa7);
+           Arg5, Arg6, Arg7, Arg8, Arg9, Arg10 , PreArg1, PreArg2, PreArg3,
+           PreArg4, PreArg5, PreArg6, PreArg7>(function , pa1, pa2, pa3, pa4, pa5,
+                   pa6, pa7);
 }
 
 template <
-    bool SelfDeleting,
-    typename R,
-    typename Class,
-    typename MethodClass
-    , typename Arg1    , typename Arg2    , typename Arg3    ,
-        typename Arg4    , typename Arg5    , typename Arg6    ,
-        typename Arg7    , typename Arg8    , typename Arg9    ,
-        typename Arg10    , typename Arg11    , typename PreArg1    ,
-        typename PreArg2    , typename PreArg3    , typename PreArg4    ,
-        typename PreArg5    , typename PreArg6    , typename PreArg7    ,
-        typename PreArg8>
+bool SelfDeleting,
+     typename R,
+     typename Class,
+     typename MethodClass
+     , typename Arg1    , typename Arg2    , typename Arg3    ,
+     typename Arg4    , typename Arg5    , typename Arg6    ,
+     typename Arg7    , typename Arg8    , typename Arg9    ,
+     typename Arg10    , typename Arg11    , typename PreArg1    ,
+     typename PreArg2    , typename PreArg3    , typename PreArg4    ,
+     typename PreArg5    , typename PreArg6    , typename PreArg7    ,
+     typename PreArg8>
 class MethodClosure_Arg3_Bind8 : public Closure<R (Arg9, Arg10, Arg11)> {
     typedef R (MethodClass::*MethodType)(Arg1, Arg2, Arg3, Arg4, Arg5, Arg6,
-        Arg7, Arg8, Arg9, Arg10, Arg11);
+                                         Arg7, Arg8, Arg9, Arg10, Arg11);
 public:
     MethodClosure_Arg3_Bind8(Class *object, MethodType method , PreArg1 pa1,
-        PreArg2 pa2, PreArg3 pa3, PreArg4 pa4, PreArg5 pa5, PreArg6 pa6,
-        PreArg7 pa7, PreArg8 pa8):
+                             PreArg2 pa2, PreArg3 pa3, PreArg4 pa4, PreArg5 pa5, PreArg6 pa6,
+                             PreArg7 pa7, PreArg8 pa8):
         m_object(object), m_method(method) , m_pa1(pa1), m_pa2(pa2),
-            m_pa3(pa3), m_pa4(pa4), m_pa5(pa5), m_pa6(pa6), m_pa7(pa7),
-            m_pa8(pa8) {}
+        m_pa3(pa3), m_pa4(pa4), m_pa5(pa5), m_pa6(pa6), m_pa7(pa7),
+        m_pa8(pa8) {}
     virtual R Run(Arg9 arg9, Arg10 arg10, Arg11 arg11) {
         ConditionalAutoDeleter<SelfDeleting,
-            MethodClosure_Arg3_Bind8> self_deleter(this);
+                               MethodClosure_Arg3_Bind8> self_deleter(this);
         return (m_object->*m_method)(m_pa1, m_pa2, m_pa3, m_pa4, m_pa5, m_pa6,
-            m_pa7, m_pa8 ,arg9, arg10, arg11);
+                                     m_pa7, m_pa8 ,arg9, arg10, arg11);
     }
-    virtual bool IsSelfDelete() const { return SelfDeleting; }
+    virtual bool IsSelfDelete() const {
+        return SelfDeleting;
+    }
 private:
     Class* m_object;
     MethodType m_method;
-        PreArg1 m_pa1;
-        PreArg2 m_pa2;
-        PreArg3 m_pa3;
-        PreArg4 m_pa4;
-        PreArg5 m_pa5;
-        PreArg6 m_pa6;
-        PreArg7 m_pa7;
-        PreArg8 m_pa8;
-    };
+    PreArg1 m_pa1;
+    PreArg2 m_pa2;
+    PreArg3 m_pa3;
+    PreArg4 m_pa4;
+    PreArg5 m_pa5;
+    PreArg6 m_pa6;
+    PreArg7 m_pa7;
+    PreArg8 m_pa8;
+};
 
 template <typename R, typename Class, typename MethodClass ,typename Arg1,
-    typename Arg2,typename Arg3,typename Arg4,typename Arg5,typename Arg6,
-    typename Arg7,typename Arg8,typename Arg9,typename Arg10,typename Arg11 ,
-    typename PreArg1, typename PreArg2, typename PreArg3, typename PreArg4,
-    typename PreArg5, typename PreArg6, typename PreArg7, typename PreArg8>
+         typename Arg2,typename Arg3,typename Arg4,typename Arg5,typename Arg6,
+         typename Arg7,typename Arg8,typename Arg9,typename Arg10,typename Arg11 ,
+         typename PreArg1, typename PreArg2, typename PreArg3, typename PreArg4,
+         typename PreArg5, typename PreArg6, typename PreArg7, typename PreArg8>
 Closure<R (Arg9, Arg10, Arg11)>* NewClosure(
     Class *object,
     R (MethodClass::*method)(Arg1, Arg2, Arg3, Arg4, Arg5, Arg6, Arg7, Arg8,
-        Arg9, Arg10, Arg11)
+                             Arg9, Arg10, Arg11)
     , PreArg1 pa1, PreArg2 pa2, PreArg3 pa3, PreArg4 pa4, PreArg5 pa5,
-        PreArg6 pa6, PreArg7 pa7, PreArg8 pa8) {
+    PreArg6 pa6, PreArg7 pa7, PreArg8 pa8) {
     return new MethodClosure_Arg3_Bind8<true, R, Class, MethodClass ,Arg1,Arg2,
-        Arg3,Arg4,Arg5,Arg6,Arg7,Arg8,Arg9,Arg10,Arg11 , PreArg1, PreArg2,
-        PreArg3, PreArg4, PreArg5, PreArg6, PreArg7, PreArg8>(
-        object, method, pa1, pa2, pa3, pa4, pa5, pa6, pa7, pa8);
+           Arg3,Arg4,Arg5,Arg6,Arg7,Arg8,Arg9,Arg10,Arg11 , PreArg1, PreArg2,
+           PreArg3, PreArg4, PreArg5, PreArg6, PreArg7, PreArg8>(
+               object, method, pa1, pa2, pa3, pa4, pa5, pa6, pa7, pa8);
 }
 
 template <typename R, typename Class, typename MethodClass ,typename Arg1,
-    typename Arg2,typename Arg3,typename Arg4,typename Arg5,typename Arg6,
-    typename Arg7,typename Arg8,typename Arg9,typename Arg10,typename Arg11 ,
-    typename PreArg1, typename PreArg2, typename PreArg3, typename PreArg4,
-    typename PreArg5, typename PreArg6, typename PreArg7, typename PreArg8>
+         typename Arg2,typename Arg3,typename Arg4,typename Arg5,typename Arg6,
+         typename Arg7,typename Arg8,typename Arg9,typename Arg10,typename Arg11 ,
+         typename PreArg1, typename PreArg2, typename PreArg3, typename PreArg4,
+         typename PreArg5, typename PreArg6, typename PreArg7, typename PreArg8>
 Closure<R (Arg9, Arg10, Arg11)>* NewPermanentClosure(
     Class *object,
     R (MethodClass::*method)(Arg1, Arg2, Arg3, Arg4, Arg5, Arg6, Arg7, Arg8,
-        Arg9, Arg10, Arg11)
+                             Arg9, Arg10, Arg11)
     , PreArg1 pa1, PreArg2 pa2, PreArg3 pa3, PreArg4 pa4, PreArg5 pa5,
-        PreArg6 pa6, PreArg7 pa7, PreArg8 pa8) {
+    PreArg6 pa6, PreArg7 pa7, PreArg8 pa8) {
     return new MethodClosure_Arg3_Bind8<false, R, Class, MethodClass ,Arg1,
-        Arg2,Arg3,Arg4,Arg5,Arg6,Arg7,Arg8,Arg9,Arg10,Arg11 , PreArg1, PreArg2,
-        PreArg3, PreArg4, PreArg5, PreArg6, PreArg7, PreArg8>(
-        object, method, pa1, pa2, pa3, pa4, pa5, pa6, pa7, pa8);
+           Arg2,Arg3,Arg4,Arg5,Arg6,Arg7,Arg8,Arg9,Arg10,Arg11 , PreArg1, PreArg2,
+           PreArg3, PreArg4, PreArg5, PreArg6, PreArg7, PreArg8>(
+               object, method, pa1, pa2, pa3, pa4, pa5, pa6, pa7, pa8);
 }
 
 ////////////////////////////////////////////////////
@@ -4108,84 +4234,86 @@ Closure<R (Arg9, Arg10, Arg11)>* NewPermanentClosure(
 ////////////////////////////////////////////////////
 
 template <
-    bool SelfDeleting,
-    typename R
-    , typename Arg1    , typename Arg2    , typename Arg3    ,
-        typename Arg4    , typename Arg5    , typename Arg6    ,
-        typename Arg7    , typename Arg8    , typename Arg9    ,
-        typename Arg10    , typename Arg11    , typename PreArg1    ,
-        typename PreArg2    , typename PreArg3    , typename PreArg4    ,
-        typename PreArg5    , typename PreArg6    , typename PreArg7    ,
-        typename PreArg8>
+bool SelfDeleting,
+     typename R
+     , typename Arg1    , typename Arg2    , typename Arg3    ,
+     typename Arg4    , typename Arg5    , typename Arg6    ,
+     typename Arg7    , typename Arg8    , typename Arg9    ,
+     typename Arg10    , typename Arg11    , typename PreArg1    ,
+     typename PreArg2    , typename PreArg3    , typename PreArg4    ,
+     typename PreArg5    , typename PreArg6    , typename PreArg7    ,
+     typename PreArg8>
 class FunctionClosure_Arg3_Bind8 : public Closure<R (Arg9, Arg10, Arg11)> {
     typedef R (*FunctionType)(Arg1, Arg2, Arg3, Arg4, Arg5, Arg6, Arg7, Arg8,
-        Arg9, Arg10, Arg11);
+                              Arg9, Arg10, Arg11);
 public:
     FunctionClosure_Arg3_Bind8(FunctionType function , PreArg1 pa1,
-        PreArg2 pa2, PreArg3 pa3, PreArg4 pa4, PreArg5 pa5, PreArg6 pa6,
-        PreArg7 pa7, PreArg8 pa8):
+                               PreArg2 pa2, PreArg3 pa3, PreArg4 pa4, PreArg5 pa5, PreArg6 pa6,
+                               PreArg7 pa7, PreArg8 pa8):
         m_function(function) , m_pa1(pa1), m_pa2(pa2), m_pa3(pa3), m_pa4(pa4),
-            m_pa5(pa5), m_pa6(pa6), m_pa7(pa7), m_pa8(pa8) {}
+        m_pa5(pa5), m_pa6(pa6), m_pa7(pa7), m_pa8(pa8) {}
     virtual R Run(Arg9 arg9, Arg10 arg10, Arg11 arg11) {
         ConditionalAutoDeleter<SelfDeleting,
-            FunctionClosure_Arg3_Bind8> self_deleter(this);
+                               FunctionClosure_Arg3_Bind8> self_deleter(this);
         return m_function(m_pa1, m_pa2, m_pa3, m_pa4, m_pa5, m_pa6, m_pa7,
-            m_pa8 ,arg9, arg10, arg11);
+                          m_pa8 ,arg9, arg10, arg11);
     }
-    virtual bool IsSelfDelete() const { return SelfDeleting; }
+    virtual bool IsSelfDelete() const {
+        return SelfDeleting;
+    }
 private:
     FunctionType m_function;
-        PreArg1 m_pa1;
-        PreArg2 m_pa2;
-        PreArg3 m_pa3;
-        PreArg4 m_pa4;
-        PreArg5 m_pa5;
-        PreArg6 m_pa6;
-        PreArg7 m_pa7;
-        PreArg8 m_pa8;
-    };
+    PreArg1 m_pa1;
+    PreArg2 m_pa2;
+    PreArg3 m_pa3;
+    PreArg4 m_pa4;
+    PreArg5 m_pa5;
+    PreArg6 m_pa6;
+    PreArg7 m_pa7;
+    PreArg8 m_pa8;
+};
 
 template <typename R , typename Arg1, typename Arg2, typename Arg3,
-    typename Arg4, typename Arg5, typename Arg6, typename Arg7, typename Arg8,
-    typename Arg9, typename Arg10, typename Arg11 , typename PreArg1,
-    typename PreArg2, typename PreArg3, typename PreArg4, typename PreArg5,
-    typename PreArg6, typename PreArg7, typename PreArg8>
+         typename Arg4, typename Arg5, typename Arg6, typename Arg7, typename Arg8,
+         typename Arg9, typename Arg10, typename Arg11 , typename PreArg1,
+         typename PreArg2, typename PreArg3, typename PreArg4, typename PreArg5,
+         typename PreArg6, typename PreArg7, typename PreArg8>
 Closure<R (Arg9, Arg10, Arg11)>* NewClosure(R (*function)(Arg1, Arg2, Arg3,
-    Arg4, Arg5, Arg6, Arg7, Arg8, Arg9, Arg10, Arg11)
-                                          , PreArg1 pa1, PreArg2 pa2,
-                                              PreArg3 pa3, PreArg4 pa4,
-                                              PreArg5 pa5, PreArg6 pa6,
-                                              PreArg7 pa7, PreArg8 pa8) {
+        Arg4, Arg5, Arg6, Arg7, Arg8, Arg9, Arg10, Arg11)
+        , PreArg1 pa1, PreArg2 pa2,
+        PreArg3 pa3, PreArg4 pa4,
+        PreArg5 pa5, PreArg6 pa6,
+        PreArg7 pa7, PreArg8 pa8) {
     return new FunctionClosure_Arg3_Bind8<true, R , Arg1, Arg2, Arg3, Arg4,
-        Arg5, Arg6, Arg7, Arg8, Arg9, Arg10, Arg11 , PreArg1, PreArg2, PreArg3,
-        PreArg4, PreArg5, PreArg6, PreArg7, PreArg8>(function , pa1, pa2, pa3,
-        pa4, pa5, pa6, pa7, pa8);
+           Arg5, Arg6, Arg7, Arg8, Arg9, Arg10, Arg11 , PreArg1, PreArg2, PreArg3,
+           PreArg4, PreArg5, PreArg6, PreArg7, PreArg8>(function , pa1, pa2, pa3,
+                   pa4, pa5, pa6, pa7, pa8);
 }
 
 template <typename R , typename Arg1, typename Arg2, typename Arg3,
-    typename Arg4, typename Arg5, typename Arg6, typename Arg7, typename Arg8,
-    typename Arg9, typename Arg10, typename Arg11 , typename PreArg1,
-    typename PreArg2, typename PreArg3, typename PreArg4, typename PreArg5,
-    typename PreArg6, typename PreArg7, typename PreArg8>
+         typename Arg4, typename Arg5, typename Arg6, typename Arg7, typename Arg8,
+         typename Arg9, typename Arg10, typename Arg11 , typename PreArg1,
+         typename PreArg2, typename PreArg3, typename PreArg4, typename PreArg5,
+         typename PreArg6, typename PreArg7, typename PreArg8>
 Closure<R (Arg9, Arg10, Arg11)>* NewPermanentClosure(R (*function)(Arg1, Arg2,
-    Arg3, Arg4, Arg5, Arg6, Arg7, Arg8, Arg9, Arg10, Arg11)
-                                          , PreArg1 pa1, PreArg2 pa2,
-                                              PreArg3 pa3, PreArg4 pa4,
-                                              PreArg5 pa5, PreArg6 pa6,
-                                              PreArg7 pa7, PreArg8 pa8) {
+        Arg3, Arg4, Arg5, Arg6, Arg7, Arg8, Arg9, Arg10, Arg11)
+        , PreArg1 pa1, PreArg2 pa2,
+        PreArg3 pa3, PreArg4 pa4,
+        PreArg5 pa5, PreArg6 pa6,
+        PreArg7 pa7, PreArg8 pa8) {
     return new FunctionClosure_Arg3_Bind8<false, R , Arg1, Arg2, Arg3, Arg4,
-        Arg5, Arg6, Arg7, Arg8, Arg9, Arg10, Arg11 , PreArg1, PreArg2, PreArg3,
-        PreArg4, PreArg5, PreArg6, PreArg7, PreArg8>(function , pa1, pa2, pa3,
-        pa4, pa5, pa6, pa7, pa8);
+           Arg5, Arg6, Arg7, Arg8, Arg9, Arg10, Arg11 , PreArg1, PreArg2, PreArg3,
+           PreArg4, PreArg5, PreArg6, PreArg7, PreArg8>(function , pa1, pa2, pa3,
+                   pa4, pa5, pa6, pa7, pa8);
 }
 
 template <
-    bool SelfDeleting,
-    typename R,
-    typename Class,
-    typename MethodClass
-    , typename Arg1    , typename Arg2    , typename Arg3    ,
-        typename Arg4    >
+bool SelfDeleting,
+     typename R,
+     typename Class,
+     typename MethodClass
+     , typename Arg1    , typename Arg2    , typename Arg3    ,
+     typename Arg4    >
 class MethodClosure_Arg4_Bind0 : public Closure<R (Arg1, Arg2, Arg3, Arg4)> {
     typedef R (MethodClass::*MethodType)(Arg1, Arg2, Arg3, Arg4);
 public:
@@ -4193,35 +4321,37 @@ public:
         m_object(object), m_method(method)  {}
     virtual R Run(Arg1 arg1, Arg2 arg2, Arg3 arg3, Arg4 arg4) {
         ConditionalAutoDeleter<SelfDeleting,
-            MethodClosure_Arg4_Bind0> self_deleter(this);
+                               MethodClosure_Arg4_Bind0> self_deleter(this);
         return (m_object->*m_method)( arg1, arg2, arg3, arg4);
     }
-    virtual bool IsSelfDelete() const { return SelfDeleting; }
+    virtual bool IsSelfDelete() const {
+        return SelfDeleting;
+    }
 private:
     Class* m_object;
     MethodType m_method;
-    };
+};
 
 template <typename R, typename Class, typename MethodClass ,typename Arg1,
-    typename Arg2,typename Arg3,typename Arg4 >
+         typename Arg2,typename Arg3,typename Arg4 >
 Closure<R (Arg1, Arg2, Arg3, Arg4)>* NewClosure(
     Class *object,
     R (MethodClass::*method)(Arg1, Arg2, Arg3, Arg4)
-    ) {
+) {
     return new MethodClosure_Arg4_Bind0<true, R, Class, MethodClass ,Arg1,Arg2,
-        Arg3,Arg4 >(
-        object, method);
+           Arg3,Arg4 >(
+               object, method);
 }
 
 template <typename R, typename Class, typename MethodClass ,typename Arg1,
-    typename Arg2,typename Arg3,typename Arg4 >
+         typename Arg2,typename Arg3,typename Arg4 >
 Closure<R (Arg1, Arg2, Arg3, Arg4)>* NewPermanentClosure(
     Class *object,
     R (MethodClass::*method)(Arg1, Arg2, Arg3, Arg4)
-    ) {
+) {
     return new MethodClosure_Arg4_Bind0<false, R, Class, MethodClass ,Arg1,
-        Arg2,Arg3,Arg4 >(
-        object, method);
+           Arg2,Arg3,Arg4 >(
+               object, method);
 }
 
 ////////////////////////////////////////////////////
@@ -4229,10 +4359,10 @@ Closure<R (Arg1, Arg2, Arg3, Arg4)>* NewPermanentClosure(
 ////////////////////////////////////////////////////
 
 template <
-    bool SelfDeleting,
-    typename R
-    , typename Arg1    , typename Arg2    , typename Arg3    ,
-        typename Arg4    >
+bool SelfDeleting,
+     typename R
+     , typename Arg1    , typename Arg2    , typename Arg3    ,
+     typename Arg4    >
 class FunctionClosure_Arg4_Bind0 : public Closure<R (Arg1, Arg2, Arg3, Arg4)> {
     typedef R (*FunctionType)(Arg1, Arg2, Arg3, Arg4);
 public:
@@ -4240,39 +4370,41 @@ public:
         m_function(function)  {}
     virtual R Run(Arg1 arg1, Arg2 arg2, Arg3 arg3, Arg4 arg4) {
         ConditionalAutoDeleter<SelfDeleting,
-            FunctionClosure_Arg4_Bind0> self_deleter(this);
+                               FunctionClosure_Arg4_Bind0> self_deleter(this);
         return m_function( arg1, arg2, arg3, arg4);
     }
-    virtual bool IsSelfDelete() const { return SelfDeleting; }
+    virtual bool IsSelfDelete() const {
+        return SelfDeleting;
+    }
 private:
     FunctionType m_function;
-    };
+};
 
 template <typename R , typename Arg1, typename Arg2, typename Arg3,
-    typename Arg4 >
+         typename Arg4 >
 Closure<R (Arg1, Arg2, Arg3, Arg4)>* NewClosure(R (*function)(Arg1, Arg2, Arg3,
-    Arg4)
-                                          ) {
+        Arg4)
+                                               ) {
     return new FunctionClosure_Arg4_Bind0<true, R , Arg1, Arg2, Arg3,
-        Arg4 >(function );
+           Arg4 >(function );
 }
 
 template <typename R , typename Arg1, typename Arg2, typename Arg3,
-    typename Arg4 >
+         typename Arg4 >
 Closure<R (Arg1, Arg2, Arg3, Arg4)>* NewPermanentClosure(R (*function)(Arg1,
-    Arg2, Arg3, Arg4)
-                                          ) {
+        Arg2, Arg3, Arg4)
+                                                        ) {
     return new FunctionClosure_Arg4_Bind0<false, R , Arg1, Arg2, Arg3,
-        Arg4 >(function );
+           Arg4 >(function );
 }
 
 template <
-    bool SelfDeleting,
-    typename R,
-    typename Class,
-    typename MethodClass
-    , typename Arg1    , typename Arg2    , typename Arg3    ,
-        typename Arg4    , typename Arg5    , typename PreArg1>
+bool SelfDeleting,
+     typename R,
+     typename Class,
+     typename MethodClass
+     , typename Arg1    , typename Arg2    , typename Arg3    ,
+     typename Arg4    , typename Arg5    , typename PreArg1>
 class MethodClosure_Arg4_Bind1 : public Closure<R (Arg2, Arg3, Arg4, Arg5)> {
     typedef R (MethodClass::*MethodType)(Arg1, Arg2, Arg3, Arg4, Arg5);
 public:
@@ -4280,36 +4412,38 @@ public:
         m_object(object), m_method(method) , m_pa1(pa1) {}
     virtual R Run(Arg2 arg2, Arg3 arg3, Arg4 arg4, Arg5 arg5) {
         ConditionalAutoDeleter<SelfDeleting,
-            MethodClosure_Arg4_Bind1> self_deleter(this);
+                               MethodClosure_Arg4_Bind1> self_deleter(this);
         return (m_object->*m_method)(m_pa1 ,arg2, arg3, arg4, arg5);
     }
-    virtual bool IsSelfDelete() const { return SelfDeleting; }
+    virtual bool IsSelfDelete() const {
+        return SelfDeleting;
+    }
 private:
     Class* m_object;
     MethodType m_method;
-        PreArg1 m_pa1;
-    };
+    PreArg1 m_pa1;
+};
 
 template <typename R, typename Class, typename MethodClass ,typename Arg1,
-    typename Arg2,typename Arg3,typename Arg4,typename Arg5 , typename PreArg1>
+         typename Arg2,typename Arg3,typename Arg4,typename Arg5 , typename PreArg1>
 Closure<R (Arg2, Arg3, Arg4, Arg5)>* NewClosure(
     Class *object,
     R (MethodClass::*method)(Arg1, Arg2, Arg3, Arg4, Arg5)
     , PreArg1 pa1) {
     return new MethodClosure_Arg4_Bind1<true, R, Class, MethodClass ,Arg1,Arg2,
-        Arg3,Arg4,Arg5 , PreArg1>(
-        object, method, pa1);
+           Arg3,Arg4,Arg5 , PreArg1>(
+               object, method, pa1);
 }
 
 template <typename R, typename Class, typename MethodClass ,typename Arg1,
-    typename Arg2,typename Arg3,typename Arg4,typename Arg5 , typename PreArg1>
+         typename Arg2,typename Arg3,typename Arg4,typename Arg5 , typename PreArg1>
 Closure<R (Arg2, Arg3, Arg4, Arg5)>* NewPermanentClosure(
     Class *object,
     R (MethodClass::*method)(Arg1, Arg2, Arg3, Arg4, Arg5)
     , PreArg1 pa1) {
     return new MethodClosure_Arg4_Bind1<false, R, Class, MethodClass ,Arg1,
-        Arg2,Arg3,Arg4,Arg5 , PreArg1>(
-        object, method, pa1);
+           Arg2,Arg3,Arg4,Arg5 , PreArg1>(
+               object, method, pa1);
 }
 
 ////////////////////////////////////////////////////
@@ -4317,10 +4451,10 @@ Closure<R (Arg2, Arg3, Arg4, Arg5)>* NewPermanentClosure(
 ////////////////////////////////////////////////////
 
 template <
-    bool SelfDeleting,
-    typename R
-    , typename Arg1    , typename Arg2    , typename Arg3    ,
-        typename Arg4    , typename Arg5    , typename PreArg1>
+bool SelfDeleting,
+     typename R
+     , typename Arg1    , typename Arg2    , typename Arg3    ,
+     typename Arg4    , typename Arg5    , typename PreArg1>
 class FunctionClosure_Arg4_Bind1 : public Closure<R (Arg2, Arg3, Arg4, Arg5)> {
     typedef R (*FunctionType)(Arg1, Arg2, Arg3, Arg4, Arg5);
 public:
@@ -4328,82 +4462,86 @@ public:
         m_function(function) , m_pa1(pa1) {}
     virtual R Run(Arg2 arg2, Arg3 arg3, Arg4 arg4, Arg5 arg5) {
         ConditionalAutoDeleter<SelfDeleting,
-            FunctionClosure_Arg4_Bind1> self_deleter(this);
+                               FunctionClosure_Arg4_Bind1> self_deleter(this);
         return m_function(m_pa1 ,arg2, arg3, arg4, arg5);
     }
-    virtual bool IsSelfDelete() const { return SelfDeleting; }
+    virtual bool IsSelfDelete() const {
+        return SelfDeleting;
+    }
 private:
     FunctionType m_function;
-        PreArg1 m_pa1;
-    };
+    PreArg1 m_pa1;
+};
 
 template <typename R , typename Arg1, typename Arg2, typename Arg3,
-    typename Arg4, typename Arg5 , typename PreArg1>
+         typename Arg4, typename Arg5 , typename PreArg1>
 Closure<R (Arg2, Arg3, Arg4, Arg5)>* NewClosure(R (*function)(Arg1, Arg2, Arg3,
-    Arg4, Arg5)
-                                          , PreArg1 pa1) {
+        Arg4, Arg5)
+        , PreArg1 pa1) {
     return new FunctionClosure_Arg4_Bind1<true, R , Arg1, Arg2, Arg3, Arg4,
-        Arg5 , PreArg1>(function , pa1);
+           Arg5 , PreArg1>(function , pa1);
 }
 
 template <typename R , typename Arg1, typename Arg2, typename Arg3,
-    typename Arg4, typename Arg5 , typename PreArg1>
+         typename Arg4, typename Arg5 , typename PreArg1>
 Closure<R (Arg2, Arg3, Arg4, Arg5)>* NewPermanentClosure(R (*function)(Arg1,
-    Arg2, Arg3, Arg4, Arg5)
-                                          , PreArg1 pa1) {
+        Arg2, Arg3, Arg4, Arg5)
+        , PreArg1 pa1) {
     return new FunctionClosure_Arg4_Bind1<false, R , Arg1, Arg2, Arg3, Arg4,
-        Arg5 , PreArg1>(function , pa1);
+           Arg5 , PreArg1>(function , pa1);
 }
 
 template <
-    bool SelfDeleting,
-    typename R,
-    typename Class,
-    typename MethodClass
-    , typename Arg1    , typename Arg2    , typename Arg3    ,
-        typename Arg4    , typename Arg5    , typename Arg6    ,
-        typename PreArg1    , typename PreArg2>
+bool SelfDeleting,
+     typename R,
+     typename Class,
+     typename MethodClass
+     , typename Arg1    , typename Arg2    , typename Arg3    ,
+     typename Arg4    , typename Arg5    , typename Arg6    ,
+     typename PreArg1    , typename PreArg2>
 class MethodClosure_Arg4_Bind2 : public Closure<R (Arg3, Arg4, Arg5, Arg6)> {
     typedef R (MethodClass::*MethodType)(Arg1, Arg2, Arg3, Arg4, Arg5, Arg6);
 public:
     MethodClosure_Arg4_Bind2(Class *object, MethodType method , PreArg1 pa1,
-        PreArg2 pa2):
+                             PreArg2 pa2):
         m_object(object), m_method(method) , m_pa1(pa1), m_pa2(pa2) {}
     virtual R Run(Arg3 arg3, Arg4 arg4, Arg5 arg5, Arg6 arg6) {
         ConditionalAutoDeleter<SelfDeleting,
-            MethodClosure_Arg4_Bind2> self_deleter(this);
+                               MethodClosure_Arg4_Bind2> self_deleter(this);
         return (m_object->*m_method)(m_pa1, m_pa2 ,arg3, arg4, arg5, arg6);
     }
-    virtual bool IsSelfDelete() const { return SelfDeleting; }
+    virtual bool IsSelfDelete() const {
+        return SelfDeleting;
+    }
 private:
     Class* m_object;
     MethodType m_method;
-        PreArg1 m_pa1;
-        PreArg2 m_pa2;
-    };
+    PreArg1 m_pa1;
+    PreArg2 m_pa2;
+};
 
 template <typename R, typename Class, typename MethodClass ,typename Arg1,
-    typename Arg2,typename Arg3,typename Arg4,typename Arg5,typename Arg6 ,
-    typename PreArg1, typename PreArg2>
+         typename Arg2,typename Arg3,typename Arg4,typename Arg5,typename Arg6 ,
+         typename PreArg1, typename PreArg2>
 Closure<R (Arg3, Arg4, Arg5, Arg6)>* NewClosure(
     Class *object,
     R (MethodClass::*method)(Arg1, Arg2, Arg3, Arg4, Arg5, Arg6)
     , PreArg1 pa1, PreArg2 pa2) {
     return new MethodClosure_Arg4_Bind2<true, R, Class, MethodClass ,Arg1,Arg2,
-        Arg3,Arg4,Arg5,Arg6 , PreArg1, PreArg2>(
-        object, method, pa1, pa2);
+           Arg3,Arg4,Arg5,Arg6 , PreArg1, PreArg2>(
+               object, method, pa1, pa2);
 }
 
 template <typename R, typename Class, typename MethodClass ,typename Arg1,
-    typename Arg2,typename Arg3,typename Arg4,typename Arg5,typename Arg6 ,
-    typename PreArg1, typename PreArg2>
+         typename Arg2,typename Arg3,typename Arg4,typename Arg5,typename Arg6 ,
+         typename PreArg1, typename PreArg2>
 Closure<R (Arg3, Arg4, Arg5, Arg6)>* NewPermanentClosure(
     Class *object,
     R (MethodClass::*method)(Arg1, Arg2, Arg3, Arg4, Arg5, Arg6)
     , PreArg1 pa1, PreArg2 pa2) {
     return new MethodClosure_Arg4_Bind2<false, R, Class, MethodClass ,Arg1,
-        Arg2,Arg3,Arg4,Arg5,Arg6 , PreArg1, PreArg2>(
-        object, method, pa1, pa2);
+           Arg2,Arg3,Arg4,Arg5,Arg6 , PreArg1, PreArg2>(
+               object, method, pa1, pa2);
 }
 
 ////////////////////////////////////////////////////
@@ -4411,103 +4549,107 @@ Closure<R (Arg3, Arg4, Arg5, Arg6)>* NewPermanentClosure(
 ////////////////////////////////////////////////////
 
 template <
-    bool SelfDeleting,
-    typename R
-    , typename Arg1    , typename Arg2    , typename Arg3    ,
-        typename Arg4    , typename Arg5    , typename Arg6    ,
-        typename PreArg1    , typename PreArg2>
+bool SelfDeleting,
+     typename R
+     , typename Arg1    , typename Arg2    , typename Arg3    ,
+     typename Arg4    , typename Arg5    , typename Arg6    ,
+     typename PreArg1    , typename PreArg2>
 class FunctionClosure_Arg4_Bind2 : public Closure<R (Arg3, Arg4, Arg5, Arg6)> {
     typedef R (*FunctionType)(Arg1, Arg2, Arg3, Arg4, Arg5, Arg6);
 public:
     FunctionClosure_Arg4_Bind2(FunctionType function , PreArg1 pa1,
-        PreArg2 pa2):
+                               PreArg2 pa2):
         m_function(function) , m_pa1(pa1), m_pa2(pa2) {}
     virtual R Run(Arg3 arg3, Arg4 arg4, Arg5 arg5, Arg6 arg6) {
         ConditionalAutoDeleter<SelfDeleting,
-            FunctionClosure_Arg4_Bind2> self_deleter(this);
+                               FunctionClosure_Arg4_Bind2> self_deleter(this);
         return m_function(m_pa1, m_pa2 ,arg3, arg4, arg5, arg6);
     }
-    virtual bool IsSelfDelete() const { return SelfDeleting; }
+    virtual bool IsSelfDelete() const {
+        return SelfDeleting;
+    }
 private:
     FunctionType m_function;
-        PreArg1 m_pa1;
-        PreArg2 m_pa2;
-    };
+    PreArg1 m_pa1;
+    PreArg2 m_pa2;
+};
 
 template <typename R , typename Arg1, typename Arg2, typename Arg3,
-    typename Arg4, typename Arg5, typename Arg6 , typename PreArg1,
-    typename PreArg2>
+         typename Arg4, typename Arg5, typename Arg6 , typename PreArg1,
+         typename PreArg2>
 Closure<R (Arg3, Arg4, Arg5, Arg6)>* NewClosure(R (*function)(Arg1, Arg2, Arg3,
-    Arg4, Arg5, Arg6)
-                                          , PreArg1 pa1, PreArg2 pa2) {
+        Arg4, Arg5, Arg6)
+        , PreArg1 pa1, PreArg2 pa2) {
     return new FunctionClosure_Arg4_Bind2<true, R , Arg1, Arg2, Arg3, Arg4,
-        Arg5, Arg6 , PreArg1, PreArg2>(function , pa1, pa2);
+           Arg5, Arg6 , PreArg1, PreArg2>(function , pa1, pa2);
 }
 
 template <typename R , typename Arg1, typename Arg2, typename Arg3,
-    typename Arg4, typename Arg5, typename Arg6 , typename PreArg1,
-    typename PreArg2>
+         typename Arg4, typename Arg5, typename Arg6 , typename PreArg1,
+         typename PreArg2>
 Closure<R (Arg3, Arg4, Arg5, Arg6)>* NewPermanentClosure(R (*function)(Arg1,
-    Arg2, Arg3, Arg4, Arg5, Arg6)
-                                          , PreArg1 pa1, PreArg2 pa2) {
+        Arg2, Arg3, Arg4, Arg5, Arg6)
+        , PreArg1 pa1, PreArg2 pa2) {
     return new FunctionClosure_Arg4_Bind2<false, R , Arg1, Arg2, Arg3, Arg4,
-        Arg5, Arg6 , PreArg1, PreArg2>(function , pa1, pa2);
+           Arg5, Arg6 , PreArg1, PreArg2>(function , pa1, pa2);
 }
 
 template <
-    bool SelfDeleting,
-    typename R,
-    typename Class,
-    typename MethodClass
-    , typename Arg1    , typename Arg2    , typename Arg3    ,
-        typename Arg4    , typename Arg5    , typename Arg6    ,
-        typename Arg7    , typename PreArg1    , typename PreArg2    ,
-        typename PreArg3>
+bool SelfDeleting,
+     typename R,
+     typename Class,
+     typename MethodClass
+     , typename Arg1    , typename Arg2    , typename Arg3    ,
+     typename Arg4    , typename Arg5    , typename Arg6    ,
+     typename Arg7    , typename PreArg1    , typename PreArg2    ,
+     typename PreArg3>
 class MethodClosure_Arg4_Bind3 : public Closure<R (Arg4, Arg5, Arg6, Arg7)> {
     typedef R (MethodClass::*MethodType)(Arg1, Arg2, Arg3, Arg4, Arg5, Arg6,
-        Arg7);
+                                         Arg7);
 public:
     MethodClosure_Arg4_Bind3(Class *object, MethodType method , PreArg1 pa1,
-        PreArg2 pa2, PreArg3 pa3):
+                             PreArg2 pa2, PreArg3 pa3):
         m_object(object), m_method(method) , m_pa1(pa1), m_pa2(pa2),
-            m_pa3(pa3) {}
+        m_pa3(pa3) {}
     virtual R Run(Arg4 arg4, Arg5 arg5, Arg6 arg6, Arg7 arg7) {
         ConditionalAutoDeleter<SelfDeleting,
-            MethodClosure_Arg4_Bind3> self_deleter(this);
+                               MethodClosure_Arg4_Bind3> self_deleter(this);
         return (m_object->*m_method)(m_pa1, m_pa2, m_pa3 ,arg4, arg5, arg6,
-            arg7);
+                                     arg7);
     }
-    virtual bool IsSelfDelete() const { return SelfDeleting; }
+    virtual bool IsSelfDelete() const {
+        return SelfDeleting;
+    }
 private:
     Class* m_object;
     MethodType m_method;
-        PreArg1 m_pa1;
-        PreArg2 m_pa2;
-        PreArg3 m_pa3;
-    };
+    PreArg1 m_pa1;
+    PreArg2 m_pa2;
+    PreArg3 m_pa3;
+};
 
 template <typename R, typename Class, typename MethodClass ,typename Arg1,
-    typename Arg2,typename Arg3,typename Arg4,typename Arg5,typename Arg6,
-    typename Arg7 , typename PreArg1, typename PreArg2, typename PreArg3>
+         typename Arg2,typename Arg3,typename Arg4,typename Arg5,typename Arg6,
+         typename Arg7 , typename PreArg1, typename PreArg2, typename PreArg3>
 Closure<R (Arg4, Arg5, Arg6, Arg7)>* NewClosure(
     Class *object,
     R (MethodClass::*method)(Arg1, Arg2, Arg3, Arg4, Arg5, Arg6, Arg7)
     , PreArg1 pa1, PreArg2 pa2, PreArg3 pa3) {
     return new MethodClosure_Arg4_Bind3<true, R, Class, MethodClass ,Arg1,Arg2,
-        Arg3,Arg4,Arg5,Arg6,Arg7 , PreArg1, PreArg2, PreArg3>(
-        object, method, pa1, pa2, pa3);
+           Arg3,Arg4,Arg5,Arg6,Arg7 , PreArg1, PreArg2, PreArg3>(
+               object, method, pa1, pa2, pa3);
 }
 
 template <typename R, typename Class, typename MethodClass ,typename Arg1,
-    typename Arg2,typename Arg3,typename Arg4,typename Arg5,typename Arg6,
-    typename Arg7 , typename PreArg1, typename PreArg2, typename PreArg3>
+         typename Arg2,typename Arg3,typename Arg4,typename Arg5,typename Arg6,
+         typename Arg7 , typename PreArg1, typename PreArg2, typename PreArg3>
 Closure<R (Arg4, Arg5, Arg6, Arg7)>* NewPermanentClosure(
     Class *object,
     R (MethodClass::*method)(Arg1, Arg2, Arg3, Arg4, Arg5, Arg6, Arg7)
     , PreArg1 pa1, PreArg2 pa2, PreArg3 pa3) {
     return new MethodClosure_Arg4_Bind3<false, R, Class, MethodClass ,Arg1,
-        Arg2,Arg3,Arg4,Arg5,Arg6,Arg7 , PreArg1, PreArg2, PreArg3>(
-        object, method, pa1, pa2, pa3);
+           Arg2,Arg3,Arg4,Arg5,Arg6,Arg7 , PreArg1, PreArg2, PreArg3>(
+               object, method, pa1, pa2, pa3);
 }
 
 ////////////////////////////////////////////////////
@@ -4515,113 +4657,117 @@ Closure<R (Arg4, Arg5, Arg6, Arg7)>* NewPermanentClosure(
 ////////////////////////////////////////////////////
 
 template <
-    bool SelfDeleting,
-    typename R
-    , typename Arg1    , typename Arg2    , typename Arg3    ,
-        typename Arg4    , typename Arg5    , typename Arg6    ,
-        typename Arg7    , typename PreArg1    , typename PreArg2    ,
-        typename PreArg3>
+bool SelfDeleting,
+     typename R
+     , typename Arg1    , typename Arg2    , typename Arg3    ,
+     typename Arg4    , typename Arg5    , typename Arg6    ,
+     typename Arg7    , typename PreArg1    , typename PreArg2    ,
+     typename PreArg3>
 class FunctionClosure_Arg4_Bind3 : public Closure<R (Arg4, Arg5, Arg6, Arg7)> {
     typedef R (*FunctionType)(Arg1, Arg2, Arg3, Arg4, Arg5, Arg6, Arg7);
 public:
     FunctionClosure_Arg4_Bind3(FunctionType function , PreArg1 pa1,
-        PreArg2 pa2, PreArg3 pa3):
+                               PreArg2 pa2, PreArg3 pa3):
         m_function(function) , m_pa1(pa1), m_pa2(pa2), m_pa3(pa3) {}
     virtual R Run(Arg4 arg4, Arg5 arg5, Arg6 arg6, Arg7 arg7) {
         ConditionalAutoDeleter<SelfDeleting,
-            FunctionClosure_Arg4_Bind3> self_deleter(this);
+                               FunctionClosure_Arg4_Bind3> self_deleter(this);
         return m_function(m_pa1, m_pa2, m_pa3 ,arg4, arg5, arg6, arg7);
     }
-    virtual bool IsSelfDelete() const { return SelfDeleting; }
+    virtual bool IsSelfDelete() const {
+        return SelfDeleting;
+    }
 private:
     FunctionType m_function;
-        PreArg1 m_pa1;
-        PreArg2 m_pa2;
-        PreArg3 m_pa3;
-    };
+    PreArg1 m_pa1;
+    PreArg2 m_pa2;
+    PreArg3 m_pa3;
+};
 
 template <typename R , typename Arg1, typename Arg2, typename Arg3,
-    typename Arg4, typename Arg5, typename Arg6, typename Arg7 ,
-    typename PreArg1, typename PreArg2, typename PreArg3>
+         typename Arg4, typename Arg5, typename Arg6, typename Arg7 ,
+         typename PreArg1, typename PreArg2, typename PreArg3>
 Closure<R (Arg4, Arg5, Arg6, Arg7)>* NewClosure(R (*function)(Arg1, Arg2, Arg3,
-    Arg4, Arg5, Arg6, Arg7)
-                                          , PreArg1 pa1, PreArg2 pa2,
-                                              PreArg3 pa3) {
+        Arg4, Arg5, Arg6, Arg7)
+        , PreArg1 pa1, PreArg2 pa2,
+        PreArg3 pa3) {
     return new FunctionClosure_Arg4_Bind3<true, R , Arg1, Arg2, Arg3, Arg4,
-        Arg5, Arg6, Arg7 , PreArg1, PreArg2, PreArg3>(function , pa1, pa2,
-        pa3);
+           Arg5, Arg6, Arg7 , PreArg1, PreArg2, PreArg3>(function , pa1, pa2,
+                   pa3);
 }
 
 template <typename R , typename Arg1, typename Arg2, typename Arg3,
-    typename Arg4, typename Arg5, typename Arg6, typename Arg7 ,
-    typename PreArg1, typename PreArg2, typename PreArg3>
+         typename Arg4, typename Arg5, typename Arg6, typename Arg7 ,
+         typename PreArg1, typename PreArg2, typename PreArg3>
 Closure<R (Arg4, Arg5, Arg6, Arg7)>* NewPermanentClosure(R (*function)(Arg1,
-    Arg2, Arg3, Arg4, Arg5, Arg6, Arg7)
-                                          , PreArg1 pa1, PreArg2 pa2,
-                                              PreArg3 pa3) {
+        Arg2, Arg3, Arg4, Arg5, Arg6, Arg7)
+        , PreArg1 pa1, PreArg2 pa2,
+        PreArg3 pa3) {
     return new FunctionClosure_Arg4_Bind3<false, R , Arg1, Arg2, Arg3, Arg4,
-        Arg5, Arg6, Arg7 , PreArg1, PreArg2, PreArg3>(function , pa1, pa2,
-        pa3);
+           Arg5, Arg6, Arg7 , PreArg1, PreArg2, PreArg3>(function , pa1, pa2,
+                   pa3);
 }
 
 template <
-    bool SelfDeleting,
-    typename R,
-    typename Class,
-    typename MethodClass
-    , typename Arg1    , typename Arg2    , typename Arg3    ,
-        typename Arg4    , typename Arg5    , typename Arg6    ,
-        typename Arg7    , typename Arg8    , typename PreArg1    ,
-        typename PreArg2    , typename PreArg3    , typename PreArg4>
+bool SelfDeleting,
+     typename R,
+     typename Class,
+     typename MethodClass
+     , typename Arg1    , typename Arg2    , typename Arg3    ,
+     typename Arg4    , typename Arg5    , typename Arg6    ,
+     typename Arg7    , typename Arg8    , typename PreArg1    ,
+     typename PreArg2    , typename PreArg3    , typename PreArg4>
 class MethodClosure_Arg4_Bind4 : public Closure<R (Arg5, Arg6, Arg7, Arg8)> {
     typedef R (MethodClass::*MethodType)(Arg1, Arg2, Arg3, Arg4, Arg5, Arg6,
-        Arg7, Arg8);
+                                         Arg7, Arg8);
 public:
     MethodClosure_Arg4_Bind4(Class *object, MethodType method , PreArg1 pa1,
-        PreArg2 pa2, PreArg3 pa3, PreArg4 pa4):
+                             PreArg2 pa2, PreArg3 pa3, PreArg4 pa4):
         m_object(object), m_method(method) , m_pa1(pa1), m_pa2(pa2),
-            m_pa3(pa3), m_pa4(pa4) {}
+        m_pa3(pa3), m_pa4(pa4) {}
     virtual R Run(Arg5 arg5, Arg6 arg6, Arg7 arg7, Arg8 arg8) {
         ConditionalAutoDeleter<SelfDeleting,
-            MethodClosure_Arg4_Bind4> self_deleter(this);
+                               MethodClosure_Arg4_Bind4> self_deleter(this);
         return (m_object->*m_method)(m_pa1, m_pa2, m_pa3, m_pa4 ,arg5, arg6,
-            arg7, arg8);
+                                     arg7, arg8);
     }
-    virtual bool IsSelfDelete() const { return SelfDeleting; }
+    virtual bool IsSelfDelete() const {
+        return SelfDeleting;
+    }
 private:
     Class* m_object;
     MethodType m_method;
-        PreArg1 m_pa1;
-        PreArg2 m_pa2;
-        PreArg3 m_pa3;
-        PreArg4 m_pa4;
-    };
+    PreArg1 m_pa1;
+    PreArg2 m_pa2;
+    PreArg3 m_pa3;
+    PreArg4 m_pa4;
+};
 
 template <typename R, typename Class, typename MethodClass ,typename Arg1,
-    typename Arg2,typename Arg3,typename Arg4,typename Arg5,typename Arg6,
-    typename Arg7,typename Arg8 , typename PreArg1, typename PreArg2,
-    typename PreArg3, typename PreArg4>
+         typename Arg2,typename Arg3,typename Arg4,typename Arg5,typename Arg6,
+         typename Arg7,typename Arg8 , typename PreArg1, typename PreArg2,
+         typename PreArg3, typename PreArg4>
 Closure<R (Arg5, Arg6, Arg7, Arg8)>* NewClosure(
     Class *object,
     R (MethodClass::*method)(Arg1, Arg2, Arg3, Arg4, Arg5, Arg6, Arg7, Arg8)
     , PreArg1 pa1, PreArg2 pa2, PreArg3 pa3, PreArg4 pa4) {
     return new MethodClosure_Arg4_Bind4<true, R, Class, MethodClass ,Arg1,Arg2,
-        Arg3,Arg4,Arg5,Arg6,Arg7,Arg8 , PreArg1, PreArg2, PreArg3, PreArg4>(
-        object, method, pa1, pa2, pa3, pa4);
+           Arg3,Arg4,Arg5,Arg6,Arg7,Arg8 , PreArg1, PreArg2, PreArg3, PreArg4>(
+               object, method, pa1, pa2, pa3, pa4);
 }
 
 template <typename R, typename Class, typename MethodClass ,typename Arg1,
-    typename Arg2,typename Arg3,typename Arg4,typename Arg5,typename Arg6,
-    typename Arg7,typename Arg8 , typename PreArg1, typename PreArg2,
-    typename PreArg3, typename PreArg4>
+         typename Arg2,typename Arg3,typename Arg4,typename Arg5,typename Arg6,
+         typename Arg7,typename Arg8 , typename PreArg1, typename PreArg2,
+         typename PreArg3, typename PreArg4>
 Closure<R (Arg5, Arg6, Arg7, Arg8)>* NewPermanentClosure(
     Class *object,
     R (MethodClass::*method)(Arg1, Arg2, Arg3, Arg4, Arg5, Arg6, Arg7, Arg8)
     , PreArg1 pa1, PreArg2 pa2, PreArg3 pa3, PreArg4 pa4) {
     return new MethodClosure_Arg4_Bind4<false, R, Class, MethodClass ,Arg1,
-        Arg2,Arg3,Arg4,Arg5,Arg6,Arg7,Arg8 , PreArg1, PreArg2, PreArg3,
-        PreArg4>(
-        object, method, pa1, pa2, pa3, pa4);
+           Arg2,Arg3,Arg4,Arg5,Arg6,Arg7,Arg8 , PreArg1, PreArg2, PreArg3,
+           PreArg4>(
+               object, method, pa1, pa2, pa3, pa4);
 }
 
 ////////////////////////////////////////////////////
@@ -4629,119 +4775,123 @@ Closure<R (Arg5, Arg6, Arg7, Arg8)>* NewPermanentClosure(
 ////////////////////////////////////////////////////
 
 template <
-    bool SelfDeleting,
-    typename R
-    , typename Arg1    , typename Arg2    , typename Arg3    ,
-        typename Arg4    , typename Arg5    , typename Arg6    ,
-        typename Arg7    , typename Arg8    , typename PreArg1    ,
-        typename PreArg2    , typename PreArg3    , typename PreArg4>
+bool SelfDeleting,
+     typename R
+     , typename Arg1    , typename Arg2    , typename Arg3    ,
+     typename Arg4    , typename Arg5    , typename Arg6    ,
+     typename Arg7    , typename Arg8    , typename PreArg1    ,
+     typename PreArg2    , typename PreArg3    , typename PreArg4>
 class FunctionClosure_Arg4_Bind4 : public Closure<R (Arg5, Arg6, Arg7, Arg8)> {
     typedef R (*FunctionType)(Arg1, Arg2, Arg3, Arg4, Arg5, Arg6, Arg7, Arg8);
 public:
     FunctionClosure_Arg4_Bind4(FunctionType function , PreArg1 pa1,
-        PreArg2 pa2, PreArg3 pa3, PreArg4 pa4):
+                               PreArg2 pa2, PreArg3 pa3, PreArg4 pa4):
         m_function(function) , m_pa1(pa1), m_pa2(pa2), m_pa3(pa3), m_pa4(pa4) {}
     virtual R Run(Arg5 arg5, Arg6 arg6, Arg7 arg7, Arg8 arg8) {
         ConditionalAutoDeleter<SelfDeleting,
-            FunctionClosure_Arg4_Bind4> self_deleter(this);
+                               FunctionClosure_Arg4_Bind4> self_deleter(this);
         return m_function(m_pa1, m_pa2, m_pa3, m_pa4 ,arg5, arg6, arg7, arg8);
     }
-    virtual bool IsSelfDelete() const { return SelfDeleting; }
+    virtual bool IsSelfDelete() const {
+        return SelfDeleting;
+    }
 private:
     FunctionType m_function;
-        PreArg1 m_pa1;
-        PreArg2 m_pa2;
-        PreArg3 m_pa3;
-        PreArg4 m_pa4;
-    };
+    PreArg1 m_pa1;
+    PreArg2 m_pa2;
+    PreArg3 m_pa3;
+    PreArg4 m_pa4;
+};
 
 template <typename R , typename Arg1, typename Arg2, typename Arg3,
-    typename Arg4, typename Arg5, typename Arg6, typename Arg7, typename Arg8 ,
-    typename PreArg1, typename PreArg2, typename PreArg3, typename PreArg4>
+         typename Arg4, typename Arg5, typename Arg6, typename Arg7, typename Arg8 ,
+         typename PreArg1, typename PreArg2, typename PreArg3, typename PreArg4>
 Closure<R (Arg5, Arg6, Arg7, Arg8)>* NewClosure(R (*function)(Arg1, Arg2, Arg3,
-    Arg4, Arg5, Arg6, Arg7, Arg8)
-                                          , PreArg1 pa1, PreArg2 pa2,
-                                              PreArg3 pa3, PreArg4 pa4) {
+        Arg4, Arg5, Arg6, Arg7, Arg8)
+        , PreArg1 pa1, PreArg2 pa2,
+        PreArg3 pa3, PreArg4 pa4) {
     return new FunctionClosure_Arg4_Bind4<true, R , Arg1, Arg2, Arg3, Arg4,
-        Arg5, Arg6, Arg7, Arg8 , PreArg1, PreArg2, PreArg3, PreArg4>(function ,
-        pa1, pa2, pa3, pa4);
+           Arg5, Arg6, Arg7, Arg8 , PreArg1, PreArg2, PreArg3, PreArg4>(function ,
+                   pa1, pa2, pa3, pa4);
 }
 
 template <typename R , typename Arg1, typename Arg2, typename Arg3,
-    typename Arg4, typename Arg5, typename Arg6, typename Arg7, typename Arg8 ,
-    typename PreArg1, typename PreArg2, typename PreArg3, typename PreArg4>
+         typename Arg4, typename Arg5, typename Arg6, typename Arg7, typename Arg8 ,
+         typename PreArg1, typename PreArg2, typename PreArg3, typename PreArg4>
 Closure<R (Arg5, Arg6, Arg7, Arg8)>* NewPermanentClosure(R (*function)(Arg1,
-    Arg2, Arg3, Arg4, Arg5, Arg6, Arg7, Arg8)
-                                          , PreArg1 pa1, PreArg2 pa2,
-                                              PreArg3 pa3, PreArg4 pa4) {
+        Arg2, Arg3, Arg4, Arg5, Arg6, Arg7, Arg8)
+        , PreArg1 pa1, PreArg2 pa2,
+        PreArg3 pa3, PreArg4 pa4) {
     return new FunctionClosure_Arg4_Bind4<false, R , Arg1, Arg2, Arg3, Arg4,
-        Arg5, Arg6, Arg7, Arg8 , PreArg1, PreArg2, PreArg3, PreArg4>(function ,
-        pa1, pa2, pa3, pa4);
+           Arg5, Arg6, Arg7, Arg8 , PreArg1, PreArg2, PreArg3, PreArg4>(function ,
+                   pa1, pa2, pa3, pa4);
 }
 
 template <
-    bool SelfDeleting,
-    typename R,
-    typename Class,
-    typename MethodClass
-    , typename Arg1    , typename Arg2    , typename Arg3    ,
-        typename Arg4    , typename Arg5    , typename Arg6    ,
-        typename Arg7    , typename Arg8    , typename Arg9    ,
-        typename PreArg1    , typename PreArg2    , typename PreArg3    ,
-        typename PreArg4    , typename PreArg5>
+bool SelfDeleting,
+     typename R,
+     typename Class,
+     typename MethodClass
+     , typename Arg1    , typename Arg2    , typename Arg3    ,
+     typename Arg4    , typename Arg5    , typename Arg6    ,
+     typename Arg7    , typename Arg8    , typename Arg9    ,
+     typename PreArg1    , typename PreArg2    , typename PreArg3    ,
+     typename PreArg4    , typename PreArg5>
 class MethodClosure_Arg4_Bind5 : public Closure<R (Arg6, Arg7, Arg8, Arg9)> {
     typedef R (MethodClass::*MethodType)(Arg1, Arg2, Arg3, Arg4, Arg5, Arg6,
-        Arg7, Arg8, Arg9);
+                                         Arg7, Arg8, Arg9);
 public:
     MethodClosure_Arg4_Bind5(Class *object, MethodType method , PreArg1 pa1,
-        PreArg2 pa2, PreArg3 pa3, PreArg4 pa4, PreArg5 pa5):
+                             PreArg2 pa2, PreArg3 pa3, PreArg4 pa4, PreArg5 pa5):
         m_object(object), m_method(method) , m_pa1(pa1), m_pa2(pa2),
-            m_pa3(pa3), m_pa4(pa4), m_pa5(pa5) {}
+        m_pa3(pa3), m_pa4(pa4), m_pa5(pa5) {}
     virtual R Run(Arg6 arg6, Arg7 arg7, Arg8 arg8, Arg9 arg9) {
         ConditionalAutoDeleter<SelfDeleting,
-            MethodClosure_Arg4_Bind5> self_deleter(this);
+                               MethodClosure_Arg4_Bind5> self_deleter(this);
         return (m_object->*m_method)(m_pa1, m_pa2, m_pa3, m_pa4, m_pa5 ,arg6,
-            arg7, arg8, arg9);
+                                     arg7, arg8, arg9);
     }
-    virtual bool IsSelfDelete() const { return SelfDeleting; }
+    virtual bool IsSelfDelete() const {
+        return SelfDeleting;
+    }
 private:
     Class* m_object;
     MethodType m_method;
-        PreArg1 m_pa1;
-        PreArg2 m_pa2;
-        PreArg3 m_pa3;
-        PreArg4 m_pa4;
-        PreArg5 m_pa5;
-    };
+    PreArg1 m_pa1;
+    PreArg2 m_pa2;
+    PreArg3 m_pa3;
+    PreArg4 m_pa4;
+    PreArg5 m_pa5;
+};
 
 template <typename R, typename Class, typename MethodClass ,typename Arg1,
-    typename Arg2,typename Arg3,typename Arg4,typename Arg5,typename Arg6,
-    typename Arg7,typename Arg8,typename Arg9 , typename PreArg1,
-    typename PreArg2, typename PreArg3, typename PreArg4, typename PreArg5>
+         typename Arg2,typename Arg3,typename Arg4,typename Arg5,typename Arg6,
+         typename Arg7,typename Arg8,typename Arg9 , typename PreArg1,
+         typename PreArg2, typename PreArg3, typename PreArg4, typename PreArg5>
 Closure<R (Arg6, Arg7, Arg8, Arg9)>* NewClosure(
     Class *object,
     R (MethodClass::*method)(Arg1, Arg2, Arg3, Arg4, Arg5, Arg6, Arg7, Arg8,
-        Arg9)
+                             Arg9)
     , PreArg1 pa1, PreArg2 pa2, PreArg3 pa3, PreArg4 pa4, PreArg5 pa5) {
     return new MethodClosure_Arg4_Bind5<true, R, Class, MethodClass ,Arg1,Arg2,
-        Arg3,Arg4,Arg5,Arg6,Arg7,Arg8,Arg9 , PreArg1, PreArg2, PreArg3,
-        PreArg4, PreArg5>(
-        object, method, pa1, pa2, pa3, pa4, pa5);
+           Arg3,Arg4,Arg5,Arg6,Arg7,Arg8,Arg9 , PreArg1, PreArg2, PreArg3,
+           PreArg4, PreArg5>(
+               object, method, pa1, pa2, pa3, pa4, pa5);
 }
 
 template <typename R, typename Class, typename MethodClass ,typename Arg1,
-    typename Arg2,typename Arg3,typename Arg4,typename Arg5,typename Arg6,
-    typename Arg7,typename Arg8,typename Arg9 , typename PreArg1,
-    typename PreArg2, typename PreArg3, typename PreArg4, typename PreArg5>
+         typename Arg2,typename Arg3,typename Arg4,typename Arg5,typename Arg6,
+         typename Arg7,typename Arg8,typename Arg9 , typename PreArg1,
+         typename PreArg2, typename PreArg3, typename PreArg4, typename PreArg5>
 Closure<R (Arg6, Arg7, Arg8, Arg9)>* NewPermanentClosure(
     Class *object,
     R (MethodClass::*method)(Arg1, Arg2, Arg3, Arg4, Arg5, Arg6, Arg7, Arg8,
-        Arg9)
+                             Arg9)
     , PreArg1 pa1, PreArg2 pa2, PreArg3 pa3, PreArg4 pa4, PreArg5 pa5) {
     return new MethodClosure_Arg4_Bind5<false, R, Class, MethodClass ,Arg1,
-        Arg2,Arg3,Arg4,Arg5,Arg6,Arg7,Arg8,Arg9 , PreArg1, PreArg2, PreArg3,
-        PreArg4, PreArg5>(
-        object, method, pa1, pa2, pa3, pa4, pa5);
+           Arg2,Arg3,Arg4,Arg5,Arg6,Arg7,Arg8,Arg9 , PreArg1, PreArg2, PreArg3,
+           PreArg4, PreArg5>(
+               object, method, pa1, pa2, pa3, pa4, pa5);
 }
 
 ////////////////////////////////////////////////////
@@ -4749,134 +4899,138 @@ Closure<R (Arg6, Arg7, Arg8, Arg9)>* NewPermanentClosure(
 ////////////////////////////////////////////////////
 
 template <
-    bool SelfDeleting,
-    typename R
-    , typename Arg1    , typename Arg2    , typename Arg3    ,
-        typename Arg4    , typename Arg5    , typename Arg6    ,
-        typename Arg7    , typename Arg8    , typename Arg9    ,
-        typename PreArg1    , typename PreArg2    , typename PreArg3    ,
-        typename PreArg4    , typename PreArg5>
+bool SelfDeleting,
+     typename R
+     , typename Arg1    , typename Arg2    , typename Arg3    ,
+     typename Arg4    , typename Arg5    , typename Arg6    ,
+     typename Arg7    , typename Arg8    , typename Arg9    ,
+     typename PreArg1    , typename PreArg2    , typename PreArg3    ,
+     typename PreArg4    , typename PreArg5>
 class FunctionClosure_Arg4_Bind5 : public Closure<R (Arg6, Arg7, Arg8, Arg9)> {
     typedef R (*FunctionType)(Arg1, Arg2, Arg3, Arg4, Arg5, Arg6, Arg7, Arg8,
-        Arg9);
+                              Arg9);
 public:
     FunctionClosure_Arg4_Bind5(FunctionType function , PreArg1 pa1,
-        PreArg2 pa2, PreArg3 pa3, PreArg4 pa4, PreArg5 pa5):
+                               PreArg2 pa2, PreArg3 pa3, PreArg4 pa4, PreArg5 pa5):
         m_function(function) , m_pa1(pa1), m_pa2(pa2), m_pa3(pa3), m_pa4(pa4),
-            m_pa5(pa5) {}
+        m_pa5(pa5) {}
     virtual R Run(Arg6 arg6, Arg7 arg7, Arg8 arg8, Arg9 arg9) {
         ConditionalAutoDeleter<SelfDeleting,
-            FunctionClosure_Arg4_Bind5> self_deleter(this);
+                               FunctionClosure_Arg4_Bind5> self_deleter(this);
         return m_function(m_pa1, m_pa2, m_pa3, m_pa4, m_pa5 ,arg6, arg7, arg8,
-            arg9);
+                          arg9);
     }
-    virtual bool IsSelfDelete() const { return SelfDeleting; }
+    virtual bool IsSelfDelete() const {
+        return SelfDeleting;
+    }
 private:
     FunctionType m_function;
-        PreArg1 m_pa1;
-        PreArg2 m_pa2;
-        PreArg3 m_pa3;
-        PreArg4 m_pa4;
-        PreArg5 m_pa5;
-    };
+    PreArg1 m_pa1;
+    PreArg2 m_pa2;
+    PreArg3 m_pa3;
+    PreArg4 m_pa4;
+    PreArg5 m_pa5;
+};
 
 template <typename R , typename Arg1, typename Arg2, typename Arg3,
-    typename Arg4, typename Arg5, typename Arg6, typename Arg7, typename Arg8,
-    typename Arg9 , typename PreArg1, typename PreArg2, typename PreArg3,
-    typename PreArg4, typename PreArg5>
+         typename Arg4, typename Arg5, typename Arg6, typename Arg7, typename Arg8,
+         typename Arg9 , typename PreArg1, typename PreArg2, typename PreArg3,
+         typename PreArg4, typename PreArg5>
 Closure<R (Arg6, Arg7, Arg8, Arg9)>* NewClosure(R (*function)(Arg1, Arg2, Arg3,
-    Arg4, Arg5, Arg6, Arg7, Arg8, Arg9)
-                                          , PreArg1 pa1, PreArg2 pa2,
-                                              PreArg3 pa3, PreArg4 pa4,
-                                              PreArg5 pa5) {
+        Arg4, Arg5, Arg6, Arg7, Arg8, Arg9)
+        , PreArg1 pa1, PreArg2 pa2,
+        PreArg3 pa3, PreArg4 pa4,
+        PreArg5 pa5) {
     return new FunctionClosure_Arg4_Bind5<true, R , Arg1, Arg2, Arg3, Arg4,
-        Arg5, Arg6, Arg7, Arg8, Arg9 , PreArg1, PreArg2, PreArg3, PreArg4,
-        PreArg5>(function , pa1, pa2, pa3, pa4, pa5);
+           Arg5, Arg6, Arg7, Arg8, Arg9 , PreArg1, PreArg2, PreArg3, PreArg4,
+           PreArg5>(function , pa1, pa2, pa3, pa4, pa5);
 }
 
 template <typename R , typename Arg1, typename Arg2, typename Arg3,
-    typename Arg4, typename Arg5, typename Arg6, typename Arg7, typename Arg8,
-    typename Arg9 , typename PreArg1, typename PreArg2, typename PreArg3,
-    typename PreArg4, typename PreArg5>
+         typename Arg4, typename Arg5, typename Arg6, typename Arg7, typename Arg8,
+         typename Arg9 , typename PreArg1, typename PreArg2, typename PreArg3,
+         typename PreArg4, typename PreArg5>
 Closure<R (Arg6, Arg7, Arg8, Arg9)>* NewPermanentClosure(R (*function)(Arg1,
-    Arg2, Arg3, Arg4, Arg5, Arg6, Arg7, Arg8, Arg9)
-                                          , PreArg1 pa1, PreArg2 pa2,
-                                              PreArg3 pa3, PreArg4 pa4,
-                                              PreArg5 pa5) {
+        Arg2, Arg3, Arg4, Arg5, Arg6, Arg7, Arg8, Arg9)
+        , PreArg1 pa1, PreArg2 pa2,
+        PreArg3 pa3, PreArg4 pa4,
+        PreArg5 pa5) {
     return new FunctionClosure_Arg4_Bind5<false, R , Arg1, Arg2, Arg3, Arg4,
-        Arg5, Arg6, Arg7, Arg8, Arg9 , PreArg1, PreArg2, PreArg3, PreArg4,
-        PreArg5>(function , pa1, pa2, pa3, pa4, pa5);
+           Arg5, Arg6, Arg7, Arg8, Arg9 , PreArg1, PreArg2, PreArg3, PreArg4,
+           PreArg5>(function , pa1, pa2, pa3, pa4, pa5);
 }
 
 template <
-    bool SelfDeleting,
-    typename R,
-    typename Class,
-    typename MethodClass
-    , typename Arg1    , typename Arg2    , typename Arg3    ,
-        typename Arg4    , typename Arg5    , typename Arg6    ,
-        typename Arg7    , typename Arg8    , typename Arg9    ,
-        typename Arg10    , typename PreArg1    , typename PreArg2    ,
-        typename PreArg3    , typename PreArg4    , typename PreArg5    ,
-        typename PreArg6>
+bool SelfDeleting,
+     typename R,
+     typename Class,
+     typename MethodClass
+     , typename Arg1    , typename Arg2    , typename Arg3    ,
+     typename Arg4    , typename Arg5    , typename Arg6    ,
+     typename Arg7    , typename Arg8    , typename Arg9    ,
+     typename Arg10    , typename PreArg1    , typename PreArg2    ,
+     typename PreArg3    , typename PreArg4    , typename PreArg5    ,
+     typename PreArg6>
 class MethodClosure_Arg4_Bind6 : public Closure<R (Arg7, Arg8, Arg9, Arg10)> {
     typedef R (MethodClass::*MethodType)(Arg1, Arg2, Arg3, Arg4, Arg5, Arg6,
-        Arg7, Arg8, Arg9, Arg10);
+                                         Arg7, Arg8, Arg9, Arg10);
 public:
     MethodClosure_Arg4_Bind6(Class *object, MethodType method , PreArg1 pa1,
-        PreArg2 pa2, PreArg3 pa3, PreArg4 pa4, PreArg5 pa5, PreArg6 pa6):
+                             PreArg2 pa2, PreArg3 pa3, PreArg4 pa4, PreArg5 pa5, PreArg6 pa6):
         m_object(object), m_method(method) , m_pa1(pa1), m_pa2(pa2),
-            m_pa3(pa3), m_pa4(pa4), m_pa5(pa5), m_pa6(pa6) {}
+        m_pa3(pa3), m_pa4(pa4), m_pa5(pa5), m_pa6(pa6) {}
     virtual R Run(Arg7 arg7, Arg8 arg8, Arg9 arg9, Arg10 arg10) {
         ConditionalAutoDeleter<SelfDeleting,
-            MethodClosure_Arg4_Bind6> self_deleter(this);
+                               MethodClosure_Arg4_Bind6> self_deleter(this);
         return (m_object->*m_method)(m_pa1, m_pa2, m_pa3, m_pa4, m_pa5, m_pa6 ,
-            arg7, arg8, arg9, arg10);
+                                     arg7, arg8, arg9, arg10);
     }
-    virtual bool IsSelfDelete() const { return SelfDeleting; }
+    virtual bool IsSelfDelete() const {
+        return SelfDeleting;
+    }
 private:
     Class* m_object;
     MethodType m_method;
-        PreArg1 m_pa1;
-        PreArg2 m_pa2;
-        PreArg3 m_pa3;
-        PreArg4 m_pa4;
-        PreArg5 m_pa5;
-        PreArg6 m_pa6;
-    };
+    PreArg1 m_pa1;
+    PreArg2 m_pa2;
+    PreArg3 m_pa3;
+    PreArg4 m_pa4;
+    PreArg5 m_pa5;
+    PreArg6 m_pa6;
+};
 
 template <typename R, typename Class, typename MethodClass ,typename Arg1,
-    typename Arg2,typename Arg3,typename Arg4,typename Arg5,typename Arg6,
-    typename Arg7,typename Arg8,typename Arg9,typename Arg10 ,
-    typename PreArg1, typename PreArg2, typename PreArg3, typename PreArg4,
-    typename PreArg5, typename PreArg6>
+         typename Arg2,typename Arg3,typename Arg4,typename Arg5,typename Arg6,
+         typename Arg7,typename Arg8,typename Arg9,typename Arg10 ,
+         typename PreArg1, typename PreArg2, typename PreArg3, typename PreArg4,
+         typename PreArg5, typename PreArg6>
 Closure<R (Arg7, Arg8, Arg9, Arg10)>* NewClosure(
     Class *object,
     R (MethodClass::*method)(Arg1, Arg2, Arg3, Arg4, Arg5, Arg6, Arg7, Arg8,
-        Arg9, Arg10)
+                             Arg9, Arg10)
     , PreArg1 pa1, PreArg2 pa2, PreArg3 pa3, PreArg4 pa4, PreArg5 pa5,
-        PreArg6 pa6) {
+    PreArg6 pa6) {
     return new MethodClosure_Arg4_Bind6<true, R, Class, MethodClass ,Arg1,Arg2,
-        Arg3,Arg4,Arg5,Arg6,Arg7,Arg8,Arg9,Arg10 , PreArg1, PreArg2, PreArg3,
-        PreArg4, PreArg5, PreArg6>(
-        object, method, pa1, pa2, pa3, pa4, pa5, pa6);
+           Arg3,Arg4,Arg5,Arg6,Arg7,Arg8,Arg9,Arg10 , PreArg1, PreArg2, PreArg3,
+           PreArg4, PreArg5, PreArg6>(
+               object, method, pa1, pa2, pa3, pa4, pa5, pa6);
 }
 
 template <typename R, typename Class, typename MethodClass ,typename Arg1,
-    typename Arg2,typename Arg3,typename Arg4,typename Arg5,typename Arg6,
-    typename Arg7,typename Arg8,typename Arg9,typename Arg10 ,
-    typename PreArg1, typename PreArg2, typename PreArg3, typename PreArg4,
-    typename PreArg5, typename PreArg6>
+         typename Arg2,typename Arg3,typename Arg4,typename Arg5,typename Arg6,
+         typename Arg7,typename Arg8,typename Arg9,typename Arg10 ,
+         typename PreArg1, typename PreArg2, typename PreArg3, typename PreArg4,
+         typename PreArg5, typename PreArg6>
 Closure<R (Arg7, Arg8, Arg9, Arg10)>* NewPermanentClosure(
     Class *object,
     R (MethodClass::*method)(Arg1, Arg2, Arg3, Arg4, Arg5, Arg6, Arg7, Arg8,
-        Arg9, Arg10)
+                             Arg9, Arg10)
     , PreArg1 pa1, PreArg2 pa2, PreArg3 pa3, PreArg4 pa4, PreArg5 pa5,
-        PreArg6 pa6) {
+    PreArg6 pa6) {
     return new MethodClosure_Arg4_Bind6<false, R, Class, MethodClass ,Arg1,
-        Arg2,Arg3,Arg4,Arg5,Arg6,Arg7,Arg8,Arg9,Arg10 , PreArg1, PreArg2,
-        PreArg3, PreArg4, PreArg5, PreArg6>(
-        object, method, pa1, pa2, pa3, pa4, pa5, pa6);
+           Arg2,Arg3,Arg4,Arg5,Arg6,Arg7,Arg8,Arg9,Arg10 , PreArg1, PreArg2,
+           PreArg3, PreArg4, PreArg5, PreArg6>(
+               object, method, pa1, pa2, pa3, pa4, pa5, pa6);
 }
 
 ////////////////////////////////////////////////////
@@ -4884,138 +5038,142 @@ Closure<R (Arg7, Arg8, Arg9, Arg10)>* NewPermanentClosure(
 ////////////////////////////////////////////////////
 
 template <
-    bool SelfDeleting,
-    typename R
-    , typename Arg1    , typename Arg2    , typename Arg3    ,
-        typename Arg4    , typename Arg5    , typename Arg6    ,
-        typename Arg7    , typename Arg8    , typename Arg9    ,
-        typename Arg10    , typename PreArg1    , typename PreArg2    ,
-        typename PreArg3    , typename PreArg4    , typename PreArg5    ,
-        typename PreArg6>
+bool SelfDeleting,
+     typename R
+     , typename Arg1    , typename Arg2    , typename Arg3    ,
+     typename Arg4    , typename Arg5    , typename Arg6    ,
+     typename Arg7    , typename Arg8    , typename Arg9    ,
+     typename Arg10    , typename PreArg1    , typename PreArg2    ,
+     typename PreArg3    , typename PreArg4    , typename PreArg5    ,
+     typename PreArg6>
 class FunctionClosure_Arg4_Bind6 : public Closure<R (Arg7, Arg8, Arg9, Arg10)> {
     typedef R (*FunctionType)(Arg1, Arg2, Arg3, Arg4, Arg5, Arg6, Arg7, Arg8,
-        Arg9, Arg10);
+                              Arg9, Arg10);
 public:
     FunctionClosure_Arg4_Bind6(FunctionType function , PreArg1 pa1,
-        PreArg2 pa2, PreArg3 pa3, PreArg4 pa4, PreArg5 pa5, PreArg6 pa6):
+                               PreArg2 pa2, PreArg3 pa3, PreArg4 pa4, PreArg5 pa5, PreArg6 pa6):
         m_function(function) , m_pa1(pa1), m_pa2(pa2), m_pa3(pa3), m_pa4(pa4),
-            m_pa5(pa5), m_pa6(pa6) {}
+        m_pa5(pa5), m_pa6(pa6) {}
     virtual R Run(Arg7 arg7, Arg8 arg8, Arg9 arg9, Arg10 arg10) {
         ConditionalAutoDeleter<SelfDeleting,
-            FunctionClosure_Arg4_Bind6> self_deleter(this);
+                               FunctionClosure_Arg4_Bind6> self_deleter(this);
         return m_function(m_pa1, m_pa2, m_pa3, m_pa4, m_pa5, m_pa6 ,arg7, arg8,
-            arg9, arg10);
+                          arg9, arg10);
     }
-    virtual bool IsSelfDelete() const { return SelfDeleting; }
+    virtual bool IsSelfDelete() const {
+        return SelfDeleting;
+    }
 private:
     FunctionType m_function;
-        PreArg1 m_pa1;
-        PreArg2 m_pa2;
-        PreArg3 m_pa3;
-        PreArg4 m_pa4;
-        PreArg5 m_pa5;
-        PreArg6 m_pa6;
-    };
+    PreArg1 m_pa1;
+    PreArg2 m_pa2;
+    PreArg3 m_pa3;
+    PreArg4 m_pa4;
+    PreArg5 m_pa5;
+    PreArg6 m_pa6;
+};
 
 template <typename R , typename Arg1, typename Arg2, typename Arg3,
-    typename Arg4, typename Arg5, typename Arg6, typename Arg7, typename Arg8,
-    typename Arg9, typename Arg10 , typename PreArg1, typename PreArg2,
-    typename PreArg3, typename PreArg4, typename PreArg5, typename PreArg6>
+         typename Arg4, typename Arg5, typename Arg6, typename Arg7, typename Arg8,
+         typename Arg9, typename Arg10 , typename PreArg1, typename PreArg2,
+         typename PreArg3, typename PreArg4, typename PreArg5, typename PreArg6>
 Closure<R (Arg7, Arg8, Arg9, Arg10)>* NewClosure(R (*function)(Arg1, Arg2,
-    Arg3, Arg4, Arg5, Arg6, Arg7, Arg8, Arg9, Arg10)
-                                          , PreArg1 pa1, PreArg2 pa2,
-                                              PreArg3 pa3, PreArg4 pa4,
-                                              PreArg5 pa5, PreArg6 pa6) {
+        Arg3, Arg4, Arg5, Arg6, Arg7, Arg8, Arg9, Arg10)
+        , PreArg1 pa1, PreArg2 pa2,
+        PreArg3 pa3, PreArg4 pa4,
+        PreArg5 pa5, PreArg6 pa6) {
     return new FunctionClosure_Arg4_Bind6<true, R , Arg1, Arg2, Arg3, Arg4,
-        Arg5, Arg6, Arg7, Arg8, Arg9, Arg10 , PreArg1, PreArg2, PreArg3,
-        PreArg4, PreArg5, PreArg6>(function , pa1, pa2, pa3, pa4, pa5, pa6);
+           Arg5, Arg6, Arg7, Arg8, Arg9, Arg10 , PreArg1, PreArg2, PreArg3,
+           PreArg4, PreArg5, PreArg6>(function , pa1, pa2, pa3, pa4, pa5, pa6);
 }
 
 template <typename R , typename Arg1, typename Arg2, typename Arg3,
-    typename Arg4, typename Arg5, typename Arg6, typename Arg7, typename Arg8,
-    typename Arg9, typename Arg10 , typename PreArg1, typename PreArg2,
-    typename PreArg3, typename PreArg4, typename PreArg5, typename PreArg6>
+         typename Arg4, typename Arg5, typename Arg6, typename Arg7, typename Arg8,
+         typename Arg9, typename Arg10 , typename PreArg1, typename PreArg2,
+         typename PreArg3, typename PreArg4, typename PreArg5, typename PreArg6>
 Closure<R (Arg7, Arg8, Arg9, Arg10)>* NewPermanentClosure(R (*function)(Arg1,
-    Arg2, Arg3, Arg4, Arg5, Arg6, Arg7, Arg8, Arg9, Arg10)
-                                          , PreArg1 pa1, PreArg2 pa2,
-                                              PreArg3 pa3, PreArg4 pa4,
-                                              PreArg5 pa5, PreArg6 pa6) {
+        Arg2, Arg3, Arg4, Arg5, Arg6, Arg7, Arg8, Arg9, Arg10)
+        , PreArg1 pa1, PreArg2 pa2,
+        PreArg3 pa3, PreArg4 pa4,
+        PreArg5 pa5, PreArg6 pa6) {
     return new FunctionClosure_Arg4_Bind6<false, R , Arg1, Arg2, Arg3, Arg4,
-        Arg5, Arg6, Arg7, Arg8, Arg9, Arg10 , PreArg1, PreArg2, PreArg3,
-        PreArg4, PreArg5, PreArg6>(function , pa1, pa2, pa3, pa4, pa5, pa6);
+           Arg5, Arg6, Arg7, Arg8, Arg9, Arg10 , PreArg1, PreArg2, PreArg3,
+           PreArg4, PreArg5, PreArg6>(function , pa1, pa2, pa3, pa4, pa5, pa6);
 }
 
 template <
-    bool SelfDeleting,
-    typename R,
-    typename Class,
-    typename MethodClass
-    , typename Arg1    , typename Arg2    , typename Arg3    ,
-        typename Arg4    , typename Arg5    , typename Arg6    ,
-        typename Arg7    , typename Arg8    , typename Arg9    ,
-        typename Arg10    , typename Arg11    , typename PreArg1    ,
-        typename PreArg2    , typename PreArg3    , typename PreArg4    ,
-        typename PreArg5    , typename PreArg6    , typename PreArg7>
+bool SelfDeleting,
+     typename R,
+     typename Class,
+     typename MethodClass
+     , typename Arg1    , typename Arg2    , typename Arg3    ,
+     typename Arg4    , typename Arg5    , typename Arg6    ,
+     typename Arg7    , typename Arg8    , typename Arg9    ,
+     typename Arg10    , typename Arg11    , typename PreArg1    ,
+     typename PreArg2    , typename PreArg3    , typename PreArg4    ,
+     typename PreArg5    , typename PreArg6    , typename PreArg7>
 class MethodClosure_Arg4_Bind7 : public Closure<R (Arg8, Arg9, Arg10, Arg11)> {
     typedef R (MethodClass::*MethodType)(Arg1, Arg2, Arg3, Arg4, Arg5, Arg6,
-        Arg7, Arg8, Arg9, Arg10, Arg11);
+                                         Arg7, Arg8, Arg9, Arg10, Arg11);
 public:
     MethodClosure_Arg4_Bind7(Class *object, MethodType method , PreArg1 pa1,
-        PreArg2 pa2, PreArg3 pa3, PreArg4 pa4, PreArg5 pa5, PreArg6 pa6,
-        PreArg7 pa7):
+                             PreArg2 pa2, PreArg3 pa3, PreArg4 pa4, PreArg5 pa5, PreArg6 pa6,
+                             PreArg7 pa7):
         m_object(object), m_method(method) , m_pa1(pa1), m_pa2(pa2),
-            m_pa3(pa3), m_pa4(pa4), m_pa5(pa5), m_pa6(pa6), m_pa7(pa7) {}
+        m_pa3(pa3), m_pa4(pa4), m_pa5(pa5), m_pa6(pa6), m_pa7(pa7) {}
     virtual R Run(Arg8 arg8, Arg9 arg9, Arg10 arg10, Arg11 arg11) {
         ConditionalAutoDeleter<SelfDeleting,
-            MethodClosure_Arg4_Bind7> self_deleter(this);
+                               MethodClosure_Arg4_Bind7> self_deleter(this);
         return (m_object->*m_method)(m_pa1, m_pa2, m_pa3, m_pa4, m_pa5, m_pa6,
-            m_pa7 ,arg8, arg9, arg10, arg11);
+                                     m_pa7 ,arg8, arg9, arg10, arg11);
     }
-    virtual bool IsSelfDelete() const { return SelfDeleting; }
+    virtual bool IsSelfDelete() const {
+        return SelfDeleting;
+    }
 private:
     Class* m_object;
     MethodType m_method;
-        PreArg1 m_pa1;
-        PreArg2 m_pa2;
-        PreArg3 m_pa3;
-        PreArg4 m_pa4;
-        PreArg5 m_pa5;
-        PreArg6 m_pa6;
-        PreArg7 m_pa7;
-    };
+    PreArg1 m_pa1;
+    PreArg2 m_pa2;
+    PreArg3 m_pa3;
+    PreArg4 m_pa4;
+    PreArg5 m_pa5;
+    PreArg6 m_pa6;
+    PreArg7 m_pa7;
+};
 
 template <typename R, typename Class, typename MethodClass ,typename Arg1,
-    typename Arg2,typename Arg3,typename Arg4,typename Arg5,typename Arg6,
-    typename Arg7,typename Arg8,typename Arg9,typename Arg10,typename Arg11 ,
-    typename PreArg1, typename PreArg2, typename PreArg3, typename PreArg4,
-    typename PreArg5, typename PreArg6, typename PreArg7>
+         typename Arg2,typename Arg3,typename Arg4,typename Arg5,typename Arg6,
+         typename Arg7,typename Arg8,typename Arg9,typename Arg10,typename Arg11 ,
+         typename PreArg1, typename PreArg2, typename PreArg3, typename PreArg4,
+         typename PreArg5, typename PreArg6, typename PreArg7>
 Closure<R (Arg8, Arg9, Arg10, Arg11)>* NewClosure(
     Class *object,
     R (MethodClass::*method)(Arg1, Arg2, Arg3, Arg4, Arg5, Arg6, Arg7, Arg8,
-        Arg9, Arg10, Arg11)
+                             Arg9, Arg10, Arg11)
     , PreArg1 pa1, PreArg2 pa2, PreArg3 pa3, PreArg4 pa4, PreArg5 pa5,
-        PreArg6 pa6, PreArg7 pa7) {
+    PreArg6 pa6, PreArg7 pa7) {
     return new MethodClosure_Arg4_Bind7<true, R, Class, MethodClass ,Arg1,Arg2,
-        Arg3,Arg4,Arg5,Arg6,Arg7,Arg8,Arg9,Arg10,Arg11 , PreArg1, PreArg2,
-        PreArg3, PreArg4, PreArg5, PreArg6, PreArg7>(
-        object, method, pa1, pa2, pa3, pa4, pa5, pa6, pa7);
+           Arg3,Arg4,Arg5,Arg6,Arg7,Arg8,Arg9,Arg10,Arg11 , PreArg1, PreArg2,
+           PreArg3, PreArg4, PreArg5, PreArg6, PreArg7>(
+               object, method, pa1, pa2, pa3, pa4, pa5, pa6, pa7);
 }
 
 template <typename R, typename Class, typename MethodClass ,typename Arg1,
-    typename Arg2,typename Arg3,typename Arg4,typename Arg5,typename Arg6,
-    typename Arg7,typename Arg8,typename Arg9,typename Arg10,typename Arg11 ,
-    typename PreArg1, typename PreArg2, typename PreArg3, typename PreArg4,
-    typename PreArg5, typename PreArg6, typename PreArg7>
+         typename Arg2,typename Arg3,typename Arg4,typename Arg5,typename Arg6,
+         typename Arg7,typename Arg8,typename Arg9,typename Arg10,typename Arg11 ,
+         typename PreArg1, typename PreArg2, typename PreArg3, typename PreArg4,
+         typename PreArg5, typename PreArg6, typename PreArg7>
 Closure<R (Arg8, Arg9, Arg10, Arg11)>* NewPermanentClosure(
     Class *object,
     R (MethodClass::*method)(Arg1, Arg2, Arg3, Arg4, Arg5, Arg6, Arg7, Arg8,
-        Arg9, Arg10, Arg11)
+                             Arg9, Arg10, Arg11)
     , PreArg1 pa1, PreArg2 pa2, PreArg3 pa3, PreArg4 pa4, PreArg5 pa5,
-        PreArg6 pa6, PreArg7 pa7) {
+    PreArg6 pa6, PreArg7 pa7) {
     return new MethodClosure_Arg4_Bind7<false, R, Class, MethodClass ,Arg1,
-        Arg2,Arg3,Arg4,Arg5,Arg6,Arg7,Arg8,Arg9,Arg10,Arg11 , PreArg1, PreArg2,
-        PreArg3, PreArg4, PreArg5, PreArg6, PreArg7>(
-        object, method, pa1, pa2, pa3, pa4, pa5, pa6, pa7);
+           Arg2,Arg3,Arg4,Arg5,Arg6,Arg7,Arg8,Arg9,Arg10,Arg11 , PreArg1, PreArg2,
+           PreArg3, PreArg4, PreArg5, PreArg6, PreArg7>(
+               object, method, pa1, pa2, pa3, pa4, pa5, pa6, pa7);
 }
 
 ////////////////////////////////////////////////////
@@ -5023,152 +5181,156 @@ Closure<R (Arg8, Arg9, Arg10, Arg11)>* NewPermanentClosure(
 ////////////////////////////////////////////////////
 
 template <
-    bool SelfDeleting,
-    typename R
-    , typename Arg1    , typename Arg2    , typename Arg3    ,
-        typename Arg4    , typename Arg5    , typename Arg6    ,
-        typename Arg7    , typename Arg8    , typename Arg9    ,
-        typename Arg10    , typename Arg11    , typename PreArg1    ,
-        typename PreArg2    , typename PreArg3    , typename PreArg4    ,
-        typename PreArg5    , typename PreArg6    , typename PreArg7>
+bool SelfDeleting,
+     typename R
+     , typename Arg1    , typename Arg2    , typename Arg3    ,
+     typename Arg4    , typename Arg5    , typename Arg6    ,
+     typename Arg7    , typename Arg8    , typename Arg9    ,
+     typename Arg10    , typename Arg11    , typename PreArg1    ,
+     typename PreArg2    , typename PreArg3    , typename PreArg4    ,
+     typename PreArg5    , typename PreArg6    , typename PreArg7>
 class FunctionClosure_Arg4_Bind7 : public Closure<R (Arg8, Arg9, Arg10,
-    Arg11)> {
+                Arg11)> {
     typedef R (*FunctionType)(Arg1, Arg2, Arg3, Arg4, Arg5, Arg6, Arg7, Arg8,
-        Arg9, Arg10, Arg11);
+                              Arg9, Arg10, Arg11);
 public:
     FunctionClosure_Arg4_Bind7(FunctionType function , PreArg1 pa1,
-        PreArg2 pa2, PreArg3 pa3, PreArg4 pa4, PreArg5 pa5, PreArg6 pa6,
-        PreArg7 pa7):
+                               PreArg2 pa2, PreArg3 pa3, PreArg4 pa4, PreArg5 pa5, PreArg6 pa6,
+                               PreArg7 pa7):
         m_function(function) , m_pa1(pa1), m_pa2(pa2), m_pa3(pa3), m_pa4(pa4),
-            m_pa5(pa5), m_pa6(pa6), m_pa7(pa7) {}
+        m_pa5(pa5), m_pa6(pa6), m_pa7(pa7) {}
     virtual R Run(Arg8 arg8, Arg9 arg9, Arg10 arg10, Arg11 arg11) {
         ConditionalAutoDeleter<SelfDeleting,
-            FunctionClosure_Arg4_Bind7> self_deleter(this);
+                               FunctionClosure_Arg4_Bind7> self_deleter(this);
         return m_function(m_pa1, m_pa2, m_pa3, m_pa4, m_pa5, m_pa6, m_pa7 ,
-            arg8, arg9, arg10, arg11);
+                          arg8, arg9, arg10, arg11);
     }
-    virtual bool IsSelfDelete() const { return SelfDeleting; }
+    virtual bool IsSelfDelete() const {
+        return SelfDeleting;
+    }
 private:
     FunctionType m_function;
-        PreArg1 m_pa1;
-        PreArg2 m_pa2;
-        PreArg3 m_pa3;
-        PreArg4 m_pa4;
-        PreArg5 m_pa5;
-        PreArg6 m_pa6;
-        PreArg7 m_pa7;
-    };
+    PreArg1 m_pa1;
+    PreArg2 m_pa2;
+    PreArg3 m_pa3;
+    PreArg4 m_pa4;
+    PreArg5 m_pa5;
+    PreArg6 m_pa6;
+    PreArg7 m_pa7;
+};
 
 template <typename R , typename Arg1, typename Arg2, typename Arg3,
-    typename Arg4, typename Arg5, typename Arg6, typename Arg7, typename Arg8,
-    typename Arg9, typename Arg10, typename Arg11 , typename PreArg1,
-    typename PreArg2, typename PreArg3, typename PreArg4, typename PreArg5,
-    typename PreArg6, typename PreArg7>
+         typename Arg4, typename Arg5, typename Arg6, typename Arg7, typename Arg8,
+         typename Arg9, typename Arg10, typename Arg11 , typename PreArg1,
+         typename PreArg2, typename PreArg3, typename PreArg4, typename PreArg5,
+         typename PreArg6, typename PreArg7>
 Closure<R (Arg8, Arg9, Arg10, Arg11)>* NewClosure(R (*function)(Arg1, Arg2,
-    Arg3, Arg4, Arg5, Arg6, Arg7, Arg8, Arg9, Arg10, Arg11)
-                                          , PreArg1 pa1, PreArg2 pa2,
-                                              PreArg3 pa3, PreArg4 pa4,
-                                              PreArg5 pa5, PreArg6 pa6,
-                                              PreArg7 pa7) {
+        Arg3, Arg4, Arg5, Arg6, Arg7, Arg8, Arg9, Arg10, Arg11)
+        , PreArg1 pa1, PreArg2 pa2,
+        PreArg3 pa3, PreArg4 pa4,
+        PreArg5 pa5, PreArg6 pa6,
+        PreArg7 pa7) {
     return new FunctionClosure_Arg4_Bind7<true, R , Arg1, Arg2, Arg3, Arg4,
-        Arg5, Arg6, Arg7, Arg8, Arg9, Arg10, Arg11 , PreArg1, PreArg2, PreArg3,
-        PreArg4, PreArg5, PreArg6, PreArg7>(function , pa1, pa2, pa3, pa4, pa5,
-        pa6, pa7);
+           Arg5, Arg6, Arg7, Arg8, Arg9, Arg10, Arg11 , PreArg1, PreArg2, PreArg3,
+           PreArg4, PreArg5, PreArg6, PreArg7>(function , pa1, pa2, pa3, pa4, pa5,
+                   pa6, pa7);
 }
 
 template <typename R , typename Arg1, typename Arg2, typename Arg3,
-    typename Arg4, typename Arg5, typename Arg6, typename Arg7, typename Arg8,
-    typename Arg9, typename Arg10, typename Arg11 , typename PreArg1,
-    typename PreArg2, typename PreArg3, typename PreArg4, typename PreArg5,
-    typename PreArg6, typename PreArg7>
+         typename Arg4, typename Arg5, typename Arg6, typename Arg7, typename Arg8,
+         typename Arg9, typename Arg10, typename Arg11 , typename PreArg1,
+         typename PreArg2, typename PreArg3, typename PreArg4, typename PreArg5,
+         typename PreArg6, typename PreArg7>
 Closure<R (Arg8, Arg9, Arg10, Arg11)>* NewPermanentClosure(R (*function)(Arg1,
-    Arg2, Arg3, Arg4, Arg5, Arg6, Arg7, Arg8, Arg9, Arg10, Arg11)
-                                          , PreArg1 pa1, PreArg2 pa2,
-                                              PreArg3 pa3, PreArg4 pa4,
-                                              PreArg5 pa5, PreArg6 pa6,
-                                              PreArg7 pa7) {
+        Arg2, Arg3, Arg4, Arg5, Arg6, Arg7, Arg8, Arg9, Arg10, Arg11)
+        , PreArg1 pa1, PreArg2 pa2,
+        PreArg3 pa3, PreArg4 pa4,
+        PreArg5 pa5, PreArg6 pa6,
+        PreArg7 pa7) {
     return new FunctionClosure_Arg4_Bind7<false, R , Arg1, Arg2, Arg3, Arg4,
-        Arg5, Arg6, Arg7, Arg8, Arg9, Arg10, Arg11 , PreArg1, PreArg2, PreArg3,
-        PreArg4, PreArg5, PreArg6, PreArg7>(function , pa1, pa2, pa3, pa4, pa5,
-        pa6, pa7);
+           Arg5, Arg6, Arg7, Arg8, Arg9, Arg10, Arg11 , PreArg1, PreArg2, PreArg3,
+           PreArg4, PreArg5, PreArg6, PreArg7>(function , pa1, pa2, pa3, pa4, pa5,
+                   pa6, pa7);
 }
 
 template <
-    bool SelfDeleting,
-    typename R,
-    typename Class,
-    typename MethodClass
-    , typename Arg1    , typename Arg2    , typename Arg3    ,
-        typename Arg4    , typename Arg5    , typename Arg6    ,
-        typename Arg7    , typename Arg8    , typename Arg9    ,
-        typename Arg10    , typename Arg11    , typename Arg12    ,
-        typename PreArg1    , typename PreArg2    , typename PreArg3    ,
-        typename PreArg4    , typename PreArg5    , typename PreArg6    ,
-        typename PreArg7    , typename PreArg8>
+bool SelfDeleting,
+     typename R,
+     typename Class,
+     typename MethodClass
+     , typename Arg1    , typename Arg2    , typename Arg3    ,
+     typename Arg4    , typename Arg5    , typename Arg6    ,
+     typename Arg7    , typename Arg8    , typename Arg9    ,
+     typename Arg10    , typename Arg11    , typename Arg12    ,
+     typename PreArg1    , typename PreArg2    , typename PreArg3    ,
+     typename PreArg4    , typename PreArg5    , typename PreArg6    ,
+     typename PreArg7    , typename PreArg8>
 class MethodClosure_Arg4_Bind8 : public Closure<R (Arg9, Arg10, Arg11, Arg12)> {
     typedef R (MethodClass::*MethodType)(Arg1, Arg2, Arg3, Arg4, Arg5, Arg6,
-        Arg7, Arg8, Arg9, Arg10, Arg11, Arg12);
+                                         Arg7, Arg8, Arg9, Arg10, Arg11, Arg12);
 public:
     MethodClosure_Arg4_Bind8(Class *object, MethodType method , PreArg1 pa1,
-        PreArg2 pa2, PreArg3 pa3, PreArg4 pa4, PreArg5 pa5, PreArg6 pa6,
-        PreArg7 pa7, PreArg8 pa8):
+                             PreArg2 pa2, PreArg3 pa3, PreArg4 pa4, PreArg5 pa5, PreArg6 pa6,
+                             PreArg7 pa7, PreArg8 pa8):
         m_object(object), m_method(method) , m_pa1(pa1), m_pa2(pa2),
-            m_pa3(pa3), m_pa4(pa4), m_pa5(pa5), m_pa6(pa6), m_pa7(pa7),
-            m_pa8(pa8) {}
+        m_pa3(pa3), m_pa4(pa4), m_pa5(pa5), m_pa6(pa6), m_pa7(pa7),
+        m_pa8(pa8) {}
     virtual R Run(Arg9 arg9, Arg10 arg10, Arg11 arg11, Arg12 arg12) {
         ConditionalAutoDeleter<SelfDeleting,
-            MethodClosure_Arg4_Bind8> self_deleter(this);
+                               MethodClosure_Arg4_Bind8> self_deleter(this);
         return (m_object->*m_method)(m_pa1, m_pa2, m_pa3, m_pa4, m_pa5, m_pa6,
-            m_pa7, m_pa8 ,arg9, arg10, arg11, arg12);
+                                     m_pa7, m_pa8 ,arg9, arg10, arg11, arg12);
     }
-    virtual bool IsSelfDelete() const { return SelfDeleting; }
+    virtual bool IsSelfDelete() const {
+        return SelfDeleting;
+    }
 private:
     Class* m_object;
     MethodType m_method;
-        PreArg1 m_pa1;
-        PreArg2 m_pa2;
-        PreArg3 m_pa3;
-        PreArg4 m_pa4;
-        PreArg5 m_pa5;
-        PreArg6 m_pa6;
-        PreArg7 m_pa7;
-        PreArg8 m_pa8;
-    };
+    PreArg1 m_pa1;
+    PreArg2 m_pa2;
+    PreArg3 m_pa3;
+    PreArg4 m_pa4;
+    PreArg5 m_pa5;
+    PreArg6 m_pa6;
+    PreArg7 m_pa7;
+    PreArg8 m_pa8;
+};
 
 template <typename R, typename Class, typename MethodClass ,typename Arg1,
-    typename Arg2,typename Arg3,typename Arg4,typename Arg5,typename Arg6,
-    typename Arg7,typename Arg8,typename Arg9,typename Arg10,typename Arg11,
-    typename Arg12 , typename PreArg1, typename PreArg2, typename PreArg3,
-    typename PreArg4, typename PreArg5, typename PreArg6, typename PreArg7,
-    typename PreArg8>
+         typename Arg2,typename Arg3,typename Arg4,typename Arg5,typename Arg6,
+         typename Arg7,typename Arg8,typename Arg9,typename Arg10,typename Arg11,
+         typename Arg12 , typename PreArg1, typename PreArg2, typename PreArg3,
+         typename PreArg4, typename PreArg5, typename PreArg6, typename PreArg7,
+         typename PreArg8>
 Closure<R (Arg9, Arg10, Arg11, Arg12)>* NewClosure(
     Class *object,
     R (MethodClass::*method)(Arg1, Arg2, Arg3, Arg4, Arg5, Arg6, Arg7, Arg8,
-        Arg9, Arg10, Arg11, Arg12)
+                             Arg9, Arg10, Arg11, Arg12)
     , PreArg1 pa1, PreArg2 pa2, PreArg3 pa3, PreArg4 pa4, PreArg5 pa5,
-        PreArg6 pa6, PreArg7 pa7, PreArg8 pa8) {
+    PreArg6 pa6, PreArg7 pa7, PreArg8 pa8) {
     return new MethodClosure_Arg4_Bind8<true, R, Class, MethodClass ,Arg1,Arg2,
-        Arg3,Arg4,Arg5,Arg6,Arg7,Arg8,Arg9,Arg10,Arg11,Arg12 , PreArg1,
-        PreArg2, PreArg3, PreArg4, PreArg5, PreArg6, PreArg7, PreArg8>(
-        object, method, pa1, pa2, pa3, pa4, pa5, pa6, pa7, pa8);
+           Arg3,Arg4,Arg5,Arg6,Arg7,Arg8,Arg9,Arg10,Arg11,Arg12 , PreArg1,
+           PreArg2, PreArg3, PreArg4, PreArg5, PreArg6, PreArg7, PreArg8>(
+               object, method, pa1, pa2, pa3, pa4, pa5, pa6, pa7, pa8);
 }
 
 template <typename R, typename Class, typename MethodClass ,typename Arg1,
-    typename Arg2,typename Arg3,typename Arg4,typename Arg5,typename Arg6,
-    typename Arg7,typename Arg8,typename Arg9,typename Arg10,typename Arg11,
-    typename Arg12 , typename PreArg1, typename PreArg2, typename PreArg3,
-    typename PreArg4, typename PreArg5, typename PreArg6, typename PreArg7,
-    typename PreArg8>
+         typename Arg2,typename Arg3,typename Arg4,typename Arg5,typename Arg6,
+         typename Arg7,typename Arg8,typename Arg9,typename Arg10,typename Arg11,
+         typename Arg12 , typename PreArg1, typename PreArg2, typename PreArg3,
+         typename PreArg4, typename PreArg5, typename PreArg6, typename PreArg7,
+         typename PreArg8>
 Closure<R (Arg9, Arg10, Arg11, Arg12)>* NewPermanentClosure(
     Class *object,
     R (MethodClass::*method)(Arg1, Arg2, Arg3, Arg4, Arg5, Arg6, Arg7, Arg8,
-        Arg9, Arg10, Arg11, Arg12)
+                             Arg9, Arg10, Arg11, Arg12)
     , PreArg1 pa1, PreArg2 pa2, PreArg3 pa3, PreArg4 pa4, PreArg5 pa5,
-        PreArg6 pa6, PreArg7 pa7, PreArg8 pa8) {
+    PreArg6 pa6, PreArg7 pa7, PreArg8 pa8) {
     return new MethodClosure_Arg4_Bind8<false, R, Class, MethodClass ,Arg1,
-        Arg2,Arg3,Arg4,Arg5,Arg6,Arg7,Arg8,Arg9,Arg10,Arg11,Arg12 , PreArg1,
-        PreArg2, PreArg3, PreArg4, PreArg5, PreArg6, PreArg7, PreArg8>(
-        object, method, pa1, pa2, pa3, pa4, pa5, pa6, pa7, pa8);
+           Arg2,Arg3,Arg4,Arg5,Arg6,Arg7,Arg8,Arg9,Arg10,Arg11,Arg12 , PreArg1,
+           PreArg2, PreArg3, PreArg4, PreArg5, PreArg6, PreArg7, PreArg8>(
+               object, method, pa1, pa2, pa3, pa4, pa5, pa6, pa7, pa8);
 }
 
 ////////////////////////////////////////////////////
@@ -5176,122 +5338,126 @@ Closure<R (Arg9, Arg10, Arg11, Arg12)>* NewPermanentClosure(
 ////////////////////////////////////////////////////
 
 template <
-    bool SelfDeleting,
-    typename R
-    , typename Arg1    , typename Arg2    , typename Arg3    ,
-        typename Arg4    , typename Arg5    , typename Arg6    ,
-        typename Arg7    , typename Arg8    , typename Arg9    ,
-        typename Arg10    , typename Arg11    , typename Arg12    ,
-        typename PreArg1    , typename PreArg2    , typename PreArg3    ,
-        typename PreArg4    , typename PreArg5    , typename PreArg6    ,
-        typename PreArg7    , typename PreArg8>
+bool SelfDeleting,
+     typename R
+     , typename Arg1    , typename Arg2    , typename Arg3    ,
+     typename Arg4    , typename Arg5    , typename Arg6    ,
+     typename Arg7    , typename Arg8    , typename Arg9    ,
+     typename Arg10    , typename Arg11    , typename Arg12    ,
+     typename PreArg1    , typename PreArg2    , typename PreArg3    ,
+     typename PreArg4    , typename PreArg5    , typename PreArg6    ,
+     typename PreArg7    , typename PreArg8>
 class FunctionClosure_Arg4_Bind8 : public Closure<R (Arg9, Arg10, Arg11,
-    Arg12)> {
+                Arg12)> {
     typedef R (*FunctionType)(Arg1, Arg2, Arg3, Arg4, Arg5, Arg6, Arg7, Arg8,
-        Arg9, Arg10, Arg11, Arg12);
+                              Arg9, Arg10, Arg11, Arg12);
 public:
     FunctionClosure_Arg4_Bind8(FunctionType function , PreArg1 pa1,
-        PreArg2 pa2, PreArg3 pa3, PreArg4 pa4, PreArg5 pa5, PreArg6 pa6,
-        PreArg7 pa7, PreArg8 pa8):
+                               PreArg2 pa2, PreArg3 pa3, PreArg4 pa4, PreArg5 pa5, PreArg6 pa6,
+                               PreArg7 pa7, PreArg8 pa8):
         m_function(function) , m_pa1(pa1), m_pa2(pa2), m_pa3(pa3), m_pa4(pa4),
-            m_pa5(pa5), m_pa6(pa6), m_pa7(pa7), m_pa8(pa8) {}
+        m_pa5(pa5), m_pa6(pa6), m_pa7(pa7), m_pa8(pa8) {}
     virtual R Run(Arg9 arg9, Arg10 arg10, Arg11 arg11, Arg12 arg12) {
         ConditionalAutoDeleter<SelfDeleting,
-            FunctionClosure_Arg4_Bind8> self_deleter(this);
+                               FunctionClosure_Arg4_Bind8> self_deleter(this);
         return m_function(m_pa1, m_pa2, m_pa3, m_pa4, m_pa5, m_pa6, m_pa7,
-            m_pa8 ,arg9, arg10, arg11, arg12);
+                          m_pa8 ,arg9, arg10, arg11, arg12);
     }
-    virtual bool IsSelfDelete() const { return SelfDeleting; }
+    virtual bool IsSelfDelete() const {
+        return SelfDeleting;
+    }
 private:
     FunctionType m_function;
-        PreArg1 m_pa1;
-        PreArg2 m_pa2;
-        PreArg3 m_pa3;
-        PreArg4 m_pa4;
-        PreArg5 m_pa5;
-        PreArg6 m_pa6;
-        PreArg7 m_pa7;
-        PreArg8 m_pa8;
-    };
+    PreArg1 m_pa1;
+    PreArg2 m_pa2;
+    PreArg3 m_pa3;
+    PreArg4 m_pa4;
+    PreArg5 m_pa5;
+    PreArg6 m_pa6;
+    PreArg7 m_pa7;
+    PreArg8 m_pa8;
+};
 
 template <typename R , typename Arg1, typename Arg2, typename Arg3,
-    typename Arg4, typename Arg5, typename Arg6, typename Arg7, typename Arg8,
-    typename Arg9, typename Arg10, typename Arg11, typename Arg12 ,
-    typename PreArg1, typename PreArg2, typename PreArg3, typename PreArg4,
-    typename PreArg5, typename PreArg6, typename PreArg7, typename PreArg8>
+         typename Arg4, typename Arg5, typename Arg6, typename Arg7, typename Arg8,
+         typename Arg9, typename Arg10, typename Arg11, typename Arg12 ,
+         typename PreArg1, typename PreArg2, typename PreArg3, typename PreArg4,
+         typename PreArg5, typename PreArg6, typename PreArg7, typename PreArg8>
 Closure<R (Arg9, Arg10, Arg11, Arg12)>* NewClosure(R (*function)(Arg1, Arg2,
-    Arg3, Arg4, Arg5, Arg6, Arg7, Arg8, Arg9, Arg10, Arg11, Arg12)
-                                          , PreArg1 pa1, PreArg2 pa2,
-                                              PreArg3 pa3, PreArg4 pa4,
-                                              PreArg5 pa5, PreArg6 pa6,
-                                              PreArg7 pa7, PreArg8 pa8) {
+        Arg3, Arg4, Arg5, Arg6, Arg7, Arg8, Arg9, Arg10, Arg11, Arg12)
+        , PreArg1 pa1, PreArg2 pa2,
+        PreArg3 pa3, PreArg4 pa4,
+        PreArg5 pa5, PreArg6 pa6,
+        PreArg7 pa7, PreArg8 pa8) {
     return new FunctionClosure_Arg4_Bind8<true, R , Arg1, Arg2, Arg3, Arg4,
-        Arg5, Arg6, Arg7, Arg8, Arg9, Arg10, Arg11, Arg12 , PreArg1, PreArg2,
-        PreArg3, PreArg4, PreArg5, PreArg6, PreArg7, PreArg8>(function , pa1,
-        pa2, pa3, pa4, pa5, pa6, pa7, pa8);
+           Arg5, Arg6, Arg7, Arg8, Arg9, Arg10, Arg11, Arg12 , PreArg1, PreArg2,
+           PreArg3, PreArg4, PreArg5, PreArg6, PreArg7, PreArg8>(function , pa1,
+                   pa2, pa3, pa4, pa5, pa6, pa7, pa8);
 }
 
 template <typename R , typename Arg1, typename Arg2, typename Arg3,
-    typename Arg4, typename Arg5, typename Arg6, typename Arg7, typename Arg8,
-    typename Arg9, typename Arg10, typename Arg11, typename Arg12 ,
-    typename PreArg1, typename PreArg2, typename PreArg3, typename PreArg4,
-    typename PreArg5, typename PreArg6, typename PreArg7, typename PreArg8>
+         typename Arg4, typename Arg5, typename Arg6, typename Arg7, typename Arg8,
+         typename Arg9, typename Arg10, typename Arg11, typename Arg12 ,
+         typename PreArg1, typename PreArg2, typename PreArg3, typename PreArg4,
+         typename PreArg5, typename PreArg6, typename PreArg7, typename PreArg8>
 Closure<R (Arg9, Arg10, Arg11, Arg12)>* NewPermanentClosure(R (*function)(Arg1,
-    Arg2, Arg3, Arg4, Arg5, Arg6, Arg7, Arg8, Arg9, Arg10, Arg11, Arg12)
-                                          , PreArg1 pa1, PreArg2 pa2,
-                                              PreArg3 pa3, PreArg4 pa4,
-                                              PreArg5 pa5, PreArg6 pa6,
-                                              PreArg7 pa7, PreArg8 pa8) {
+        Arg2, Arg3, Arg4, Arg5, Arg6, Arg7, Arg8, Arg9, Arg10, Arg11, Arg12)
+        , PreArg1 pa1, PreArg2 pa2,
+        PreArg3 pa3, PreArg4 pa4,
+        PreArg5 pa5, PreArg6 pa6,
+        PreArg7 pa7, PreArg8 pa8) {
     return new FunctionClosure_Arg4_Bind8<false, R , Arg1, Arg2, Arg3, Arg4,
-        Arg5, Arg6, Arg7, Arg8, Arg9, Arg10, Arg11, Arg12 , PreArg1, PreArg2,
-        PreArg3, PreArg4, PreArg5, PreArg6, PreArg7, PreArg8>(function , pa1,
-        pa2, pa3, pa4, pa5, pa6, pa7, pa8);
+           Arg5, Arg6, Arg7, Arg8, Arg9, Arg10, Arg11, Arg12 , PreArg1, PreArg2,
+           PreArg3, PreArg4, PreArg5, PreArg6, PreArg7, PreArg8>(function , pa1,
+                   pa2, pa3, pa4, pa5, pa6, pa7, pa8);
 }
 
 template <
-    bool SelfDeleting,
-    typename R,
-    typename Class,
-    typename MethodClass
-    , typename Arg1    , typename Arg2    , typename Arg3    ,
-        typename Arg4    , typename Arg5    >
+bool SelfDeleting,
+     typename R,
+     typename Class,
+     typename MethodClass
+     , typename Arg1    , typename Arg2    , typename Arg3    ,
+     typename Arg4    , typename Arg5    >
 class MethodClosure_Arg5_Bind0 : public Closure<R (Arg1, Arg2, Arg3, Arg4,
-    Arg5)> {
+                Arg5)> {
     typedef R (MethodClass::*MethodType)(Arg1, Arg2, Arg3, Arg4, Arg5);
 public:
     MethodClosure_Arg5_Bind0(Class *object, MethodType method ):
         m_object(object), m_method(method)  {}
     virtual R Run(Arg1 arg1, Arg2 arg2, Arg3 arg3, Arg4 arg4, Arg5 arg5) {
         ConditionalAutoDeleter<SelfDeleting,
-            MethodClosure_Arg5_Bind0> self_deleter(this);
+                               MethodClosure_Arg5_Bind0> self_deleter(this);
         return (m_object->*m_method)( arg1, arg2, arg3, arg4, arg5);
     }
-    virtual bool IsSelfDelete() const { return SelfDeleting; }
+    virtual bool IsSelfDelete() const {
+        return SelfDeleting;
+    }
 private:
     Class* m_object;
     MethodType m_method;
-    };
+};
 
 template <typename R, typename Class, typename MethodClass ,typename Arg1,
-    typename Arg2,typename Arg3,typename Arg4,typename Arg5 >
+         typename Arg2,typename Arg3,typename Arg4,typename Arg5 >
 Closure<R (Arg1, Arg2, Arg3, Arg4, Arg5)>* NewClosure(
     Class *object,
     R (MethodClass::*method)(Arg1, Arg2, Arg3, Arg4, Arg5)
-    ) {
+) {
     return new MethodClosure_Arg5_Bind0<true, R, Class, MethodClass ,Arg1,Arg2,
-        Arg3,Arg4,Arg5 >(
-        object, method);
+           Arg3,Arg4,Arg5 >(
+               object, method);
 }
 
 template <typename R, typename Class, typename MethodClass ,typename Arg1,
-    typename Arg2,typename Arg3,typename Arg4,typename Arg5 >
+         typename Arg2,typename Arg3,typename Arg4,typename Arg5 >
 Closure<R (Arg1, Arg2, Arg3, Arg4, Arg5)>* NewPermanentClosure(
     Class *object,
     R (MethodClass::*method)(Arg1, Arg2, Arg3, Arg4, Arg5)
-    ) {
+) {
     return new MethodClosure_Arg5_Bind0<false, R, Class, MethodClass ,Arg1,
-        Arg2,Arg3,Arg4,Arg5 >(
-        object, method);
+           Arg2,Arg3,Arg4,Arg5 >(
+               object, method);
 }
 
 ////////////////////////////////////////////////////
@@ -5299,92 +5465,96 @@ Closure<R (Arg1, Arg2, Arg3, Arg4, Arg5)>* NewPermanentClosure(
 ////////////////////////////////////////////////////
 
 template <
-    bool SelfDeleting,
-    typename R
-    , typename Arg1    , typename Arg2    , typename Arg3    ,
-        typename Arg4    , typename Arg5    >
+bool SelfDeleting,
+     typename R
+     , typename Arg1    , typename Arg2    , typename Arg3    ,
+     typename Arg4    , typename Arg5    >
 class FunctionClosure_Arg5_Bind0 : public Closure<R (Arg1, Arg2, Arg3, Arg4,
-    Arg5)> {
+                Arg5)> {
     typedef R (*FunctionType)(Arg1, Arg2, Arg3, Arg4, Arg5);
 public:
     FunctionClosure_Arg5_Bind0(FunctionType function ):
         m_function(function)  {}
     virtual R Run(Arg1 arg1, Arg2 arg2, Arg3 arg3, Arg4 arg4, Arg5 arg5) {
         ConditionalAutoDeleter<SelfDeleting,
-            FunctionClosure_Arg5_Bind0> self_deleter(this);
+                               FunctionClosure_Arg5_Bind0> self_deleter(this);
         return m_function( arg1, arg2, arg3, arg4, arg5);
     }
-    virtual bool IsSelfDelete() const { return SelfDeleting; }
+    virtual bool IsSelfDelete() const {
+        return SelfDeleting;
+    }
 private:
     FunctionType m_function;
-    };
+};
 
 template <typename R , typename Arg1, typename Arg2, typename Arg3,
-    typename Arg4, typename Arg5 >
+         typename Arg4, typename Arg5 >
 Closure<R (Arg1, Arg2, Arg3, Arg4, Arg5)>* NewClosure(R (*function)(Arg1, Arg2,
-    Arg3, Arg4, Arg5)
-                                          ) {
+        Arg3, Arg4, Arg5)
+                                                     ) {
     return new FunctionClosure_Arg5_Bind0<true, R , Arg1, Arg2, Arg3, Arg4,
-        Arg5 >(function );
+           Arg5 >(function );
 }
 
 template <typename R , typename Arg1, typename Arg2, typename Arg3,
-    typename Arg4, typename Arg5 >
+         typename Arg4, typename Arg5 >
 Closure<R (Arg1, Arg2, Arg3, Arg4,
-    Arg5)>* NewPermanentClosure(R (*function)(Arg1, Arg2, Arg3, Arg4, Arg5)
-                                          ) {
+           Arg5)>* NewPermanentClosure(R (*function)(Arg1, Arg2, Arg3, Arg4, Arg5)
+                                      ) {
     return new FunctionClosure_Arg5_Bind0<false, R , Arg1, Arg2, Arg3, Arg4,
-        Arg5 >(function );
+           Arg5 >(function );
 }
 
 template <
-    bool SelfDeleting,
-    typename R,
-    typename Class,
-    typename MethodClass
-    , typename Arg1    , typename Arg2    , typename Arg3    ,
-        typename Arg4    , typename Arg5    , typename Arg6    ,
-        typename PreArg1>
+bool SelfDeleting,
+     typename R,
+     typename Class,
+     typename MethodClass
+     , typename Arg1    , typename Arg2    , typename Arg3    ,
+     typename Arg4    , typename Arg5    , typename Arg6    ,
+     typename PreArg1>
 class MethodClosure_Arg5_Bind1 : public Closure<R (Arg2, Arg3, Arg4, Arg5,
-    Arg6)> {
+                Arg6)> {
     typedef R (MethodClass::*MethodType)(Arg1, Arg2, Arg3, Arg4, Arg5, Arg6);
 public:
     MethodClosure_Arg5_Bind1(Class *object, MethodType method , PreArg1 pa1):
         m_object(object), m_method(method) , m_pa1(pa1) {}
     virtual R Run(Arg2 arg2, Arg3 arg3, Arg4 arg4, Arg5 arg5, Arg6 arg6) {
         ConditionalAutoDeleter<SelfDeleting,
-            MethodClosure_Arg5_Bind1> self_deleter(this);
+                               MethodClosure_Arg5_Bind1> self_deleter(this);
         return (m_object->*m_method)(m_pa1 ,arg2, arg3, arg4, arg5, arg6);
     }
-    virtual bool IsSelfDelete() const { return SelfDeleting; }
+    virtual bool IsSelfDelete() const {
+        return SelfDeleting;
+    }
 private:
     Class* m_object;
     MethodType m_method;
-        PreArg1 m_pa1;
-    };
+    PreArg1 m_pa1;
+};
 
 template <typename R, typename Class, typename MethodClass ,typename Arg1,
-    typename Arg2,typename Arg3,typename Arg4,typename Arg5,typename Arg6 ,
-    typename PreArg1>
+         typename Arg2,typename Arg3,typename Arg4,typename Arg5,typename Arg6 ,
+         typename PreArg1>
 Closure<R (Arg2, Arg3, Arg4, Arg5, Arg6)>* NewClosure(
     Class *object,
     R (MethodClass::*method)(Arg1, Arg2, Arg3, Arg4, Arg5, Arg6)
     , PreArg1 pa1) {
     return new MethodClosure_Arg5_Bind1<true, R, Class, MethodClass ,Arg1,Arg2,
-        Arg3,Arg4,Arg5,Arg6 , PreArg1>(
-        object, method, pa1);
+           Arg3,Arg4,Arg5,Arg6 , PreArg1>(
+               object, method, pa1);
 }
 
 template <typename R, typename Class, typename MethodClass ,typename Arg1,
-    typename Arg2,typename Arg3,typename Arg4,typename Arg5,typename Arg6 ,
-    typename PreArg1>
+         typename Arg2,typename Arg3,typename Arg4,typename Arg5,typename Arg6 ,
+         typename PreArg1>
 Closure<R (Arg2, Arg3, Arg4, Arg5, Arg6)>* NewPermanentClosure(
     Class *object,
     R (MethodClass::*method)(Arg1, Arg2, Arg3, Arg4, Arg5, Arg6)
     , PreArg1 pa1) {
     return new MethodClosure_Arg5_Bind1<false, R, Class, MethodClass ,Arg1,
-        Arg2,Arg3,Arg4,Arg5,Arg6 , PreArg1>(
-        object, method, pa1);
+           Arg2,Arg3,Arg4,Arg5,Arg6 , PreArg1>(
+               object, method, pa1);
 }
 
 ////////////////////////////////////////////////////
@@ -5392,99 +5562,103 @@ Closure<R (Arg2, Arg3, Arg4, Arg5, Arg6)>* NewPermanentClosure(
 ////////////////////////////////////////////////////
 
 template <
-    bool SelfDeleting,
-    typename R
-    , typename Arg1    , typename Arg2    , typename Arg3    ,
-        typename Arg4    , typename Arg5    , typename Arg6    ,
-        typename PreArg1>
+bool SelfDeleting,
+     typename R
+     , typename Arg1    , typename Arg2    , typename Arg3    ,
+     typename Arg4    , typename Arg5    , typename Arg6    ,
+     typename PreArg1>
 class FunctionClosure_Arg5_Bind1 : public Closure<R (Arg2, Arg3, Arg4, Arg5,
-    Arg6)> {
+                Arg6)> {
     typedef R (*FunctionType)(Arg1, Arg2, Arg3, Arg4, Arg5, Arg6);
 public:
     FunctionClosure_Arg5_Bind1(FunctionType function , PreArg1 pa1):
         m_function(function) , m_pa1(pa1) {}
     virtual R Run(Arg2 arg2, Arg3 arg3, Arg4 arg4, Arg5 arg5, Arg6 arg6) {
         ConditionalAutoDeleter<SelfDeleting,
-            FunctionClosure_Arg5_Bind1> self_deleter(this);
+                               FunctionClosure_Arg5_Bind1> self_deleter(this);
         return m_function(m_pa1 ,arg2, arg3, arg4, arg5, arg6);
     }
-    virtual bool IsSelfDelete() const { return SelfDeleting; }
+    virtual bool IsSelfDelete() const {
+        return SelfDeleting;
+    }
 private:
     FunctionType m_function;
-        PreArg1 m_pa1;
-    };
+    PreArg1 m_pa1;
+};
 
 template <typename R , typename Arg1, typename Arg2, typename Arg3,
-    typename Arg4, typename Arg5, typename Arg6 , typename PreArg1>
+         typename Arg4, typename Arg5, typename Arg6 , typename PreArg1>
 Closure<R (Arg2, Arg3, Arg4, Arg5, Arg6)>* NewClosure(R (*function)(Arg1, Arg2,
-    Arg3, Arg4, Arg5, Arg6)
-                                          , PreArg1 pa1) {
+        Arg3, Arg4, Arg5, Arg6)
+        , PreArg1 pa1) {
     return new FunctionClosure_Arg5_Bind1<true, R , Arg1, Arg2, Arg3, Arg4,
-        Arg5, Arg6 , PreArg1>(function , pa1);
+           Arg5, Arg6 , PreArg1>(function , pa1);
 }
 
 template <typename R , typename Arg1, typename Arg2, typename Arg3,
-    typename Arg4, typename Arg5, typename Arg6 , typename PreArg1>
+         typename Arg4, typename Arg5, typename Arg6 , typename PreArg1>
 Closure<R (Arg2, Arg3, Arg4, Arg5,
-    Arg6)>* NewPermanentClosure(R (*function)(Arg1, Arg2, Arg3, Arg4, Arg5,
-    Arg6)
-                                          , PreArg1 pa1) {
+           Arg6)>* NewPermanentClosure(R (*function)(Arg1, Arg2, Arg3, Arg4, Arg5,
+                                       Arg6)
+                                       , PreArg1 pa1) {
     return new FunctionClosure_Arg5_Bind1<false, R , Arg1, Arg2, Arg3, Arg4,
-        Arg5, Arg6 , PreArg1>(function , pa1);
+           Arg5, Arg6 , PreArg1>(function , pa1);
 }
 
 template <
-    bool SelfDeleting,
-    typename R,
-    typename Class,
-    typename MethodClass
-    , typename Arg1    , typename Arg2    , typename Arg3    ,
-        typename Arg4    , typename Arg5    , typename Arg6    ,
-        typename Arg7    , typename PreArg1    , typename PreArg2>
+bool SelfDeleting,
+     typename R,
+     typename Class,
+     typename MethodClass
+     , typename Arg1    , typename Arg2    , typename Arg3    ,
+     typename Arg4    , typename Arg5    , typename Arg6    ,
+     typename Arg7    , typename PreArg1    , typename PreArg2>
 class MethodClosure_Arg5_Bind2 : public Closure<R (Arg3, Arg4, Arg5, Arg6,
-    Arg7)> {
+                Arg7)> {
     typedef R (MethodClass::*MethodType)(Arg1, Arg2, Arg3, Arg4, Arg5, Arg6,
-        Arg7);
+                                         Arg7);
 public:
     MethodClosure_Arg5_Bind2(Class *object, MethodType method , PreArg1 pa1,
-        PreArg2 pa2):
+                             PreArg2 pa2):
         m_object(object), m_method(method) , m_pa1(pa1), m_pa2(pa2) {}
     virtual R Run(Arg3 arg3, Arg4 arg4, Arg5 arg5, Arg6 arg6, Arg7 arg7) {
         ConditionalAutoDeleter<SelfDeleting,
-            MethodClosure_Arg5_Bind2> self_deleter(this);
+                               MethodClosure_Arg5_Bind2> self_deleter(this);
         return (m_object->*m_method)(m_pa1, m_pa2 ,arg3, arg4, arg5, arg6,
-            arg7);
+                                     arg7);
     }
-    virtual bool IsSelfDelete() const { return SelfDeleting; }
+    virtual bool IsSelfDelete() const {
+        return SelfDeleting;
+    }
 private:
     Class* m_object;
     MethodType m_method;
-        PreArg1 m_pa1;
-        PreArg2 m_pa2;
-    };
+    PreArg1 m_pa1;
+    PreArg2 m_pa2;
+};
 
 template <typename R, typename Class, typename MethodClass ,typename Arg1,
-    typename Arg2,typename Arg3,typename Arg4,typename Arg5,typename Arg6,
-    typename Arg7 , typename PreArg1, typename PreArg2>
+         typename Arg2,typename Arg3,typename Arg4,typename Arg5,typename Arg6,
+         typename Arg7 , typename PreArg1, typename PreArg2>
 Closure<R (Arg3, Arg4, Arg5, Arg6, Arg7)>* NewClosure(
     Class *object,
     R (MethodClass::*method)(Arg1, Arg2, Arg3, Arg4, Arg5, Arg6, Arg7)
     , PreArg1 pa1, PreArg2 pa2) {
     return new MethodClosure_Arg5_Bind2<true, R, Class, MethodClass ,Arg1,Arg2,
-        Arg3,Arg4,Arg5,Arg6,Arg7 , PreArg1, PreArg2>(
-        object, method, pa1, pa2);
+           Arg3,Arg4,Arg5,Arg6,Arg7 , PreArg1, PreArg2>(
+               object, method, pa1, pa2);
 }
 
 template <typename R, typename Class, typename MethodClass ,typename Arg1,
-    typename Arg2,typename Arg3,typename Arg4,typename Arg5,typename Arg6,
-    typename Arg7 , typename PreArg1, typename PreArg2>
+         typename Arg2,typename Arg3,typename Arg4,typename Arg5,typename Arg6,
+         typename Arg7 , typename PreArg1, typename PreArg2>
 Closure<R (Arg3, Arg4, Arg5, Arg6, Arg7)>* NewPermanentClosure(
     Class *object,
     R (MethodClass::*method)(Arg1, Arg2, Arg3, Arg4, Arg5, Arg6, Arg7)
     , PreArg1 pa1, PreArg2 pa2) {
     return new MethodClosure_Arg5_Bind2<false, R, Class, MethodClass ,Arg1,
-        Arg2,Arg3,Arg4,Arg5,Arg6,Arg7 , PreArg1, PreArg2>(
-        object, method, pa1, pa2);
+           Arg2,Arg3,Arg4,Arg5,Arg6,Arg7 , PreArg1, PreArg2>(
+               object, method, pa1, pa2);
 }
 
 ////////////////////////////////////////////////////
@@ -5492,108 +5666,112 @@ Closure<R (Arg3, Arg4, Arg5, Arg6, Arg7)>* NewPermanentClosure(
 ////////////////////////////////////////////////////
 
 template <
-    bool SelfDeleting,
-    typename R
-    , typename Arg1    , typename Arg2    , typename Arg3    ,
-        typename Arg4    , typename Arg5    , typename Arg6    ,
-        typename Arg7    , typename PreArg1    , typename PreArg2>
+bool SelfDeleting,
+     typename R
+     , typename Arg1    , typename Arg2    , typename Arg3    ,
+     typename Arg4    , typename Arg5    , typename Arg6    ,
+     typename Arg7    , typename PreArg1    , typename PreArg2>
 class FunctionClosure_Arg5_Bind2 : public Closure<R (Arg3, Arg4, Arg5, Arg6,
-    Arg7)> {
+                Arg7)> {
     typedef R (*FunctionType)(Arg1, Arg2, Arg3, Arg4, Arg5, Arg6, Arg7);
 public:
     FunctionClosure_Arg5_Bind2(FunctionType function , PreArg1 pa1,
-        PreArg2 pa2):
+                               PreArg2 pa2):
         m_function(function) , m_pa1(pa1), m_pa2(pa2) {}
     virtual R Run(Arg3 arg3, Arg4 arg4, Arg5 arg5, Arg6 arg6, Arg7 arg7) {
         ConditionalAutoDeleter<SelfDeleting,
-            FunctionClosure_Arg5_Bind2> self_deleter(this);
+                               FunctionClosure_Arg5_Bind2> self_deleter(this);
         return m_function(m_pa1, m_pa2 ,arg3, arg4, arg5, arg6, arg7);
     }
-    virtual bool IsSelfDelete() const { return SelfDeleting; }
+    virtual bool IsSelfDelete() const {
+        return SelfDeleting;
+    }
 private:
     FunctionType m_function;
-        PreArg1 m_pa1;
-        PreArg2 m_pa2;
-    };
+    PreArg1 m_pa1;
+    PreArg2 m_pa2;
+};
 
 template <typename R , typename Arg1, typename Arg2, typename Arg3,
-    typename Arg4, typename Arg5, typename Arg6, typename Arg7 ,
-    typename PreArg1, typename PreArg2>
+         typename Arg4, typename Arg5, typename Arg6, typename Arg7 ,
+         typename PreArg1, typename PreArg2>
 Closure<R (Arg3, Arg4, Arg5, Arg6, Arg7)>* NewClosure(R (*function)(Arg1, Arg2,
-    Arg3, Arg4, Arg5, Arg6, Arg7)
-                                          , PreArg1 pa1, PreArg2 pa2) {
+        Arg3, Arg4, Arg5, Arg6, Arg7)
+        , PreArg1 pa1, PreArg2 pa2) {
     return new FunctionClosure_Arg5_Bind2<true, R , Arg1, Arg2, Arg3, Arg4,
-        Arg5, Arg6, Arg7 , PreArg1, PreArg2>(function , pa1, pa2);
+           Arg5, Arg6, Arg7 , PreArg1, PreArg2>(function , pa1, pa2);
 }
 
 template <typename R , typename Arg1, typename Arg2, typename Arg3,
-    typename Arg4, typename Arg5, typename Arg6, typename Arg7 ,
-    typename PreArg1, typename PreArg2>
+         typename Arg4, typename Arg5, typename Arg6, typename Arg7 ,
+         typename PreArg1, typename PreArg2>
 Closure<R (Arg3, Arg4, Arg5, Arg6,
-    Arg7)>* NewPermanentClosure(R (*function)(Arg1, Arg2, Arg3, Arg4, Arg5,
-    Arg6, Arg7)
-                                          , PreArg1 pa1, PreArg2 pa2) {
+           Arg7)>* NewPermanentClosure(R (*function)(Arg1, Arg2, Arg3, Arg4, Arg5,
+                                       Arg6, Arg7)
+                                       , PreArg1 pa1, PreArg2 pa2) {
     return new FunctionClosure_Arg5_Bind2<false, R , Arg1, Arg2, Arg3, Arg4,
-        Arg5, Arg6, Arg7 , PreArg1, PreArg2>(function , pa1, pa2);
+           Arg5, Arg6, Arg7 , PreArg1, PreArg2>(function , pa1, pa2);
 }
 
 template <
-    bool SelfDeleting,
-    typename R,
-    typename Class,
-    typename MethodClass
-    , typename Arg1    , typename Arg2    , typename Arg3    ,
-        typename Arg4    , typename Arg5    , typename Arg6    ,
-        typename Arg7    , typename Arg8    , typename PreArg1    ,
-        typename PreArg2    , typename PreArg3>
+bool SelfDeleting,
+     typename R,
+     typename Class,
+     typename MethodClass
+     , typename Arg1    , typename Arg2    , typename Arg3    ,
+     typename Arg4    , typename Arg5    , typename Arg6    ,
+     typename Arg7    , typename Arg8    , typename PreArg1    ,
+     typename PreArg2    , typename PreArg3>
 class MethodClosure_Arg5_Bind3 : public Closure<R (Arg4, Arg5, Arg6, Arg7,
-    Arg8)> {
+                Arg8)> {
     typedef R (MethodClass::*MethodType)(Arg1, Arg2, Arg3, Arg4, Arg5, Arg6,
-        Arg7, Arg8);
+                                         Arg7, Arg8);
 public:
     MethodClosure_Arg5_Bind3(Class *object, MethodType method , PreArg1 pa1,
-        PreArg2 pa2, PreArg3 pa3):
+                             PreArg2 pa2, PreArg3 pa3):
         m_object(object), m_method(method) , m_pa1(pa1), m_pa2(pa2),
-            m_pa3(pa3) {}
+        m_pa3(pa3) {}
     virtual R Run(Arg4 arg4, Arg5 arg5, Arg6 arg6, Arg7 arg7, Arg8 arg8) {
         ConditionalAutoDeleter<SelfDeleting,
-            MethodClosure_Arg5_Bind3> self_deleter(this);
+                               MethodClosure_Arg5_Bind3> self_deleter(this);
         return (m_object->*m_method)(m_pa1, m_pa2, m_pa3 ,arg4, arg5, arg6,
-            arg7, arg8);
+                                     arg7, arg8);
     }
-    virtual bool IsSelfDelete() const { return SelfDeleting; }
+    virtual bool IsSelfDelete() const {
+        return SelfDeleting;
+    }
 private:
     Class* m_object;
     MethodType m_method;
-        PreArg1 m_pa1;
-        PreArg2 m_pa2;
-        PreArg3 m_pa3;
-    };
+    PreArg1 m_pa1;
+    PreArg2 m_pa2;
+    PreArg3 m_pa3;
+};
 
 template <typename R, typename Class, typename MethodClass ,typename Arg1,
-    typename Arg2,typename Arg3,typename Arg4,typename Arg5,typename Arg6,
-    typename Arg7,typename Arg8 , typename PreArg1, typename PreArg2,
-    typename PreArg3>
+         typename Arg2,typename Arg3,typename Arg4,typename Arg5,typename Arg6,
+         typename Arg7,typename Arg8 , typename PreArg1, typename PreArg2,
+         typename PreArg3>
 Closure<R (Arg4, Arg5, Arg6, Arg7, Arg8)>* NewClosure(
     Class *object,
     R (MethodClass::*method)(Arg1, Arg2, Arg3, Arg4, Arg5, Arg6, Arg7, Arg8)
     , PreArg1 pa1, PreArg2 pa2, PreArg3 pa3) {
     return new MethodClosure_Arg5_Bind3<true, R, Class, MethodClass ,Arg1,Arg2,
-        Arg3,Arg4,Arg5,Arg6,Arg7,Arg8 , PreArg1, PreArg2, PreArg3>(
-        object, method, pa1, pa2, pa3);
+           Arg3,Arg4,Arg5,Arg6,Arg7,Arg8 , PreArg1, PreArg2, PreArg3>(
+               object, method, pa1, pa2, pa3);
 }
 
 template <typename R, typename Class, typename MethodClass ,typename Arg1,
-    typename Arg2,typename Arg3,typename Arg4,typename Arg5,typename Arg6,
-    typename Arg7,typename Arg8 , typename PreArg1, typename PreArg2,
-    typename PreArg3>
+         typename Arg2,typename Arg3,typename Arg4,typename Arg5,typename Arg6,
+         typename Arg7,typename Arg8 , typename PreArg1, typename PreArg2,
+         typename PreArg3>
 Closure<R (Arg4, Arg5, Arg6, Arg7, Arg8)>* NewPermanentClosure(
     Class *object,
     R (MethodClass::*method)(Arg1, Arg2, Arg3, Arg4, Arg5, Arg6, Arg7, Arg8)
     , PreArg1 pa1, PreArg2 pa2, PreArg3 pa3) {
     return new MethodClosure_Arg5_Bind3<false, R, Class, MethodClass ,Arg1,
-        Arg2,Arg3,Arg4,Arg5,Arg6,Arg7,Arg8 , PreArg1, PreArg2, PreArg3>(
-        object, method, pa1, pa2, pa3);
+           Arg2,Arg3,Arg4,Arg5,Arg6,Arg7,Arg8 , PreArg1, PreArg2, PreArg3>(
+               object, method, pa1, pa2, pa3);
 }
 
 ////////////////////////////////////////////////////
@@ -5601,120 +5779,124 @@ Closure<R (Arg4, Arg5, Arg6, Arg7, Arg8)>* NewPermanentClosure(
 ////////////////////////////////////////////////////
 
 template <
-    bool SelfDeleting,
-    typename R
-    , typename Arg1    , typename Arg2    , typename Arg3    ,
-        typename Arg4    , typename Arg5    , typename Arg6    ,
-        typename Arg7    , typename Arg8    , typename PreArg1    ,
-        typename PreArg2    , typename PreArg3>
+bool SelfDeleting,
+     typename R
+     , typename Arg1    , typename Arg2    , typename Arg3    ,
+     typename Arg4    , typename Arg5    , typename Arg6    ,
+     typename Arg7    , typename Arg8    , typename PreArg1    ,
+     typename PreArg2    , typename PreArg3>
 class FunctionClosure_Arg5_Bind3 : public Closure<R (Arg4, Arg5, Arg6, Arg7,
-    Arg8)> {
+                Arg8)> {
     typedef R (*FunctionType)(Arg1, Arg2, Arg3, Arg4, Arg5, Arg6, Arg7, Arg8);
 public:
     FunctionClosure_Arg5_Bind3(FunctionType function , PreArg1 pa1,
-        PreArg2 pa2, PreArg3 pa3):
+                               PreArg2 pa2, PreArg3 pa3):
         m_function(function) , m_pa1(pa1), m_pa2(pa2), m_pa3(pa3) {}
     virtual R Run(Arg4 arg4, Arg5 arg5, Arg6 arg6, Arg7 arg7, Arg8 arg8) {
         ConditionalAutoDeleter<SelfDeleting,
-            FunctionClosure_Arg5_Bind3> self_deleter(this);
+                               FunctionClosure_Arg5_Bind3> self_deleter(this);
         return m_function(m_pa1, m_pa2, m_pa3 ,arg4, arg5, arg6, arg7, arg8);
     }
-    virtual bool IsSelfDelete() const { return SelfDeleting; }
+    virtual bool IsSelfDelete() const {
+        return SelfDeleting;
+    }
 private:
     FunctionType m_function;
-        PreArg1 m_pa1;
-        PreArg2 m_pa2;
-        PreArg3 m_pa3;
-    };
+    PreArg1 m_pa1;
+    PreArg2 m_pa2;
+    PreArg3 m_pa3;
+};
 
 template <typename R , typename Arg1, typename Arg2, typename Arg3,
-    typename Arg4, typename Arg5, typename Arg6, typename Arg7, typename Arg8 ,
-    typename PreArg1, typename PreArg2, typename PreArg3>
+         typename Arg4, typename Arg5, typename Arg6, typename Arg7, typename Arg8 ,
+         typename PreArg1, typename PreArg2, typename PreArg3>
 Closure<R (Arg4, Arg5, Arg6, Arg7, Arg8)>* NewClosure(R (*function)(Arg1, Arg2,
-    Arg3, Arg4, Arg5, Arg6, Arg7, Arg8)
-                                          , PreArg1 pa1, PreArg2 pa2,
-                                              PreArg3 pa3) {
+        Arg3, Arg4, Arg5, Arg6, Arg7, Arg8)
+        , PreArg1 pa1, PreArg2 pa2,
+        PreArg3 pa3) {
     return new FunctionClosure_Arg5_Bind3<true, R , Arg1, Arg2, Arg3, Arg4,
-        Arg5, Arg6, Arg7, Arg8 , PreArg1, PreArg2, PreArg3>(function , pa1,
-        pa2, pa3);
+           Arg5, Arg6, Arg7, Arg8 , PreArg1, PreArg2, PreArg3>(function , pa1,
+                   pa2, pa3);
 }
 
 template <typename R , typename Arg1, typename Arg2, typename Arg3,
-    typename Arg4, typename Arg5, typename Arg6, typename Arg7, typename Arg8 ,
-    typename PreArg1, typename PreArg2, typename PreArg3>
+         typename Arg4, typename Arg5, typename Arg6, typename Arg7, typename Arg8 ,
+         typename PreArg1, typename PreArg2, typename PreArg3>
 Closure<R (Arg4, Arg5, Arg6, Arg7,
-    Arg8)>* NewPermanentClosure(R (*function)(Arg1, Arg2, Arg3, Arg4, Arg5,
-    Arg6, Arg7, Arg8)
-                                          , PreArg1 pa1, PreArg2 pa2,
-                                              PreArg3 pa3) {
+           Arg8)>* NewPermanentClosure(R (*function)(Arg1, Arg2, Arg3, Arg4, Arg5,
+                                       Arg6, Arg7, Arg8)
+                                       , PreArg1 pa1, PreArg2 pa2,
+                                       PreArg3 pa3) {
     return new FunctionClosure_Arg5_Bind3<false, R , Arg1, Arg2, Arg3, Arg4,
-        Arg5, Arg6, Arg7, Arg8 , PreArg1, PreArg2, PreArg3>(function , pa1,
-        pa2, pa3);
+           Arg5, Arg6, Arg7, Arg8 , PreArg1, PreArg2, PreArg3>(function , pa1,
+                   pa2, pa3);
 }
 
 template <
-    bool SelfDeleting,
-    typename R,
-    typename Class,
-    typename MethodClass
-    , typename Arg1    , typename Arg2    , typename Arg3    ,
-        typename Arg4    , typename Arg5    , typename Arg6    ,
-        typename Arg7    , typename Arg8    , typename Arg9    ,
-        typename PreArg1    , typename PreArg2    , typename PreArg3    ,
-        typename PreArg4>
+bool SelfDeleting,
+     typename R,
+     typename Class,
+     typename MethodClass
+     , typename Arg1    , typename Arg2    , typename Arg3    ,
+     typename Arg4    , typename Arg5    , typename Arg6    ,
+     typename Arg7    , typename Arg8    , typename Arg9    ,
+     typename PreArg1    , typename PreArg2    , typename PreArg3    ,
+     typename PreArg4>
 class MethodClosure_Arg5_Bind4 : public Closure<R (Arg5, Arg6, Arg7, Arg8,
-    Arg9)> {
+                Arg9)> {
     typedef R (MethodClass::*MethodType)(Arg1, Arg2, Arg3, Arg4, Arg5, Arg6,
-        Arg7, Arg8, Arg9);
+                                         Arg7, Arg8, Arg9);
 public:
     MethodClosure_Arg5_Bind4(Class *object, MethodType method , PreArg1 pa1,
-        PreArg2 pa2, PreArg3 pa3, PreArg4 pa4):
+                             PreArg2 pa2, PreArg3 pa3, PreArg4 pa4):
         m_object(object), m_method(method) , m_pa1(pa1), m_pa2(pa2),
-            m_pa3(pa3), m_pa4(pa4) {}
+        m_pa3(pa3), m_pa4(pa4) {}
     virtual R Run(Arg5 arg5, Arg6 arg6, Arg7 arg7, Arg8 arg8, Arg9 arg9) {
         ConditionalAutoDeleter<SelfDeleting,
-            MethodClosure_Arg5_Bind4> self_deleter(this);
+                               MethodClosure_Arg5_Bind4> self_deleter(this);
         return (m_object->*m_method)(m_pa1, m_pa2, m_pa3, m_pa4 ,arg5, arg6,
-            arg7, arg8, arg9);
+                                     arg7, arg8, arg9);
     }
-    virtual bool IsSelfDelete() const { return SelfDeleting; }
+    virtual bool IsSelfDelete() const {
+        return SelfDeleting;
+    }
 private:
     Class* m_object;
     MethodType m_method;
-        PreArg1 m_pa1;
-        PreArg2 m_pa2;
-        PreArg3 m_pa3;
-        PreArg4 m_pa4;
-    };
+    PreArg1 m_pa1;
+    PreArg2 m_pa2;
+    PreArg3 m_pa3;
+    PreArg4 m_pa4;
+};
 
 template <typename R, typename Class, typename MethodClass ,typename Arg1,
-    typename Arg2,typename Arg3,typename Arg4,typename Arg5,typename Arg6,
-    typename Arg7,typename Arg8,typename Arg9 , typename PreArg1,
-    typename PreArg2, typename PreArg3, typename PreArg4>
+         typename Arg2,typename Arg3,typename Arg4,typename Arg5,typename Arg6,
+         typename Arg7,typename Arg8,typename Arg9 , typename PreArg1,
+         typename PreArg2, typename PreArg3, typename PreArg4>
 Closure<R (Arg5, Arg6, Arg7, Arg8, Arg9)>* NewClosure(
     Class *object,
     R (MethodClass::*method)(Arg1, Arg2, Arg3, Arg4, Arg5, Arg6, Arg7, Arg8,
-        Arg9)
+                             Arg9)
     , PreArg1 pa1, PreArg2 pa2, PreArg3 pa3, PreArg4 pa4) {
     return new MethodClosure_Arg5_Bind4<true, R, Class, MethodClass ,Arg1,Arg2,
-        Arg3,Arg4,Arg5,Arg6,Arg7,Arg8,Arg9 , PreArg1, PreArg2, PreArg3,
-        PreArg4>(
-        object, method, pa1, pa2, pa3, pa4);
+           Arg3,Arg4,Arg5,Arg6,Arg7,Arg8,Arg9 , PreArg1, PreArg2, PreArg3,
+           PreArg4>(
+               object, method, pa1, pa2, pa3, pa4);
 }
 
 template <typename R, typename Class, typename MethodClass ,typename Arg1,
-    typename Arg2,typename Arg3,typename Arg4,typename Arg5,typename Arg6,
-    typename Arg7,typename Arg8,typename Arg9 , typename PreArg1,
-    typename PreArg2, typename PreArg3, typename PreArg4>
+         typename Arg2,typename Arg3,typename Arg4,typename Arg5,typename Arg6,
+         typename Arg7,typename Arg8,typename Arg9 , typename PreArg1,
+         typename PreArg2, typename PreArg3, typename PreArg4>
 Closure<R (Arg5, Arg6, Arg7, Arg8, Arg9)>* NewPermanentClosure(
     Class *object,
     R (MethodClass::*method)(Arg1, Arg2, Arg3, Arg4, Arg5, Arg6, Arg7, Arg8,
-        Arg9)
+                             Arg9)
     , PreArg1 pa1, PreArg2 pa2, PreArg3 pa3, PreArg4 pa4) {
     return new MethodClosure_Arg5_Bind4<false, R, Class, MethodClass ,Arg1,
-        Arg2,Arg3,Arg4,Arg5,Arg6,Arg7,Arg8,Arg9 , PreArg1, PreArg2, PreArg3,
-        PreArg4>(
-        object, method, pa1, pa2, pa3, pa4);
+           Arg2,Arg3,Arg4,Arg5,Arg6,Arg7,Arg8,Arg9 , PreArg1, PreArg2, PreArg3,
+           PreArg4>(
+               object, method, pa1, pa2, pa3, pa4);
 }
 
 ////////////////////////////////////////////////////
@@ -5722,129 +5904,133 @@ Closure<R (Arg5, Arg6, Arg7, Arg8, Arg9)>* NewPermanentClosure(
 ////////////////////////////////////////////////////
 
 template <
-    bool SelfDeleting,
-    typename R
-    , typename Arg1    , typename Arg2    , typename Arg3    ,
-        typename Arg4    , typename Arg5    , typename Arg6    ,
-        typename Arg7    , typename Arg8    , typename Arg9    ,
-        typename PreArg1    , typename PreArg2    , typename PreArg3    ,
-        typename PreArg4>
+bool SelfDeleting,
+     typename R
+     , typename Arg1    , typename Arg2    , typename Arg3    ,
+     typename Arg4    , typename Arg5    , typename Arg6    ,
+     typename Arg7    , typename Arg8    , typename Arg9    ,
+     typename PreArg1    , typename PreArg2    , typename PreArg3    ,
+     typename PreArg4>
 class FunctionClosure_Arg5_Bind4 : public Closure<R (Arg5, Arg6, Arg7, Arg8,
-    Arg9)> {
+                Arg9)> {
     typedef R (*FunctionType)(Arg1, Arg2, Arg3, Arg4, Arg5, Arg6, Arg7, Arg8,
-        Arg9);
+                              Arg9);
 public:
     FunctionClosure_Arg5_Bind4(FunctionType function , PreArg1 pa1,
-        PreArg2 pa2, PreArg3 pa3, PreArg4 pa4):
+                               PreArg2 pa2, PreArg3 pa3, PreArg4 pa4):
         m_function(function) , m_pa1(pa1), m_pa2(pa2), m_pa3(pa3), m_pa4(pa4) {}
     virtual R Run(Arg5 arg5, Arg6 arg6, Arg7 arg7, Arg8 arg8, Arg9 arg9) {
         ConditionalAutoDeleter<SelfDeleting,
-            FunctionClosure_Arg5_Bind4> self_deleter(this);
+                               FunctionClosure_Arg5_Bind4> self_deleter(this);
         return m_function(m_pa1, m_pa2, m_pa3, m_pa4 ,arg5, arg6, arg7, arg8,
-            arg9);
+                          arg9);
     }
-    virtual bool IsSelfDelete() const { return SelfDeleting; }
+    virtual bool IsSelfDelete() const {
+        return SelfDeleting;
+    }
 private:
     FunctionType m_function;
-        PreArg1 m_pa1;
-        PreArg2 m_pa2;
-        PreArg3 m_pa3;
-        PreArg4 m_pa4;
-    };
+    PreArg1 m_pa1;
+    PreArg2 m_pa2;
+    PreArg3 m_pa3;
+    PreArg4 m_pa4;
+};
 
 template <typename R , typename Arg1, typename Arg2, typename Arg3,
-    typename Arg4, typename Arg5, typename Arg6, typename Arg7, typename Arg8,
-    typename Arg9 , typename PreArg1, typename PreArg2, typename PreArg3,
-    typename PreArg4>
+         typename Arg4, typename Arg5, typename Arg6, typename Arg7, typename Arg8,
+         typename Arg9 , typename PreArg1, typename PreArg2, typename PreArg3,
+         typename PreArg4>
 Closure<R (Arg5, Arg6, Arg7, Arg8, Arg9)>* NewClosure(R (*function)(Arg1, Arg2,
-    Arg3, Arg4, Arg5, Arg6, Arg7, Arg8, Arg9)
-                                          , PreArg1 pa1, PreArg2 pa2,
-                                              PreArg3 pa3, PreArg4 pa4) {
+        Arg3, Arg4, Arg5, Arg6, Arg7, Arg8, Arg9)
+        , PreArg1 pa1, PreArg2 pa2,
+        PreArg3 pa3, PreArg4 pa4) {
     return new FunctionClosure_Arg5_Bind4<true, R , Arg1, Arg2, Arg3, Arg4,
-        Arg5, Arg6, Arg7, Arg8, Arg9 , PreArg1, PreArg2, PreArg3,
-        PreArg4>(function , pa1, pa2, pa3, pa4);
+           Arg5, Arg6, Arg7, Arg8, Arg9 , PreArg1, PreArg2, PreArg3,
+           PreArg4>(function , pa1, pa2, pa3, pa4);
 }
 
 template <typename R , typename Arg1, typename Arg2, typename Arg3,
-    typename Arg4, typename Arg5, typename Arg6, typename Arg7, typename Arg8,
-    typename Arg9 , typename PreArg1, typename PreArg2, typename PreArg3,
-    typename PreArg4>
+         typename Arg4, typename Arg5, typename Arg6, typename Arg7, typename Arg8,
+         typename Arg9 , typename PreArg1, typename PreArg2, typename PreArg3,
+         typename PreArg4>
 Closure<R (Arg5, Arg6, Arg7, Arg8,
-    Arg9)>* NewPermanentClosure(R (*function)(Arg1, Arg2, Arg3, Arg4, Arg5,
-    Arg6, Arg7, Arg8, Arg9)
-                                          , PreArg1 pa1, PreArg2 pa2,
-                                              PreArg3 pa3, PreArg4 pa4) {
+           Arg9)>* NewPermanentClosure(R (*function)(Arg1, Arg2, Arg3, Arg4, Arg5,
+                                       Arg6, Arg7, Arg8, Arg9)
+                                       , PreArg1 pa1, PreArg2 pa2,
+                                       PreArg3 pa3, PreArg4 pa4) {
     return new FunctionClosure_Arg5_Bind4<false, R , Arg1, Arg2, Arg3, Arg4,
-        Arg5, Arg6, Arg7, Arg8, Arg9 , PreArg1, PreArg2, PreArg3,
-        PreArg4>(function , pa1, pa2, pa3, pa4);
+           Arg5, Arg6, Arg7, Arg8, Arg9 , PreArg1, PreArg2, PreArg3,
+           PreArg4>(function , pa1, pa2, pa3, pa4);
 }
 
 template <
-    bool SelfDeleting,
-    typename R,
-    typename Class,
-    typename MethodClass
-    , typename Arg1    , typename Arg2    , typename Arg3    ,
-        typename Arg4    , typename Arg5    , typename Arg6    ,
-        typename Arg7    , typename Arg8    , typename Arg9    ,
-        typename Arg10    , typename PreArg1    , typename PreArg2    ,
-        typename PreArg3    , typename PreArg4    , typename PreArg5>
+bool SelfDeleting,
+     typename R,
+     typename Class,
+     typename MethodClass
+     , typename Arg1    , typename Arg2    , typename Arg3    ,
+     typename Arg4    , typename Arg5    , typename Arg6    ,
+     typename Arg7    , typename Arg8    , typename Arg9    ,
+     typename Arg10    , typename PreArg1    , typename PreArg2    ,
+     typename PreArg3    , typename PreArg4    , typename PreArg5>
 class MethodClosure_Arg5_Bind5 : public Closure<R (Arg6, Arg7, Arg8, Arg9,
-    Arg10)> {
+                Arg10)> {
     typedef R (MethodClass::*MethodType)(Arg1, Arg2, Arg3, Arg4, Arg5, Arg6,
-        Arg7, Arg8, Arg9, Arg10);
+                                         Arg7, Arg8, Arg9, Arg10);
 public:
     MethodClosure_Arg5_Bind5(Class *object, MethodType method , PreArg1 pa1,
-        PreArg2 pa2, PreArg3 pa3, PreArg4 pa4, PreArg5 pa5):
+                             PreArg2 pa2, PreArg3 pa3, PreArg4 pa4, PreArg5 pa5):
         m_object(object), m_method(method) , m_pa1(pa1), m_pa2(pa2),
-            m_pa3(pa3), m_pa4(pa4), m_pa5(pa5) {}
+        m_pa3(pa3), m_pa4(pa4), m_pa5(pa5) {}
     virtual R Run(Arg6 arg6, Arg7 arg7, Arg8 arg8, Arg9 arg9, Arg10 arg10) {
         ConditionalAutoDeleter<SelfDeleting,
-            MethodClosure_Arg5_Bind5> self_deleter(this);
+                               MethodClosure_Arg5_Bind5> self_deleter(this);
         return (m_object->*m_method)(m_pa1, m_pa2, m_pa3, m_pa4, m_pa5 ,arg6,
-            arg7, arg8, arg9, arg10);
+                                     arg7, arg8, arg9, arg10);
     }
-    virtual bool IsSelfDelete() const { return SelfDeleting; }
+    virtual bool IsSelfDelete() const {
+        return SelfDeleting;
+    }
 private:
     Class* m_object;
     MethodType m_method;
-        PreArg1 m_pa1;
-        PreArg2 m_pa2;
-        PreArg3 m_pa3;
-        PreArg4 m_pa4;
-        PreArg5 m_pa5;
-    };
+    PreArg1 m_pa1;
+    PreArg2 m_pa2;
+    PreArg3 m_pa3;
+    PreArg4 m_pa4;
+    PreArg5 m_pa5;
+};
 
 template <typename R, typename Class, typename MethodClass ,typename Arg1,
-    typename Arg2,typename Arg3,typename Arg4,typename Arg5,typename Arg6,
-    typename Arg7,typename Arg8,typename Arg9,typename Arg10 ,
-    typename PreArg1, typename PreArg2, typename PreArg3, typename PreArg4,
-    typename PreArg5>
+         typename Arg2,typename Arg3,typename Arg4,typename Arg5,typename Arg6,
+         typename Arg7,typename Arg8,typename Arg9,typename Arg10 ,
+         typename PreArg1, typename PreArg2, typename PreArg3, typename PreArg4,
+         typename PreArg5>
 Closure<R (Arg6, Arg7, Arg8, Arg9, Arg10)>* NewClosure(
     Class *object,
     R (MethodClass::*method)(Arg1, Arg2, Arg3, Arg4, Arg5, Arg6, Arg7, Arg8,
-        Arg9, Arg10)
+                             Arg9, Arg10)
     , PreArg1 pa1, PreArg2 pa2, PreArg3 pa3, PreArg4 pa4, PreArg5 pa5) {
     return new MethodClosure_Arg5_Bind5<true, R, Class, MethodClass ,Arg1,Arg2,
-        Arg3,Arg4,Arg5,Arg6,Arg7,Arg8,Arg9,Arg10 , PreArg1, PreArg2, PreArg3,
-        PreArg4, PreArg5>(
-        object, method, pa1, pa2, pa3, pa4, pa5);
+           Arg3,Arg4,Arg5,Arg6,Arg7,Arg8,Arg9,Arg10 , PreArg1, PreArg2, PreArg3,
+           PreArg4, PreArg5>(
+               object, method, pa1, pa2, pa3, pa4, pa5);
 }
 
 template <typename R, typename Class, typename MethodClass ,typename Arg1,
-    typename Arg2,typename Arg3,typename Arg4,typename Arg5,typename Arg6,
-    typename Arg7,typename Arg8,typename Arg9,typename Arg10 ,
-    typename PreArg1, typename PreArg2, typename PreArg3, typename PreArg4,
-    typename PreArg5>
+         typename Arg2,typename Arg3,typename Arg4,typename Arg5,typename Arg6,
+         typename Arg7,typename Arg8,typename Arg9,typename Arg10 ,
+         typename PreArg1, typename PreArg2, typename PreArg3, typename PreArg4,
+         typename PreArg5>
 Closure<R (Arg6, Arg7, Arg8, Arg9, Arg10)>* NewPermanentClosure(
     Class *object,
     R (MethodClass::*method)(Arg1, Arg2, Arg3, Arg4, Arg5, Arg6, Arg7, Arg8,
-        Arg9, Arg10)
+                             Arg9, Arg10)
     , PreArg1 pa1, PreArg2 pa2, PreArg3 pa3, PreArg4 pa4, PreArg5 pa5) {
     return new MethodClosure_Arg5_Bind5<false, R, Class, MethodClass ,Arg1,
-        Arg2,Arg3,Arg4,Arg5,Arg6,Arg7,Arg8,Arg9,Arg10 , PreArg1, PreArg2,
-        PreArg3, PreArg4, PreArg5>(
-        object, method, pa1, pa2, pa3, pa4, pa5);
+           Arg2,Arg3,Arg4,Arg5,Arg6,Arg7,Arg8,Arg9,Arg10 , PreArg1, PreArg2,
+           PreArg3, PreArg4, PreArg5>(
+               object, method, pa1, pa2, pa3, pa4, pa5);
 }
 
 ////////////////////////////////////////////////////
@@ -5852,137 +6038,141 @@ Closure<R (Arg6, Arg7, Arg8, Arg9, Arg10)>* NewPermanentClosure(
 ////////////////////////////////////////////////////
 
 template <
-    bool SelfDeleting,
-    typename R
-    , typename Arg1    , typename Arg2    , typename Arg3    ,
-        typename Arg4    , typename Arg5    , typename Arg6    ,
-        typename Arg7    , typename Arg8    , typename Arg9    ,
-        typename Arg10    , typename PreArg1    , typename PreArg2    ,
-        typename PreArg3    , typename PreArg4    , typename PreArg5>
+bool SelfDeleting,
+     typename R
+     , typename Arg1    , typename Arg2    , typename Arg3    ,
+     typename Arg4    , typename Arg5    , typename Arg6    ,
+     typename Arg7    , typename Arg8    , typename Arg9    ,
+     typename Arg10    , typename PreArg1    , typename PreArg2    ,
+     typename PreArg3    , typename PreArg4    , typename PreArg5>
 class FunctionClosure_Arg5_Bind5 : public Closure<R (Arg6, Arg7, Arg8, Arg9,
-    Arg10)> {
+                Arg10)> {
     typedef R (*FunctionType)(Arg1, Arg2, Arg3, Arg4, Arg5, Arg6, Arg7, Arg8,
-        Arg9, Arg10);
+                              Arg9, Arg10);
 public:
     FunctionClosure_Arg5_Bind5(FunctionType function , PreArg1 pa1,
-        PreArg2 pa2, PreArg3 pa3, PreArg4 pa4, PreArg5 pa5):
+                               PreArg2 pa2, PreArg3 pa3, PreArg4 pa4, PreArg5 pa5):
         m_function(function) , m_pa1(pa1), m_pa2(pa2), m_pa3(pa3), m_pa4(pa4),
-            m_pa5(pa5) {}
+        m_pa5(pa5) {}
     virtual R Run(Arg6 arg6, Arg7 arg7, Arg8 arg8, Arg9 arg9, Arg10 arg10) {
         ConditionalAutoDeleter<SelfDeleting,
-            FunctionClosure_Arg5_Bind5> self_deleter(this);
+                               FunctionClosure_Arg5_Bind5> self_deleter(this);
         return m_function(m_pa1, m_pa2, m_pa3, m_pa4, m_pa5 ,arg6, arg7, arg8,
-            arg9, arg10);
+                          arg9, arg10);
     }
-    virtual bool IsSelfDelete() const { return SelfDeleting; }
+    virtual bool IsSelfDelete() const {
+        return SelfDeleting;
+    }
 private:
     FunctionType m_function;
-        PreArg1 m_pa1;
-        PreArg2 m_pa2;
-        PreArg3 m_pa3;
-        PreArg4 m_pa4;
-        PreArg5 m_pa5;
-    };
+    PreArg1 m_pa1;
+    PreArg2 m_pa2;
+    PreArg3 m_pa3;
+    PreArg4 m_pa4;
+    PreArg5 m_pa5;
+};
 
 template <typename R , typename Arg1, typename Arg2, typename Arg3,
-    typename Arg4, typename Arg5, typename Arg6, typename Arg7, typename Arg8,
-    typename Arg9, typename Arg10 , typename PreArg1, typename PreArg2,
-    typename PreArg3, typename PreArg4, typename PreArg5>
+         typename Arg4, typename Arg5, typename Arg6, typename Arg7, typename Arg8,
+         typename Arg9, typename Arg10 , typename PreArg1, typename PreArg2,
+         typename PreArg3, typename PreArg4, typename PreArg5>
 Closure<R (Arg6, Arg7, Arg8, Arg9, Arg10)>* NewClosure(R (*function)(Arg1,
-    Arg2, Arg3, Arg4, Arg5, Arg6, Arg7, Arg8, Arg9, Arg10)
-                                          , PreArg1 pa1, PreArg2 pa2,
-                                              PreArg3 pa3, PreArg4 pa4,
-                                              PreArg5 pa5) {
+        Arg2, Arg3, Arg4, Arg5, Arg6, Arg7, Arg8, Arg9, Arg10)
+        , PreArg1 pa1, PreArg2 pa2,
+        PreArg3 pa3, PreArg4 pa4,
+        PreArg5 pa5) {
     return new FunctionClosure_Arg5_Bind5<true, R , Arg1, Arg2, Arg3, Arg4,
-        Arg5, Arg6, Arg7, Arg8, Arg9, Arg10 , PreArg1, PreArg2, PreArg3,
-        PreArg4, PreArg5>(function , pa1, pa2, pa3, pa4, pa5);
+           Arg5, Arg6, Arg7, Arg8, Arg9, Arg10 , PreArg1, PreArg2, PreArg3,
+           PreArg4, PreArg5>(function , pa1, pa2, pa3, pa4, pa5);
 }
 
 template <typename R , typename Arg1, typename Arg2, typename Arg3,
-    typename Arg4, typename Arg5, typename Arg6, typename Arg7, typename Arg8,
-    typename Arg9, typename Arg10 , typename PreArg1, typename PreArg2,
-    typename PreArg3, typename PreArg4, typename PreArg5>
+         typename Arg4, typename Arg5, typename Arg6, typename Arg7, typename Arg8,
+         typename Arg9, typename Arg10 , typename PreArg1, typename PreArg2,
+         typename PreArg3, typename PreArg4, typename PreArg5>
 Closure<R (Arg6, Arg7, Arg8, Arg9,
-    Arg10)>* NewPermanentClosure(R (*function)(Arg1, Arg2, Arg3, Arg4, Arg5,
-    Arg6, Arg7, Arg8, Arg9, Arg10)
-                                          , PreArg1 pa1, PreArg2 pa2,
-                                              PreArg3 pa3, PreArg4 pa4,
-                                              PreArg5 pa5) {
+           Arg10)>* NewPermanentClosure(R (*function)(Arg1, Arg2, Arg3, Arg4, Arg5,
+                                        Arg6, Arg7, Arg8, Arg9, Arg10)
+                                        , PreArg1 pa1, PreArg2 pa2,
+                                        PreArg3 pa3, PreArg4 pa4,
+                                        PreArg5 pa5) {
     return new FunctionClosure_Arg5_Bind5<false, R , Arg1, Arg2, Arg3, Arg4,
-        Arg5, Arg6, Arg7, Arg8, Arg9, Arg10 , PreArg1, PreArg2, PreArg3,
-        PreArg4, PreArg5>(function , pa1, pa2, pa3, pa4, pa5);
+           Arg5, Arg6, Arg7, Arg8, Arg9, Arg10 , PreArg1, PreArg2, PreArg3,
+           PreArg4, PreArg5>(function , pa1, pa2, pa3, pa4, pa5);
 }
 
 template <
-    bool SelfDeleting,
-    typename R,
-    typename Class,
-    typename MethodClass
-    , typename Arg1    , typename Arg2    , typename Arg3    ,
-        typename Arg4    , typename Arg5    , typename Arg6    ,
-        typename Arg7    , typename Arg8    , typename Arg9    ,
-        typename Arg10    , typename Arg11    , typename PreArg1    ,
-        typename PreArg2    , typename PreArg3    , typename PreArg4    ,
-        typename PreArg5    , typename PreArg6>
+bool SelfDeleting,
+     typename R,
+     typename Class,
+     typename MethodClass
+     , typename Arg1    , typename Arg2    , typename Arg3    ,
+     typename Arg4    , typename Arg5    , typename Arg6    ,
+     typename Arg7    , typename Arg8    , typename Arg9    ,
+     typename Arg10    , typename Arg11    , typename PreArg1    ,
+     typename PreArg2    , typename PreArg3    , typename PreArg4    ,
+     typename PreArg5    , typename PreArg6>
 class MethodClosure_Arg5_Bind6 : public Closure<R (Arg7, Arg8, Arg9, Arg10,
-    Arg11)> {
+                Arg11)> {
     typedef R (MethodClass::*MethodType)(Arg1, Arg2, Arg3, Arg4, Arg5, Arg6,
-        Arg7, Arg8, Arg9, Arg10, Arg11);
+                                         Arg7, Arg8, Arg9, Arg10, Arg11);
 public:
     MethodClosure_Arg5_Bind6(Class *object, MethodType method , PreArg1 pa1,
-        PreArg2 pa2, PreArg3 pa3, PreArg4 pa4, PreArg5 pa5, PreArg6 pa6):
+                             PreArg2 pa2, PreArg3 pa3, PreArg4 pa4, PreArg5 pa5, PreArg6 pa6):
         m_object(object), m_method(method) , m_pa1(pa1), m_pa2(pa2),
-            m_pa3(pa3), m_pa4(pa4), m_pa5(pa5), m_pa6(pa6) {}
+        m_pa3(pa3), m_pa4(pa4), m_pa5(pa5), m_pa6(pa6) {}
     virtual R Run(Arg7 arg7, Arg8 arg8, Arg9 arg9, Arg10 arg10, Arg11 arg11) {
         ConditionalAutoDeleter<SelfDeleting,
-            MethodClosure_Arg5_Bind6> self_deleter(this);
+                               MethodClosure_Arg5_Bind6> self_deleter(this);
         return (m_object->*m_method)(m_pa1, m_pa2, m_pa3, m_pa4, m_pa5, m_pa6 ,
-            arg7, arg8, arg9, arg10, arg11);
+                                     arg7, arg8, arg9, arg10, arg11);
     }
-    virtual bool IsSelfDelete() const { return SelfDeleting; }
+    virtual bool IsSelfDelete() const {
+        return SelfDeleting;
+    }
 private:
     Class* m_object;
     MethodType m_method;
-        PreArg1 m_pa1;
-        PreArg2 m_pa2;
-        PreArg3 m_pa3;
-        PreArg4 m_pa4;
-        PreArg5 m_pa5;
-        PreArg6 m_pa6;
-    };
+    PreArg1 m_pa1;
+    PreArg2 m_pa2;
+    PreArg3 m_pa3;
+    PreArg4 m_pa4;
+    PreArg5 m_pa5;
+    PreArg6 m_pa6;
+};
 
 template <typename R, typename Class, typename MethodClass ,typename Arg1,
-    typename Arg2,typename Arg3,typename Arg4,typename Arg5,typename Arg6,
-    typename Arg7,typename Arg8,typename Arg9,typename Arg10,typename Arg11 ,
-    typename PreArg1, typename PreArg2, typename PreArg3, typename PreArg4,
-    typename PreArg5, typename PreArg6>
+         typename Arg2,typename Arg3,typename Arg4,typename Arg5,typename Arg6,
+         typename Arg7,typename Arg8,typename Arg9,typename Arg10,typename Arg11 ,
+         typename PreArg1, typename PreArg2, typename PreArg3, typename PreArg4,
+         typename PreArg5, typename PreArg6>
 Closure<R (Arg7, Arg8, Arg9, Arg10, Arg11)>* NewClosure(
     Class *object,
     R (MethodClass::*method)(Arg1, Arg2, Arg3, Arg4, Arg5, Arg6, Arg7, Arg8,
-        Arg9, Arg10, Arg11)
+                             Arg9, Arg10, Arg11)
     , PreArg1 pa1, PreArg2 pa2, PreArg3 pa3, PreArg4 pa4, PreArg5 pa5,
-        PreArg6 pa6) {
+    PreArg6 pa6) {
     return new MethodClosure_Arg5_Bind6<true, R, Class, MethodClass ,Arg1,Arg2,
-        Arg3,Arg4,Arg5,Arg6,Arg7,Arg8,Arg9,Arg10,Arg11 , PreArg1, PreArg2,
-        PreArg3, PreArg4, PreArg5, PreArg6>(
-        object, method, pa1, pa2, pa3, pa4, pa5, pa6);
+           Arg3,Arg4,Arg5,Arg6,Arg7,Arg8,Arg9,Arg10,Arg11 , PreArg1, PreArg2,
+           PreArg3, PreArg4, PreArg5, PreArg6>(
+               object, method, pa1, pa2, pa3, pa4, pa5, pa6);
 }
 
 template <typename R, typename Class, typename MethodClass ,typename Arg1,
-    typename Arg2,typename Arg3,typename Arg4,typename Arg5,typename Arg6,
-    typename Arg7,typename Arg8,typename Arg9,typename Arg10,typename Arg11 ,
-    typename PreArg1, typename PreArg2, typename PreArg3, typename PreArg4,
-    typename PreArg5, typename PreArg6>
+         typename Arg2,typename Arg3,typename Arg4,typename Arg5,typename Arg6,
+         typename Arg7,typename Arg8,typename Arg9,typename Arg10,typename Arg11 ,
+         typename PreArg1, typename PreArg2, typename PreArg3, typename PreArg4,
+         typename PreArg5, typename PreArg6>
 Closure<R (Arg7, Arg8, Arg9, Arg10, Arg11)>* NewPermanentClosure(
     Class *object,
     R (MethodClass::*method)(Arg1, Arg2, Arg3, Arg4, Arg5, Arg6, Arg7, Arg8,
-        Arg9, Arg10, Arg11)
+                             Arg9, Arg10, Arg11)
     , PreArg1 pa1, PreArg2 pa2, PreArg3 pa3, PreArg4 pa4, PreArg5 pa5,
-        PreArg6 pa6) {
+    PreArg6 pa6) {
     return new MethodClosure_Arg5_Bind6<false, R, Class, MethodClass ,Arg1,
-        Arg2,Arg3,Arg4,Arg5,Arg6,Arg7,Arg8,Arg9,Arg10,Arg11 , PreArg1, PreArg2,
-        PreArg3, PreArg4, PreArg5, PreArg6>(
-        object, method, pa1, pa2, pa3, pa4, pa5, pa6);
+           Arg2,Arg3,Arg4,Arg5,Arg6,Arg7,Arg8,Arg9,Arg10,Arg11 , PreArg1, PreArg2,
+           PreArg3, PreArg4, PreArg5, PreArg6>(
+               object, method, pa1, pa2, pa3, pa4, pa5, pa6);
 }
 
 ////////////////////////////////////////////////////
@@ -5990,144 +6180,148 @@ Closure<R (Arg7, Arg8, Arg9, Arg10, Arg11)>* NewPermanentClosure(
 ////////////////////////////////////////////////////
 
 template <
-    bool SelfDeleting,
-    typename R
-    , typename Arg1    , typename Arg2    , typename Arg3    ,
-        typename Arg4    , typename Arg5    , typename Arg6    ,
-        typename Arg7    , typename Arg8    , typename Arg9    ,
-        typename Arg10    , typename Arg11    , typename PreArg1    ,
-        typename PreArg2    , typename PreArg3    , typename PreArg4    ,
-        typename PreArg5    , typename PreArg6>
+bool SelfDeleting,
+     typename R
+     , typename Arg1    , typename Arg2    , typename Arg3    ,
+     typename Arg4    , typename Arg5    , typename Arg6    ,
+     typename Arg7    , typename Arg8    , typename Arg9    ,
+     typename Arg10    , typename Arg11    , typename PreArg1    ,
+     typename PreArg2    , typename PreArg3    , typename PreArg4    ,
+     typename PreArg5    , typename PreArg6>
 class FunctionClosure_Arg5_Bind6 : public Closure<R (Arg7, Arg8, Arg9, Arg10,
-    Arg11)> {
+                Arg11)> {
     typedef R (*FunctionType)(Arg1, Arg2, Arg3, Arg4, Arg5, Arg6, Arg7, Arg8,
-        Arg9, Arg10, Arg11);
+                              Arg9, Arg10, Arg11);
 public:
     FunctionClosure_Arg5_Bind6(FunctionType function , PreArg1 pa1,
-        PreArg2 pa2, PreArg3 pa3, PreArg4 pa4, PreArg5 pa5, PreArg6 pa6):
+                               PreArg2 pa2, PreArg3 pa3, PreArg4 pa4, PreArg5 pa5, PreArg6 pa6):
         m_function(function) , m_pa1(pa1), m_pa2(pa2), m_pa3(pa3), m_pa4(pa4),
-            m_pa5(pa5), m_pa6(pa6) {}
+        m_pa5(pa5), m_pa6(pa6) {}
     virtual R Run(Arg7 arg7, Arg8 arg8, Arg9 arg9, Arg10 arg10, Arg11 arg11) {
         ConditionalAutoDeleter<SelfDeleting,
-            FunctionClosure_Arg5_Bind6> self_deleter(this);
+                               FunctionClosure_Arg5_Bind6> self_deleter(this);
         return m_function(m_pa1, m_pa2, m_pa3, m_pa4, m_pa5, m_pa6 ,arg7, arg8,
-            arg9, arg10, arg11);
+                          arg9, arg10, arg11);
     }
-    virtual bool IsSelfDelete() const { return SelfDeleting; }
+    virtual bool IsSelfDelete() const {
+        return SelfDeleting;
+    }
 private:
     FunctionType m_function;
-        PreArg1 m_pa1;
-        PreArg2 m_pa2;
-        PreArg3 m_pa3;
-        PreArg4 m_pa4;
-        PreArg5 m_pa5;
-        PreArg6 m_pa6;
-    };
+    PreArg1 m_pa1;
+    PreArg2 m_pa2;
+    PreArg3 m_pa3;
+    PreArg4 m_pa4;
+    PreArg5 m_pa5;
+    PreArg6 m_pa6;
+};
 
 template <typename R , typename Arg1, typename Arg2, typename Arg3,
-    typename Arg4, typename Arg5, typename Arg6, typename Arg7, typename Arg8,
-    typename Arg9, typename Arg10, typename Arg11 , typename PreArg1,
-    typename PreArg2, typename PreArg3, typename PreArg4, typename PreArg5,
-    typename PreArg6>
+         typename Arg4, typename Arg5, typename Arg6, typename Arg7, typename Arg8,
+         typename Arg9, typename Arg10, typename Arg11 , typename PreArg1,
+         typename PreArg2, typename PreArg3, typename PreArg4, typename PreArg5,
+         typename PreArg6>
 Closure<R (Arg7, Arg8, Arg9, Arg10, Arg11)>* NewClosure(R (*function)(Arg1,
-    Arg2, Arg3, Arg4, Arg5, Arg6, Arg7, Arg8, Arg9, Arg10, Arg11)
-                                          , PreArg1 pa1, PreArg2 pa2,
-                                              PreArg3 pa3, PreArg4 pa4,
-                                              PreArg5 pa5, PreArg6 pa6) {
+        Arg2, Arg3, Arg4, Arg5, Arg6, Arg7, Arg8, Arg9, Arg10, Arg11)
+        , PreArg1 pa1, PreArg2 pa2,
+        PreArg3 pa3, PreArg4 pa4,
+        PreArg5 pa5, PreArg6 pa6) {
     return new FunctionClosure_Arg5_Bind6<true, R , Arg1, Arg2, Arg3, Arg4,
-        Arg5, Arg6, Arg7, Arg8, Arg9, Arg10, Arg11 , PreArg1, PreArg2, PreArg3,
-        PreArg4, PreArg5, PreArg6>(function , pa1, pa2, pa3, pa4, pa5, pa6);
+           Arg5, Arg6, Arg7, Arg8, Arg9, Arg10, Arg11 , PreArg1, PreArg2, PreArg3,
+           PreArg4, PreArg5, PreArg6>(function , pa1, pa2, pa3, pa4, pa5, pa6);
 }
 
 template <typename R , typename Arg1, typename Arg2, typename Arg3,
-    typename Arg4, typename Arg5, typename Arg6, typename Arg7, typename Arg8,
-    typename Arg9, typename Arg10, typename Arg11 , typename PreArg1,
-    typename PreArg2, typename PreArg3, typename PreArg4, typename PreArg5,
-    typename PreArg6>
+         typename Arg4, typename Arg5, typename Arg6, typename Arg7, typename Arg8,
+         typename Arg9, typename Arg10, typename Arg11 , typename PreArg1,
+         typename PreArg2, typename PreArg3, typename PreArg4, typename PreArg5,
+         typename PreArg6>
 Closure<R (Arg7, Arg8, Arg9, Arg10,
-    Arg11)>* NewPermanentClosure(R (*function)(Arg1, Arg2, Arg3, Arg4, Arg5,
-    Arg6, Arg7, Arg8, Arg9, Arg10, Arg11)
-                                          , PreArg1 pa1, PreArg2 pa2,
-                                              PreArg3 pa3, PreArg4 pa4,
-                                              PreArg5 pa5, PreArg6 pa6) {
+           Arg11)>* NewPermanentClosure(R (*function)(Arg1, Arg2, Arg3, Arg4, Arg5,
+                                        Arg6, Arg7, Arg8, Arg9, Arg10, Arg11)
+                                        , PreArg1 pa1, PreArg2 pa2,
+                                        PreArg3 pa3, PreArg4 pa4,
+                                        PreArg5 pa5, PreArg6 pa6) {
     return new FunctionClosure_Arg5_Bind6<false, R , Arg1, Arg2, Arg3, Arg4,
-        Arg5, Arg6, Arg7, Arg8, Arg9, Arg10, Arg11 , PreArg1, PreArg2, PreArg3,
-        PreArg4, PreArg5, PreArg6>(function , pa1, pa2, pa3, pa4, pa5, pa6);
+           Arg5, Arg6, Arg7, Arg8, Arg9, Arg10, Arg11 , PreArg1, PreArg2, PreArg3,
+           PreArg4, PreArg5, PreArg6>(function , pa1, pa2, pa3, pa4, pa5, pa6);
 }
 
 template <
-    bool SelfDeleting,
-    typename R,
-    typename Class,
-    typename MethodClass
-    , typename Arg1    , typename Arg2    , typename Arg3    ,
-        typename Arg4    , typename Arg5    , typename Arg6    ,
-        typename Arg7    , typename Arg8    , typename Arg9    ,
-        typename Arg10    , typename Arg11    , typename Arg12    ,
-        typename PreArg1    , typename PreArg2    , typename PreArg3    ,
-        typename PreArg4    , typename PreArg5    , typename PreArg6    ,
-        typename PreArg7>
+bool SelfDeleting,
+     typename R,
+     typename Class,
+     typename MethodClass
+     , typename Arg1    , typename Arg2    , typename Arg3    ,
+     typename Arg4    , typename Arg5    , typename Arg6    ,
+     typename Arg7    , typename Arg8    , typename Arg9    ,
+     typename Arg10    , typename Arg11    , typename Arg12    ,
+     typename PreArg1    , typename PreArg2    , typename PreArg3    ,
+     typename PreArg4    , typename PreArg5    , typename PreArg6    ,
+     typename PreArg7>
 class MethodClosure_Arg5_Bind7 : public Closure<R (Arg8, Arg9, Arg10, Arg11,
-    Arg12)> {
+                Arg12)> {
     typedef R (MethodClass::*MethodType)(Arg1, Arg2, Arg3, Arg4, Arg5, Arg6,
-        Arg7, Arg8, Arg9, Arg10, Arg11, Arg12);
+                                         Arg7, Arg8, Arg9, Arg10, Arg11, Arg12);
 public:
     MethodClosure_Arg5_Bind7(Class *object, MethodType method , PreArg1 pa1,
-        PreArg2 pa2, PreArg3 pa3, PreArg4 pa4, PreArg5 pa5, PreArg6 pa6,
-        PreArg7 pa7):
+                             PreArg2 pa2, PreArg3 pa3, PreArg4 pa4, PreArg5 pa5, PreArg6 pa6,
+                             PreArg7 pa7):
         m_object(object), m_method(method) , m_pa1(pa1), m_pa2(pa2),
-            m_pa3(pa3), m_pa4(pa4), m_pa5(pa5), m_pa6(pa6), m_pa7(pa7) {}
+        m_pa3(pa3), m_pa4(pa4), m_pa5(pa5), m_pa6(pa6), m_pa7(pa7) {}
     virtual R Run(Arg8 arg8, Arg9 arg9, Arg10 arg10, Arg11 arg11, Arg12 arg12) {
         ConditionalAutoDeleter<SelfDeleting,
-            MethodClosure_Arg5_Bind7> self_deleter(this);
+                               MethodClosure_Arg5_Bind7> self_deleter(this);
         return (m_object->*m_method)(m_pa1, m_pa2, m_pa3, m_pa4, m_pa5, m_pa6,
-            m_pa7 ,arg8, arg9, arg10, arg11, arg12);
+                                     m_pa7 ,arg8, arg9, arg10, arg11, arg12);
     }
-    virtual bool IsSelfDelete() const { return SelfDeleting; }
+    virtual bool IsSelfDelete() const {
+        return SelfDeleting;
+    }
 private:
     Class* m_object;
     MethodType m_method;
-        PreArg1 m_pa1;
-        PreArg2 m_pa2;
-        PreArg3 m_pa3;
-        PreArg4 m_pa4;
-        PreArg5 m_pa5;
-        PreArg6 m_pa6;
-        PreArg7 m_pa7;
-    };
+    PreArg1 m_pa1;
+    PreArg2 m_pa2;
+    PreArg3 m_pa3;
+    PreArg4 m_pa4;
+    PreArg5 m_pa5;
+    PreArg6 m_pa6;
+    PreArg7 m_pa7;
+};
 
 template <typename R, typename Class, typename MethodClass ,typename Arg1,
-    typename Arg2,typename Arg3,typename Arg4,typename Arg5,typename Arg6,
-    typename Arg7,typename Arg8,typename Arg9,typename Arg10,typename Arg11,
-    typename Arg12 , typename PreArg1, typename PreArg2, typename PreArg3,
-    typename PreArg4, typename PreArg5, typename PreArg6, typename PreArg7>
+         typename Arg2,typename Arg3,typename Arg4,typename Arg5,typename Arg6,
+         typename Arg7,typename Arg8,typename Arg9,typename Arg10,typename Arg11,
+         typename Arg12 , typename PreArg1, typename PreArg2, typename PreArg3,
+         typename PreArg4, typename PreArg5, typename PreArg6, typename PreArg7>
 Closure<R (Arg8, Arg9, Arg10, Arg11, Arg12)>* NewClosure(
     Class *object,
     R (MethodClass::*method)(Arg1, Arg2, Arg3, Arg4, Arg5, Arg6, Arg7, Arg8,
-        Arg9, Arg10, Arg11, Arg12)
+                             Arg9, Arg10, Arg11, Arg12)
     , PreArg1 pa1, PreArg2 pa2, PreArg3 pa3, PreArg4 pa4, PreArg5 pa5,
-        PreArg6 pa6, PreArg7 pa7) {
+    PreArg6 pa6, PreArg7 pa7) {
     return new MethodClosure_Arg5_Bind7<true, R, Class, MethodClass ,Arg1,Arg2,
-        Arg3,Arg4,Arg5,Arg6,Arg7,Arg8,Arg9,Arg10,Arg11,Arg12 , PreArg1,
-        PreArg2, PreArg3, PreArg4, PreArg5, PreArg6, PreArg7>(
-        object, method, pa1, pa2, pa3, pa4, pa5, pa6, pa7);
+           Arg3,Arg4,Arg5,Arg6,Arg7,Arg8,Arg9,Arg10,Arg11,Arg12 , PreArg1,
+           PreArg2, PreArg3, PreArg4, PreArg5, PreArg6, PreArg7>(
+               object, method, pa1, pa2, pa3, pa4, pa5, pa6, pa7);
 }
 
 template <typename R, typename Class, typename MethodClass ,typename Arg1,
-    typename Arg2,typename Arg3,typename Arg4,typename Arg5,typename Arg6,
-    typename Arg7,typename Arg8,typename Arg9,typename Arg10,typename Arg11,
-    typename Arg12 , typename PreArg1, typename PreArg2, typename PreArg3,
-    typename PreArg4, typename PreArg5, typename PreArg6, typename PreArg7>
+         typename Arg2,typename Arg3,typename Arg4,typename Arg5,typename Arg6,
+         typename Arg7,typename Arg8,typename Arg9,typename Arg10,typename Arg11,
+         typename Arg12 , typename PreArg1, typename PreArg2, typename PreArg3,
+         typename PreArg4, typename PreArg5, typename PreArg6, typename PreArg7>
 Closure<R (Arg8, Arg9, Arg10, Arg11, Arg12)>* NewPermanentClosure(
     Class *object,
     R (MethodClass::*method)(Arg1, Arg2, Arg3, Arg4, Arg5, Arg6, Arg7, Arg8,
-        Arg9, Arg10, Arg11, Arg12)
+                             Arg9, Arg10, Arg11, Arg12)
     , PreArg1 pa1, PreArg2 pa2, PreArg3 pa3, PreArg4 pa4, PreArg5 pa5,
-        PreArg6 pa6, PreArg7 pa7) {
+    PreArg6 pa6, PreArg7 pa7) {
     return new MethodClosure_Arg5_Bind7<false, R, Class, MethodClass ,Arg1,
-        Arg2,Arg3,Arg4,Arg5,Arg6,Arg7,Arg8,Arg9,Arg10,Arg11,Arg12 , PreArg1,
-        PreArg2, PreArg3, PreArg4, PreArg5, PreArg6, PreArg7>(
-        object, method, pa1, pa2, pa3, pa4, pa5, pa6, pa7);
+           Arg2,Arg3,Arg4,Arg5,Arg6,Arg7,Arg8,Arg9,Arg10,Arg11,Arg12 , PreArg1,
+           PreArg2, PreArg3, PreArg4, PreArg5, PreArg6, PreArg7>(
+               object, method, pa1, pa2, pa3, pa4, pa5, pa6, pa7);
 }
 
 ////////////////////////////////////////////////////
@@ -6135,157 +6329,161 @@ Closure<R (Arg8, Arg9, Arg10, Arg11, Arg12)>* NewPermanentClosure(
 ////////////////////////////////////////////////////
 
 template <
-    bool SelfDeleting,
-    typename R
-    , typename Arg1    , typename Arg2    , typename Arg3    ,
-        typename Arg4    , typename Arg5    , typename Arg6    ,
-        typename Arg7    , typename Arg8    , typename Arg9    ,
-        typename Arg10    , typename Arg11    , typename Arg12    ,
-        typename PreArg1    , typename PreArg2    , typename PreArg3    ,
-        typename PreArg4    , typename PreArg5    , typename PreArg6    ,
-        typename PreArg7>
+bool SelfDeleting,
+     typename R
+     , typename Arg1    , typename Arg2    , typename Arg3    ,
+     typename Arg4    , typename Arg5    , typename Arg6    ,
+     typename Arg7    , typename Arg8    , typename Arg9    ,
+     typename Arg10    , typename Arg11    , typename Arg12    ,
+     typename PreArg1    , typename PreArg2    , typename PreArg3    ,
+     typename PreArg4    , typename PreArg5    , typename PreArg6    ,
+     typename PreArg7>
 class FunctionClosure_Arg5_Bind7 : public Closure<R (Arg8, Arg9, Arg10, Arg11,
-    Arg12)> {
+                Arg12)> {
     typedef R (*FunctionType)(Arg1, Arg2, Arg3, Arg4, Arg5, Arg6, Arg7, Arg8,
-        Arg9, Arg10, Arg11, Arg12);
+                              Arg9, Arg10, Arg11, Arg12);
 public:
     FunctionClosure_Arg5_Bind7(FunctionType function , PreArg1 pa1,
-        PreArg2 pa2, PreArg3 pa3, PreArg4 pa4, PreArg5 pa5, PreArg6 pa6,
-        PreArg7 pa7):
+                               PreArg2 pa2, PreArg3 pa3, PreArg4 pa4, PreArg5 pa5, PreArg6 pa6,
+                               PreArg7 pa7):
         m_function(function) , m_pa1(pa1), m_pa2(pa2), m_pa3(pa3), m_pa4(pa4),
-            m_pa5(pa5), m_pa6(pa6), m_pa7(pa7) {}
+        m_pa5(pa5), m_pa6(pa6), m_pa7(pa7) {}
     virtual R Run(Arg8 arg8, Arg9 arg9, Arg10 arg10, Arg11 arg11, Arg12 arg12) {
         ConditionalAutoDeleter<SelfDeleting,
-            FunctionClosure_Arg5_Bind7> self_deleter(this);
+                               FunctionClosure_Arg5_Bind7> self_deleter(this);
         return m_function(m_pa1, m_pa2, m_pa3, m_pa4, m_pa5, m_pa6, m_pa7 ,
-            arg8, arg9, arg10, arg11, arg12);
+                          arg8, arg9, arg10, arg11, arg12);
     }
-    virtual bool IsSelfDelete() const { return SelfDeleting; }
+    virtual bool IsSelfDelete() const {
+        return SelfDeleting;
+    }
 private:
     FunctionType m_function;
-        PreArg1 m_pa1;
-        PreArg2 m_pa2;
-        PreArg3 m_pa3;
-        PreArg4 m_pa4;
-        PreArg5 m_pa5;
-        PreArg6 m_pa6;
-        PreArg7 m_pa7;
-    };
+    PreArg1 m_pa1;
+    PreArg2 m_pa2;
+    PreArg3 m_pa3;
+    PreArg4 m_pa4;
+    PreArg5 m_pa5;
+    PreArg6 m_pa6;
+    PreArg7 m_pa7;
+};
 
 template <typename R , typename Arg1, typename Arg2, typename Arg3,
-    typename Arg4, typename Arg5, typename Arg6, typename Arg7, typename Arg8,
-    typename Arg9, typename Arg10, typename Arg11, typename Arg12 ,
-    typename PreArg1, typename PreArg2, typename PreArg3, typename PreArg4,
-    typename PreArg5, typename PreArg6, typename PreArg7>
+         typename Arg4, typename Arg5, typename Arg6, typename Arg7, typename Arg8,
+         typename Arg9, typename Arg10, typename Arg11, typename Arg12 ,
+         typename PreArg1, typename PreArg2, typename PreArg3, typename PreArg4,
+         typename PreArg5, typename PreArg6, typename PreArg7>
 Closure<R (Arg8, Arg9, Arg10, Arg11, Arg12)>* NewClosure(R (*function)(Arg1,
-    Arg2, Arg3, Arg4, Arg5, Arg6, Arg7, Arg8, Arg9, Arg10, Arg11, Arg12)
-                                          , PreArg1 pa1, PreArg2 pa2,
-                                              PreArg3 pa3, PreArg4 pa4,
-                                              PreArg5 pa5, PreArg6 pa6,
-                                              PreArg7 pa7) {
+        Arg2, Arg3, Arg4, Arg5, Arg6, Arg7, Arg8, Arg9, Arg10, Arg11, Arg12)
+        , PreArg1 pa1, PreArg2 pa2,
+        PreArg3 pa3, PreArg4 pa4,
+        PreArg5 pa5, PreArg6 pa6,
+        PreArg7 pa7) {
     return new FunctionClosure_Arg5_Bind7<true, R , Arg1, Arg2, Arg3, Arg4,
-        Arg5, Arg6, Arg7, Arg8, Arg9, Arg10, Arg11, Arg12 , PreArg1, PreArg2,
-        PreArg3, PreArg4, PreArg5, PreArg6, PreArg7>(function , pa1, pa2, pa3,
-        pa4, pa5, pa6, pa7);
+           Arg5, Arg6, Arg7, Arg8, Arg9, Arg10, Arg11, Arg12 , PreArg1, PreArg2,
+           PreArg3, PreArg4, PreArg5, PreArg6, PreArg7>(function , pa1, pa2, pa3,
+                   pa4, pa5, pa6, pa7);
 }
 
 template <typename R , typename Arg1, typename Arg2, typename Arg3,
-    typename Arg4, typename Arg5, typename Arg6, typename Arg7, typename Arg8,
-    typename Arg9, typename Arg10, typename Arg11, typename Arg12 ,
-    typename PreArg1, typename PreArg2, typename PreArg3, typename PreArg4,
-    typename PreArg5, typename PreArg6, typename PreArg7>
+         typename Arg4, typename Arg5, typename Arg6, typename Arg7, typename Arg8,
+         typename Arg9, typename Arg10, typename Arg11, typename Arg12 ,
+         typename PreArg1, typename PreArg2, typename PreArg3, typename PreArg4,
+         typename PreArg5, typename PreArg6, typename PreArg7>
 Closure<R (Arg8, Arg9, Arg10, Arg11,
-    Arg12)>* NewPermanentClosure(R (*function)(Arg1, Arg2, Arg3, Arg4, Arg5,
-    Arg6, Arg7, Arg8, Arg9, Arg10, Arg11, Arg12)
-                                          , PreArg1 pa1, PreArg2 pa2,
-                                              PreArg3 pa3, PreArg4 pa4,
-                                              PreArg5 pa5, PreArg6 pa6,
-                                              PreArg7 pa7) {
+           Arg12)>* NewPermanentClosure(R (*function)(Arg1, Arg2, Arg3, Arg4, Arg5,
+                                        Arg6, Arg7, Arg8, Arg9, Arg10, Arg11, Arg12)
+                                        , PreArg1 pa1, PreArg2 pa2,
+                                        PreArg3 pa3, PreArg4 pa4,
+                                        PreArg5 pa5, PreArg6 pa6,
+                                        PreArg7 pa7) {
     return new FunctionClosure_Arg5_Bind7<false, R , Arg1, Arg2, Arg3, Arg4,
-        Arg5, Arg6, Arg7, Arg8, Arg9, Arg10, Arg11, Arg12 , PreArg1, PreArg2,
-        PreArg3, PreArg4, PreArg5, PreArg6, PreArg7>(function , pa1, pa2, pa3,
-        pa4, pa5, pa6, pa7);
+           Arg5, Arg6, Arg7, Arg8, Arg9, Arg10, Arg11, Arg12 , PreArg1, PreArg2,
+           PreArg3, PreArg4, PreArg5, PreArg6, PreArg7>(function , pa1, pa2, pa3,
+                   pa4, pa5, pa6, pa7);
 }
 
 template <
-    bool SelfDeleting,
-    typename R,
-    typename Class,
-    typename MethodClass
-    , typename Arg1    , typename Arg2    , typename Arg3    ,
-        typename Arg4    , typename Arg5    , typename Arg6    ,
-        typename Arg7    , typename Arg8    , typename Arg9    ,
-        typename Arg10    , typename Arg11    , typename Arg12    ,
-        typename Arg13    , typename PreArg1    , typename PreArg2    ,
-        typename PreArg3    , typename PreArg4    , typename PreArg5    ,
-        typename PreArg6    , typename PreArg7    , typename PreArg8>
+bool SelfDeleting,
+     typename R,
+     typename Class,
+     typename MethodClass
+     , typename Arg1    , typename Arg2    , typename Arg3    ,
+     typename Arg4    , typename Arg5    , typename Arg6    ,
+     typename Arg7    , typename Arg8    , typename Arg9    ,
+     typename Arg10    , typename Arg11    , typename Arg12    ,
+     typename Arg13    , typename PreArg1    , typename PreArg2    ,
+     typename PreArg3    , typename PreArg4    , typename PreArg5    ,
+     typename PreArg6    , typename PreArg7    , typename PreArg8>
 class MethodClosure_Arg5_Bind8 : public Closure<R (Arg9, Arg10, Arg11, Arg12,
-    Arg13)> {
+                Arg13)> {
     typedef R (MethodClass::*MethodType)(Arg1, Arg2, Arg3, Arg4, Arg5, Arg6,
-        Arg7, Arg8, Arg9, Arg10, Arg11, Arg12, Arg13);
+                                         Arg7, Arg8, Arg9, Arg10, Arg11, Arg12, Arg13);
 public:
     MethodClosure_Arg5_Bind8(Class *object, MethodType method , PreArg1 pa1,
-        PreArg2 pa2, PreArg3 pa3, PreArg4 pa4, PreArg5 pa5, PreArg6 pa6,
-        PreArg7 pa7, PreArg8 pa8):
+                             PreArg2 pa2, PreArg3 pa3, PreArg4 pa4, PreArg5 pa5, PreArg6 pa6,
+                             PreArg7 pa7, PreArg8 pa8):
         m_object(object), m_method(method) , m_pa1(pa1), m_pa2(pa2),
-            m_pa3(pa3), m_pa4(pa4), m_pa5(pa5), m_pa6(pa6), m_pa7(pa7),
-            m_pa8(pa8) {}
+        m_pa3(pa3), m_pa4(pa4), m_pa5(pa5), m_pa6(pa6), m_pa7(pa7),
+        m_pa8(pa8) {}
     virtual R Run(Arg9 arg9, Arg10 arg10, Arg11 arg11, Arg12 arg12,
-        Arg13 arg13) {
+                  Arg13 arg13) {
         ConditionalAutoDeleter<SelfDeleting,
-            MethodClosure_Arg5_Bind8> self_deleter(this);
+                               MethodClosure_Arg5_Bind8> self_deleter(this);
         return (m_object->*m_method)(m_pa1, m_pa2, m_pa3, m_pa4, m_pa5, m_pa6,
-            m_pa7, m_pa8 ,arg9, arg10, arg11, arg12, arg13);
+                                     m_pa7, m_pa8 ,arg9, arg10, arg11, arg12, arg13);
     }
-    virtual bool IsSelfDelete() const { return SelfDeleting; }
+    virtual bool IsSelfDelete() const {
+        return SelfDeleting;
+    }
 private:
     Class* m_object;
     MethodType m_method;
-        PreArg1 m_pa1;
-        PreArg2 m_pa2;
-        PreArg3 m_pa3;
-        PreArg4 m_pa4;
-        PreArg5 m_pa5;
-        PreArg6 m_pa6;
-        PreArg7 m_pa7;
-        PreArg8 m_pa8;
-    };
+    PreArg1 m_pa1;
+    PreArg2 m_pa2;
+    PreArg3 m_pa3;
+    PreArg4 m_pa4;
+    PreArg5 m_pa5;
+    PreArg6 m_pa6;
+    PreArg7 m_pa7;
+    PreArg8 m_pa8;
+};
 
 template <typename R, typename Class, typename MethodClass ,typename Arg1,
-    typename Arg2,typename Arg3,typename Arg4,typename Arg5,typename Arg6,
-    typename Arg7,typename Arg8,typename Arg9,typename Arg10,typename Arg11,
-    typename Arg12,typename Arg13 , typename PreArg1, typename PreArg2,
-    typename PreArg3, typename PreArg4, typename PreArg5, typename PreArg6,
-    typename PreArg7, typename PreArg8>
+         typename Arg2,typename Arg3,typename Arg4,typename Arg5,typename Arg6,
+         typename Arg7,typename Arg8,typename Arg9,typename Arg10,typename Arg11,
+         typename Arg12,typename Arg13 , typename PreArg1, typename PreArg2,
+         typename PreArg3, typename PreArg4, typename PreArg5, typename PreArg6,
+         typename PreArg7, typename PreArg8>
 Closure<R (Arg9, Arg10, Arg11, Arg12, Arg13)>* NewClosure(
     Class *object,
     R (MethodClass::*method)(Arg1, Arg2, Arg3, Arg4, Arg5, Arg6, Arg7, Arg8,
-        Arg9, Arg10, Arg11, Arg12, Arg13)
+                             Arg9, Arg10, Arg11, Arg12, Arg13)
     , PreArg1 pa1, PreArg2 pa2, PreArg3 pa3, PreArg4 pa4, PreArg5 pa5,
-        PreArg6 pa6, PreArg7 pa7, PreArg8 pa8) {
+    PreArg6 pa6, PreArg7 pa7, PreArg8 pa8) {
     return new MethodClosure_Arg5_Bind8<true, R, Class, MethodClass ,Arg1,Arg2,
-        Arg3,Arg4,Arg5,Arg6,Arg7,Arg8,Arg9,Arg10,Arg11,Arg12,Arg13 , PreArg1,
-        PreArg2, PreArg3, PreArg4, PreArg5, PreArg6, PreArg7, PreArg8>(
-        object, method, pa1, pa2, pa3, pa4, pa5, pa6, pa7, pa8);
+           Arg3,Arg4,Arg5,Arg6,Arg7,Arg8,Arg9,Arg10,Arg11,Arg12,Arg13 , PreArg1,
+           PreArg2, PreArg3, PreArg4, PreArg5, PreArg6, PreArg7, PreArg8>(
+               object, method, pa1, pa2, pa3, pa4, pa5, pa6, pa7, pa8);
 }
 
 template <typename R, typename Class, typename MethodClass ,typename Arg1,
-    typename Arg2,typename Arg3,typename Arg4,typename Arg5,typename Arg6,
-    typename Arg7,typename Arg8,typename Arg9,typename Arg10,typename Arg11,
-    typename Arg12,typename Arg13 , typename PreArg1, typename PreArg2,
-    typename PreArg3, typename PreArg4, typename PreArg5, typename PreArg6,
-    typename PreArg7, typename PreArg8>
+         typename Arg2,typename Arg3,typename Arg4,typename Arg5,typename Arg6,
+         typename Arg7,typename Arg8,typename Arg9,typename Arg10,typename Arg11,
+         typename Arg12,typename Arg13 , typename PreArg1, typename PreArg2,
+         typename PreArg3, typename PreArg4, typename PreArg5, typename PreArg6,
+         typename PreArg7, typename PreArg8>
 Closure<R (Arg9, Arg10, Arg11, Arg12, Arg13)>* NewPermanentClosure(
     Class *object,
     R (MethodClass::*method)(Arg1, Arg2, Arg3, Arg4, Arg5, Arg6, Arg7, Arg8,
-        Arg9, Arg10, Arg11, Arg12, Arg13)
+                             Arg9, Arg10, Arg11, Arg12, Arg13)
     , PreArg1 pa1, PreArg2 pa2, PreArg3 pa3, PreArg4 pa4, PreArg5 pa5,
-        PreArg6 pa6, PreArg7 pa7, PreArg8 pa8) {
+    PreArg6 pa6, PreArg7 pa7, PreArg8 pa8) {
     return new MethodClosure_Arg5_Bind8<false, R, Class, MethodClass ,Arg1,
-        Arg2,Arg3,Arg4,Arg5,Arg6,Arg7,Arg8,Arg9,Arg10,Arg11,Arg12,Arg13 ,
-        PreArg1, PreArg2, PreArg3, PreArg4, PreArg5, PreArg6, PreArg7,
-        PreArg8>(
-        object, method, pa1, pa2, pa3, pa4, pa5, pa6, pa7, pa8);
+           Arg2,Arg3,Arg4,Arg5,Arg6,Arg7,Arg8,Arg9,Arg10,Arg11,Arg12,Arg13 ,
+           PreArg1, PreArg2, PreArg3, PreArg4, PreArg5, PreArg6, PreArg7,
+           PreArg8>(
+               object, method, pa1, pa2, pa3, pa4, pa5, pa6, pa7, pa8);
 }
 
 ////////////////////////////////////////////////////
@@ -6293,127 +6491,131 @@ Closure<R (Arg9, Arg10, Arg11, Arg12, Arg13)>* NewPermanentClosure(
 ////////////////////////////////////////////////////
 
 template <
-    bool SelfDeleting,
-    typename R
-    , typename Arg1    , typename Arg2    , typename Arg3    ,
-        typename Arg4    , typename Arg5    , typename Arg6    ,
-        typename Arg7    , typename Arg8    , typename Arg9    ,
-        typename Arg10    , typename Arg11    , typename Arg12    ,
-        typename Arg13    , typename PreArg1    , typename PreArg2    ,
-        typename PreArg3    , typename PreArg4    , typename PreArg5    ,
-        typename PreArg6    , typename PreArg7    , typename PreArg8>
+bool SelfDeleting,
+     typename R
+     , typename Arg1    , typename Arg2    , typename Arg3    ,
+     typename Arg4    , typename Arg5    , typename Arg6    ,
+     typename Arg7    , typename Arg8    , typename Arg9    ,
+     typename Arg10    , typename Arg11    , typename Arg12    ,
+     typename Arg13    , typename PreArg1    , typename PreArg2    ,
+     typename PreArg3    , typename PreArg4    , typename PreArg5    ,
+     typename PreArg6    , typename PreArg7    , typename PreArg8>
 class FunctionClosure_Arg5_Bind8 : public Closure<R (Arg9, Arg10, Arg11, Arg12,
-    Arg13)> {
+                Arg13)> {
     typedef R (*FunctionType)(Arg1, Arg2, Arg3, Arg4, Arg5, Arg6, Arg7, Arg8,
-        Arg9, Arg10, Arg11, Arg12, Arg13);
+                              Arg9, Arg10, Arg11, Arg12, Arg13);
 public:
     FunctionClosure_Arg5_Bind8(FunctionType function , PreArg1 pa1,
-        PreArg2 pa2, PreArg3 pa3, PreArg4 pa4, PreArg5 pa5, PreArg6 pa6,
-        PreArg7 pa7, PreArg8 pa8):
+                               PreArg2 pa2, PreArg3 pa3, PreArg4 pa4, PreArg5 pa5, PreArg6 pa6,
+                               PreArg7 pa7, PreArg8 pa8):
         m_function(function) , m_pa1(pa1), m_pa2(pa2), m_pa3(pa3), m_pa4(pa4),
-            m_pa5(pa5), m_pa6(pa6), m_pa7(pa7), m_pa8(pa8) {}
+        m_pa5(pa5), m_pa6(pa6), m_pa7(pa7), m_pa8(pa8) {}
     virtual R Run(Arg9 arg9, Arg10 arg10, Arg11 arg11, Arg12 arg12,
-        Arg13 arg13) {
+                  Arg13 arg13) {
         ConditionalAutoDeleter<SelfDeleting,
-            FunctionClosure_Arg5_Bind8> self_deleter(this);
+                               FunctionClosure_Arg5_Bind8> self_deleter(this);
         return m_function(m_pa1, m_pa2, m_pa3, m_pa4, m_pa5, m_pa6, m_pa7,
-            m_pa8 ,arg9, arg10, arg11, arg12, arg13);
+                          m_pa8 ,arg9, arg10, arg11, arg12, arg13);
     }
-    virtual bool IsSelfDelete() const { return SelfDeleting; }
+    virtual bool IsSelfDelete() const {
+        return SelfDeleting;
+    }
 private:
     FunctionType m_function;
-        PreArg1 m_pa1;
-        PreArg2 m_pa2;
-        PreArg3 m_pa3;
-        PreArg4 m_pa4;
-        PreArg5 m_pa5;
-        PreArg6 m_pa6;
-        PreArg7 m_pa7;
-        PreArg8 m_pa8;
-    };
+    PreArg1 m_pa1;
+    PreArg2 m_pa2;
+    PreArg3 m_pa3;
+    PreArg4 m_pa4;
+    PreArg5 m_pa5;
+    PreArg6 m_pa6;
+    PreArg7 m_pa7;
+    PreArg8 m_pa8;
+};
 
 template <typename R , typename Arg1, typename Arg2, typename Arg3,
-    typename Arg4, typename Arg5, typename Arg6, typename Arg7, typename Arg8,
-    typename Arg9, typename Arg10, typename Arg11, typename Arg12,
-    typename Arg13 , typename PreArg1, typename PreArg2, typename PreArg3,
-    typename PreArg4, typename PreArg5, typename PreArg6, typename PreArg7,
-    typename PreArg8>
+         typename Arg4, typename Arg5, typename Arg6, typename Arg7, typename Arg8,
+         typename Arg9, typename Arg10, typename Arg11, typename Arg12,
+         typename Arg13 , typename PreArg1, typename PreArg2, typename PreArg3,
+         typename PreArg4, typename PreArg5, typename PreArg6, typename PreArg7,
+         typename PreArg8>
 Closure<R (Arg9, Arg10, Arg11, Arg12, Arg13)>* NewClosure(R (*function)(Arg1,
-    Arg2, Arg3, Arg4, Arg5, Arg6, Arg7, Arg8, Arg9, Arg10, Arg11, Arg12, Arg13)
-                                          , PreArg1 pa1, PreArg2 pa2,
-                                              PreArg3 pa3, PreArg4 pa4,
-                                              PreArg5 pa5, PreArg6 pa6,
-                                              PreArg7 pa7, PreArg8 pa8) {
+        Arg2, Arg3, Arg4, Arg5, Arg6, Arg7, Arg8, Arg9, Arg10, Arg11, Arg12, Arg13)
+        , PreArg1 pa1, PreArg2 pa2,
+        PreArg3 pa3, PreArg4 pa4,
+        PreArg5 pa5, PreArg6 pa6,
+        PreArg7 pa7, PreArg8 pa8) {
     return new FunctionClosure_Arg5_Bind8<true, R , Arg1, Arg2, Arg3, Arg4,
-        Arg5, Arg6, Arg7, Arg8, Arg9, Arg10, Arg11, Arg12, Arg13 , PreArg1,
-        PreArg2, PreArg3, PreArg4, PreArg5, PreArg6, PreArg7,
-        PreArg8>(function , pa1, pa2, pa3, pa4, pa5, pa6, pa7, pa8);
+           Arg5, Arg6, Arg7, Arg8, Arg9, Arg10, Arg11, Arg12, Arg13 , PreArg1,
+           PreArg2, PreArg3, PreArg4, PreArg5, PreArg6, PreArg7,
+           PreArg8>(function , pa1, pa2, pa3, pa4, pa5, pa6, pa7, pa8);
 }
 
 template <typename R , typename Arg1, typename Arg2, typename Arg3,
-    typename Arg4, typename Arg5, typename Arg6, typename Arg7, typename Arg8,
-    typename Arg9, typename Arg10, typename Arg11, typename Arg12,
-    typename Arg13 , typename PreArg1, typename PreArg2, typename PreArg3,
-    typename PreArg4, typename PreArg5, typename PreArg6, typename PreArg7,
-    typename PreArg8>
+         typename Arg4, typename Arg5, typename Arg6, typename Arg7, typename Arg8,
+         typename Arg9, typename Arg10, typename Arg11, typename Arg12,
+         typename Arg13 , typename PreArg1, typename PreArg2, typename PreArg3,
+         typename PreArg4, typename PreArg5, typename PreArg6, typename PreArg7,
+         typename PreArg8>
 Closure<R (Arg9, Arg10, Arg11, Arg12,
-    Arg13)>* NewPermanentClosure(R (*function)(Arg1, Arg2, Arg3, Arg4, Arg5,
-    Arg6, Arg7, Arg8, Arg9, Arg10, Arg11, Arg12, Arg13)
-                                          , PreArg1 pa1, PreArg2 pa2,
-                                              PreArg3 pa3, PreArg4 pa4,
-                                              PreArg5 pa5, PreArg6 pa6,
-                                              PreArg7 pa7, PreArg8 pa8) {
+           Arg13)>* NewPermanentClosure(R (*function)(Arg1, Arg2, Arg3, Arg4, Arg5,
+                                        Arg6, Arg7, Arg8, Arg9, Arg10, Arg11, Arg12, Arg13)
+                                        , PreArg1 pa1, PreArg2 pa2,
+                                        PreArg3 pa3, PreArg4 pa4,
+                                        PreArg5 pa5, PreArg6 pa6,
+                                        PreArg7 pa7, PreArg8 pa8) {
     return new FunctionClosure_Arg5_Bind8<false, R , Arg1, Arg2, Arg3, Arg4,
-        Arg5, Arg6, Arg7, Arg8, Arg9, Arg10, Arg11, Arg12, Arg13 , PreArg1,
-        PreArg2, PreArg3, PreArg4, PreArg5, PreArg6, PreArg7,
-        PreArg8>(function , pa1, pa2, pa3, pa4, pa5, pa6, pa7, pa8);
+           Arg5, Arg6, Arg7, Arg8, Arg9, Arg10, Arg11, Arg12, Arg13 , PreArg1,
+           PreArg2, PreArg3, PreArg4, PreArg5, PreArg6, PreArg7,
+           PreArg8>(function , pa1, pa2, pa3, pa4, pa5, pa6, pa7, pa8);
 }
 
 template <
-    bool SelfDeleting,
-    typename R,
-    typename Class,
-    typename MethodClass
-    , typename Arg1    , typename Arg2    , typename Arg3    ,
-        typename Arg4    , typename Arg5    , typename Arg6    >
+bool SelfDeleting,
+     typename R,
+     typename Class,
+     typename MethodClass
+     , typename Arg1    , typename Arg2    , typename Arg3    ,
+     typename Arg4    , typename Arg5    , typename Arg6    >
 class MethodClosure_Arg6_Bind0 : public Closure<R (Arg1, Arg2, Arg3, Arg4,
-    Arg5, Arg6)> {
+                Arg5, Arg6)> {
     typedef R (MethodClass::*MethodType)(Arg1, Arg2, Arg3, Arg4, Arg5, Arg6);
 public:
     MethodClosure_Arg6_Bind0(Class *object, MethodType method ):
         m_object(object), m_method(method)  {}
     virtual R Run(Arg1 arg1, Arg2 arg2, Arg3 arg3, Arg4 arg4, Arg5 arg5,
-        Arg6 arg6) {
+                  Arg6 arg6) {
         ConditionalAutoDeleter<SelfDeleting,
-            MethodClosure_Arg6_Bind0> self_deleter(this);
+                               MethodClosure_Arg6_Bind0> self_deleter(this);
         return (m_object->*m_method)( arg1, arg2, arg3, arg4, arg5, arg6);
     }
-    virtual bool IsSelfDelete() const { return SelfDeleting; }
+    virtual bool IsSelfDelete() const {
+        return SelfDeleting;
+    }
 private:
     Class* m_object;
     MethodType m_method;
-    };
+};
 
 template <typename R, typename Class, typename MethodClass ,typename Arg1,
-    typename Arg2,typename Arg3,typename Arg4,typename Arg5,typename Arg6 >
+         typename Arg2,typename Arg3,typename Arg4,typename Arg5,typename Arg6 >
 Closure<R (Arg1, Arg2, Arg3, Arg4, Arg5, Arg6)>* NewClosure(
     Class *object,
     R (MethodClass::*method)(Arg1, Arg2, Arg3, Arg4, Arg5, Arg6)
-    ) {
+) {
     return new MethodClosure_Arg6_Bind0<true, R, Class, MethodClass ,Arg1,Arg2,
-        Arg3,Arg4,Arg5,Arg6 >(
-        object, method);
+           Arg3,Arg4,Arg5,Arg6 >(
+               object, method);
 }
 
 template <typename R, typename Class, typename MethodClass ,typename Arg1,
-    typename Arg2,typename Arg3,typename Arg4,typename Arg5,typename Arg6 >
+         typename Arg2,typename Arg3,typename Arg4,typename Arg5,typename Arg6 >
 Closure<R (Arg1, Arg2, Arg3, Arg4, Arg5, Arg6)>* NewPermanentClosure(
     Class *object,
     R (MethodClass::*method)(Arg1, Arg2, Arg3, Arg4, Arg5, Arg6)
-    ) {
+) {
     return new MethodClosure_Arg6_Bind0<false, R, Class, MethodClass ,Arg1,
-        Arg2,Arg3,Arg4,Arg5,Arg6 >(
-        object, method);
+           Arg2,Arg3,Arg4,Arg5,Arg6 >(
+               object, method);
 }
 
 ////////////////////////////////////////////////////
@@ -6421,96 +6623,100 @@ Closure<R (Arg1, Arg2, Arg3, Arg4, Arg5, Arg6)>* NewPermanentClosure(
 ////////////////////////////////////////////////////
 
 template <
-    bool SelfDeleting,
-    typename R
-    , typename Arg1    , typename Arg2    , typename Arg3    ,
-        typename Arg4    , typename Arg5    , typename Arg6    >
+bool SelfDeleting,
+     typename R
+     , typename Arg1    , typename Arg2    , typename Arg3    ,
+     typename Arg4    , typename Arg5    , typename Arg6    >
 class FunctionClosure_Arg6_Bind0 : public Closure<R (Arg1, Arg2, Arg3, Arg4,
-    Arg5, Arg6)> {
+                Arg5, Arg6)> {
     typedef R (*FunctionType)(Arg1, Arg2, Arg3, Arg4, Arg5, Arg6);
 public:
     FunctionClosure_Arg6_Bind0(FunctionType function ):
         m_function(function)  {}
     virtual R Run(Arg1 arg1, Arg2 arg2, Arg3 arg3, Arg4 arg4, Arg5 arg5,
-        Arg6 arg6) {
+                  Arg6 arg6) {
         ConditionalAutoDeleter<SelfDeleting,
-            FunctionClosure_Arg6_Bind0> self_deleter(this);
+                               FunctionClosure_Arg6_Bind0> self_deleter(this);
         return m_function( arg1, arg2, arg3, arg4, arg5, arg6);
     }
-    virtual bool IsSelfDelete() const { return SelfDeleting; }
+    virtual bool IsSelfDelete() const {
+        return SelfDeleting;
+    }
 private:
     FunctionType m_function;
-    };
+};
 
 template <typename R , typename Arg1, typename Arg2, typename Arg3,
-    typename Arg4, typename Arg5, typename Arg6 >
+         typename Arg4, typename Arg5, typename Arg6 >
 Closure<R (Arg1, Arg2, Arg3, Arg4, Arg5, Arg6)>* NewClosure(R (*function)(Arg1,
-    Arg2, Arg3, Arg4, Arg5, Arg6)
-                                          ) {
+        Arg2, Arg3, Arg4, Arg5, Arg6)
+                                                           ) {
     return new FunctionClosure_Arg6_Bind0<true, R , Arg1, Arg2, Arg3, Arg4,
-        Arg5, Arg6 >(function );
+           Arg5, Arg6 >(function );
 }
 
 template <typename R , typename Arg1, typename Arg2, typename Arg3,
-    typename Arg4, typename Arg5, typename Arg6 >
+         typename Arg4, typename Arg5, typename Arg6 >
 Closure<R (Arg1, Arg2, Arg3, Arg4, Arg5,
-    Arg6)>* NewPermanentClosure(R (*function)(Arg1, Arg2, Arg3, Arg4, Arg5,
-    Arg6)
-                                          ) {
+           Arg6)>* NewPermanentClosure(R (*function)(Arg1, Arg2, Arg3, Arg4, Arg5,
+                                       Arg6)
+                                      ) {
     return new FunctionClosure_Arg6_Bind0<false, R , Arg1, Arg2, Arg3, Arg4,
-        Arg5, Arg6 >(function );
+           Arg5, Arg6 >(function );
 }
 
 template <
-    bool SelfDeleting,
-    typename R,
-    typename Class,
-    typename MethodClass
-    , typename Arg1    , typename Arg2    , typename Arg3    ,
-        typename Arg4    , typename Arg5    , typename Arg6    ,
-        typename Arg7    , typename PreArg1>
+bool SelfDeleting,
+     typename R,
+     typename Class,
+     typename MethodClass
+     , typename Arg1    , typename Arg2    , typename Arg3    ,
+     typename Arg4    , typename Arg5    , typename Arg6    ,
+     typename Arg7    , typename PreArg1>
 class MethodClosure_Arg6_Bind1 : public Closure<R (Arg2, Arg3, Arg4, Arg5,
-    Arg6, Arg7)> {
+                Arg6, Arg7)> {
     typedef R (MethodClass::*MethodType)(Arg1, Arg2, Arg3, Arg4, Arg5, Arg6,
-        Arg7);
+                                         Arg7);
 public:
     MethodClosure_Arg6_Bind1(Class *object, MethodType method , PreArg1 pa1):
         m_object(object), m_method(method) , m_pa1(pa1) {}
     virtual R Run(Arg2 arg2, Arg3 arg3, Arg4 arg4, Arg5 arg5, Arg6 arg6,
-        Arg7 arg7) {
+                  Arg7 arg7) {
         ConditionalAutoDeleter<SelfDeleting,
-            MethodClosure_Arg6_Bind1> self_deleter(this);
+                               MethodClosure_Arg6_Bind1> self_deleter(this);
         return (m_object->*m_method)(m_pa1 ,arg2, arg3, arg4, arg5, arg6, arg7);
     }
-    virtual bool IsSelfDelete() const { return SelfDeleting; }
+    virtual bool IsSelfDelete() const {
+        return SelfDeleting;
+    }
 private:
     Class* m_object;
     MethodType m_method;
-        PreArg1 m_pa1;
-    };
+    PreArg1 m_pa1;
+};
 
 template <typename R, typename Class, typename MethodClass ,typename Arg1,
-    typename Arg2,typename Arg3,typename Arg4,typename Arg5,typename Arg6,
-    typename Arg7 , typename PreArg1>
+         typename Arg2,typename Arg3,typename Arg4,typename Arg5,typename Arg6,
+         typename Arg7 , typename PreArg1>
 Closure<R (Arg2, Arg3, Arg4, Arg5, Arg6, Arg7)>* NewClosure(
     Class *object,
     R (MethodClass::*method)(Arg1, Arg2, Arg3, Arg4, Arg5, Arg6, Arg7)
     , PreArg1 pa1) {
     return new MethodClosure_Arg6_Bind1<true, R, Class, MethodClass ,Arg1,Arg2,
-        Arg3,Arg4,Arg5,Arg6,Arg7 , PreArg1>(
-        object, method, pa1);
+           Arg3,Arg4,Arg5,Arg6,Arg7 , PreArg1>(
+               object, method, pa1);
 }
 
 template <typename R, typename Class, typename MethodClass ,typename Arg1,
-    typename Arg2,typename Arg3,typename Arg4,typename Arg5,typename Arg6,
-    typename Arg7 , typename PreArg1>
+         typename Arg2,typename Arg3,typename Arg4,typename Arg5,typename Arg6,
+         typename Arg7 , typename PreArg1>
 Closure<R (Arg2, Arg3, Arg4, Arg5, Arg6, Arg7)>* NewPermanentClosure(
     Class *object,
     R (MethodClass::*method)(Arg1, Arg2, Arg3, Arg4, Arg5, Arg6, Arg7)
     , PreArg1 pa1) {
     return new MethodClosure_Arg6_Bind1<false, R, Class, MethodClass ,Arg1,
-        Arg2,Arg3,Arg4,Arg5,Arg6,Arg7 , PreArg1>(
-        object, method, pa1);
+           Arg2,Arg3,Arg4,Arg5,Arg6,Arg7 , PreArg1>(
+               object, method, pa1);
 }
 
 ////////////////////////////////////////////////////
@@ -6518,104 +6724,108 @@ Closure<R (Arg2, Arg3, Arg4, Arg5, Arg6, Arg7)>* NewPermanentClosure(
 ////////////////////////////////////////////////////
 
 template <
-    bool SelfDeleting,
-    typename R
-    , typename Arg1    , typename Arg2    , typename Arg3    ,
-        typename Arg4    , typename Arg5    , typename Arg6    ,
-        typename Arg7    , typename PreArg1>
+bool SelfDeleting,
+     typename R
+     , typename Arg1    , typename Arg2    , typename Arg3    ,
+     typename Arg4    , typename Arg5    , typename Arg6    ,
+     typename Arg7    , typename PreArg1>
 class FunctionClosure_Arg6_Bind1 : public Closure<R (Arg2, Arg3, Arg4, Arg5,
-    Arg6, Arg7)> {
+                Arg6, Arg7)> {
     typedef R (*FunctionType)(Arg1, Arg2, Arg3, Arg4, Arg5, Arg6, Arg7);
 public:
     FunctionClosure_Arg6_Bind1(FunctionType function , PreArg1 pa1):
         m_function(function) , m_pa1(pa1) {}
     virtual R Run(Arg2 arg2, Arg3 arg3, Arg4 arg4, Arg5 arg5, Arg6 arg6,
-        Arg7 arg7) {
+                  Arg7 arg7) {
         ConditionalAutoDeleter<SelfDeleting,
-            FunctionClosure_Arg6_Bind1> self_deleter(this);
+                               FunctionClosure_Arg6_Bind1> self_deleter(this);
         return m_function(m_pa1 ,arg2, arg3, arg4, arg5, arg6, arg7);
     }
-    virtual bool IsSelfDelete() const { return SelfDeleting; }
+    virtual bool IsSelfDelete() const {
+        return SelfDeleting;
+    }
 private:
     FunctionType m_function;
-        PreArg1 m_pa1;
-    };
+    PreArg1 m_pa1;
+};
 
 template <typename R , typename Arg1, typename Arg2, typename Arg3,
-    typename Arg4, typename Arg5, typename Arg6, typename Arg7 ,
-    typename PreArg1>
+         typename Arg4, typename Arg5, typename Arg6, typename Arg7 ,
+         typename PreArg1>
 Closure<R (Arg2, Arg3, Arg4, Arg5, Arg6, Arg7)>* NewClosure(R (*function)(Arg1,
-    Arg2, Arg3, Arg4, Arg5, Arg6, Arg7)
-                                          , PreArg1 pa1) {
+        Arg2, Arg3, Arg4, Arg5, Arg6, Arg7)
+        , PreArg1 pa1) {
     return new FunctionClosure_Arg6_Bind1<true, R , Arg1, Arg2, Arg3, Arg4,
-        Arg5, Arg6, Arg7 , PreArg1>(function , pa1);
+           Arg5, Arg6, Arg7 , PreArg1>(function , pa1);
 }
 
 template <typename R , typename Arg1, typename Arg2, typename Arg3,
-    typename Arg4, typename Arg5, typename Arg6, typename Arg7 ,
-    typename PreArg1>
+         typename Arg4, typename Arg5, typename Arg6, typename Arg7 ,
+         typename PreArg1>
 Closure<R (Arg2, Arg3, Arg4, Arg5, Arg6,
-    Arg7)>* NewPermanentClosure(R (*function)(Arg1, Arg2, Arg3, Arg4, Arg5,
-    Arg6, Arg7)
-                                          , PreArg1 pa1) {
+           Arg7)>* NewPermanentClosure(R (*function)(Arg1, Arg2, Arg3, Arg4, Arg5,
+                                       Arg6, Arg7)
+                                       , PreArg1 pa1) {
     return new FunctionClosure_Arg6_Bind1<false, R , Arg1, Arg2, Arg3, Arg4,
-        Arg5, Arg6, Arg7 , PreArg1>(function , pa1);
+           Arg5, Arg6, Arg7 , PreArg1>(function , pa1);
 }
 
 template <
-    bool SelfDeleting,
-    typename R,
-    typename Class,
-    typename MethodClass
-    , typename Arg1    , typename Arg2    , typename Arg3    ,
-        typename Arg4    , typename Arg5    , typename Arg6    ,
-        typename Arg7    , typename Arg8    , typename PreArg1    ,
-        typename PreArg2>
+bool SelfDeleting,
+     typename R,
+     typename Class,
+     typename MethodClass
+     , typename Arg1    , typename Arg2    , typename Arg3    ,
+     typename Arg4    , typename Arg5    , typename Arg6    ,
+     typename Arg7    , typename Arg8    , typename PreArg1    ,
+     typename PreArg2>
 class MethodClosure_Arg6_Bind2 : public Closure<R (Arg3, Arg4, Arg5, Arg6,
-    Arg7, Arg8)> {
+                Arg7, Arg8)> {
     typedef R (MethodClass::*MethodType)(Arg1, Arg2, Arg3, Arg4, Arg5, Arg6,
-        Arg7, Arg8);
+                                         Arg7, Arg8);
 public:
     MethodClosure_Arg6_Bind2(Class *object, MethodType method , PreArg1 pa1,
-        PreArg2 pa2):
+                             PreArg2 pa2):
         m_object(object), m_method(method) , m_pa1(pa1), m_pa2(pa2) {}
     virtual R Run(Arg3 arg3, Arg4 arg4, Arg5 arg5, Arg6 arg6, Arg7 arg7,
-        Arg8 arg8) {
+                  Arg8 arg8) {
         ConditionalAutoDeleter<SelfDeleting,
-            MethodClosure_Arg6_Bind2> self_deleter(this);
+                               MethodClosure_Arg6_Bind2> self_deleter(this);
         return (m_object->*m_method)(m_pa1, m_pa2 ,arg3, arg4, arg5, arg6,
-            arg7, arg8);
+                                     arg7, arg8);
     }
-    virtual bool IsSelfDelete() const { return SelfDeleting; }
+    virtual bool IsSelfDelete() const {
+        return SelfDeleting;
+    }
 private:
     Class* m_object;
     MethodType m_method;
-        PreArg1 m_pa1;
-        PreArg2 m_pa2;
-    };
+    PreArg1 m_pa1;
+    PreArg2 m_pa2;
+};
 
 template <typename R, typename Class, typename MethodClass ,typename Arg1,
-    typename Arg2,typename Arg3,typename Arg4,typename Arg5,typename Arg6,
-    typename Arg7,typename Arg8 , typename PreArg1, typename PreArg2>
+         typename Arg2,typename Arg3,typename Arg4,typename Arg5,typename Arg6,
+         typename Arg7,typename Arg8 , typename PreArg1, typename PreArg2>
 Closure<R (Arg3, Arg4, Arg5, Arg6, Arg7, Arg8)>* NewClosure(
     Class *object,
     R (MethodClass::*method)(Arg1, Arg2, Arg3, Arg4, Arg5, Arg6, Arg7, Arg8)
     , PreArg1 pa1, PreArg2 pa2) {
     return new MethodClosure_Arg6_Bind2<true, R, Class, MethodClass ,Arg1,Arg2,
-        Arg3,Arg4,Arg5,Arg6,Arg7,Arg8 , PreArg1, PreArg2>(
-        object, method, pa1, pa2);
+           Arg3,Arg4,Arg5,Arg6,Arg7,Arg8 , PreArg1, PreArg2>(
+               object, method, pa1, pa2);
 }
 
 template <typename R, typename Class, typename MethodClass ,typename Arg1,
-    typename Arg2,typename Arg3,typename Arg4,typename Arg5,typename Arg6,
-    typename Arg7,typename Arg8 , typename PreArg1, typename PreArg2>
+         typename Arg2,typename Arg3,typename Arg4,typename Arg5,typename Arg6,
+         typename Arg7,typename Arg8 , typename PreArg1, typename PreArg2>
 Closure<R (Arg3, Arg4, Arg5, Arg6, Arg7, Arg8)>* NewPermanentClosure(
     Class *object,
     R (MethodClass::*method)(Arg1, Arg2, Arg3, Arg4, Arg5, Arg6, Arg7, Arg8)
     , PreArg1 pa1, PreArg2 pa2) {
     return new MethodClosure_Arg6_Bind2<false, R, Class, MethodClass ,Arg1,
-        Arg2,Arg3,Arg4,Arg5,Arg6,Arg7,Arg8 , PreArg1, PreArg2>(
-        object, method, pa1, pa2);
+           Arg2,Arg3,Arg4,Arg5,Arg6,Arg7,Arg8 , PreArg1, PreArg2>(
+               object, method, pa1, pa2);
 }
 
 ////////////////////////////////////////////////////
@@ -6623,113 +6833,117 @@ Closure<R (Arg3, Arg4, Arg5, Arg6, Arg7, Arg8)>* NewPermanentClosure(
 ////////////////////////////////////////////////////
 
 template <
-    bool SelfDeleting,
-    typename R
-    , typename Arg1    , typename Arg2    , typename Arg3    ,
-        typename Arg4    , typename Arg5    , typename Arg6    ,
-        typename Arg7    , typename Arg8    , typename PreArg1    ,
-        typename PreArg2>
+bool SelfDeleting,
+     typename R
+     , typename Arg1    , typename Arg2    , typename Arg3    ,
+     typename Arg4    , typename Arg5    , typename Arg6    ,
+     typename Arg7    , typename Arg8    , typename PreArg1    ,
+     typename PreArg2>
 class FunctionClosure_Arg6_Bind2 : public Closure<R (Arg3, Arg4, Arg5, Arg6,
-    Arg7, Arg8)> {
+                Arg7, Arg8)> {
     typedef R (*FunctionType)(Arg1, Arg2, Arg3, Arg4, Arg5, Arg6, Arg7, Arg8);
 public:
     FunctionClosure_Arg6_Bind2(FunctionType function , PreArg1 pa1,
-        PreArg2 pa2):
+                               PreArg2 pa2):
         m_function(function) , m_pa1(pa1), m_pa2(pa2) {}
     virtual R Run(Arg3 arg3, Arg4 arg4, Arg5 arg5, Arg6 arg6, Arg7 arg7,
-        Arg8 arg8) {
+                  Arg8 arg8) {
         ConditionalAutoDeleter<SelfDeleting,
-            FunctionClosure_Arg6_Bind2> self_deleter(this);
+                               FunctionClosure_Arg6_Bind2> self_deleter(this);
         return m_function(m_pa1, m_pa2 ,arg3, arg4, arg5, arg6, arg7, arg8);
     }
-    virtual bool IsSelfDelete() const { return SelfDeleting; }
+    virtual bool IsSelfDelete() const {
+        return SelfDeleting;
+    }
 private:
     FunctionType m_function;
-        PreArg1 m_pa1;
-        PreArg2 m_pa2;
-    };
+    PreArg1 m_pa1;
+    PreArg2 m_pa2;
+};
 
 template <typename R , typename Arg1, typename Arg2, typename Arg3,
-    typename Arg4, typename Arg5, typename Arg6, typename Arg7, typename Arg8 ,
-    typename PreArg1, typename PreArg2>
+         typename Arg4, typename Arg5, typename Arg6, typename Arg7, typename Arg8 ,
+         typename PreArg1, typename PreArg2>
 Closure<R (Arg3, Arg4, Arg5, Arg6, Arg7, Arg8)>* NewClosure(R (*function)(Arg1,
-    Arg2, Arg3, Arg4, Arg5, Arg6, Arg7, Arg8)
-                                          , PreArg1 pa1, PreArg2 pa2) {
+        Arg2, Arg3, Arg4, Arg5, Arg6, Arg7, Arg8)
+        , PreArg1 pa1, PreArg2 pa2) {
     return new FunctionClosure_Arg6_Bind2<true, R , Arg1, Arg2, Arg3, Arg4,
-        Arg5, Arg6, Arg7, Arg8 , PreArg1, PreArg2>(function , pa1, pa2);
+           Arg5, Arg6, Arg7, Arg8 , PreArg1, PreArg2>(function , pa1, pa2);
 }
 
 template <typename R , typename Arg1, typename Arg2, typename Arg3,
-    typename Arg4, typename Arg5, typename Arg6, typename Arg7, typename Arg8 ,
-    typename PreArg1, typename PreArg2>
+         typename Arg4, typename Arg5, typename Arg6, typename Arg7, typename Arg8 ,
+         typename PreArg1, typename PreArg2>
 Closure<R (Arg3, Arg4, Arg5, Arg6, Arg7,
-    Arg8)>* NewPermanentClosure(R (*function)(Arg1, Arg2, Arg3, Arg4, Arg5,
-    Arg6, Arg7, Arg8)
-                                          , PreArg1 pa1, PreArg2 pa2) {
+           Arg8)>* NewPermanentClosure(R (*function)(Arg1, Arg2, Arg3, Arg4, Arg5,
+                                       Arg6, Arg7, Arg8)
+                                       , PreArg1 pa1, PreArg2 pa2) {
     return new FunctionClosure_Arg6_Bind2<false, R , Arg1, Arg2, Arg3, Arg4,
-        Arg5, Arg6, Arg7, Arg8 , PreArg1, PreArg2>(function , pa1, pa2);
+           Arg5, Arg6, Arg7, Arg8 , PreArg1, PreArg2>(function , pa1, pa2);
 }
 
 template <
-    bool SelfDeleting,
-    typename R,
-    typename Class,
-    typename MethodClass
-    , typename Arg1    , typename Arg2    , typename Arg3    ,
-        typename Arg4    , typename Arg5    , typename Arg6    ,
-        typename Arg7    , typename Arg8    , typename Arg9    ,
-        typename PreArg1    , typename PreArg2    , typename PreArg3>
+bool SelfDeleting,
+     typename R,
+     typename Class,
+     typename MethodClass
+     , typename Arg1    , typename Arg2    , typename Arg3    ,
+     typename Arg4    , typename Arg5    , typename Arg6    ,
+     typename Arg7    , typename Arg8    , typename Arg9    ,
+     typename PreArg1    , typename PreArg2    , typename PreArg3>
 class MethodClosure_Arg6_Bind3 : public Closure<R (Arg4, Arg5, Arg6, Arg7,
-    Arg8, Arg9)> {
+                Arg8, Arg9)> {
     typedef R (MethodClass::*MethodType)(Arg1, Arg2, Arg3, Arg4, Arg5, Arg6,
-        Arg7, Arg8, Arg9);
+                                         Arg7, Arg8, Arg9);
 public:
     MethodClosure_Arg6_Bind3(Class *object, MethodType method , PreArg1 pa1,
-        PreArg2 pa2, PreArg3 pa3):
+                             PreArg2 pa2, PreArg3 pa3):
         m_object(object), m_method(method) , m_pa1(pa1), m_pa2(pa2),
-            m_pa3(pa3) {}
+        m_pa3(pa3) {}
     virtual R Run(Arg4 arg4, Arg5 arg5, Arg6 arg6, Arg7 arg7, Arg8 arg8,
-        Arg9 arg9) {
+                  Arg9 arg9) {
         ConditionalAutoDeleter<SelfDeleting,
-            MethodClosure_Arg6_Bind3> self_deleter(this);
+                               MethodClosure_Arg6_Bind3> self_deleter(this);
         return (m_object->*m_method)(m_pa1, m_pa2, m_pa3 ,arg4, arg5, arg6,
-            arg7, arg8, arg9);
+                                     arg7, arg8, arg9);
     }
-    virtual bool IsSelfDelete() const { return SelfDeleting; }
+    virtual bool IsSelfDelete() const {
+        return SelfDeleting;
+    }
 private:
     Class* m_object;
     MethodType m_method;
-        PreArg1 m_pa1;
-        PreArg2 m_pa2;
-        PreArg3 m_pa3;
-    };
+    PreArg1 m_pa1;
+    PreArg2 m_pa2;
+    PreArg3 m_pa3;
+};
 
 template <typename R, typename Class, typename MethodClass ,typename Arg1,
-    typename Arg2,typename Arg3,typename Arg4,typename Arg5,typename Arg6,
-    typename Arg7,typename Arg8,typename Arg9 , typename PreArg1,
-    typename PreArg2, typename PreArg3>
+         typename Arg2,typename Arg3,typename Arg4,typename Arg5,typename Arg6,
+         typename Arg7,typename Arg8,typename Arg9 , typename PreArg1,
+         typename PreArg2, typename PreArg3>
 Closure<R (Arg4, Arg5, Arg6, Arg7, Arg8, Arg9)>* NewClosure(
     Class *object,
     R (MethodClass::*method)(Arg1, Arg2, Arg3, Arg4, Arg5, Arg6, Arg7, Arg8,
-        Arg9)
+                             Arg9)
     , PreArg1 pa1, PreArg2 pa2, PreArg3 pa3) {
     return new MethodClosure_Arg6_Bind3<true, R, Class, MethodClass ,Arg1,Arg2,
-        Arg3,Arg4,Arg5,Arg6,Arg7,Arg8,Arg9 , PreArg1, PreArg2, PreArg3>(
-        object, method, pa1, pa2, pa3);
+           Arg3,Arg4,Arg5,Arg6,Arg7,Arg8,Arg9 , PreArg1, PreArg2, PreArg3>(
+               object, method, pa1, pa2, pa3);
 }
 
 template <typename R, typename Class, typename MethodClass ,typename Arg1,
-    typename Arg2,typename Arg3,typename Arg4,typename Arg5,typename Arg6,
-    typename Arg7,typename Arg8,typename Arg9 , typename PreArg1,
-    typename PreArg2, typename PreArg3>
+         typename Arg2,typename Arg3,typename Arg4,typename Arg5,typename Arg6,
+         typename Arg7,typename Arg8,typename Arg9 , typename PreArg1,
+         typename PreArg2, typename PreArg3>
 Closure<R (Arg4, Arg5, Arg6, Arg7, Arg8, Arg9)>* NewPermanentClosure(
     Class *object,
     R (MethodClass::*method)(Arg1, Arg2, Arg3, Arg4, Arg5, Arg6, Arg7, Arg8,
-        Arg9)
+                             Arg9)
     , PreArg1 pa1, PreArg2 pa2, PreArg3 pa3) {
     return new MethodClosure_Arg6_Bind3<false, R, Class, MethodClass ,Arg1,
-        Arg2,Arg3,Arg4,Arg5,Arg6,Arg7,Arg8,Arg9 , PreArg1, PreArg2, PreArg3>(
-        object, method, pa1, pa2, pa3);
+           Arg2,Arg3,Arg4,Arg5,Arg6,Arg7,Arg8,Arg9 , PreArg1, PreArg2, PreArg3>(
+               object, method, pa1, pa2, pa3);
 }
 
 ////////////////////////////////////////////////////
@@ -6737,124 +6951,128 @@ Closure<R (Arg4, Arg5, Arg6, Arg7, Arg8, Arg9)>* NewPermanentClosure(
 ////////////////////////////////////////////////////
 
 template <
-    bool SelfDeleting,
-    typename R
-    , typename Arg1    , typename Arg2    , typename Arg3    ,
-        typename Arg4    , typename Arg5    , typename Arg6    ,
-        typename Arg7    , typename Arg8    , typename Arg9    ,
-        typename PreArg1    , typename PreArg2    , typename PreArg3>
+bool SelfDeleting,
+     typename R
+     , typename Arg1    , typename Arg2    , typename Arg3    ,
+     typename Arg4    , typename Arg5    , typename Arg6    ,
+     typename Arg7    , typename Arg8    , typename Arg9    ,
+     typename PreArg1    , typename PreArg2    , typename PreArg3>
 class FunctionClosure_Arg6_Bind3 : public Closure<R (Arg4, Arg5, Arg6, Arg7,
-    Arg8, Arg9)> {
+                Arg8, Arg9)> {
     typedef R (*FunctionType)(Arg1, Arg2, Arg3, Arg4, Arg5, Arg6, Arg7, Arg8,
-        Arg9);
+                              Arg9);
 public:
     FunctionClosure_Arg6_Bind3(FunctionType function , PreArg1 pa1,
-        PreArg2 pa2, PreArg3 pa3):
+                               PreArg2 pa2, PreArg3 pa3):
         m_function(function) , m_pa1(pa1), m_pa2(pa2), m_pa3(pa3) {}
     virtual R Run(Arg4 arg4, Arg5 arg5, Arg6 arg6, Arg7 arg7, Arg8 arg8,
-        Arg9 arg9) {
+                  Arg9 arg9) {
         ConditionalAutoDeleter<SelfDeleting,
-            FunctionClosure_Arg6_Bind3> self_deleter(this);
+                               FunctionClosure_Arg6_Bind3> self_deleter(this);
         return m_function(m_pa1, m_pa2, m_pa3 ,arg4, arg5, arg6, arg7, arg8,
-            arg9);
+                          arg9);
     }
-    virtual bool IsSelfDelete() const { return SelfDeleting; }
+    virtual bool IsSelfDelete() const {
+        return SelfDeleting;
+    }
 private:
     FunctionType m_function;
-        PreArg1 m_pa1;
-        PreArg2 m_pa2;
-        PreArg3 m_pa3;
-    };
+    PreArg1 m_pa1;
+    PreArg2 m_pa2;
+    PreArg3 m_pa3;
+};
 
 template <typename R , typename Arg1, typename Arg2, typename Arg3,
-    typename Arg4, typename Arg5, typename Arg6, typename Arg7, typename Arg8,
-    typename Arg9 , typename PreArg1, typename PreArg2, typename PreArg3>
+         typename Arg4, typename Arg5, typename Arg6, typename Arg7, typename Arg8,
+         typename Arg9 , typename PreArg1, typename PreArg2, typename PreArg3>
 Closure<R (Arg4, Arg5, Arg6, Arg7, Arg8, Arg9)>* NewClosure(R (*function)(Arg1,
-    Arg2, Arg3, Arg4, Arg5, Arg6, Arg7, Arg8, Arg9)
-                                          , PreArg1 pa1, PreArg2 pa2,
-                                              PreArg3 pa3) {
+        Arg2, Arg3, Arg4, Arg5, Arg6, Arg7, Arg8, Arg9)
+        , PreArg1 pa1, PreArg2 pa2,
+        PreArg3 pa3) {
     return new FunctionClosure_Arg6_Bind3<true, R , Arg1, Arg2, Arg3, Arg4,
-        Arg5, Arg6, Arg7, Arg8, Arg9 , PreArg1, PreArg2, PreArg3>(function ,
-        pa1, pa2, pa3);
+           Arg5, Arg6, Arg7, Arg8, Arg9 , PreArg1, PreArg2, PreArg3>(function ,
+                   pa1, pa2, pa3);
 }
 
 template <typename R , typename Arg1, typename Arg2, typename Arg3,
-    typename Arg4, typename Arg5, typename Arg6, typename Arg7, typename Arg8,
-    typename Arg9 , typename PreArg1, typename PreArg2, typename PreArg3>
+         typename Arg4, typename Arg5, typename Arg6, typename Arg7, typename Arg8,
+         typename Arg9 , typename PreArg1, typename PreArg2, typename PreArg3>
 Closure<R (Arg4, Arg5, Arg6, Arg7, Arg8,
-    Arg9)>* NewPermanentClosure(R (*function)(Arg1, Arg2, Arg3, Arg4, Arg5,
-    Arg6, Arg7, Arg8, Arg9)
-                                          , PreArg1 pa1, PreArg2 pa2,
-                                              PreArg3 pa3) {
+           Arg9)>* NewPermanentClosure(R (*function)(Arg1, Arg2, Arg3, Arg4, Arg5,
+                                       Arg6, Arg7, Arg8, Arg9)
+                                       , PreArg1 pa1, PreArg2 pa2,
+                                       PreArg3 pa3) {
     return new FunctionClosure_Arg6_Bind3<false, R , Arg1, Arg2, Arg3, Arg4,
-        Arg5, Arg6, Arg7, Arg8, Arg9 , PreArg1, PreArg2, PreArg3>(function ,
-        pa1, pa2, pa3);
+           Arg5, Arg6, Arg7, Arg8, Arg9 , PreArg1, PreArg2, PreArg3>(function ,
+                   pa1, pa2, pa3);
 }
 
 template <
-    bool SelfDeleting,
-    typename R,
-    typename Class,
-    typename MethodClass
-    , typename Arg1    , typename Arg2    , typename Arg3    ,
-        typename Arg4    , typename Arg5    , typename Arg6    ,
-        typename Arg7    , typename Arg8    , typename Arg9    ,
-        typename Arg10    , typename PreArg1    , typename PreArg2    ,
-        typename PreArg3    , typename PreArg4>
+bool SelfDeleting,
+     typename R,
+     typename Class,
+     typename MethodClass
+     , typename Arg1    , typename Arg2    , typename Arg3    ,
+     typename Arg4    , typename Arg5    , typename Arg6    ,
+     typename Arg7    , typename Arg8    , typename Arg9    ,
+     typename Arg10    , typename PreArg1    , typename PreArg2    ,
+     typename PreArg3    , typename PreArg4>
 class MethodClosure_Arg6_Bind4 : public Closure<R (Arg5, Arg6, Arg7, Arg8,
-    Arg9, Arg10)> {
+                Arg9, Arg10)> {
     typedef R (MethodClass::*MethodType)(Arg1, Arg2, Arg3, Arg4, Arg5, Arg6,
-        Arg7, Arg8, Arg9, Arg10);
+                                         Arg7, Arg8, Arg9, Arg10);
 public:
     MethodClosure_Arg6_Bind4(Class *object, MethodType method , PreArg1 pa1,
-        PreArg2 pa2, PreArg3 pa3, PreArg4 pa4):
+                             PreArg2 pa2, PreArg3 pa3, PreArg4 pa4):
         m_object(object), m_method(method) , m_pa1(pa1), m_pa2(pa2),
-            m_pa3(pa3), m_pa4(pa4) {}
+        m_pa3(pa3), m_pa4(pa4) {}
     virtual R Run(Arg5 arg5, Arg6 arg6, Arg7 arg7, Arg8 arg8, Arg9 arg9,
-        Arg10 arg10) {
+                  Arg10 arg10) {
         ConditionalAutoDeleter<SelfDeleting,
-            MethodClosure_Arg6_Bind4> self_deleter(this);
+                               MethodClosure_Arg6_Bind4> self_deleter(this);
         return (m_object->*m_method)(m_pa1, m_pa2, m_pa3, m_pa4 ,arg5, arg6,
-            arg7, arg8, arg9, arg10);
+                                     arg7, arg8, arg9, arg10);
     }
-    virtual bool IsSelfDelete() const { return SelfDeleting; }
+    virtual bool IsSelfDelete() const {
+        return SelfDeleting;
+    }
 private:
     Class* m_object;
     MethodType m_method;
-        PreArg1 m_pa1;
-        PreArg2 m_pa2;
-        PreArg3 m_pa3;
-        PreArg4 m_pa4;
-    };
+    PreArg1 m_pa1;
+    PreArg2 m_pa2;
+    PreArg3 m_pa3;
+    PreArg4 m_pa4;
+};
 
 template <typename R, typename Class, typename MethodClass ,typename Arg1,
-    typename Arg2,typename Arg3,typename Arg4,typename Arg5,typename Arg6,
-    typename Arg7,typename Arg8,typename Arg9,typename Arg10 ,
-    typename PreArg1, typename PreArg2, typename PreArg3, typename PreArg4>
+         typename Arg2,typename Arg3,typename Arg4,typename Arg5,typename Arg6,
+         typename Arg7,typename Arg8,typename Arg9,typename Arg10 ,
+         typename PreArg1, typename PreArg2, typename PreArg3, typename PreArg4>
 Closure<R (Arg5, Arg6, Arg7, Arg8, Arg9, Arg10)>* NewClosure(
     Class *object,
     R (MethodClass::*method)(Arg1, Arg2, Arg3, Arg4, Arg5, Arg6, Arg7, Arg8,
-        Arg9, Arg10)
+                             Arg9, Arg10)
     , PreArg1 pa1, PreArg2 pa2, PreArg3 pa3, PreArg4 pa4) {
     return new MethodClosure_Arg6_Bind4<true, R, Class, MethodClass ,Arg1,Arg2,
-        Arg3,Arg4,Arg5,Arg6,Arg7,Arg8,Arg9,Arg10 , PreArg1, PreArg2, PreArg3,
-        PreArg4>(
-        object, method, pa1, pa2, pa3, pa4);
+           Arg3,Arg4,Arg5,Arg6,Arg7,Arg8,Arg9,Arg10 , PreArg1, PreArg2, PreArg3,
+           PreArg4>(
+               object, method, pa1, pa2, pa3, pa4);
 }
 
 template <typename R, typename Class, typename MethodClass ,typename Arg1,
-    typename Arg2,typename Arg3,typename Arg4,typename Arg5,typename Arg6,
-    typename Arg7,typename Arg8,typename Arg9,typename Arg10 ,
-    typename PreArg1, typename PreArg2, typename PreArg3, typename PreArg4>
+         typename Arg2,typename Arg3,typename Arg4,typename Arg5,typename Arg6,
+         typename Arg7,typename Arg8,typename Arg9,typename Arg10 ,
+         typename PreArg1, typename PreArg2, typename PreArg3, typename PreArg4>
 Closure<R (Arg5, Arg6, Arg7, Arg8, Arg9, Arg10)>* NewPermanentClosure(
     Class *object,
     R (MethodClass::*method)(Arg1, Arg2, Arg3, Arg4, Arg5, Arg6, Arg7, Arg8,
-        Arg9, Arg10)
+                             Arg9, Arg10)
     , PreArg1 pa1, PreArg2 pa2, PreArg3 pa3, PreArg4 pa4) {
     return new MethodClosure_Arg6_Bind4<false, R, Class, MethodClass ,Arg1,
-        Arg2,Arg3,Arg4,Arg5,Arg6,Arg7,Arg8,Arg9,Arg10 , PreArg1, PreArg2,
-        PreArg3, PreArg4>(
-        object, method, pa1, pa2, pa3, pa4);
+           Arg2,Arg3,Arg4,Arg5,Arg6,Arg7,Arg8,Arg9,Arg10 , PreArg1, PreArg2,
+           PreArg3, PreArg4>(
+               object, method, pa1, pa2, pa3, pa4);
 }
 
 ////////////////////////////////////////////////////
@@ -6862,133 +7080,137 @@ Closure<R (Arg5, Arg6, Arg7, Arg8, Arg9, Arg10)>* NewPermanentClosure(
 ////////////////////////////////////////////////////
 
 template <
-    bool SelfDeleting,
-    typename R
-    , typename Arg1    , typename Arg2    , typename Arg3    ,
-        typename Arg4    , typename Arg5    , typename Arg6    ,
-        typename Arg7    , typename Arg8    , typename Arg9    ,
-        typename Arg10    , typename PreArg1    , typename PreArg2    ,
-        typename PreArg3    , typename PreArg4>
+bool SelfDeleting,
+     typename R
+     , typename Arg1    , typename Arg2    , typename Arg3    ,
+     typename Arg4    , typename Arg5    , typename Arg6    ,
+     typename Arg7    , typename Arg8    , typename Arg9    ,
+     typename Arg10    , typename PreArg1    , typename PreArg2    ,
+     typename PreArg3    , typename PreArg4>
 class FunctionClosure_Arg6_Bind4 : public Closure<R (Arg5, Arg6, Arg7, Arg8,
-    Arg9, Arg10)> {
+                Arg9, Arg10)> {
     typedef R (*FunctionType)(Arg1, Arg2, Arg3, Arg4, Arg5, Arg6, Arg7, Arg8,
-        Arg9, Arg10);
+                              Arg9, Arg10);
 public:
     FunctionClosure_Arg6_Bind4(FunctionType function , PreArg1 pa1,
-        PreArg2 pa2, PreArg3 pa3, PreArg4 pa4):
+                               PreArg2 pa2, PreArg3 pa3, PreArg4 pa4):
         m_function(function) , m_pa1(pa1), m_pa2(pa2), m_pa3(pa3), m_pa4(pa4) {}
     virtual R Run(Arg5 arg5, Arg6 arg6, Arg7 arg7, Arg8 arg8, Arg9 arg9,
-        Arg10 arg10) {
+                  Arg10 arg10) {
         ConditionalAutoDeleter<SelfDeleting,
-            FunctionClosure_Arg6_Bind4> self_deleter(this);
+                               FunctionClosure_Arg6_Bind4> self_deleter(this);
         return m_function(m_pa1, m_pa2, m_pa3, m_pa4 ,arg5, arg6, arg7, arg8,
-            arg9, arg10);
+                          arg9, arg10);
     }
-    virtual bool IsSelfDelete() const { return SelfDeleting; }
+    virtual bool IsSelfDelete() const {
+        return SelfDeleting;
+    }
 private:
     FunctionType m_function;
-        PreArg1 m_pa1;
-        PreArg2 m_pa2;
-        PreArg3 m_pa3;
-        PreArg4 m_pa4;
-    };
+    PreArg1 m_pa1;
+    PreArg2 m_pa2;
+    PreArg3 m_pa3;
+    PreArg4 m_pa4;
+};
 
 template <typename R , typename Arg1, typename Arg2, typename Arg3,
-    typename Arg4, typename Arg5, typename Arg6, typename Arg7, typename Arg8,
-    typename Arg9, typename Arg10 , typename PreArg1, typename PreArg2,
-    typename PreArg3, typename PreArg4>
+         typename Arg4, typename Arg5, typename Arg6, typename Arg7, typename Arg8,
+         typename Arg9, typename Arg10 , typename PreArg1, typename PreArg2,
+         typename PreArg3, typename PreArg4>
 Closure<R (Arg5, Arg6, Arg7, Arg8, Arg9,
-    Arg10)>* NewClosure(R (*function)(Arg1, Arg2, Arg3, Arg4, Arg5, Arg6, Arg7,
-    Arg8, Arg9, Arg10)
-                                          , PreArg1 pa1, PreArg2 pa2,
-                                              PreArg3 pa3, PreArg4 pa4) {
+           Arg10)>* NewClosure(R (*function)(Arg1, Arg2, Arg3, Arg4, Arg5, Arg6, Arg7,
+                               Arg8, Arg9, Arg10)
+                               , PreArg1 pa1, PreArg2 pa2,
+                               PreArg3 pa3, PreArg4 pa4) {
     return new FunctionClosure_Arg6_Bind4<true, R , Arg1, Arg2, Arg3, Arg4,
-        Arg5, Arg6, Arg7, Arg8, Arg9, Arg10 , PreArg1, PreArg2, PreArg3,
-        PreArg4>(function , pa1, pa2, pa3, pa4);
+           Arg5, Arg6, Arg7, Arg8, Arg9, Arg10 , PreArg1, PreArg2, PreArg3,
+           PreArg4>(function , pa1, pa2, pa3, pa4);
 }
 
 template <typename R , typename Arg1, typename Arg2, typename Arg3,
-    typename Arg4, typename Arg5, typename Arg6, typename Arg7, typename Arg8,
-    typename Arg9, typename Arg10 , typename PreArg1, typename PreArg2,
-    typename PreArg3, typename PreArg4>
+         typename Arg4, typename Arg5, typename Arg6, typename Arg7, typename Arg8,
+         typename Arg9, typename Arg10 , typename PreArg1, typename PreArg2,
+         typename PreArg3, typename PreArg4>
 Closure<R (Arg5, Arg6, Arg7, Arg8, Arg9,
-    Arg10)>* NewPermanentClosure(R (*function)(Arg1, Arg2, Arg3, Arg4, Arg5,
-    Arg6, Arg7, Arg8, Arg9, Arg10)
-                                          , PreArg1 pa1, PreArg2 pa2,
-                                              PreArg3 pa3, PreArg4 pa4) {
+           Arg10)>* NewPermanentClosure(R (*function)(Arg1, Arg2, Arg3, Arg4, Arg5,
+                                        Arg6, Arg7, Arg8, Arg9, Arg10)
+                                        , PreArg1 pa1, PreArg2 pa2,
+                                        PreArg3 pa3, PreArg4 pa4) {
     return new FunctionClosure_Arg6_Bind4<false, R , Arg1, Arg2, Arg3, Arg4,
-        Arg5, Arg6, Arg7, Arg8, Arg9, Arg10 , PreArg1, PreArg2, PreArg3,
-        PreArg4>(function , pa1, pa2, pa3, pa4);
+           Arg5, Arg6, Arg7, Arg8, Arg9, Arg10 , PreArg1, PreArg2, PreArg3,
+           PreArg4>(function , pa1, pa2, pa3, pa4);
 }
 
 template <
-    bool SelfDeleting,
-    typename R,
-    typename Class,
-    typename MethodClass
-    , typename Arg1    , typename Arg2    , typename Arg3    ,
-        typename Arg4    , typename Arg5    , typename Arg6    ,
-        typename Arg7    , typename Arg8    , typename Arg9    ,
-        typename Arg10    , typename Arg11    , typename PreArg1    ,
-        typename PreArg2    , typename PreArg3    , typename PreArg4    ,
-        typename PreArg5>
+bool SelfDeleting,
+     typename R,
+     typename Class,
+     typename MethodClass
+     , typename Arg1    , typename Arg2    , typename Arg3    ,
+     typename Arg4    , typename Arg5    , typename Arg6    ,
+     typename Arg7    , typename Arg8    , typename Arg9    ,
+     typename Arg10    , typename Arg11    , typename PreArg1    ,
+     typename PreArg2    , typename PreArg3    , typename PreArg4    ,
+     typename PreArg5>
 class MethodClosure_Arg6_Bind5 : public Closure<R (Arg6, Arg7, Arg8, Arg9,
-    Arg10, Arg11)> {
+                Arg10, Arg11)> {
     typedef R (MethodClass::*MethodType)(Arg1, Arg2, Arg3, Arg4, Arg5, Arg6,
-        Arg7, Arg8, Arg9, Arg10, Arg11);
+                                         Arg7, Arg8, Arg9, Arg10, Arg11);
 public:
     MethodClosure_Arg6_Bind5(Class *object, MethodType method , PreArg1 pa1,
-        PreArg2 pa2, PreArg3 pa3, PreArg4 pa4, PreArg5 pa5):
+                             PreArg2 pa2, PreArg3 pa3, PreArg4 pa4, PreArg5 pa5):
         m_object(object), m_method(method) , m_pa1(pa1), m_pa2(pa2),
-            m_pa3(pa3), m_pa4(pa4), m_pa5(pa5) {}
+        m_pa3(pa3), m_pa4(pa4), m_pa5(pa5) {}
     virtual R Run(Arg6 arg6, Arg7 arg7, Arg8 arg8, Arg9 arg9, Arg10 arg10,
-        Arg11 arg11) {
+                  Arg11 arg11) {
         ConditionalAutoDeleter<SelfDeleting,
-            MethodClosure_Arg6_Bind5> self_deleter(this);
+                               MethodClosure_Arg6_Bind5> self_deleter(this);
         return (m_object->*m_method)(m_pa1, m_pa2, m_pa3, m_pa4, m_pa5 ,arg6,
-            arg7, arg8, arg9, arg10, arg11);
+                                     arg7, arg8, arg9, arg10, arg11);
     }
-    virtual bool IsSelfDelete() const { return SelfDeleting; }
+    virtual bool IsSelfDelete() const {
+        return SelfDeleting;
+    }
 private:
     Class* m_object;
     MethodType m_method;
-        PreArg1 m_pa1;
-        PreArg2 m_pa2;
-        PreArg3 m_pa3;
-        PreArg4 m_pa4;
-        PreArg5 m_pa5;
-    };
+    PreArg1 m_pa1;
+    PreArg2 m_pa2;
+    PreArg3 m_pa3;
+    PreArg4 m_pa4;
+    PreArg5 m_pa5;
+};
 
 template <typename R, typename Class, typename MethodClass ,typename Arg1,
-    typename Arg2,typename Arg3,typename Arg4,typename Arg5,typename Arg6,
-    typename Arg7,typename Arg8,typename Arg9,typename Arg10,typename Arg11 ,
-    typename PreArg1, typename PreArg2, typename PreArg3, typename PreArg4,
-    typename PreArg5>
+         typename Arg2,typename Arg3,typename Arg4,typename Arg5,typename Arg6,
+         typename Arg7,typename Arg8,typename Arg9,typename Arg10,typename Arg11 ,
+         typename PreArg1, typename PreArg2, typename PreArg3, typename PreArg4,
+         typename PreArg5>
 Closure<R (Arg6, Arg7, Arg8, Arg9, Arg10, Arg11)>* NewClosure(
     Class *object,
     R (MethodClass::*method)(Arg1, Arg2, Arg3, Arg4, Arg5, Arg6, Arg7, Arg8,
-        Arg9, Arg10, Arg11)
+                             Arg9, Arg10, Arg11)
     , PreArg1 pa1, PreArg2 pa2, PreArg3 pa3, PreArg4 pa4, PreArg5 pa5) {
     return new MethodClosure_Arg6_Bind5<true, R, Class, MethodClass ,Arg1,Arg2,
-        Arg3,Arg4,Arg5,Arg6,Arg7,Arg8,Arg9,Arg10,Arg11 , PreArg1, PreArg2,
-        PreArg3, PreArg4, PreArg5>(
-        object, method, pa1, pa2, pa3, pa4, pa5);
+           Arg3,Arg4,Arg5,Arg6,Arg7,Arg8,Arg9,Arg10,Arg11 , PreArg1, PreArg2,
+           PreArg3, PreArg4, PreArg5>(
+               object, method, pa1, pa2, pa3, pa4, pa5);
 }
 
 template <typename R, typename Class, typename MethodClass ,typename Arg1,
-    typename Arg2,typename Arg3,typename Arg4,typename Arg5,typename Arg6,
-    typename Arg7,typename Arg8,typename Arg9,typename Arg10,typename Arg11 ,
-    typename PreArg1, typename PreArg2, typename PreArg3, typename PreArg4,
-    typename PreArg5>
+         typename Arg2,typename Arg3,typename Arg4,typename Arg5,typename Arg6,
+         typename Arg7,typename Arg8,typename Arg9,typename Arg10,typename Arg11 ,
+         typename PreArg1, typename PreArg2, typename PreArg3, typename PreArg4,
+         typename PreArg5>
 Closure<R (Arg6, Arg7, Arg8, Arg9, Arg10, Arg11)>* NewPermanentClosure(
     Class *object,
     R (MethodClass::*method)(Arg1, Arg2, Arg3, Arg4, Arg5, Arg6, Arg7, Arg8,
-        Arg9, Arg10, Arg11)
+                             Arg9, Arg10, Arg11)
     , PreArg1 pa1, PreArg2 pa2, PreArg3 pa3, PreArg4 pa4, PreArg5 pa5) {
     return new MethodClosure_Arg6_Bind5<false, R, Class, MethodClass ,Arg1,
-        Arg2,Arg3,Arg4,Arg5,Arg6,Arg7,Arg8,Arg9,Arg10,Arg11 , PreArg1, PreArg2,
-        PreArg3, PreArg4, PreArg5>(
-        object, method, pa1, pa2, pa3, pa4, pa5);
+           Arg2,Arg3,Arg4,Arg5,Arg6,Arg7,Arg8,Arg9,Arg10,Arg11 , PreArg1, PreArg2,
+           PreArg3, PreArg4, PreArg5>(
+               object, method, pa1, pa2, pa3, pa4, pa5);
 }
 
 ////////////////////////////////////////////////////
@@ -6996,141 +7218,145 @@ Closure<R (Arg6, Arg7, Arg8, Arg9, Arg10, Arg11)>* NewPermanentClosure(
 ////////////////////////////////////////////////////
 
 template <
-    bool SelfDeleting,
-    typename R
-    , typename Arg1    , typename Arg2    , typename Arg3    ,
-        typename Arg4    , typename Arg5    , typename Arg6    ,
-        typename Arg7    , typename Arg8    , typename Arg9    ,
-        typename Arg10    , typename Arg11    , typename PreArg1    ,
-        typename PreArg2    , typename PreArg3    , typename PreArg4    ,
-        typename PreArg5>
+bool SelfDeleting,
+     typename R
+     , typename Arg1    , typename Arg2    , typename Arg3    ,
+     typename Arg4    , typename Arg5    , typename Arg6    ,
+     typename Arg7    , typename Arg8    , typename Arg9    ,
+     typename Arg10    , typename Arg11    , typename PreArg1    ,
+     typename PreArg2    , typename PreArg3    , typename PreArg4    ,
+     typename PreArg5>
 class FunctionClosure_Arg6_Bind5 : public Closure<R (Arg6, Arg7, Arg8, Arg9,
-    Arg10, Arg11)> {
+                Arg10, Arg11)> {
     typedef R (*FunctionType)(Arg1, Arg2, Arg3, Arg4, Arg5, Arg6, Arg7, Arg8,
-        Arg9, Arg10, Arg11);
+                              Arg9, Arg10, Arg11);
 public:
     FunctionClosure_Arg6_Bind5(FunctionType function , PreArg1 pa1,
-        PreArg2 pa2, PreArg3 pa3, PreArg4 pa4, PreArg5 pa5):
+                               PreArg2 pa2, PreArg3 pa3, PreArg4 pa4, PreArg5 pa5):
         m_function(function) , m_pa1(pa1), m_pa2(pa2), m_pa3(pa3), m_pa4(pa4),
-            m_pa5(pa5) {}
+        m_pa5(pa5) {}
     virtual R Run(Arg6 arg6, Arg7 arg7, Arg8 arg8, Arg9 arg9, Arg10 arg10,
-        Arg11 arg11) {
+                  Arg11 arg11) {
         ConditionalAutoDeleter<SelfDeleting,
-            FunctionClosure_Arg6_Bind5> self_deleter(this);
+                               FunctionClosure_Arg6_Bind5> self_deleter(this);
         return m_function(m_pa1, m_pa2, m_pa3, m_pa4, m_pa5 ,arg6, arg7, arg8,
-            arg9, arg10, arg11);
+                          arg9, arg10, arg11);
     }
-    virtual bool IsSelfDelete() const { return SelfDeleting; }
+    virtual bool IsSelfDelete() const {
+        return SelfDeleting;
+    }
 private:
     FunctionType m_function;
-        PreArg1 m_pa1;
-        PreArg2 m_pa2;
-        PreArg3 m_pa3;
-        PreArg4 m_pa4;
-        PreArg5 m_pa5;
-    };
+    PreArg1 m_pa1;
+    PreArg2 m_pa2;
+    PreArg3 m_pa3;
+    PreArg4 m_pa4;
+    PreArg5 m_pa5;
+};
 
 template <typename R , typename Arg1, typename Arg2, typename Arg3,
-    typename Arg4, typename Arg5, typename Arg6, typename Arg7, typename Arg8,
-    typename Arg9, typename Arg10, typename Arg11 , typename PreArg1,
-    typename PreArg2, typename PreArg3, typename PreArg4, typename PreArg5>
+         typename Arg4, typename Arg5, typename Arg6, typename Arg7, typename Arg8,
+         typename Arg9, typename Arg10, typename Arg11 , typename PreArg1,
+         typename PreArg2, typename PreArg3, typename PreArg4, typename PreArg5>
 Closure<R (Arg6, Arg7, Arg8, Arg9, Arg10,
-    Arg11)>* NewClosure(R (*function)(Arg1, Arg2, Arg3, Arg4, Arg5, Arg6, Arg7,
-    Arg8, Arg9, Arg10, Arg11)
-                                          , PreArg1 pa1, PreArg2 pa2,
-                                              PreArg3 pa3, PreArg4 pa4,
-                                              PreArg5 pa5) {
+           Arg11)>* NewClosure(R (*function)(Arg1, Arg2, Arg3, Arg4, Arg5, Arg6, Arg7,
+                               Arg8, Arg9, Arg10, Arg11)
+                               , PreArg1 pa1, PreArg2 pa2,
+                               PreArg3 pa3, PreArg4 pa4,
+                               PreArg5 pa5) {
     return new FunctionClosure_Arg6_Bind5<true, R , Arg1, Arg2, Arg3, Arg4,
-        Arg5, Arg6, Arg7, Arg8, Arg9, Arg10, Arg11 , PreArg1, PreArg2, PreArg3,
-        PreArg4, PreArg5>(function , pa1, pa2, pa3, pa4, pa5);
+           Arg5, Arg6, Arg7, Arg8, Arg9, Arg10, Arg11 , PreArg1, PreArg2, PreArg3,
+           PreArg4, PreArg5>(function , pa1, pa2, pa3, pa4, pa5);
 }
 
 template <typename R , typename Arg1, typename Arg2, typename Arg3,
-    typename Arg4, typename Arg5, typename Arg6, typename Arg7, typename Arg8,
-    typename Arg9, typename Arg10, typename Arg11 , typename PreArg1,
-    typename PreArg2, typename PreArg3, typename PreArg4, typename PreArg5>
+         typename Arg4, typename Arg5, typename Arg6, typename Arg7, typename Arg8,
+         typename Arg9, typename Arg10, typename Arg11 , typename PreArg1,
+         typename PreArg2, typename PreArg3, typename PreArg4, typename PreArg5>
 Closure<R (Arg6, Arg7, Arg8, Arg9, Arg10,
-    Arg11)>* NewPermanentClosure(R (*function)(Arg1, Arg2, Arg3, Arg4, Arg5,
-    Arg6, Arg7, Arg8, Arg9, Arg10, Arg11)
-                                          , PreArg1 pa1, PreArg2 pa2,
-                                              PreArg3 pa3, PreArg4 pa4,
-                                              PreArg5 pa5) {
+           Arg11)>* NewPermanentClosure(R (*function)(Arg1, Arg2, Arg3, Arg4, Arg5,
+                                        Arg6, Arg7, Arg8, Arg9, Arg10, Arg11)
+                                        , PreArg1 pa1, PreArg2 pa2,
+                                        PreArg3 pa3, PreArg4 pa4,
+                                        PreArg5 pa5) {
     return new FunctionClosure_Arg6_Bind5<false, R , Arg1, Arg2, Arg3, Arg4,
-        Arg5, Arg6, Arg7, Arg8, Arg9, Arg10, Arg11 , PreArg1, PreArg2, PreArg3,
-        PreArg4, PreArg5>(function , pa1, pa2, pa3, pa4, pa5);
+           Arg5, Arg6, Arg7, Arg8, Arg9, Arg10, Arg11 , PreArg1, PreArg2, PreArg3,
+           PreArg4, PreArg5>(function , pa1, pa2, pa3, pa4, pa5);
 }
 
 template <
-    bool SelfDeleting,
-    typename R,
-    typename Class,
-    typename MethodClass
-    , typename Arg1    , typename Arg2    , typename Arg3    ,
-        typename Arg4    , typename Arg5    , typename Arg6    ,
-        typename Arg7    , typename Arg8    , typename Arg9    ,
-        typename Arg10    , typename Arg11    , typename Arg12    ,
-        typename PreArg1    , typename PreArg2    , typename PreArg3    ,
-        typename PreArg4    , typename PreArg5    , typename PreArg6>
+bool SelfDeleting,
+     typename R,
+     typename Class,
+     typename MethodClass
+     , typename Arg1    , typename Arg2    , typename Arg3    ,
+     typename Arg4    , typename Arg5    , typename Arg6    ,
+     typename Arg7    , typename Arg8    , typename Arg9    ,
+     typename Arg10    , typename Arg11    , typename Arg12    ,
+     typename PreArg1    , typename PreArg2    , typename PreArg3    ,
+     typename PreArg4    , typename PreArg5    , typename PreArg6>
 class MethodClosure_Arg6_Bind6 : public Closure<R (Arg7, Arg8, Arg9, Arg10,
-    Arg11, Arg12)> {
+                Arg11, Arg12)> {
     typedef R (MethodClass::*MethodType)(Arg1, Arg2, Arg3, Arg4, Arg5, Arg6,
-        Arg7, Arg8, Arg9, Arg10, Arg11, Arg12);
+                                         Arg7, Arg8, Arg9, Arg10, Arg11, Arg12);
 public:
     MethodClosure_Arg6_Bind6(Class *object, MethodType method , PreArg1 pa1,
-        PreArg2 pa2, PreArg3 pa3, PreArg4 pa4, PreArg5 pa5, PreArg6 pa6):
+                             PreArg2 pa2, PreArg3 pa3, PreArg4 pa4, PreArg5 pa5, PreArg6 pa6):
         m_object(object), m_method(method) , m_pa1(pa1), m_pa2(pa2),
-            m_pa3(pa3), m_pa4(pa4), m_pa5(pa5), m_pa6(pa6) {}
+        m_pa3(pa3), m_pa4(pa4), m_pa5(pa5), m_pa6(pa6) {}
     virtual R Run(Arg7 arg7, Arg8 arg8, Arg9 arg9, Arg10 arg10, Arg11 arg11,
-        Arg12 arg12) {
+                  Arg12 arg12) {
         ConditionalAutoDeleter<SelfDeleting,
-            MethodClosure_Arg6_Bind6> self_deleter(this);
+                               MethodClosure_Arg6_Bind6> self_deleter(this);
         return (m_object->*m_method)(m_pa1, m_pa2, m_pa3, m_pa4, m_pa5, m_pa6 ,
-            arg7, arg8, arg9, arg10, arg11, arg12);
+                                     arg7, arg8, arg9, arg10, arg11, arg12);
     }
-    virtual bool IsSelfDelete() const { return SelfDeleting; }
+    virtual bool IsSelfDelete() const {
+        return SelfDeleting;
+    }
 private:
     Class* m_object;
     MethodType m_method;
-        PreArg1 m_pa1;
-        PreArg2 m_pa2;
-        PreArg3 m_pa3;
-        PreArg4 m_pa4;
-        PreArg5 m_pa5;
-        PreArg6 m_pa6;
-    };
+    PreArg1 m_pa1;
+    PreArg2 m_pa2;
+    PreArg3 m_pa3;
+    PreArg4 m_pa4;
+    PreArg5 m_pa5;
+    PreArg6 m_pa6;
+};
 
 template <typename R, typename Class, typename MethodClass ,typename Arg1,
-    typename Arg2,typename Arg3,typename Arg4,typename Arg5,typename Arg6,
-    typename Arg7,typename Arg8,typename Arg9,typename Arg10,typename Arg11,
-    typename Arg12 , typename PreArg1, typename PreArg2, typename PreArg3,
-    typename PreArg4, typename PreArg5, typename PreArg6>
+         typename Arg2,typename Arg3,typename Arg4,typename Arg5,typename Arg6,
+         typename Arg7,typename Arg8,typename Arg9,typename Arg10,typename Arg11,
+         typename Arg12 , typename PreArg1, typename PreArg2, typename PreArg3,
+         typename PreArg4, typename PreArg5, typename PreArg6>
 Closure<R (Arg7, Arg8, Arg9, Arg10, Arg11, Arg12)>* NewClosure(
     Class *object,
     R (MethodClass::*method)(Arg1, Arg2, Arg3, Arg4, Arg5, Arg6, Arg7, Arg8,
-        Arg9, Arg10, Arg11, Arg12)
+                             Arg9, Arg10, Arg11, Arg12)
     , PreArg1 pa1, PreArg2 pa2, PreArg3 pa3, PreArg4 pa4, PreArg5 pa5,
-        PreArg6 pa6) {
+    PreArg6 pa6) {
     return new MethodClosure_Arg6_Bind6<true, R, Class, MethodClass ,Arg1,Arg2,
-        Arg3,Arg4,Arg5,Arg6,Arg7,Arg8,Arg9,Arg10,Arg11,Arg12 , PreArg1,
-        PreArg2, PreArg3, PreArg4, PreArg5, PreArg6>(
-        object, method, pa1, pa2, pa3, pa4, pa5, pa6);
+           Arg3,Arg4,Arg5,Arg6,Arg7,Arg8,Arg9,Arg10,Arg11,Arg12 , PreArg1,
+           PreArg2, PreArg3, PreArg4, PreArg5, PreArg6>(
+               object, method, pa1, pa2, pa3, pa4, pa5, pa6);
 }
 
 template <typename R, typename Class, typename MethodClass ,typename Arg1,
-    typename Arg2,typename Arg3,typename Arg4,typename Arg5,typename Arg6,
-    typename Arg7,typename Arg8,typename Arg9,typename Arg10,typename Arg11,
-    typename Arg12 , typename PreArg1, typename PreArg2, typename PreArg3,
-    typename PreArg4, typename PreArg5, typename PreArg6>
+         typename Arg2,typename Arg3,typename Arg4,typename Arg5,typename Arg6,
+         typename Arg7,typename Arg8,typename Arg9,typename Arg10,typename Arg11,
+         typename Arg12 , typename PreArg1, typename PreArg2, typename PreArg3,
+         typename PreArg4, typename PreArg5, typename PreArg6>
 Closure<R (Arg7, Arg8, Arg9, Arg10, Arg11, Arg12)>* NewPermanentClosure(
     Class *object,
     R (MethodClass::*method)(Arg1, Arg2, Arg3, Arg4, Arg5, Arg6, Arg7, Arg8,
-        Arg9, Arg10, Arg11, Arg12)
+                             Arg9, Arg10, Arg11, Arg12)
     , PreArg1 pa1, PreArg2 pa2, PreArg3 pa3, PreArg4 pa4, PreArg5 pa5,
-        PreArg6 pa6) {
+    PreArg6 pa6) {
     return new MethodClosure_Arg6_Bind6<false, R, Class, MethodClass ,Arg1,
-        Arg2,Arg3,Arg4,Arg5,Arg6,Arg7,Arg8,Arg9,Arg10,Arg11,Arg12 , PreArg1,
-        PreArg2, PreArg3, PreArg4, PreArg5, PreArg6>(
-        object, method, pa1, pa2, pa3, pa4, pa5, pa6);
+           Arg2,Arg3,Arg4,Arg5,Arg6,Arg7,Arg8,Arg9,Arg10,Arg11,Arg12 , PreArg1,
+           PreArg2, PreArg3, PreArg4, PreArg5, PreArg6>(
+               object, method, pa1, pa2, pa3, pa4, pa5, pa6);
 }
 
 ////////////////////////////////////////////////////
@@ -7138,151 +7364,155 @@ Closure<R (Arg7, Arg8, Arg9, Arg10, Arg11, Arg12)>* NewPermanentClosure(
 ////////////////////////////////////////////////////
 
 template <
-    bool SelfDeleting,
-    typename R
-    , typename Arg1    , typename Arg2    , typename Arg3    ,
-        typename Arg4    , typename Arg5    , typename Arg6    ,
-        typename Arg7    , typename Arg8    , typename Arg9    ,
-        typename Arg10    , typename Arg11    , typename Arg12    ,
-        typename PreArg1    , typename PreArg2    , typename PreArg3    ,
-        typename PreArg4    , typename PreArg5    , typename PreArg6>
+bool SelfDeleting,
+     typename R
+     , typename Arg1    , typename Arg2    , typename Arg3    ,
+     typename Arg4    , typename Arg5    , typename Arg6    ,
+     typename Arg7    , typename Arg8    , typename Arg9    ,
+     typename Arg10    , typename Arg11    , typename Arg12    ,
+     typename PreArg1    , typename PreArg2    , typename PreArg3    ,
+     typename PreArg4    , typename PreArg5    , typename PreArg6>
 class FunctionClosure_Arg6_Bind6 : public Closure<R (Arg7, Arg8, Arg9, Arg10,
-    Arg11, Arg12)> {
+                Arg11, Arg12)> {
     typedef R (*FunctionType)(Arg1, Arg2, Arg3, Arg4, Arg5, Arg6, Arg7, Arg8,
-        Arg9, Arg10, Arg11, Arg12);
+                              Arg9, Arg10, Arg11, Arg12);
 public:
     FunctionClosure_Arg6_Bind6(FunctionType function , PreArg1 pa1,
-        PreArg2 pa2, PreArg3 pa3, PreArg4 pa4, PreArg5 pa5, PreArg6 pa6):
+                               PreArg2 pa2, PreArg3 pa3, PreArg4 pa4, PreArg5 pa5, PreArg6 pa6):
         m_function(function) , m_pa1(pa1), m_pa2(pa2), m_pa3(pa3), m_pa4(pa4),
-            m_pa5(pa5), m_pa6(pa6) {}
+        m_pa5(pa5), m_pa6(pa6) {}
     virtual R Run(Arg7 arg7, Arg8 arg8, Arg9 arg9, Arg10 arg10, Arg11 arg11,
-        Arg12 arg12) {
+                  Arg12 arg12) {
         ConditionalAutoDeleter<SelfDeleting,
-            FunctionClosure_Arg6_Bind6> self_deleter(this);
+                               FunctionClosure_Arg6_Bind6> self_deleter(this);
         return m_function(m_pa1, m_pa2, m_pa3, m_pa4, m_pa5, m_pa6 ,arg7, arg8,
-            arg9, arg10, arg11, arg12);
+                          arg9, arg10, arg11, arg12);
     }
-    virtual bool IsSelfDelete() const { return SelfDeleting; }
+    virtual bool IsSelfDelete() const {
+        return SelfDeleting;
+    }
 private:
     FunctionType m_function;
-        PreArg1 m_pa1;
-        PreArg2 m_pa2;
-        PreArg3 m_pa3;
-        PreArg4 m_pa4;
-        PreArg5 m_pa5;
-        PreArg6 m_pa6;
-    };
+    PreArg1 m_pa1;
+    PreArg2 m_pa2;
+    PreArg3 m_pa3;
+    PreArg4 m_pa4;
+    PreArg5 m_pa5;
+    PreArg6 m_pa6;
+};
 
 template <typename R , typename Arg1, typename Arg2, typename Arg3,
-    typename Arg4, typename Arg5, typename Arg6, typename Arg7, typename Arg8,
-    typename Arg9, typename Arg10, typename Arg11, typename Arg12 ,
-    typename PreArg1, typename PreArg2, typename PreArg3, typename PreArg4,
-    typename PreArg5, typename PreArg6>
+         typename Arg4, typename Arg5, typename Arg6, typename Arg7, typename Arg8,
+         typename Arg9, typename Arg10, typename Arg11, typename Arg12 ,
+         typename PreArg1, typename PreArg2, typename PreArg3, typename PreArg4,
+         typename PreArg5, typename PreArg6>
 Closure<R (Arg7, Arg8, Arg9, Arg10, Arg11,
-    Arg12)>* NewClosure(R (*function)(Arg1, Arg2, Arg3, Arg4, Arg5, Arg6, Arg7,
-    Arg8, Arg9, Arg10, Arg11, Arg12)
-                                          , PreArg1 pa1, PreArg2 pa2,
-                                              PreArg3 pa3, PreArg4 pa4,
-                                              PreArg5 pa5, PreArg6 pa6) {
+           Arg12)>* NewClosure(R (*function)(Arg1, Arg2, Arg3, Arg4, Arg5, Arg6, Arg7,
+                               Arg8, Arg9, Arg10, Arg11, Arg12)
+                               , PreArg1 pa1, PreArg2 pa2,
+                               PreArg3 pa3, PreArg4 pa4,
+                               PreArg5 pa5, PreArg6 pa6) {
     return new FunctionClosure_Arg6_Bind6<true, R , Arg1, Arg2, Arg3, Arg4,
-        Arg5, Arg6, Arg7, Arg8, Arg9, Arg10, Arg11, Arg12 , PreArg1, PreArg2,
-        PreArg3, PreArg4, PreArg5, PreArg6>(function , pa1, pa2, pa3, pa4, pa5,
-        pa6);
+           Arg5, Arg6, Arg7, Arg8, Arg9, Arg10, Arg11, Arg12 , PreArg1, PreArg2,
+           PreArg3, PreArg4, PreArg5, PreArg6>(function , pa1, pa2, pa3, pa4, pa5,
+                   pa6);
 }
 
 template <typename R , typename Arg1, typename Arg2, typename Arg3,
-    typename Arg4, typename Arg5, typename Arg6, typename Arg7, typename Arg8,
-    typename Arg9, typename Arg10, typename Arg11, typename Arg12 ,
-    typename PreArg1, typename PreArg2, typename PreArg3, typename PreArg4,
-    typename PreArg5, typename PreArg6>
+         typename Arg4, typename Arg5, typename Arg6, typename Arg7, typename Arg8,
+         typename Arg9, typename Arg10, typename Arg11, typename Arg12 ,
+         typename PreArg1, typename PreArg2, typename PreArg3, typename PreArg4,
+         typename PreArg5, typename PreArg6>
 Closure<R (Arg7, Arg8, Arg9, Arg10, Arg11,
-    Arg12)>* NewPermanentClosure(R (*function)(Arg1, Arg2, Arg3, Arg4, Arg5,
-    Arg6, Arg7, Arg8, Arg9, Arg10, Arg11, Arg12)
-                                          , PreArg1 pa1, PreArg2 pa2,
-                                              PreArg3 pa3, PreArg4 pa4,
-                                              PreArg5 pa5, PreArg6 pa6) {
+           Arg12)>* NewPermanentClosure(R (*function)(Arg1, Arg2, Arg3, Arg4, Arg5,
+                                        Arg6, Arg7, Arg8, Arg9, Arg10, Arg11, Arg12)
+                                        , PreArg1 pa1, PreArg2 pa2,
+                                        PreArg3 pa3, PreArg4 pa4,
+                                        PreArg5 pa5, PreArg6 pa6) {
     return new FunctionClosure_Arg6_Bind6<false, R , Arg1, Arg2, Arg3, Arg4,
-        Arg5, Arg6, Arg7, Arg8, Arg9, Arg10, Arg11, Arg12 , PreArg1, PreArg2,
-        PreArg3, PreArg4, PreArg5, PreArg6>(function , pa1, pa2, pa3, pa4, pa5,
-        pa6);
+           Arg5, Arg6, Arg7, Arg8, Arg9, Arg10, Arg11, Arg12 , PreArg1, PreArg2,
+           PreArg3, PreArg4, PreArg5, PreArg6>(function , pa1, pa2, pa3, pa4, pa5,
+                   pa6);
 }
 
 template <
-    bool SelfDeleting,
-    typename R,
-    typename Class,
-    typename MethodClass
-    , typename Arg1    , typename Arg2    , typename Arg3    ,
-        typename Arg4    , typename Arg5    , typename Arg6    ,
-        typename Arg7    , typename Arg8    , typename Arg9    ,
-        typename Arg10    , typename Arg11    , typename Arg12    ,
-        typename Arg13    , typename PreArg1    , typename PreArg2    ,
-        typename PreArg3    , typename PreArg4    , typename PreArg5    ,
-        typename PreArg6    , typename PreArg7>
+bool SelfDeleting,
+     typename R,
+     typename Class,
+     typename MethodClass
+     , typename Arg1    , typename Arg2    , typename Arg3    ,
+     typename Arg4    , typename Arg5    , typename Arg6    ,
+     typename Arg7    , typename Arg8    , typename Arg9    ,
+     typename Arg10    , typename Arg11    , typename Arg12    ,
+     typename Arg13    , typename PreArg1    , typename PreArg2    ,
+     typename PreArg3    , typename PreArg4    , typename PreArg5    ,
+     typename PreArg6    , typename PreArg7>
 class MethodClosure_Arg6_Bind7 : public Closure<R (Arg8, Arg9, Arg10, Arg11,
-    Arg12, Arg13)> {
+                Arg12, Arg13)> {
     typedef R (MethodClass::*MethodType)(Arg1, Arg2, Arg3, Arg4, Arg5, Arg6,
-        Arg7, Arg8, Arg9, Arg10, Arg11, Arg12, Arg13);
+                                         Arg7, Arg8, Arg9, Arg10, Arg11, Arg12, Arg13);
 public:
     MethodClosure_Arg6_Bind7(Class *object, MethodType method , PreArg1 pa1,
-        PreArg2 pa2, PreArg3 pa3, PreArg4 pa4, PreArg5 pa5, PreArg6 pa6,
-        PreArg7 pa7):
+                             PreArg2 pa2, PreArg3 pa3, PreArg4 pa4, PreArg5 pa5, PreArg6 pa6,
+                             PreArg7 pa7):
         m_object(object), m_method(method) , m_pa1(pa1), m_pa2(pa2),
-            m_pa3(pa3), m_pa4(pa4), m_pa5(pa5), m_pa6(pa6), m_pa7(pa7) {}
+        m_pa3(pa3), m_pa4(pa4), m_pa5(pa5), m_pa6(pa6), m_pa7(pa7) {}
     virtual R Run(Arg8 arg8, Arg9 arg9, Arg10 arg10, Arg11 arg11, Arg12 arg12,
-        Arg13 arg13) {
+                  Arg13 arg13) {
         ConditionalAutoDeleter<SelfDeleting,
-            MethodClosure_Arg6_Bind7> self_deleter(this);
+                               MethodClosure_Arg6_Bind7> self_deleter(this);
         return (m_object->*m_method)(m_pa1, m_pa2, m_pa3, m_pa4, m_pa5, m_pa6,
-            m_pa7 ,arg8, arg9, arg10, arg11, arg12, arg13);
+                                     m_pa7 ,arg8, arg9, arg10, arg11, arg12, arg13);
     }
-    virtual bool IsSelfDelete() const { return SelfDeleting; }
+    virtual bool IsSelfDelete() const {
+        return SelfDeleting;
+    }
 private:
     Class* m_object;
     MethodType m_method;
-        PreArg1 m_pa1;
-        PreArg2 m_pa2;
-        PreArg3 m_pa3;
-        PreArg4 m_pa4;
-        PreArg5 m_pa5;
-        PreArg6 m_pa6;
-        PreArg7 m_pa7;
-    };
+    PreArg1 m_pa1;
+    PreArg2 m_pa2;
+    PreArg3 m_pa3;
+    PreArg4 m_pa4;
+    PreArg5 m_pa5;
+    PreArg6 m_pa6;
+    PreArg7 m_pa7;
+};
 
 template <typename R, typename Class, typename MethodClass ,typename Arg1,
-    typename Arg2,typename Arg3,typename Arg4,typename Arg5,typename Arg6,
-    typename Arg7,typename Arg8,typename Arg9,typename Arg10,typename Arg11,
-    typename Arg12,typename Arg13 , typename PreArg1, typename PreArg2,
-    typename PreArg3, typename PreArg4, typename PreArg5, typename PreArg6,
-    typename PreArg7>
+         typename Arg2,typename Arg3,typename Arg4,typename Arg5,typename Arg6,
+         typename Arg7,typename Arg8,typename Arg9,typename Arg10,typename Arg11,
+         typename Arg12,typename Arg13 , typename PreArg1, typename PreArg2,
+         typename PreArg3, typename PreArg4, typename PreArg5, typename PreArg6,
+         typename PreArg7>
 Closure<R (Arg8, Arg9, Arg10, Arg11, Arg12, Arg13)>* NewClosure(
     Class *object,
     R (MethodClass::*method)(Arg1, Arg2, Arg3, Arg4, Arg5, Arg6, Arg7, Arg8,
-        Arg9, Arg10, Arg11, Arg12, Arg13)
+                             Arg9, Arg10, Arg11, Arg12, Arg13)
     , PreArg1 pa1, PreArg2 pa2, PreArg3 pa3, PreArg4 pa4, PreArg5 pa5,
-        PreArg6 pa6, PreArg7 pa7) {
+    PreArg6 pa6, PreArg7 pa7) {
     return new MethodClosure_Arg6_Bind7<true, R, Class, MethodClass ,Arg1,Arg2,
-        Arg3,Arg4,Arg5,Arg6,Arg7,Arg8,Arg9,Arg10,Arg11,Arg12,Arg13 , PreArg1,
-        PreArg2, PreArg3, PreArg4, PreArg5, PreArg6, PreArg7>(
-        object, method, pa1, pa2, pa3, pa4, pa5, pa6, pa7);
+           Arg3,Arg4,Arg5,Arg6,Arg7,Arg8,Arg9,Arg10,Arg11,Arg12,Arg13 , PreArg1,
+           PreArg2, PreArg3, PreArg4, PreArg5, PreArg6, PreArg7>(
+               object, method, pa1, pa2, pa3, pa4, pa5, pa6, pa7);
 }
 
 template <typename R, typename Class, typename MethodClass ,typename Arg1,
-    typename Arg2,typename Arg3,typename Arg4,typename Arg5,typename Arg6,
-    typename Arg7,typename Arg8,typename Arg9,typename Arg10,typename Arg11,
-    typename Arg12,typename Arg13 , typename PreArg1, typename PreArg2,
-    typename PreArg3, typename PreArg4, typename PreArg5, typename PreArg6,
-    typename PreArg7>
+         typename Arg2,typename Arg3,typename Arg4,typename Arg5,typename Arg6,
+         typename Arg7,typename Arg8,typename Arg9,typename Arg10,typename Arg11,
+         typename Arg12,typename Arg13 , typename PreArg1, typename PreArg2,
+         typename PreArg3, typename PreArg4, typename PreArg5, typename PreArg6,
+         typename PreArg7>
 Closure<R (Arg8, Arg9, Arg10, Arg11, Arg12, Arg13)>* NewPermanentClosure(
     Class *object,
     R (MethodClass::*method)(Arg1, Arg2, Arg3, Arg4, Arg5, Arg6, Arg7, Arg8,
-        Arg9, Arg10, Arg11, Arg12, Arg13)
+                             Arg9, Arg10, Arg11, Arg12, Arg13)
     , PreArg1 pa1, PreArg2 pa2, PreArg3 pa3, PreArg4 pa4, PreArg5 pa5,
-        PreArg6 pa6, PreArg7 pa7) {
+    PreArg6 pa6, PreArg7 pa7) {
     return new MethodClosure_Arg6_Bind7<false, R, Class, MethodClass ,Arg1,
-        Arg2,Arg3,Arg4,Arg5,Arg6,Arg7,Arg8,Arg9,Arg10,Arg11,Arg12,Arg13 ,
-        PreArg1, PreArg2, PreArg3, PreArg4, PreArg5, PreArg6, PreArg7>(
-        object, method, pa1, pa2, pa3, pa4, pa5, pa6, pa7);
+           Arg2,Arg3,Arg4,Arg5,Arg6,Arg7,Arg8,Arg9,Arg10,Arg11,Arg12,Arg13 ,
+           PreArg1, PreArg2, PreArg3, PreArg4, PreArg5, PreArg6, PreArg7>(
+               object, method, pa1, pa2, pa3, pa4, pa5, pa6, pa7);
 }
 
 ////////////////////////////////////////////////////
@@ -7290,161 +7520,165 @@ Closure<R (Arg8, Arg9, Arg10, Arg11, Arg12, Arg13)>* NewPermanentClosure(
 ////////////////////////////////////////////////////
 
 template <
-    bool SelfDeleting,
-    typename R
-    , typename Arg1    , typename Arg2    , typename Arg3    ,
-        typename Arg4    , typename Arg5    , typename Arg6    ,
-        typename Arg7    , typename Arg8    , typename Arg9    ,
-        typename Arg10    , typename Arg11    , typename Arg12    ,
-        typename Arg13    , typename PreArg1    , typename PreArg2    ,
-        typename PreArg3    , typename PreArg4    , typename PreArg5    ,
-        typename PreArg6    , typename PreArg7>
+bool SelfDeleting,
+     typename R
+     , typename Arg1    , typename Arg2    , typename Arg3    ,
+     typename Arg4    , typename Arg5    , typename Arg6    ,
+     typename Arg7    , typename Arg8    , typename Arg9    ,
+     typename Arg10    , typename Arg11    , typename Arg12    ,
+     typename Arg13    , typename PreArg1    , typename PreArg2    ,
+     typename PreArg3    , typename PreArg4    , typename PreArg5    ,
+     typename PreArg6    , typename PreArg7>
 class FunctionClosure_Arg6_Bind7 : public Closure<R (Arg8, Arg9, Arg10, Arg11,
-    Arg12, Arg13)> {
+                Arg12, Arg13)> {
     typedef R (*FunctionType)(Arg1, Arg2, Arg3, Arg4, Arg5, Arg6, Arg7, Arg8,
-        Arg9, Arg10, Arg11, Arg12, Arg13);
+                              Arg9, Arg10, Arg11, Arg12, Arg13);
 public:
     FunctionClosure_Arg6_Bind7(FunctionType function , PreArg1 pa1,
-        PreArg2 pa2, PreArg3 pa3, PreArg4 pa4, PreArg5 pa5, PreArg6 pa6,
-        PreArg7 pa7):
+                               PreArg2 pa2, PreArg3 pa3, PreArg4 pa4, PreArg5 pa5, PreArg6 pa6,
+                               PreArg7 pa7):
         m_function(function) , m_pa1(pa1), m_pa2(pa2), m_pa3(pa3), m_pa4(pa4),
-            m_pa5(pa5), m_pa6(pa6), m_pa7(pa7) {}
+        m_pa5(pa5), m_pa6(pa6), m_pa7(pa7) {}
     virtual R Run(Arg8 arg8, Arg9 arg9, Arg10 arg10, Arg11 arg11, Arg12 arg12,
-        Arg13 arg13) {
+                  Arg13 arg13) {
         ConditionalAutoDeleter<SelfDeleting,
-            FunctionClosure_Arg6_Bind7> self_deleter(this);
+                               FunctionClosure_Arg6_Bind7> self_deleter(this);
         return m_function(m_pa1, m_pa2, m_pa3, m_pa4, m_pa5, m_pa6, m_pa7 ,
-            arg8, arg9, arg10, arg11, arg12, arg13);
+                          arg8, arg9, arg10, arg11, arg12, arg13);
     }
-    virtual bool IsSelfDelete() const { return SelfDeleting; }
+    virtual bool IsSelfDelete() const {
+        return SelfDeleting;
+    }
 private:
     FunctionType m_function;
-        PreArg1 m_pa1;
-        PreArg2 m_pa2;
-        PreArg3 m_pa3;
-        PreArg4 m_pa4;
-        PreArg5 m_pa5;
-        PreArg6 m_pa6;
-        PreArg7 m_pa7;
-    };
+    PreArg1 m_pa1;
+    PreArg2 m_pa2;
+    PreArg3 m_pa3;
+    PreArg4 m_pa4;
+    PreArg5 m_pa5;
+    PreArg6 m_pa6;
+    PreArg7 m_pa7;
+};
 
 template <typename R , typename Arg1, typename Arg2, typename Arg3,
-    typename Arg4, typename Arg5, typename Arg6, typename Arg7, typename Arg8,
-    typename Arg9, typename Arg10, typename Arg11, typename Arg12,
-    typename Arg13 , typename PreArg1, typename PreArg2, typename PreArg3,
-    typename PreArg4, typename PreArg5, typename PreArg6, typename PreArg7>
+         typename Arg4, typename Arg5, typename Arg6, typename Arg7, typename Arg8,
+         typename Arg9, typename Arg10, typename Arg11, typename Arg12,
+         typename Arg13 , typename PreArg1, typename PreArg2, typename PreArg3,
+         typename PreArg4, typename PreArg5, typename PreArg6, typename PreArg7>
 Closure<R (Arg8, Arg9, Arg10, Arg11, Arg12,
-    Arg13)>* NewClosure(R (*function)(Arg1, Arg2, Arg3, Arg4, Arg5, Arg6, Arg7,
-    Arg8, Arg9, Arg10, Arg11, Arg12, Arg13)
-                                          , PreArg1 pa1, PreArg2 pa2,
-                                              PreArg3 pa3, PreArg4 pa4,
-                                              PreArg5 pa5, PreArg6 pa6,
-                                              PreArg7 pa7) {
+           Arg13)>* NewClosure(R (*function)(Arg1, Arg2, Arg3, Arg4, Arg5, Arg6, Arg7,
+                               Arg8, Arg9, Arg10, Arg11, Arg12, Arg13)
+                               , PreArg1 pa1, PreArg2 pa2,
+                               PreArg3 pa3, PreArg4 pa4,
+                               PreArg5 pa5, PreArg6 pa6,
+                               PreArg7 pa7) {
     return new FunctionClosure_Arg6_Bind7<true, R , Arg1, Arg2, Arg3, Arg4,
-        Arg5, Arg6, Arg7, Arg8, Arg9, Arg10, Arg11, Arg12, Arg13 , PreArg1,
-        PreArg2, PreArg3, PreArg4, PreArg5, PreArg6, PreArg7>(function , pa1,
-        pa2, pa3, pa4, pa5, pa6, pa7);
+           Arg5, Arg6, Arg7, Arg8, Arg9, Arg10, Arg11, Arg12, Arg13 , PreArg1,
+           PreArg2, PreArg3, PreArg4, PreArg5, PreArg6, PreArg7>(function , pa1,
+                   pa2, pa3, pa4, pa5, pa6, pa7);
 }
 
 template <typename R , typename Arg1, typename Arg2, typename Arg3,
-    typename Arg4, typename Arg5, typename Arg6, typename Arg7, typename Arg8,
-    typename Arg9, typename Arg10, typename Arg11, typename Arg12,
-    typename Arg13 , typename PreArg1, typename PreArg2, typename PreArg3,
-    typename PreArg4, typename PreArg5, typename PreArg6, typename PreArg7>
+         typename Arg4, typename Arg5, typename Arg6, typename Arg7, typename Arg8,
+         typename Arg9, typename Arg10, typename Arg11, typename Arg12,
+         typename Arg13 , typename PreArg1, typename PreArg2, typename PreArg3,
+         typename PreArg4, typename PreArg5, typename PreArg6, typename PreArg7>
 Closure<R (Arg8, Arg9, Arg10, Arg11, Arg12,
-    Arg13)>* NewPermanentClosure(R (*function)(Arg1, Arg2, Arg3, Arg4, Arg5,
-    Arg6, Arg7, Arg8, Arg9, Arg10, Arg11, Arg12, Arg13)
-                                          , PreArg1 pa1, PreArg2 pa2,
-                                              PreArg3 pa3, PreArg4 pa4,
-                                              PreArg5 pa5, PreArg6 pa6,
-                                              PreArg7 pa7) {
+           Arg13)>* NewPermanentClosure(R (*function)(Arg1, Arg2, Arg3, Arg4, Arg5,
+                                        Arg6, Arg7, Arg8, Arg9, Arg10, Arg11, Arg12, Arg13)
+                                        , PreArg1 pa1, PreArg2 pa2,
+                                        PreArg3 pa3, PreArg4 pa4,
+                                        PreArg5 pa5, PreArg6 pa6,
+                                        PreArg7 pa7) {
     return new FunctionClosure_Arg6_Bind7<false, R , Arg1, Arg2, Arg3, Arg4,
-        Arg5, Arg6, Arg7, Arg8, Arg9, Arg10, Arg11, Arg12, Arg13 , PreArg1,
-        PreArg2, PreArg3, PreArg4, PreArg5, PreArg6, PreArg7>(function , pa1,
-        pa2, pa3, pa4, pa5, pa6, pa7);
+           Arg5, Arg6, Arg7, Arg8, Arg9, Arg10, Arg11, Arg12, Arg13 , PreArg1,
+           PreArg2, PreArg3, PreArg4, PreArg5, PreArg6, PreArg7>(function , pa1,
+                   pa2, pa3, pa4, pa5, pa6, pa7);
 }
 
 template <
-    bool SelfDeleting,
-    typename R,
-    typename Class,
-    typename MethodClass
-    , typename Arg1    , typename Arg2    , typename Arg3    ,
-        typename Arg4    , typename Arg5    , typename Arg6    ,
-        typename Arg7    , typename Arg8    , typename Arg9    ,
-        typename Arg10    , typename Arg11    , typename Arg12    ,
-        typename Arg13    , typename Arg14    , typename PreArg1    ,
-        typename PreArg2    , typename PreArg3    , typename PreArg4    ,
-        typename PreArg5    , typename PreArg6    , typename PreArg7    ,
-        typename PreArg8>
+bool SelfDeleting,
+     typename R,
+     typename Class,
+     typename MethodClass
+     , typename Arg1    , typename Arg2    , typename Arg3    ,
+     typename Arg4    , typename Arg5    , typename Arg6    ,
+     typename Arg7    , typename Arg8    , typename Arg9    ,
+     typename Arg10    , typename Arg11    , typename Arg12    ,
+     typename Arg13    , typename Arg14    , typename PreArg1    ,
+     typename PreArg2    , typename PreArg3    , typename PreArg4    ,
+     typename PreArg5    , typename PreArg6    , typename PreArg7    ,
+     typename PreArg8>
 class MethodClosure_Arg6_Bind8 : public Closure<R (Arg9, Arg10, Arg11, Arg12,
-    Arg13, Arg14)> {
+                Arg13, Arg14)> {
     typedef R (MethodClass::*MethodType)(Arg1, Arg2, Arg3, Arg4, Arg5, Arg6,
-        Arg7, Arg8, Arg9, Arg10, Arg11, Arg12, Arg13, Arg14);
+                                         Arg7, Arg8, Arg9, Arg10, Arg11, Arg12, Arg13, Arg14);
 public:
     MethodClosure_Arg6_Bind8(Class *object, MethodType method , PreArg1 pa1,
-        PreArg2 pa2, PreArg3 pa3, PreArg4 pa4, PreArg5 pa5, PreArg6 pa6,
-        PreArg7 pa7, PreArg8 pa8):
+                             PreArg2 pa2, PreArg3 pa3, PreArg4 pa4, PreArg5 pa5, PreArg6 pa6,
+                             PreArg7 pa7, PreArg8 pa8):
         m_object(object), m_method(method) , m_pa1(pa1), m_pa2(pa2),
-            m_pa3(pa3), m_pa4(pa4), m_pa5(pa5), m_pa6(pa6), m_pa7(pa7),
-            m_pa8(pa8) {}
+        m_pa3(pa3), m_pa4(pa4), m_pa5(pa5), m_pa6(pa6), m_pa7(pa7),
+        m_pa8(pa8) {}
     virtual R Run(Arg9 arg9, Arg10 arg10, Arg11 arg11, Arg12 arg12,
-        Arg13 arg13, Arg14 arg14) {
+                  Arg13 arg13, Arg14 arg14) {
         ConditionalAutoDeleter<SelfDeleting,
-            MethodClosure_Arg6_Bind8> self_deleter(this);
+                               MethodClosure_Arg6_Bind8> self_deleter(this);
         return (m_object->*m_method)(m_pa1, m_pa2, m_pa3, m_pa4, m_pa5, m_pa6,
-            m_pa7, m_pa8 ,arg9, arg10, arg11, arg12, arg13, arg14);
+                                     m_pa7, m_pa8 ,arg9, arg10, arg11, arg12, arg13, arg14);
     }
-    virtual bool IsSelfDelete() const { return SelfDeleting; }
+    virtual bool IsSelfDelete() const {
+        return SelfDeleting;
+    }
 private:
     Class* m_object;
     MethodType m_method;
-        PreArg1 m_pa1;
-        PreArg2 m_pa2;
-        PreArg3 m_pa3;
-        PreArg4 m_pa4;
-        PreArg5 m_pa5;
-        PreArg6 m_pa6;
-        PreArg7 m_pa7;
-        PreArg8 m_pa8;
-    };
+    PreArg1 m_pa1;
+    PreArg2 m_pa2;
+    PreArg3 m_pa3;
+    PreArg4 m_pa4;
+    PreArg5 m_pa5;
+    PreArg6 m_pa6;
+    PreArg7 m_pa7;
+    PreArg8 m_pa8;
+};
 
 template <typename R, typename Class, typename MethodClass ,typename Arg1,
-    typename Arg2,typename Arg3,typename Arg4,typename Arg5,typename Arg6,
-    typename Arg7,typename Arg8,typename Arg9,typename Arg10,typename Arg11,
-    typename Arg12,typename Arg13,typename Arg14 , typename PreArg1,
-    typename PreArg2, typename PreArg3, typename PreArg4, typename PreArg5,
-    typename PreArg6, typename PreArg7, typename PreArg8>
+         typename Arg2,typename Arg3,typename Arg4,typename Arg5,typename Arg6,
+         typename Arg7,typename Arg8,typename Arg9,typename Arg10,typename Arg11,
+         typename Arg12,typename Arg13,typename Arg14 , typename PreArg1,
+         typename PreArg2, typename PreArg3, typename PreArg4, typename PreArg5,
+         typename PreArg6, typename PreArg7, typename PreArg8>
 Closure<R (Arg9, Arg10, Arg11, Arg12, Arg13, Arg14)>* NewClosure(
     Class *object,
     R (MethodClass::*method)(Arg1, Arg2, Arg3, Arg4, Arg5, Arg6, Arg7, Arg8,
-        Arg9, Arg10, Arg11, Arg12, Arg13, Arg14)
+                             Arg9, Arg10, Arg11, Arg12, Arg13, Arg14)
     , PreArg1 pa1, PreArg2 pa2, PreArg3 pa3, PreArg4 pa4, PreArg5 pa5,
-        PreArg6 pa6, PreArg7 pa7, PreArg8 pa8) {
+    PreArg6 pa6, PreArg7 pa7, PreArg8 pa8) {
     return new MethodClosure_Arg6_Bind8<true, R, Class, MethodClass ,Arg1,Arg2,
-        Arg3,Arg4,Arg5,Arg6,Arg7,Arg8,Arg9,Arg10,Arg11,Arg12,Arg13,Arg14 ,
-        PreArg1, PreArg2, PreArg3, PreArg4, PreArg5, PreArg6, PreArg7,
-        PreArg8>(
-        object, method, pa1, pa2, pa3, pa4, pa5, pa6, pa7, pa8);
+           Arg3,Arg4,Arg5,Arg6,Arg7,Arg8,Arg9,Arg10,Arg11,Arg12,Arg13,Arg14 ,
+           PreArg1, PreArg2, PreArg3, PreArg4, PreArg5, PreArg6, PreArg7,
+           PreArg8>(
+               object, method, pa1, pa2, pa3, pa4, pa5, pa6, pa7, pa8);
 }
 
 template <typename R, typename Class, typename MethodClass ,typename Arg1,
-    typename Arg2,typename Arg3,typename Arg4,typename Arg5,typename Arg6,
-    typename Arg7,typename Arg8,typename Arg9,typename Arg10,typename Arg11,
-    typename Arg12,typename Arg13,typename Arg14 , typename PreArg1,
-    typename PreArg2, typename PreArg3, typename PreArg4, typename PreArg5,
-    typename PreArg6, typename PreArg7, typename PreArg8>
+         typename Arg2,typename Arg3,typename Arg4,typename Arg5,typename Arg6,
+         typename Arg7,typename Arg8,typename Arg9,typename Arg10,typename Arg11,
+         typename Arg12,typename Arg13,typename Arg14 , typename PreArg1,
+         typename PreArg2, typename PreArg3, typename PreArg4, typename PreArg5,
+         typename PreArg6, typename PreArg7, typename PreArg8>
 Closure<R (Arg9, Arg10, Arg11, Arg12, Arg13, Arg14)>* NewPermanentClosure(
     Class *object,
     R (MethodClass::*method)(Arg1, Arg2, Arg3, Arg4, Arg5, Arg6, Arg7, Arg8,
-        Arg9, Arg10, Arg11, Arg12, Arg13, Arg14)
+                             Arg9, Arg10, Arg11, Arg12, Arg13, Arg14)
     , PreArg1 pa1, PreArg2 pa2, PreArg3 pa3, PreArg4 pa4, PreArg5 pa5,
-        PreArg6 pa6, PreArg7 pa7, PreArg8 pa8) {
+    PreArg6 pa6, PreArg7 pa7, PreArg8 pa8) {
     return new MethodClosure_Arg6_Bind8<false, R, Class, MethodClass ,Arg1,
-        Arg2,Arg3,Arg4,Arg5,Arg6,Arg7,Arg8,Arg9,Arg10,Arg11,Arg12,Arg13,Arg14 ,
-        PreArg1, PreArg2, PreArg3, PreArg4, PreArg5, PreArg6, PreArg7,
-        PreArg8>(
-        object, method, pa1, pa2, pa3, pa4, pa5, pa6, pa7, pa8);
+           Arg2,Arg3,Arg4,Arg5,Arg6,Arg7,Arg8,Arg9,Arg10,Arg11,Arg12,Arg13,Arg14 ,
+           PreArg1, PreArg2, PreArg3, PreArg4, PreArg5, PreArg6, PreArg7,
+           PreArg8>(
+               object, method, pa1, pa2, pa3, pa4, pa5, pa6, pa7, pa8);
 }
 
 ////////////////////////////////////////////////////
@@ -7452,133 +7686,137 @@ Closure<R (Arg9, Arg10, Arg11, Arg12, Arg13, Arg14)>* NewPermanentClosure(
 ////////////////////////////////////////////////////
 
 template <
-    bool SelfDeleting,
-    typename R
-    , typename Arg1    , typename Arg2    , typename Arg3    ,
-        typename Arg4    , typename Arg5    , typename Arg6    ,
-        typename Arg7    , typename Arg8    , typename Arg9    ,
-        typename Arg10    , typename Arg11    , typename Arg12    ,
-        typename Arg13    , typename Arg14    , typename PreArg1    ,
-        typename PreArg2    , typename PreArg3    , typename PreArg4    ,
-        typename PreArg5    , typename PreArg6    , typename PreArg7    ,
-        typename PreArg8>
+bool SelfDeleting,
+     typename R
+     , typename Arg1    , typename Arg2    , typename Arg3    ,
+     typename Arg4    , typename Arg5    , typename Arg6    ,
+     typename Arg7    , typename Arg8    , typename Arg9    ,
+     typename Arg10    , typename Arg11    , typename Arg12    ,
+     typename Arg13    , typename Arg14    , typename PreArg1    ,
+     typename PreArg2    , typename PreArg3    , typename PreArg4    ,
+     typename PreArg5    , typename PreArg6    , typename PreArg7    ,
+     typename PreArg8>
 class FunctionClosure_Arg6_Bind8 : public Closure<R (Arg9, Arg10, Arg11, Arg12,
-    Arg13, Arg14)> {
+                Arg13, Arg14)> {
     typedef R (*FunctionType)(Arg1, Arg2, Arg3, Arg4, Arg5, Arg6, Arg7, Arg8,
-        Arg9, Arg10, Arg11, Arg12, Arg13, Arg14);
+                              Arg9, Arg10, Arg11, Arg12, Arg13, Arg14);
 public:
     FunctionClosure_Arg6_Bind8(FunctionType function , PreArg1 pa1,
-        PreArg2 pa2, PreArg3 pa3, PreArg4 pa4, PreArg5 pa5, PreArg6 pa6,
-        PreArg7 pa7, PreArg8 pa8):
+                               PreArg2 pa2, PreArg3 pa3, PreArg4 pa4, PreArg5 pa5, PreArg6 pa6,
+                               PreArg7 pa7, PreArg8 pa8):
         m_function(function) , m_pa1(pa1), m_pa2(pa2), m_pa3(pa3), m_pa4(pa4),
-            m_pa5(pa5), m_pa6(pa6), m_pa7(pa7), m_pa8(pa8) {}
+        m_pa5(pa5), m_pa6(pa6), m_pa7(pa7), m_pa8(pa8) {}
     virtual R Run(Arg9 arg9, Arg10 arg10, Arg11 arg11, Arg12 arg12,
-        Arg13 arg13, Arg14 arg14) {
+                  Arg13 arg13, Arg14 arg14) {
         ConditionalAutoDeleter<SelfDeleting,
-            FunctionClosure_Arg6_Bind8> self_deleter(this);
+                               FunctionClosure_Arg6_Bind8> self_deleter(this);
         return m_function(m_pa1, m_pa2, m_pa3, m_pa4, m_pa5, m_pa6, m_pa7,
-            m_pa8 ,arg9, arg10, arg11, arg12, arg13, arg14);
+                          m_pa8 ,arg9, arg10, arg11, arg12, arg13, arg14);
     }
-    virtual bool IsSelfDelete() const { return SelfDeleting; }
+    virtual bool IsSelfDelete() const {
+        return SelfDeleting;
+    }
 private:
     FunctionType m_function;
-        PreArg1 m_pa1;
-        PreArg2 m_pa2;
-        PreArg3 m_pa3;
-        PreArg4 m_pa4;
-        PreArg5 m_pa5;
-        PreArg6 m_pa6;
-        PreArg7 m_pa7;
-        PreArg8 m_pa8;
-    };
+    PreArg1 m_pa1;
+    PreArg2 m_pa2;
+    PreArg3 m_pa3;
+    PreArg4 m_pa4;
+    PreArg5 m_pa5;
+    PreArg6 m_pa6;
+    PreArg7 m_pa7;
+    PreArg8 m_pa8;
+};
 
 template <typename R , typename Arg1, typename Arg2, typename Arg3,
-    typename Arg4, typename Arg5, typename Arg6, typename Arg7, typename Arg8,
-    typename Arg9, typename Arg10, typename Arg11, typename Arg12,
-    typename Arg13, typename Arg14 , typename PreArg1, typename PreArg2,
-    typename PreArg3, typename PreArg4, typename PreArg5, typename PreArg6,
-    typename PreArg7, typename PreArg8>
+         typename Arg4, typename Arg5, typename Arg6, typename Arg7, typename Arg8,
+         typename Arg9, typename Arg10, typename Arg11, typename Arg12,
+         typename Arg13, typename Arg14 , typename PreArg1, typename PreArg2,
+         typename PreArg3, typename PreArg4, typename PreArg5, typename PreArg6,
+         typename PreArg7, typename PreArg8>
 Closure<R (Arg9, Arg10, Arg11, Arg12, Arg13,
-    Arg14)>* NewClosure(R (*function)(Arg1, Arg2, Arg3, Arg4, Arg5, Arg6, Arg7,
-    Arg8, Arg9, Arg10, Arg11, Arg12, Arg13, Arg14)
-                                          , PreArg1 pa1, PreArg2 pa2,
-                                              PreArg3 pa3, PreArg4 pa4,
-                                              PreArg5 pa5, PreArg6 pa6,
-                                              PreArg7 pa7, PreArg8 pa8) {
+           Arg14)>* NewClosure(R (*function)(Arg1, Arg2, Arg3, Arg4, Arg5, Arg6, Arg7,
+                               Arg8, Arg9, Arg10, Arg11, Arg12, Arg13, Arg14)
+                               , PreArg1 pa1, PreArg2 pa2,
+                               PreArg3 pa3, PreArg4 pa4,
+                               PreArg5 pa5, PreArg6 pa6,
+                               PreArg7 pa7, PreArg8 pa8) {
     return new FunctionClosure_Arg6_Bind8<true, R , Arg1, Arg2, Arg3, Arg4,
-        Arg5, Arg6, Arg7, Arg8, Arg9, Arg10, Arg11, Arg12, Arg13, Arg14 ,
-        PreArg1, PreArg2, PreArg3, PreArg4, PreArg5, PreArg6, PreArg7,
-        PreArg8>(function , pa1, pa2, pa3, pa4, pa5, pa6, pa7, pa8);
+           Arg5, Arg6, Arg7, Arg8, Arg9, Arg10, Arg11, Arg12, Arg13, Arg14 ,
+           PreArg1, PreArg2, PreArg3, PreArg4, PreArg5, PreArg6, PreArg7,
+           PreArg8>(function , pa1, pa2, pa3, pa4, pa5, pa6, pa7, pa8);
 }
 
 template <typename R , typename Arg1, typename Arg2, typename Arg3,
-    typename Arg4, typename Arg5, typename Arg6, typename Arg7, typename Arg8,
-    typename Arg9, typename Arg10, typename Arg11, typename Arg12,
-    typename Arg13, typename Arg14 , typename PreArg1, typename PreArg2,
-    typename PreArg3, typename PreArg4, typename PreArg5, typename PreArg6,
-    typename PreArg7, typename PreArg8>
+         typename Arg4, typename Arg5, typename Arg6, typename Arg7, typename Arg8,
+         typename Arg9, typename Arg10, typename Arg11, typename Arg12,
+         typename Arg13, typename Arg14 , typename PreArg1, typename PreArg2,
+         typename PreArg3, typename PreArg4, typename PreArg5, typename PreArg6,
+         typename PreArg7, typename PreArg8>
 Closure<R (Arg9, Arg10, Arg11, Arg12, Arg13,
-    Arg14)>* NewPermanentClosure(R (*function)(Arg1, Arg2, Arg3, Arg4, Arg5,
-    Arg6, Arg7, Arg8, Arg9, Arg10, Arg11, Arg12, Arg13, Arg14)
-                                          , PreArg1 pa1, PreArg2 pa2,
-                                              PreArg3 pa3, PreArg4 pa4,
-                                              PreArg5 pa5, PreArg6 pa6,
-                                              PreArg7 pa7, PreArg8 pa8) {
+           Arg14)>* NewPermanentClosure(R (*function)(Arg1, Arg2, Arg3, Arg4, Arg5,
+                                        Arg6, Arg7, Arg8, Arg9, Arg10, Arg11, Arg12, Arg13, Arg14)
+                                        , PreArg1 pa1, PreArg2 pa2,
+                                        PreArg3 pa3, PreArg4 pa4,
+                                        PreArg5 pa5, PreArg6 pa6,
+                                        PreArg7 pa7, PreArg8 pa8) {
     return new FunctionClosure_Arg6_Bind8<false, R , Arg1, Arg2, Arg3, Arg4,
-        Arg5, Arg6, Arg7, Arg8, Arg9, Arg10, Arg11, Arg12, Arg13, Arg14 ,
-        PreArg1, PreArg2, PreArg3, PreArg4, PreArg5, PreArg6, PreArg7,
-        PreArg8>(function , pa1, pa2, pa3, pa4, pa5, pa6, pa7, pa8);
+           Arg5, Arg6, Arg7, Arg8, Arg9, Arg10, Arg11, Arg12, Arg13, Arg14 ,
+           PreArg1, PreArg2, PreArg3, PreArg4, PreArg5, PreArg6, PreArg7,
+           PreArg8>(function , pa1, pa2, pa3, pa4, pa5, pa6, pa7, pa8);
 }
 
 template <
-    bool SelfDeleting,
-    typename R,
-    typename Class,
-    typename MethodClass
-    , typename Arg1    , typename Arg2    , typename Arg3    ,
-        typename Arg4    , typename Arg5    , typename Arg6    ,
-        typename Arg7    >
+bool SelfDeleting,
+     typename R,
+     typename Class,
+     typename MethodClass
+     , typename Arg1    , typename Arg2    , typename Arg3    ,
+     typename Arg4    , typename Arg5    , typename Arg6    ,
+     typename Arg7    >
 class MethodClosure_Arg7_Bind0 : public Closure<R (Arg1, Arg2, Arg3, Arg4,
-    Arg5, Arg6, Arg7)> {
+                Arg5, Arg6, Arg7)> {
     typedef R (MethodClass::*MethodType)(Arg1, Arg2, Arg3, Arg4, Arg5, Arg6,
-        Arg7);
+                                         Arg7);
 public:
     MethodClosure_Arg7_Bind0(Class *object, MethodType method ):
         m_object(object), m_method(method)  {}
     virtual R Run(Arg1 arg1, Arg2 arg2, Arg3 arg3, Arg4 arg4, Arg5 arg5,
-        Arg6 arg6, Arg7 arg7) {
+                  Arg6 arg6, Arg7 arg7) {
         ConditionalAutoDeleter<SelfDeleting,
-            MethodClosure_Arg7_Bind0> self_deleter(this);
+                               MethodClosure_Arg7_Bind0> self_deleter(this);
         return (m_object->*m_method)( arg1, arg2, arg3, arg4, arg5, arg6, arg7);
     }
-    virtual bool IsSelfDelete() const { return SelfDeleting; }
+    virtual bool IsSelfDelete() const {
+        return SelfDeleting;
+    }
 private:
     Class* m_object;
     MethodType m_method;
-    };
+};
 
 template <typename R, typename Class, typename MethodClass ,typename Arg1,
-    typename Arg2,typename Arg3,typename Arg4,typename Arg5,typename Arg6,
-    typename Arg7 >
+         typename Arg2,typename Arg3,typename Arg4,typename Arg5,typename Arg6,
+         typename Arg7 >
 Closure<R (Arg1, Arg2, Arg3, Arg4, Arg5, Arg6, Arg7)>* NewClosure(
     Class *object,
     R (MethodClass::*method)(Arg1, Arg2, Arg3, Arg4, Arg5, Arg6, Arg7)
-    ) {
+) {
     return new MethodClosure_Arg7_Bind0<true, R, Class, MethodClass ,Arg1,Arg2,
-        Arg3,Arg4,Arg5,Arg6,Arg7 >(
-        object, method);
+           Arg3,Arg4,Arg5,Arg6,Arg7 >(
+               object, method);
 }
 
 template <typename R, typename Class, typename MethodClass ,typename Arg1,
-    typename Arg2,typename Arg3,typename Arg4,typename Arg5,typename Arg6,
-    typename Arg7 >
+         typename Arg2,typename Arg3,typename Arg4,typename Arg5,typename Arg6,
+         typename Arg7 >
 Closure<R (Arg1, Arg2, Arg3, Arg4, Arg5, Arg6, Arg7)>* NewPermanentClosure(
     Class *object,
     R (MethodClass::*method)(Arg1, Arg2, Arg3, Arg4, Arg5, Arg6, Arg7)
-    ) {
+) {
     return new MethodClosure_Arg7_Bind0<false, R, Class, MethodClass ,Arg1,
-        Arg2,Arg3,Arg4,Arg5,Arg6,Arg7 >(
-        object, method);
+           Arg2,Arg3,Arg4,Arg5,Arg6,Arg7 >(
+               object, method);
 }
 
 ////////////////////////////////////////////////////
@@ -7586,98 +7824,102 @@ Closure<R (Arg1, Arg2, Arg3, Arg4, Arg5, Arg6, Arg7)>* NewPermanentClosure(
 ////////////////////////////////////////////////////
 
 template <
-    bool SelfDeleting,
-    typename R
-    , typename Arg1    , typename Arg2    , typename Arg3    ,
-        typename Arg4    , typename Arg5    , typename Arg6    ,
-        typename Arg7    >
+bool SelfDeleting,
+     typename R
+     , typename Arg1    , typename Arg2    , typename Arg3    ,
+     typename Arg4    , typename Arg5    , typename Arg6    ,
+     typename Arg7    >
 class FunctionClosure_Arg7_Bind0 : public Closure<R (Arg1, Arg2, Arg3, Arg4,
-    Arg5, Arg6, Arg7)> {
+                Arg5, Arg6, Arg7)> {
     typedef R (*FunctionType)(Arg1, Arg2, Arg3, Arg4, Arg5, Arg6, Arg7);
 public:
     FunctionClosure_Arg7_Bind0(FunctionType function ):
         m_function(function)  {}
     virtual R Run(Arg1 arg1, Arg2 arg2, Arg3 arg3, Arg4 arg4, Arg5 arg5,
-        Arg6 arg6, Arg7 arg7) {
+                  Arg6 arg6, Arg7 arg7) {
         ConditionalAutoDeleter<SelfDeleting,
-            FunctionClosure_Arg7_Bind0> self_deleter(this);
+                               FunctionClosure_Arg7_Bind0> self_deleter(this);
         return m_function( arg1, arg2, arg3, arg4, arg5, arg6, arg7);
     }
-    virtual bool IsSelfDelete() const { return SelfDeleting; }
+    virtual bool IsSelfDelete() const {
+        return SelfDeleting;
+    }
 private:
     FunctionType m_function;
-    };
+};
 
 template <typename R , typename Arg1, typename Arg2, typename Arg3,
-    typename Arg4, typename Arg5, typename Arg6, typename Arg7 >
+         typename Arg4, typename Arg5, typename Arg6, typename Arg7 >
 Closure<R (Arg1, Arg2, Arg3, Arg4, Arg5, Arg6,
-    Arg7)>* NewClosure(R (*function)(Arg1, Arg2, Arg3, Arg4, Arg5, Arg6, Arg7)
-                                          ) {
+           Arg7)>* NewClosure(R (*function)(Arg1, Arg2, Arg3, Arg4, Arg5, Arg6, Arg7)
+                             ) {
     return new FunctionClosure_Arg7_Bind0<true, R , Arg1, Arg2, Arg3, Arg4,
-        Arg5, Arg6, Arg7 >(function );
+           Arg5, Arg6, Arg7 >(function );
 }
 
 template <typename R , typename Arg1, typename Arg2, typename Arg3,
-    typename Arg4, typename Arg5, typename Arg6, typename Arg7 >
+         typename Arg4, typename Arg5, typename Arg6, typename Arg7 >
 Closure<R (Arg1, Arg2, Arg3, Arg4, Arg5, Arg6,
-    Arg7)>* NewPermanentClosure(R (*function)(Arg1, Arg2, Arg3, Arg4, Arg5,
-    Arg6, Arg7)
-                                          ) {
+           Arg7)>* NewPermanentClosure(R (*function)(Arg1, Arg2, Arg3, Arg4, Arg5,
+                                       Arg6, Arg7)
+                                      ) {
     return new FunctionClosure_Arg7_Bind0<false, R , Arg1, Arg2, Arg3, Arg4,
-        Arg5, Arg6, Arg7 >(function );
+           Arg5, Arg6, Arg7 >(function );
 }
 
 template <
-    bool SelfDeleting,
-    typename R,
-    typename Class,
-    typename MethodClass
-    , typename Arg1    , typename Arg2    , typename Arg3    ,
-        typename Arg4    , typename Arg5    , typename Arg6    ,
-        typename Arg7    , typename Arg8    , typename PreArg1>
+bool SelfDeleting,
+     typename R,
+     typename Class,
+     typename MethodClass
+     , typename Arg1    , typename Arg2    , typename Arg3    ,
+     typename Arg4    , typename Arg5    , typename Arg6    ,
+     typename Arg7    , typename Arg8    , typename PreArg1>
 class MethodClosure_Arg7_Bind1 : public Closure<R (Arg2, Arg3, Arg4, Arg5,
-    Arg6, Arg7, Arg8)> {
+                Arg6, Arg7, Arg8)> {
     typedef R (MethodClass::*MethodType)(Arg1, Arg2, Arg3, Arg4, Arg5, Arg6,
-        Arg7, Arg8);
+                                         Arg7, Arg8);
 public:
     MethodClosure_Arg7_Bind1(Class *object, MethodType method , PreArg1 pa1):
         m_object(object), m_method(method) , m_pa1(pa1) {}
     virtual R Run(Arg2 arg2, Arg3 arg3, Arg4 arg4, Arg5 arg5, Arg6 arg6,
-        Arg7 arg7, Arg8 arg8) {
+                  Arg7 arg7, Arg8 arg8) {
         ConditionalAutoDeleter<SelfDeleting,
-            MethodClosure_Arg7_Bind1> self_deleter(this);
+                               MethodClosure_Arg7_Bind1> self_deleter(this);
         return (m_object->*m_method)(m_pa1 ,arg2, arg3, arg4, arg5, arg6, arg7,
-            arg8);
+                                     arg8);
     }
-    virtual bool IsSelfDelete() const { return SelfDeleting; }
+    virtual bool IsSelfDelete() const {
+        return SelfDeleting;
+    }
 private:
     Class* m_object;
     MethodType m_method;
-        PreArg1 m_pa1;
-    };
+    PreArg1 m_pa1;
+};
 
 template <typename R, typename Class, typename MethodClass ,typename Arg1,
-    typename Arg2,typename Arg3,typename Arg4,typename Arg5,typename Arg6,
-    typename Arg7,typename Arg8 , typename PreArg1>
+         typename Arg2,typename Arg3,typename Arg4,typename Arg5,typename Arg6,
+         typename Arg7,typename Arg8 , typename PreArg1>
 Closure<R (Arg2, Arg3, Arg4, Arg5, Arg6, Arg7, Arg8)>* NewClosure(
     Class *object,
     R (MethodClass::*method)(Arg1, Arg2, Arg3, Arg4, Arg5, Arg6, Arg7, Arg8)
     , PreArg1 pa1) {
     return new MethodClosure_Arg7_Bind1<true, R, Class, MethodClass ,Arg1,Arg2,
-        Arg3,Arg4,Arg5,Arg6,Arg7,Arg8 , PreArg1>(
-        object, method, pa1);
+           Arg3,Arg4,Arg5,Arg6,Arg7,Arg8 , PreArg1>(
+               object, method, pa1);
 }
 
 template <typename R, typename Class, typename MethodClass ,typename Arg1,
-    typename Arg2,typename Arg3,typename Arg4,typename Arg5,typename Arg6,
-    typename Arg7,typename Arg8 , typename PreArg1>
+         typename Arg2,typename Arg3,typename Arg4,typename Arg5,typename Arg6,
+         typename Arg7,typename Arg8 , typename PreArg1>
 Closure<R (Arg2, Arg3, Arg4, Arg5, Arg6, Arg7, Arg8)>* NewPermanentClosure(
     Class *object,
     R (MethodClass::*method)(Arg1, Arg2, Arg3, Arg4, Arg5, Arg6, Arg7, Arg8)
     , PreArg1 pa1) {
     return new MethodClosure_Arg7_Bind1<false, R, Class, MethodClass ,Arg1,
-        Arg2,Arg3,Arg4,Arg5,Arg6,Arg7,Arg8 , PreArg1>(
-        object, method, pa1);
+           Arg2,Arg3,Arg4,Arg5,Arg6,Arg7,Arg8 , PreArg1>(
+               object, method, pa1);
 }
 
 ////////////////////////////////////////////////////
@@ -7685,109 +7927,113 @@ Closure<R (Arg2, Arg3, Arg4, Arg5, Arg6, Arg7, Arg8)>* NewPermanentClosure(
 ////////////////////////////////////////////////////
 
 template <
-    bool SelfDeleting,
-    typename R
-    , typename Arg1    , typename Arg2    , typename Arg3    ,
-        typename Arg4    , typename Arg5    , typename Arg6    ,
-        typename Arg7    , typename Arg8    , typename PreArg1>
+bool SelfDeleting,
+     typename R
+     , typename Arg1    , typename Arg2    , typename Arg3    ,
+     typename Arg4    , typename Arg5    , typename Arg6    ,
+     typename Arg7    , typename Arg8    , typename PreArg1>
 class FunctionClosure_Arg7_Bind1 : public Closure<R (Arg2, Arg3, Arg4, Arg5,
-    Arg6, Arg7, Arg8)> {
+                Arg6, Arg7, Arg8)> {
     typedef R (*FunctionType)(Arg1, Arg2, Arg3, Arg4, Arg5, Arg6, Arg7, Arg8);
 public:
     FunctionClosure_Arg7_Bind1(FunctionType function , PreArg1 pa1):
         m_function(function) , m_pa1(pa1) {}
     virtual R Run(Arg2 arg2, Arg3 arg3, Arg4 arg4, Arg5 arg5, Arg6 arg6,
-        Arg7 arg7, Arg8 arg8) {
+                  Arg7 arg7, Arg8 arg8) {
         ConditionalAutoDeleter<SelfDeleting,
-            FunctionClosure_Arg7_Bind1> self_deleter(this);
+                               FunctionClosure_Arg7_Bind1> self_deleter(this);
         return m_function(m_pa1 ,arg2, arg3, arg4, arg5, arg6, arg7, arg8);
     }
-    virtual bool IsSelfDelete() const { return SelfDeleting; }
+    virtual bool IsSelfDelete() const {
+        return SelfDeleting;
+    }
 private:
     FunctionType m_function;
-        PreArg1 m_pa1;
-    };
+    PreArg1 m_pa1;
+};
 
 template <typename R , typename Arg1, typename Arg2, typename Arg3,
-    typename Arg4, typename Arg5, typename Arg6, typename Arg7, typename Arg8 ,
-    typename PreArg1>
+         typename Arg4, typename Arg5, typename Arg6, typename Arg7, typename Arg8 ,
+         typename PreArg1>
 Closure<R (Arg2, Arg3, Arg4, Arg5, Arg6, Arg7,
-    Arg8)>* NewClosure(R (*function)(Arg1, Arg2, Arg3, Arg4, Arg5, Arg6, Arg7,
-    Arg8)
-                                          , PreArg1 pa1) {
+           Arg8)>* NewClosure(R (*function)(Arg1, Arg2, Arg3, Arg4, Arg5, Arg6, Arg7,
+                              Arg8)
+                              , PreArg1 pa1) {
     return new FunctionClosure_Arg7_Bind1<true, R , Arg1, Arg2, Arg3, Arg4,
-        Arg5, Arg6, Arg7, Arg8 , PreArg1>(function , pa1);
+           Arg5, Arg6, Arg7, Arg8 , PreArg1>(function , pa1);
 }
 
 template <typename R , typename Arg1, typename Arg2, typename Arg3,
-    typename Arg4, typename Arg5, typename Arg6, typename Arg7, typename Arg8 ,
-    typename PreArg1>
+         typename Arg4, typename Arg5, typename Arg6, typename Arg7, typename Arg8 ,
+         typename PreArg1>
 Closure<R (Arg2, Arg3, Arg4, Arg5, Arg6, Arg7,
-    Arg8)>* NewPermanentClosure(R (*function)(Arg1, Arg2, Arg3, Arg4, Arg5,
-    Arg6, Arg7, Arg8)
-                                          , PreArg1 pa1) {
+           Arg8)>* NewPermanentClosure(R (*function)(Arg1, Arg2, Arg3, Arg4, Arg5,
+                                       Arg6, Arg7, Arg8)
+                                       , PreArg1 pa1) {
     return new FunctionClosure_Arg7_Bind1<false, R , Arg1, Arg2, Arg3, Arg4,
-        Arg5, Arg6, Arg7, Arg8 , PreArg1>(function , pa1);
+           Arg5, Arg6, Arg7, Arg8 , PreArg1>(function , pa1);
 }
 
 template <
-    bool SelfDeleting,
-    typename R,
-    typename Class,
-    typename MethodClass
-    , typename Arg1    , typename Arg2    , typename Arg3    ,
-        typename Arg4    , typename Arg5    , typename Arg6    ,
-        typename Arg7    , typename Arg8    , typename Arg9    ,
-        typename PreArg1    , typename PreArg2>
+bool SelfDeleting,
+     typename R,
+     typename Class,
+     typename MethodClass
+     , typename Arg1    , typename Arg2    , typename Arg3    ,
+     typename Arg4    , typename Arg5    , typename Arg6    ,
+     typename Arg7    , typename Arg8    , typename Arg9    ,
+     typename PreArg1    , typename PreArg2>
 class MethodClosure_Arg7_Bind2 : public Closure<R (Arg3, Arg4, Arg5, Arg6,
-    Arg7, Arg8, Arg9)> {
+                Arg7, Arg8, Arg9)> {
     typedef R (MethodClass::*MethodType)(Arg1, Arg2, Arg3, Arg4, Arg5, Arg6,
-        Arg7, Arg8, Arg9);
+                                         Arg7, Arg8, Arg9);
 public:
     MethodClosure_Arg7_Bind2(Class *object, MethodType method , PreArg1 pa1,
-        PreArg2 pa2):
+                             PreArg2 pa2):
         m_object(object), m_method(method) , m_pa1(pa1), m_pa2(pa2) {}
     virtual R Run(Arg3 arg3, Arg4 arg4, Arg5 arg5, Arg6 arg6, Arg7 arg7,
-        Arg8 arg8, Arg9 arg9) {
+                  Arg8 arg8, Arg9 arg9) {
         ConditionalAutoDeleter<SelfDeleting,
-            MethodClosure_Arg7_Bind2> self_deleter(this);
+                               MethodClosure_Arg7_Bind2> self_deleter(this);
         return (m_object->*m_method)(m_pa1, m_pa2 ,arg3, arg4, arg5, arg6,
-            arg7, arg8, arg9);
+                                     arg7, arg8, arg9);
     }
-    virtual bool IsSelfDelete() const { return SelfDeleting; }
+    virtual bool IsSelfDelete() const {
+        return SelfDeleting;
+    }
 private:
     Class* m_object;
     MethodType m_method;
-        PreArg1 m_pa1;
-        PreArg2 m_pa2;
-    };
+    PreArg1 m_pa1;
+    PreArg2 m_pa2;
+};
 
 template <typename R, typename Class, typename MethodClass ,typename Arg1,
-    typename Arg2,typename Arg3,typename Arg4,typename Arg5,typename Arg6,
-    typename Arg7,typename Arg8,typename Arg9 , typename PreArg1,
-    typename PreArg2>
+         typename Arg2,typename Arg3,typename Arg4,typename Arg5,typename Arg6,
+         typename Arg7,typename Arg8,typename Arg9 , typename PreArg1,
+         typename PreArg2>
 Closure<R (Arg3, Arg4, Arg5, Arg6, Arg7, Arg8, Arg9)>* NewClosure(
     Class *object,
     R (MethodClass::*method)(Arg1, Arg2, Arg3, Arg4, Arg5, Arg6, Arg7, Arg8,
-        Arg9)
+                             Arg9)
     , PreArg1 pa1, PreArg2 pa2) {
     return new MethodClosure_Arg7_Bind2<true, R, Class, MethodClass ,Arg1,Arg2,
-        Arg3,Arg4,Arg5,Arg6,Arg7,Arg8,Arg9 , PreArg1, PreArg2>(
-        object, method, pa1, pa2);
+           Arg3,Arg4,Arg5,Arg6,Arg7,Arg8,Arg9 , PreArg1, PreArg2>(
+               object, method, pa1, pa2);
 }
 
 template <typename R, typename Class, typename MethodClass ,typename Arg1,
-    typename Arg2,typename Arg3,typename Arg4,typename Arg5,typename Arg6,
-    typename Arg7,typename Arg8,typename Arg9 , typename PreArg1,
-    typename PreArg2>
+         typename Arg2,typename Arg3,typename Arg4,typename Arg5,typename Arg6,
+         typename Arg7,typename Arg8,typename Arg9 , typename PreArg1,
+         typename PreArg2>
 Closure<R (Arg3, Arg4, Arg5, Arg6, Arg7, Arg8, Arg9)>* NewPermanentClosure(
     Class *object,
     R (MethodClass::*method)(Arg1, Arg2, Arg3, Arg4, Arg5, Arg6, Arg7, Arg8,
-        Arg9)
+                             Arg9)
     , PreArg1 pa1, PreArg2 pa2) {
     return new MethodClosure_Arg7_Bind2<false, R, Class, MethodClass ,Arg1,
-        Arg2,Arg3,Arg4,Arg5,Arg6,Arg7,Arg8,Arg9 , PreArg1, PreArg2>(
-        object, method, pa1, pa2);
+           Arg2,Arg3,Arg4,Arg5,Arg6,Arg7,Arg8,Arg9 , PreArg1, PreArg2>(
+               object, method, pa1, pa2);
 }
 
 ////////////////////////////////////////////////////
@@ -7795,118 +8041,122 @@ Closure<R (Arg3, Arg4, Arg5, Arg6, Arg7, Arg8, Arg9)>* NewPermanentClosure(
 ////////////////////////////////////////////////////
 
 template <
-    bool SelfDeleting,
-    typename R
-    , typename Arg1    , typename Arg2    , typename Arg3    ,
-        typename Arg4    , typename Arg5    , typename Arg6    ,
-        typename Arg7    , typename Arg8    , typename Arg9    ,
-        typename PreArg1    , typename PreArg2>
+bool SelfDeleting,
+     typename R
+     , typename Arg1    , typename Arg2    , typename Arg3    ,
+     typename Arg4    , typename Arg5    , typename Arg6    ,
+     typename Arg7    , typename Arg8    , typename Arg9    ,
+     typename PreArg1    , typename PreArg2>
 class FunctionClosure_Arg7_Bind2 : public Closure<R (Arg3, Arg4, Arg5, Arg6,
-    Arg7, Arg8, Arg9)> {
+                Arg7, Arg8, Arg9)> {
     typedef R (*FunctionType)(Arg1, Arg2, Arg3, Arg4, Arg5, Arg6, Arg7, Arg8,
-        Arg9);
+                              Arg9);
 public:
     FunctionClosure_Arg7_Bind2(FunctionType function , PreArg1 pa1,
-        PreArg2 pa2):
+                               PreArg2 pa2):
         m_function(function) , m_pa1(pa1), m_pa2(pa2) {}
     virtual R Run(Arg3 arg3, Arg4 arg4, Arg5 arg5, Arg6 arg6, Arg7 arg7,
-        Arg8 arg8, Arg9 arg9) {
+                  Arg8 arg8, Arg9 arg9) {
         ConditionalAutoDeleter<SelfDeleting,
-            FunctionClosure_Arg7_Bind2> self_deleter(this);
+                               FunctionClosure_Arg7_Bind2> self_deleter(this);
         return m_function(m_pa1, m_pa2 ,arg3, arg4, arg5, arg6, arg7, arg8,
-            arg9);
+                          arg9);
     }
-    virtual bool IsSelfDelete() const { return SelfDeleting; }
+    virtual bool IsSelfDelete() const {
+        return SelfDeleting;
+    }
 private:
     FunctionType m_function;
-        PreArg1 m_pa1;
-        PreArg2 m_pa2;
-    };
+    PreArg1 m_pa1;
+    PreArg2 m_pa2;
+};
 
 template <typename R , typename Arg1, typename Arg2, typename Arg3,
-    typename Arg4, typename Arg5, typename Arg6, typename Arg7, typename Arg8,
-    typename Arg9 , typename PreArg1, typename PreArg2>
+         typename Arg4, typename Arg5, typename Arg6, typename Arg7, typename Arg8,
+         typename Arg9 , typename PreArg1, typename PreArg2>
 Closure<R (Arg3, Arg4, Arg5, Arg6, Arg7, Arg8,
-    Arg9)>* NewClosure(R (*function)(Arg1, Arg2, Arg3, Arg4, Arg5, Arg6, Arg7,
-    Arg8, Arg9)
-                                          , PreArg1 pa1, PreArg2 pa2) {
+           Arg9)>* NewClosure(R (*function)(Arg1, Arg2, Arg3, Arg4, Arg5, Arg6, Arg7,
+                              Arg8, Arg9)
+                              , PreArg1 pa1, PreArg2 pa2) {
     return new FunctionClosure_Arg7_Bind2<true, R , Arg1, Arg2, Arg3, Arg4,
-        Arg5, Arg6, Arg7, Arg8, Arg9 , PreArg1, PreArg2>(function , pa1, pa2);
+           Arg5, Arg6, Arg7, Arg8, Arg9 , PreArg1, PreArg2>(function , pa1, pa2);
 }
 
 template <typename R , typename Arg1, typename Arg2, typename Arg3,
-    typename Arg4, typename Arg5, typename Arg6, typename Arg7, typename Arg8,
-    typename Arg9 , typename PreArg1, typename PreArg2>
+         typename Arg4, typename Arg5, typename Arg6, typename Arg7, typename Arg8,
+         typename Arg9 , typename PreArg1, typename PreArg2>
 Closure<R (Arg3, Arg4, Arg5, Arg6, Arg7, Arg8,
-    Arg9)>* NewPermanentClosure(R (*function)(Arg1, Arg2, Arg3, Arg4, Arg5,
-    Arg6, Arg7, Arg8, Arg9)
-                                          , PreArg1 pa1, PreArg2 pa2) {
+           Arg9)>* NewPermanentClosure(R (*function)(Arg1, Arg2, Arg3, Arg4, Arg5,
+                                       Arg6, Arg7, Arg8, Arg9)
+                                       , PreArg1 pa1, PreArg2 pa2) {
     return new FunctionClosure_Arg7_Bind2<false, R , Arg1, Arg2, Arg3, Arg4,
-        Arg5, Arg6, Arg7, Arg8, Arg9 , PreArg1, PreArg2>(function , pa1, pa2);
+           Arg5, Arg6, Arg7, Arg8, Arg9 , PreArg1, PreArg2>(function , pa1, pa2);
 }
 
 template <
-    bool SelfDeleting,
-    typename R,
-    typename Class,
-    typename MethodClass
-    , typename Arg1    , typename Arg2    , typename Arg3    ,
-        typename Arg4    , typename Arg5    , typename Arg6    ,
-        typename Arg7    , typename Arg8    , typename Arg9    ,
-        typename Arg10    , typename PreArg1    , typename PreArg2    ,
-        typename PreArg3>
+bool SelfDeleting,
+     typename R,
+     typename Class,
+     typename MethodClass
+     , typename Arg1    , typename Arg2    , typename Arg3    ,
+     typename Arg4    , typename Arg5    , typename Arg6    ,
+     typename Arg7    , typename Arg8    , typename Arg9    ,
+     typename Arg10    , typename PreArg1    , typename PreArg2    ,
+     typename PreArg3>
 class MethodClosure_Arg7_Bind3 : public Closure<R (Arg4, Arg5, Arg6, Arg7,
-    Arg8, Arg9, Arg10)> {
+                Arg8, Arg9, Arg10)> {
     typedef R (MethodClass::*MethodType)(Arg1, Arg2, Arg3, Arg4, Arg5, Arg6,
-        Arg7, Arg8, Arg9, Arg10);
+                                         Arg7, Arg8, Arg9, Arg10);
 public:
     MethodClosure_Arg7_Bind3(Class *object, MethodType method , PreArg1 pa1,
-        PreArg2 pa2, PreArg3 pa3):
+                             PreArg2 pa2, PreArg3 pa3):
         m_object(object), m_method(method) , m_pa1(pa1), m_pa2(pa2),
-            m_pa3(pa3) {}
+        m_pa3(pa3) {}
     virtual R Run(Arg4 arg4, Arg5 arg5, Arg6 arg6, Arg7 arg7, Arg8 arg8,
-        Arg9 arg9, Arg10 arg10) {
+                  Arg9 arg9, Arg10 arg10) {
         ConditionalAutoDeleter<SelfDeleting,
-            MethodClosure_Arg7_Bind3> self_deleter(this);
+                               MethodClosure_Arg7_Bind3> self_deleter(this);
         return (m_object->*m_method)(m_pa1, m_pa2, m_pa3 ,arg4, arg5, arg6,
-            arg7, arg8, arg9, arg10);
+                                     arg7, arg8, arg9, arg10);
     }
-    virtual bool IsSelfDelete() const { return SelfDeleting; }
+    virtual bool IsSelfDelete() const {
+        return SelfDeleting;
+    }
 private:
     Class* m_object;
     MethodType m_method;
-        PreArg1 m_pa1;
-        PreArg2 m_pa2;
-        PreArg3 m_pa3;
-    };
+    PreArg1 m_pa1;
+    PreArg2 m_pa2;
+    PreArg3 m_pa3;
+};
 
 template <typename R, typename Class, typename MethodClass ,typename Arg1,
-    typename Arg2,typename Arg3,typename Arg4,typename Arg5,typename Arg6,
-    typename Arg7,typename Arg8,typename Arg9,typename Arg10 ,
-    typename PreArg1, typename PreArg2, typename PreArg3>
+         typename Arg2,typename Arg3,typename Arg4,typename Arg5,typename Arg6,
+         typename Arg7,typename Arg8,typename Arg9,typename Arg10 ,
+         typename PreArg1, typename PreArg2, typename PreArg3>
 Closure<R (Arg4, Arg5, Arg6, Arg7, Arg8, Arg9, Arg10)>* NewClosure(
     Class *object,
     R (MethodClass::*method)(Arg1, Arg2, Arg3, Arg4, Arg5, Arg6, Arg7, Arg8,
-        Arg9, Arg10)
+                             Arg9, Arg10)
     , PreArg1 pa1, PreArg2 pa2, PreArg3 pa3) {
     return new MethodClosure_Arg7_Bind3<true, R, Class, MethodClass ,Arg1,Arg2,
-        Arg3,Arg4,Arg5,Arg6,Arg7,Arg8,Arg9,Arg10 , PreArg1, PreArg2, PreArg3>(
-        object, method, pa1, pa2, pa3);
+           Arg3,Arg4,Arg5,Arg6,Arg7,Arg8,Arg9,Arg10 , PreArg1, PreArg2, PreArg3>(
+               object, method, pa1, pa2, pa3);
 }
 
 template <typename R, typename Class, typename MethodClass ,typename Arg1,
-    typename Arg2,typename Arg3,typename Arg4,typename Arg5,typename Arg6,
-    typename Arg7,typename Arg8,typename Arg9,typename Arg10 ,
-    typename PreArg1, typename PreArg2, typename PreArg3>
+         typename Arg2,typename Arg3,typename Arg4,typename Arg5,typename Arg6,
+         typename Arg7,typename Arg8,typename Arg9,typename Arg10 ,
+         typename PreArg1, typename PreArg2, typename PreArg3>
 Closure<R (Arg4, Arg5, Arg6, Arg7, Arg8, Arg9, Arg10)>* NewPermanentClosure(
     Class *object,
     R (MethodClass::*method)(Arg1, Arg2, Arg3, Arg4, Arg5, Arg6, Arg7, Arg8,
-        Arg9, Arg10)
+                             Arg9, Arg10)
     , PreArg1 pa1, PreArg2 pa2, PreArg3 pa3) {
     return new MethodClosure_Arg7_Bind3<false, R, Class, MethodClass ,Arg1,
-        Arg2,Arg3,Arg4,Arg5,Arg6,Arg7,Arg8,Arg9,Arg10 , PreArg1, PreArg2,
-        PreArg3>(
-        object, method, pa1, pa2, pa3);
+           Arg2,Arg3,Arg4,Arg5,Arg6,Arg7,Arg8,Arg9,Arg10 , PreArg1, PreArg2,
+           PreArg3>(
+               object, method, pa1, pa2, pa3);
 }
 
 ////////////////////////////////////////////////////
@@ -7914,128 +8164,132 @@ Closure<R (Arg4, Arg5, Arg6, Arg7, Arg8, Arg9, Arg10)>* NewPermanentClosure(
 ////////////////////////////////////////////////////
 
 template <
-    bool SelfDeleting,
-    typename R
-    , typename Arg1    , typename Arg2    , typename Arg3    ,
-        typename Arg4    , typename Arg5    , typename Arg6    ,
-        typename Arg7    , typename Arg8    , typename Arg9    ,
-        typename Arg10    , typename PreArg1    , typename PreArg2    ,
-        typename PreArg3>
+bool SelfDeleting,
+     typename R
+     , typename Arg1    , typename Arg2    , typename Arg3    ,
+     typename Arg4    , typename Arg5    , typename Arg6    ,
+     typename Arg7    , typename Arg8    , typename Arg9    ,
+     typename Arg10    , typename PreArg1    , typename PreArg2    ,
+     typename PreArg3>
 class FunctionClosure_Arg7_Bind3 : public Closure<R (Arg4, Arg5, Arg6, Arg7,
-    Arg8, Arg9, Arg10)> {
+                Arg8, Arg9, Arg10)> {
     typedef R (*FunctionType)(Arg1, Arg2, Arg3, Arg4, Arg5, Arg6, Arg7, Arg8,
-        Arg9, Arg10);
+                              Arg9, Arg10);
 public:
     FunctionClosure_Arg7_Bind3(FunctionType function , PreArg1 pa1,
-        PreArg2 pa2, PreArg3 pa3):
+                               PreArg2 pa2, PreArg3 pa3):
         m_function(function) , m_pa1(pa1), m_pa2(pa2), m_pa3(pa3) {}
     virtual R Run(Arg4 arg4, Arg5 arg5, Arg6 arg6, Arg7 arg7, Arg8 arg8,
-        Arg9 arg9, Arg10 arg10) {
+                  Arg9 arg9, Arg10 arg10) {
         ConditionalAutoDeleter<SelfDeleting,
-            FunctionClosure_Arg7_Bind3> self_deleter(this);
+                               FunctionClosure_Arg7_Bind3> self_deleter(this);
         return m_function(m_pa1, m_pa2, m_pa3 ,arg4, arg5, arg6, arg7, arg8,
-            arg9, arg10);
+                          arg9, arg10);
     }
-    virtual bool IsSelfDelete() const { return SelfDeleting; }
+    virtual bool IsSelfDelete() const {
+        return SelfDeleting;
+    }
 private:
     FunctionType m_function;
-        PreArg1 m_pa1;
-        PreArg2 m_pa2;
-        PreArg3 m_pa3;
-    };
+    PreArg1 m_pa1;
+    PreArg2 m_pa2;
+    PreArg3 m_pa3;
+};
 
 template <typename R , typename Arg1, typename Arg2, typename Arg3,
-    typename Arg4, typename Arg5, typename Arg6, typename Arg7, typename Arg8,
-    typename Arg9, typename Arg10 , typename PreArg1, typename PreArg2,
-    typename PreArg3>
+         typename Arg4, typename Arg5, typename Arg6, typename Arg7, typename Arg8,
+         typename Arg9, typename Arg10 , typename PreArg1, typename PreArg2,
+         typename PreArg3>
 Closure<R (Arg4, Arg5, Arg6, Arg7, Arg8, Arg9,
-    Arg10)>* NewClosure(R (*function)(Arg1, Arg2, Arg3, Arg4, Arg5, Arg6, Arg7,
-    Arg8, Arg9, Arg10)
-                                          , PreArg1 pa1, PreArg2 pa2,
-                                              PreArg3 pa3) {
+           Arg10)>* NewClosure(R (*function)(Arg1, Arg2, Arg3, Arg4, Arg5, Arg6, Arg7,
+                               Arg8, Arg9, Arg10)
+                               , PreArg1 pa1, PreArg2 pa2,
+                               PreArg3 pa3) {
     return new FunctionClosure_Arg7_Bind3<true, R , Arg1, Arg2, Arg3, Arg4,
-        Arg5, Arg6, Arg7, Arg8, Arg9, Arg10 , PreArg1, PreArg2,
-        PreArg3>(function , pa1, pa2, pa3);
+           Arg5, Arg6, Arg7, Arg8, Arg9, Arg10 , PreArg1, PreArg2,
+           PreArg3>(function , pa1, pa2, pa3);
 }
 
 template <typename R , typename Arg1, typename Arg2, typename Arg3,
-    typename Arg4, typename Arg5, typename Arg6, typename Arg7, typename Arg8,
-    typename Arg9, typename Arg10 , typename PreArg1, typename PreArg2,
-    typename PreArg3>
+         typename Arg4, typename Arg5, typename Arg6, typename Arg7, typename Arg8,
+         typename Arg9, typename Arg10 , typename PreArg1, typename PreArg2,
+         typename PreArg3>
 Closure<R (Arg4, Arg5, Arg6, Arg7, Arg8, Arg9,
-    Arg10)>* NewPermanentClosure(R (*function)(Arg1, Arg2, Arg3, Arg4, Arg5,
-    Arg6, Arg7, Arg8, Arg9, Arg10)
-                                          , PreArg1 pa1, PreArg2 pa2,
-                                              PreArg3 pa3) {
+           Arg10)>* NewPermanentClosure(R (*function)(Arg1, Arg2, Arg3, Arg4, Arg5,
+                                        Arg6, Arg7, Arg8, Arg9, Arg10)
+                                        , PreArg1 pa1, PreArg2 pa2,
+                                        PreArg3 pa3) {
     return new FunctionClosure_Arg7_Bind3<false, R , Arg1, Arg2, Arg3, Arg4,
-        Arg5, Arg6, Arg7, Arg8, Arg9, Arg10 , PreArg1, PreArg2,
-        PreArg3>(function , pa1, pa2, pa3);
+           Arg5, Arg6, Arg7, Arg8, Arg9, Arg10 , PreArg1, PreArg2,
+           PreArg3>(function , pa1, pa2, pa3);
 }
 
 template <
-    bool SelfDeleting,
-    typename R,
-    typename Class,
-    typename MethodClass
-    , typename Arg1    , typename Arg2    , typename Arg3    ,
-        typename Arg4    , typename Arg5    , typename Arg6    ,
-        typename Arg7    , typename Arg8    , typename Arg9    ,
-        typename Arg10    , typename Arg11    , typename PreArg1    ,
-        typename PreArg2    , typename PreArg3    , typename PreArg4>
+bool SelfDeleting,
+     typename R,
+     typename Class,
+     typename MethodClass
+     , typename Arg1    , typename Arg2    , typename Arg3    ,
+     typename Arg4    , typename Arg5    , typename Arg6    ,
+     typename Arg7    , typename Arg8    , typename Arg9    ,
+     typename Arg10    , typename Arg11    , typename PreArg1    ,
+     typename PreArg2    , typename PreArg3    , typename PreArg4>
 class MethodClosure_Arg7_Bind4 : public Closure<R (Arg5, Arg6, Arg7, Arg8,
-    Arg9, Arg10, Arg11)> {
+                Arg9, Arg10, Arg11)> {
     typedef R (MethodClass::*MethodType)(Arg1, Arg2, Arg3, Arg4, Arg5, Arg6,
-        Arg7, Arg8, Arg9, Arg10, Arg11);
+                                         Arg7, Arg8, Arg9, Arg10, Arg11);
 public:
     MethodClosure_Arg7_Bind4(Class *object, MethodType method , PreArg1 pa1,
-        PreArg2 pa2, PreArg3 pa3, PreArg4 pa4):
+                             PreArg2 pa2, PreArg3 pa3, PreArg4 pa4):
         m_object(object), m_method(method) , m_pa1(pa1), m_pa2(pa2),
-            m_pa3(pa3), m_pa4(pa4) {}
+        m_pa3(pa3), m_pa4(pa4) {}
     virtual R Run(Arg5 arg5, Arg6 arg6, Arg7 arg7, Arg8 arg8, Arg9 arg9,
-        Arg10 arg10, Arg11 arg11) {
+                  Arg10 arg10, Arg11 arg11) {
         ConditionalAutoDeleter<SelfDeleting,
-            MethodClosure_Arg7_Bind4> self_deleter(this);
+                               MethodClosure_Arg7_Bind4> self_deleter(this);
         return (m_object->*m_method)(m_pa1, m_pa2, m_pa3, m_pa4 ,arg5, arg6,
-            arg7, arg8, arg9, arg10, arg11);
+                                     arg7, arg8, arg9, arg10, arg11);
     }
-    virtual bool IsSelfDelete() const { return SelfDeleting; }
+    virtual bool IsSelfDelete() const {
+        return SelfDeleting;
+    }
 private:
     Class* m_object;
     MethodType m_method;
-        PreArg1 m_pa1;
-        PreArg2 m_pa2;
-        PreArg3 m_pa3;
-        PreArg4 m_pa4;
-    };
+    PreArg1 m_pa1;
+    PreArg2 m_pa2;
+    PreArg3 m_pa3;
+    PreArg4 m_pa4;
+};
 
 template <typename R, typename Class, typename MethodClass ,typename Arg1,
-    typename Arg2,typename Arg3,typename Arg4,typename Arg5,typename Arg6,
-    typename Arg7,typename Arg8,typename Arg9,typename Arg10,typename Arg11 ,
-    typename PreArg1, typename PreArg2, typename PreArg3, typename PreArg4>
+         typename Arg2,typename Arg3,typename Arg4,typename Arg5,typename Arg6,
+         typename Arg7,typename Arg8,typename Arg9,typename Arg10,typename Arg11 ,
+         typename PreArg1, typename PreArg2, typename PreArg3, typename PreArg4>
 Closure<R (Arg5, Arg6, Arg7, Arg8, Arg9, Arg10, Arg11)>* NewClosure(
     Class *object,
     R (MethodClass::*method)(Arg1, Arg2, Arg3, Arg4, Arg5, Arg6, Arg7, Arg8,
-        Arg9, Arg10, Arg11)
+                             Arg9, Arg10, Arg11)
     , PreArg1 pa1, PreArg2 pa2, PreArg3 pa3, PreArg4 pa4) {
     return new MethodClosure_Arg7_Bind4<true, R, Class, MethodClass ,Arg1,Arg2,
-        Arg3,Arg4,Arg5,Arg6,Arg7,Arg8,Arg9,Arg10,Arg11 , PreArg1, PreArg2,
-        PreArg3, PreArg4>(
-        object, method, pa1, pa2, pa3, pa4);
+           Arg3,Arg4,Arg5,Arg6,Arg7,Arg8,Arg9,Arg10,Arg11 , PreArg1, PreArg2,
+           PreArg3, PreArg4>(
+               object, method, pa1, pa2, pa3, pa4);
 }
 
 template <typename R, typename Class, typename MethodClass ,typename Arg1,
-    typename Arg2,typename Arg3,typename Arg4,typename Arg5,typename Arg6,
-    typename Arg7,typename Arg8,typename Arg9,typename Arg10,typename Arg11 ,
-    typename PreArg1, typename PreArg2, typename PreArg3, typename PreArg4>
+         typename Arg2,typename Arg3,typename Arg4,typename Arg5,typename Arg6,
+         typename Arg7,typename Arg8,typename Arg9,typename Arg10,typename Arg11 ,
+         typename PreArg1, typename PreArg2, typename PreArg3, typename PreArg4>
 Closure<R (Arg5, Arg6, Arg7, Arg8, Arg9, Arg10, Arg11)>* NewPermanentClosure(
     Class *object,
     R (MethodClass::*method)(Arg1, Arg2, Arg3, Arg4, Arg5, Arg6, Arg7, Arg8,
-        Arg9, Arg10, Arg11)
+                             Arg9, Arg10, Arg11)
     , PreArg1 pa1, PreArg2 pa2, PreArg3 pa3, PreArg4 pa4) {
     return new MethodClosure_Arg7_Bind4<false, R, Class, MethodClass ,Arg1,
-        Arg2,Arg3,Arg4,Arg5,Arg6,Arg7,Arg8,Arg9,Arg10,Arg11 , PreArg1, PreArg2,
-        PreArg3, PreArg4>(
-        object, method, pa1, pa2, pa3, pa4);
+           Arg2,Arg3,Arg4,Arg5,Arg6,Arg7,Arg8,Arg9,Arg10,Arg11 , PreArg1, PreArg2,
+           PreArg3, PreArg4>(
+               object, method, pa1, pa2, pa3, pa4);
 }
 
 ////////////////////////////////////////////////////
@@ -8043,133 +8297,137 @@ Closure<R (Arg5, Arg6, Arg7, Arg8, Arg9, Arg10, Arg11)>* NewPermanentClosure(
 ////////////////////////////////////////////////////
 
 template <
-    bool SelfDeleting,
-    typename R
-    , typename Arg1    , typename Arg2    , typename Arg3    ,
-        typename Arg4    , typename Arg5    , typename Arg6    ,
-        typename Arg7    , typename Arg8    , typename Arg9    ,
-        typename Arg10    , typename Arg11    , typename PreArg1    ,
-        typename PreArg2    , typename PreArg3    , typename PreArg4>
+bool SelfDeleting,
+     typename R
+     , typename Arg1    , typename Arg2    , typename Arg3    ,
+     typename Arg4    , typename Arg5    , typename Arg6    ,
+     typename Arg7    , typename Arg8    , typename Arg9    ,
+     typename Arg10    , typename Arg11    , typename PreArg1    ,
+     typename PreArg2    , typename PreArg3    , typename PreArg4>
 class FunctionClosure_Arg7_Bind4 : public Closure<R (Arg5, Arg6, Arg7, Arg8,
-    Arg9, Arg10, Arg11)> {
+                Arg9, Arg10, Arg11)> {
     typedef R (*FunctionType)(Arg1, Arg2, Arg3, Arg4, Arg5, Arg6, Arg7, Arg8,
-        Arg9, Arg10, Arg11);
+                              Arg9, Arg10, Arg11);
 public:
     FunctionClosure_Arg7_Bind4(FunctionType function , PreArg1 pa1,
-        PreArg2 pa2, PreArg3 pa3, PreArg4 pa4):
+                               PreArg2 pa2, PreArg3 pa3, PreArg4 pa4):
         m_function(function) , m_pa1(pa1), m_pa2(pa2), m_pa3(pa3), m_pa4(pa4) {}
     virtual R Run(Arg5 arg5, Arg6 arg6, Arg7 arg7, Arg8 arg8, Arg9 arg9,
-        Arg10 arg10, Arg11 arg11) {
+                  Arg10 arg10, Arg11 arg11) {
         ConditionalAutoDeleter<SelfDeleting,
-            FunctionClosure_Arg7_Bind4> self_deleter(this);
+                               FunctionClosure_Arg7_Bind4> self_deleter(this);
         return m_function(m_pa1, m_pa2, m_pa3, m_pa4 ,arg5, arg6, arg7, arg8,
-            arg9, arg10, arg11);
+                          arg9, arg10, arg11);
     }
-    virtual bool IsSelfDelete() const { return SelfDeleting; }
+    virtual bool IsSelfDelete() const {
+        return SelfDeleting;
+    }
 private:
     FunctionType m_function;
-        PreArg1 m_pa1;
-        PreArg2 m_pa2;
-        PreArg3 m_pa3;
-        PreArg4 m_pa4;
-    };
+    PreArg1 m_pa1;
+    PreArg2 m_pa2;
+    PreArg3 m_pa3;
+    PreArg4 m_pa4;
+};
 
 template <typename R , typename Arg1, typename Arg2, typename Arg3,
-    typename Arg4, typename Arg5, typename Arg6, typename Arg7, typename Arg8,
-    typename Arg9, typename Arg10, typename Arg11 , typename PreArg1,
-    typename PreArg2, typename PreArg3, typename PreArg4>
+         typename Arg4, typename Arg5, typename Arg6, typename Arg7, typename Arg8,
+         typename Arg9, typename Arg10, typename Arg11 , typename PreArg1,
+         typename PreArg2, typename PreArg3, typename PreArg4>
 Closure<R (Arg5, Arg6, Arg7, Arg8, Arg9, Arg10,
-    Arg11)>* NewClosure(R (*function)(Arg1, Arg2, Arg3, Arg4, Arg5, Arg6, Arg7,
-    Arg8, Arg9, Arg10, Arg11)
-                                          , PreArg1 pa1, PreArg2 pa2,
-                                              PreArg3 pa3, PreArg4 pa4) {
+           Arg11)>* NewClosure(R (*function)(Arg1, Arg2, Arg3, Arg4, Arg5, Arg6, Arg7,
+                               Arg8, Arg9, Arg10, Arg11)
+                               , PreArg1 pa1, PreArg2 pa2,
+                               PreArg3 pa3, PreArg4 pa4) {
     return new FunctionClosure_Arg7_Bind4<true, R , Arg1, Arg2, Arg3, Arg4,
-        Arg5, Arg6, Arg7, Arg8, Arg9, Arg10, Arg11 , PreArg1, PreArg2, PreArg3,
-        PreArg4>(function , pa1, pa2, pa3, pa4);
+           Arg5, Arg6, Arg7, Arg8, Arg9, Arg10, Arg11 , PreArg1, PreArg2, PreArg3,
+           PreArg4>(function , pa1, pa2, pa3, pa4);
 }
 
 template <typename R , typename Arg1, typename Arg2, typename Arg3,
-    typename Arg4, typename Arg5, typename Arg6, typename Arg7, typename Arg8,
-    typename Arg9, typename Arg10, typename Arg11 , typename PreArg1,
-    typename PreArg2, typename PreArg3, typename PreArg4>
+         typename Arg4, typename Arg5, typename Arg6, typename Arg7, typename Arg8,
+         typename Arg9, typename Arg10, typename Arg11 , typename PreArg1,
+         typename PreArg2, typename PreArg3, typename PreArg4>
 Closure<R (Arg5, Arg6, Arg7, Arg8, Arg9, Arg10,
-    Arg11)>* NewPermanentClosure(R (*function)(Arg1, Arg2, Arg3, Arg4, Arg5,
-    Arg6, Arg7, Arg8, Arg9, Arg10, Arg11)
-                                          , PreArg1 pa1, PreArg2 pa2,
-                                              PreArg3 pa3, PreArg4 pa4) {
+           Arg11)>* NewPermanentClosure(R (*function)(Arg1, Arg2, Arg3, Arg4, Arg5,
+                                        Arg6, Arg7, Arg8, Arg9, Arg10, Arg11)
+                                        , PreArg1 pa1, PreArg2 pa2,
+                                        PreArg3 pa3, PreArg4 pa4) {
     return new FunctionClosure_Arg7_Bind4<false, R , Arg1, Arg2, Arg3, Arg4,
-        Arg5, Arg6, Arg7, Arg8, Arg9, Arg10, Arg11 , PreArg1, PreArg2, PreArg3,
-        PreArg4>(function , pa1, pa2, pa3, pa4);
+           Arg5, Arg6, Arg7, Arg8, Arg9, Arg10, Arg11 , PreArg1, PreArg2, PreArg3,
+           PreArg4>(function , pa1, pa2, pa3, pa4);
 }
 
 template <
-    bool SelfDeleting,
-    typename R,
-    typename Class,
-    typename MethodClass
-    , typename Arg1    , typename Arg2    , typename Arg3    ,
-        typename Arg4    , typename Arg5    , typename Arg6    ,
-        typename Arg7    , typename Arg8    , typename Arg9    ,
-        typename Arg10    , typename Arg11    , typename Arg12    ,
-        typename PreArg1    , typename PreArg2    , typename PreArg3    ,
-        typename PreArg4    , typename PreArg5>
+bool SelfDeleting,
+     typename R,
+     typename Class,
+     typename MethodClass
+     , typename Arg1    , typename Arg2    , typename Arg3    ,
+     typename Arg4    , typename Arg5    , typename Arg6    ,
+     typename Arg7    , typename Arg8    , typename Arg9    ,
+     typename Arg10    , typename Arg11    , typename Arg12    ,
+     typename PreArg1    , typename PreArg2    , typename PreArg3    ,
+     typename PreArg4    , typename PreArg5>
 class MethodClosure_Arg7_Bind5 : public Closure<R (Arg6, Arg7, Arg8, Arg9,
-    Arg10, Arg11, Arg12)> {
+                Arg10, Arg11, Arg12)> {
     typedef R (MethodClass::*MethodType)(Arg1, Arg2, Arg3, Arg4, Arg5, Arg6,
-        Arg7, Arg8, Arg9, Arg10, Arg11, Arg12);
+                                         Arg7, Arg8, Arg9, Arg10, Arg11, Arg12);
 public:
     MethodClosure_Arg7_Bind5(Class *object, MethodType method , PreArg1 pa1,
-        PreArg2 pa2, PreArg3 pa3, PreArg4 pa4, PreArg5 pa5):
+                             PreArg2 pa2, PreArg3 pa3, PreArg4 pa4, PreArg5 pa5):
         m_object(object), m_method(method) , m_pa1(pa1), m_pa2(pa2),
-            m_pa3(pa3), m_pa4(pa4), m_pa5(pa5) {}
+        m_pa3(pa3), m_pa4(pa4), m_pa5(pa5) {}
     virtual R Run(Arg6 arg6, Arg7 arg7, Arg8 arg8, Arg9 arg9, Arg10 arg10,
-        Arg11 arg11, Arg12 arg12) {
+                  Arg11 arg11, Arg12 arg12) {
         ConditionalAutoDeleter<SelfDeleting,
-            MethodClosure_Arg7_Bind5> self_deleter(this);
+                               MethodClosure_Arg7_Bind5> self_deleter(this);
         return (m_object->*m_method)(m_pa1, m_pa2, m_pa3, m_pa4, m_pa5 ,arg6,
-            arg7, arg8, arg9, arg10, arg11, arg12);
+                                     arg7, arg8, arg9, arg10, arg11, arg12);
     }
-    virtual bool IsSelfDelete() const { return SelfDeleting; }
+    virtual bool IsSelfDelete() const {
+        return SelfDeleting;
+    }
 private:
     Class* m_object;
     MethodType m_method;
-        PreArg1 m_pa1;
-        PreArg2 m_pa2;
-        PreArg3 m_pa3;
-        PreArg4 m_pa4;
-        PreArg5 m_pa5;
-    };
+    PreArg1 m_pa1;
+    PreArg2 m_pa2;
+    PreArg3 m_pa3;
+    PreArg4 m_pa4;
+    PreArg5 m_pa5;
+};
 
 template <typename R, typename Class, typename MethodClass ,typename Arg1,
-    typename Arg2,typename Arg3,typename Arg4,typename Arg5,typename Arg6,
-    typename Arg7,typename Arg8,typename Arg9,typename Arg10,typename Arg11,
-    typename Arg12 , typename PreArg1, typename PreArg2, typename PreArg3,
-    typename PreArg4, typename PreArg5>
+         typename Arg2,typename Arg3,typename Arg4,typename Arg5,typename Arg6,
+         typename Arg7,typename Arg8,typename Arg9,typename Arg10,typename Arg11,
+         typename Arg12 , typename PreArg1, typename PreArg2, typename PreArg3,
+         typename PreArg4, typename PreArg5>
 Closure<R (Arg6, Arg7, Arg8, Arg9, Arg10, Arg11, Arg12)>* NewClosure(
     Class *object,
     R (MethodClass::*method)(Arg1, Arg2, Arg3, Arg4, Arg5, Arg6, Arg7, Arg8,
-        Arg9, Arg10, Arg11, Arg12)
+                             Arg9, Arg10, Arg11, Arg12)
     , PreArg1 pa1, PreArg2 pa2, PreArg3 pa3, PreArg4 pa4, PreArg5 pa5) {
     return new MethodClosure_Arg7_Bind5<true, R, Class, MethodClass ,Arg1,Arg2,
-        Arg3,Arg4,Arg5,Arg6,Arg7,Arg8,Arg9,Arg10,Arg11,Arg12 , PreArg1,
-        PreArg2, PreArg3, PreArg4, PreArg5>(
-        object, method, pa1, pa2, pa3, pa4, pa5);
+           Arg3,Arg4,Arg5,Arg6,Arg7,Arg8,Arg9,Arg10,Arg11,Arg12 , PreArg1,
+           PreArg2, PreArg3, PreArg4, PreArg5>(
+               object, method, pa1, pa2, pa3, pa4, pa5);
 }
 
 template <typename R, typename Class, typename MethodClass ,typename Arg1,
-    typename Arg2,typename Arg3,typename Arg4,typename Arg5,typename Arg6,
-    typename Arg7,typename Arg8,typename Arg9,typename Arg10,typename Arg11,
-    typename Arg12 , typename PreArg1, typename PreArg2, typename PreArg3,
-    typename PreArg4, typename PreArg5>
+         typename Arg2,typename Arg3,typename Arg4,typename Arg5,typename Arg6,
+         typename Arg7,typename Arg8,typename Arg9,typename Arg10,typename Arg11,
+         typename Arg12 , typename PreArg1, typename PreArg2, typename PreArg3,
+         typename PreArg4, typename PreArg5>
 Closure<R (Arg6, Arg7, Arg8, Arg9, Arg10, Arg11, Arg12)>* NewPermanentClosure(
     Class *object,
     R (MethodClass::*method)(Arg1, Arg2, Arg3, Arg4, Arg5, Arg6, Arg7, Arg8,
-        Arg9, Arg10, Arg11, Arg12)
+                             Arg9, Arg10, Arg11, Arg12)
     , PreArg1 pa1, PreArg2 pa2, PreArg3 pa3, PreArg4 pa4, PreArg5 pa5) {
     return new MethodClosure_Arg7_Bind5<false, R, Class, MethodClass ,Arg1,
-        Arg2,Arg3,Arg4,Arg5,Arg6,Arg7,Arg8,Arg9,Arg10,Arg11,Arg12 , PreArg1,
-        PreArg2, PreArg3, PreArg4, PreArg5>(
-        object, method, pa1, pa2, pa3, pa4, pa5);
+           Arg2,Arg3,Arg4,Arg5,Arg6,Arg7,Arg8,Arg9,Arg10,Arg11,Arg12 , PreArg1,
+           PreArg2, PreArg3, PreArg4, PreArg5>(
+               object, method, pa1, pa2, pa3, pa4, pa5);
 }
 
 ////////////////////////////////////////////////////
@@ -8177,144 +8435,148 @@ Closure<R (Arg6, Arg7, Arg8, Arg9, Arg10, Arg11, Arg12)>* NewPermanentClosure(
 ////////////////////////////////////////////////////
 
 template <
-    bool SelfDeleting,
-    typename R
-    , typename Arg1    , typename Arg2    , typename Arg3    ,
-        typename Arg4    , typename Arg5    , typename Arg6    ,
-        typename Arg7    , typename Arg8    , typename Arg9    ,
-        typename Arg10    , typename Arg11    , typename Arg12    ,
-        typename PreArg1    , typename PreArg2    , typename PreArg3    ,
-        typename PreArg4    , typename PreArg5>
+bool SelfDeleting,
+     typename R
+     , typename Arg1    , typename Arg2    , typename Arg3    ,
+     typename Arg4    , typename Arg5    , typename Arg6    ,
+     typename Arg7    , typename Arg8    , typename Arg9    ,
+     typename Arg10    , typename Arg11    , typename Arg12    ,
+     typename PreArg1    , typename PreArg2    , typename PreArg3    ,
+     typename PreArg4    , typename PreArg5>
 class FunctionClosure_Arg7_Bind5 : public Closure<R (Arg6, Arg7, Arg8, Arg9,
-    Arg10, Arg11, Arg12)> {
+                Arg10, Arg11, Arg12)> {
     typedef R (*FunctionType)(Arg1, Arg2, Arg3, Arg4, Arg5, Arg6, Arg7, Arg8,
-        Arg9, Arg10, Arg11, Arg12);
+                              Arg9, Arg10, Arg11, Arg12);
 public:
     FunctionClosure_Arg7_Bind5(FunctionType function , PreArg1 pa1,
-        PreArg2 pa2, PreArg3 pa3, PreArg4 pa4, PreArg5 pa5):
+                               PreArg2 pa2, PreArg3 pa3, PreArg4 pa4, PreArg5 pa5):
         m_function(function) , m_pa1(pa1), m_pa2(pa2), m_pa3(pa3), m_pa4(pa4),
-            m_pa5(pa5) {}
+        m_pa5(pa5) {}
     virtual R Run(Arg6 arg6, Arg7 arg7, Arg8 arg8, Arg9 arg9, Arg10 arg10,
-        Arg11 arg11, Arg12 arg12) {
+                  Arg11 arg11, Arg12 arg12) {
         ConditionalAutoDeleter<SelfDeleting,
-            FunctionClosure_Arg7_Bind5> self_deleter(this);
+                               FunctionClosure_Arg7_Bind5> self_deleter(this);
         return m_function(m_pa1, m_pa2, m_pa3, m_pa4, m_pa5 ,arg6, arg7, arg8,
-            arg9, arg10, arg11, arg12);
+                          arg9, arg10, arg11, arg12);
     }
-    virtual bool IsSelfDelete() const { return SelfDeleting; }
+    virtual bool IsSelfDelete() const {
+        return SelfDeleting;
+    }
 private:
     FunctionType m_function;
-        PreArg1 m_pa1;
-        PreArg2 m_pa2;
-        PreArg3 m_pa3;
-        PreArg4 m_pa4;
-        PreArg5 m_pa5;
-    };
+    PreArg1 m_pa1;
+    PreArg2 m_pa2;
+    PreArg3 m_pa3;
+    PreArg4 m_pa4;
+    PreArg5 m_pa5;
+};
 
 template <typename R , typename Arg1, typename Arg2, typename Arg3,
-    typename Arg4, typename Arg5, typename Arg6, typename Arg7, typename Arg8,
-    typename Arg9, typename Arg10, typename Arg11, typename Arg12 ,
-    typename PreArg1, typename PreArg2, typename PreArg3, typename PreArg4,
-    typename PreArg5>
+         typename Arg4, typename Arg5, typename Arg6, typename Arg7, typename Arg8,
+         typename Arg9, typename Arg10, typename Arg11, typename Arg12 ,
+         typename PreArg1, typename PreArg2, typename PreArg3, typename PreArg4,
+         typename PreArg5>
 Closure<R (Arg6, Arg7, Arg8, Arg9, Arg10, Arg11,
-    Arg12)>* NewClosure(R (*function)(Arg1, Arg2, Arg3, Arg4, Arg5, Arg6, Arg7,
-    Arg8, Arg9, Arg10, Arg11, Arg12)
-                                          , PreArg1 pa1, PreArg2 pa2,
-                                              PreArg3 pa3, PreArg4 pa4,
-                                              PreArg5 pa5) {
+           Arg12)>* NewClosure(R (*function)(Arg1, Arg2, Arg3, Arg4, Arg5, Arg6, Arg7,
+                               Arg8, Arg9, Arg10, Arg11, Arg12)
+                               , PreArg1 pa1, PreArg2 pa2,
+                               PreArg3 pa3, PreArg4 pa4,
+                               PreArg5 pa5) {
     return new FunctionClosure_Arg7_Bind5<true, R , Arg1, Arg2, Arg3, Arg4,
-        Arg5, Arg6, Arg7, Arg8, Arg9, Arg10, Arg11, Arg12 , PreArg1, PreArg2,
-        PreArg3, PreArg4, PreArg5>(function , pa1, pa2, pa3, pa4, pa5);
+           Arg5, Arg6, Arg7, Arg8, Arg9, Arg10, Arg11, Arg12 , PreArg1, PreArg2,
+           PreArg3, PreArg4, PreArg5>(function , pa1, pa2, pa3, pa4, pa5);
 }
 
 template <typename R , typename Arg1, typename Arg2, typename Arg3,
-    typename Arg4, typename Arg5, typename Arg6, typename Arg7, typename Arg8,
-    typename Arg9, typename Arg10, typename Arg11, typename Arg12 ,
-    typename PreArg1, typename PreArg2, typename PreArg3, typename PreArg4,
-    typename PreArg5>
+         typename Arg4, typename Arg5, typename Arg6, typename Arg7, typename Arg8,
+         typename Arg9, typename Arg10, typename Arg11, typename Arg12 ,
+         typename PreArg1, typename PreArg2, typename PreArg3, typename PreArg4,
+         typename PreArg5>
 Closure<R (Arg6, Arg7, Arg8, Arg9, Arg10, Arg11,
-    Arg12)>* NewPermanentClosure(R (*function)(Arg1, Arg2, Arg3, Arg4, Arg5,
-    Arg6, Arg7, Arg8, Arg9, Arg10, Arg11, Arg12)
-                                          , PreArg1 pa1, PreArg2 pa2,
-                                              PreArg3 pa3, PreArg4 pa4,
-                                              PreArg5 pa5) {
+           Arg12)>* NewPermanentClosure(R (*function)(Arg1, Arg2, Arg3, Arg4, Arg5,
+                                        Arg6, Arg7, Arg8, Arg9, Arg10, Arg11, Arg12)
+                                        , PreArg1 pa1, PreArg2 pa2,
+                                        PreArg3 pa3, PreArg4 pa4,
+                                        PreArg5 pa5) {
     return new FunctionClosure_Arg7_Bind5<false, R , Arg1, Arg2, Arg3, Arg4,
-        Arg5, Arg6, Arg7, Arg8, Arg9, Arg10, Arg11, Arg12 , PreArg1, PreArg2,
-        PreArg3, PreArg4, PreArg5>(function , pa1, pa2, pa3, pa4, pa5);
+           Arg5, Arg6, Arg7, Arg8, Arg9, Arg10, Arg11, Arg12 , PreArg1, PreArg2,
+           PreArg3, PreArg4, PreArg5>(function , pa1, pa2, pa3, pa4, pa5);
 }
 
 template <
-    bool SelfDeleting,
-    typename R,
-    typename Class,
-    typename MethodClass
-    , typename Arg1    , typename Arg2    , typename Arg3    ,
-        typename Arg4    , typename Arg5    , typename Arg6    ,
-        typename Arg7    , typename Arg8    , typename Arg9    ,
-        typename Arg10    , typename Arg11    , typename Arg12    ,
-        typename Arg13    , typename PreArg1    , typename PreArg2    ,
-        typename PreArg3    , typename PreArg4    , typename PreArg5    ,
-        typename PreArg6>
+bool SelfDeleting,
+     typename R,
+     typename Class,
+     typename MethodClass
+     , typename Arg1    , typename Arg2    , typename Arg3    ,
+     typename Arg4    , typename Arg5    , typename Arg6    ,
+     typename Arg7    , typename Arg8    , typename Arg9    ,
+     typename Arg10    , typename Arg11    , typename Arg12    ,
+     typename Arg13    , typename PreArg1    , typename PreArg2    ,
+     typename PreArg3    , typename PreArg4    , typename PreArg5    ,
+     typename PreArg6>
 class MethodClosure_Arg7_Bind6 : public Closure<R (Arg7, Arg8, Arg9, Arg10,
-    Arg11, Arg12, Arg13)> {
+                Arg11, Arg12, Arg13)> {
     typedef R (MethodClass::*MethodType)(Arg1, Arg2, Arg3, Arg4, Arg5, Arg6,
-        Arg7, Arg8, Arg9, Arg10, Arg11, Arg12, Arg13);
+                                         Arg7, Arg8, Arg9, Arg10, Arg11, Arg12, Arg13);
 public:
     MethodClosure_Arg7_Bind6(Class *object, MethodType method , PreArg1 pa1,
-        PreArg2 pa2, PreArg3 pa3, PreArg4 pa4, PreArg5 pa5, PreArg6 pa6):
+                             PreArg2 pa2, PreArg3 pa3, PreArg4 pa4, PreArg5 pa5, PreArg6 pa6):
         m_object(object), m_method(method) , m_pa1(pa1), m_pa2(pa2),
-            m_pa3(pa3), m_pa4(pa4), m_pa5(pa5), m_pa6(pa6) {}
+        m_pa3(pa3), m_pa4(pa4), m_pa5(pa5), m_pa6(pa6) {}
     virtual R Run(Arg7 arg7, Arg8 arg8, Arg9 arg9, Arg10 arg10, Arg11 arg11,
-        Arg12 arg12, Arg13 arg13) {
+                  Arg12 arg12, Arg13 arg13) {
         ConditionalAutoDeleter<SelfDeleting,
-            MethodClosure_Arg7_Bind6> self_deleter(this);
+                               MethodClosure_Arg7_Bind6> self_deleter(this);
         return (m_object->*m_method)(m_pa1, m_pa2, m_pa3, m_pa4, m_pa5, m_pa6 ,
-            arg7, arg8, arg9, arg10, arg11, arg12, arg13);
+                                     arg7, arg8, arg9, arg10, arg11, arg12, arg13);
     }
-    virtual bool IsSelfDelete() const { return SelfDeleting; }
+    virtual bool IsSelfDelete() const {
+        return SelfDeleting;
+    }
 private:
     Class* m_object;
     MethodType m_method;
-        PreArg1 m_pa1;
-        PreArg2 m_pa2;
-        PreArg3 m_pa3;
-        PreArg4 m_pa4;
-        PreArg5 m_pa5;
-        PreArg6 m_pa6;
-    };
+    PreArg1 m_pa1;
+    PreArg2 m_pa2;
+    PreArg3 m_pa3;
+    PreArg4 m_pa4;
+    PreArg5 m_pa5;
+    PreArg6 m_pa6;
+};
 
 template <typename R, typename Class, typename MethodClass ,typename Arg1,
-    typename Arg2,typename Arg3,typename Arg4,typename Arg5,typename Arg6,
-    typename Arg7,typename Arg8,typename Arg9,typename Arg10,typename Arg11,
-    typename Arg12,typename Arg13 , typename PreArg1, typename PreArg2,
-    typename PreArg3, typename PreArg4, typename PreArg5, typename PreArg6>
+         typename Arg2,typename Arg3,typename Arg4,typename Arg5,typename Arg6,
+         typename Arg7,typename Arg8,typename Arg9,typename Arg10,typename Arg11,
+         typename Arg12,typename Arg13 , typename PreArg1, typename PreArg2,
+         typename PreArg3, typename PreArg4, typename PreArg5, typename PreArg6>
 Closure<R (Arg7, Arg8, Arg9, Arg10, Arg11, Arg12, Arg13)>* NewClosure(
     Class *object,
     R (MethodClass::*method)(Arg1, Arg2, Arg3, Arg4, Arg5, Arg6, Arg7, Arg8,
-        Arg9, Arg10, Arg11, Arg12, Arg13)
+                             Arg9, Arg10, Arg11, Arg12, Arg13)
     , PreArg1 pa1, PreArg2 pa2, PreArg3 pa3, PreArg4 pa4, PreArg5 pa5,
-        PreArg6 pa6) {
+    PreArg6 pa6) {
     return new MethodClosure_Arg7_Bind6<true, R, Class, MethodClass ,Arg1,Arg2,
-        Arg3,Arg4,Arg5,Arg6,Arg7,Arg8,Arg9,Arg10,Arg11,Arg12,Arg13 , PreArg1,
-        PreArg2, PreArg3, PreArg4, PreArg5, PreArg6>(
-        object, method, pa1, pa2, pa3, pa4, pa5, pa6);
+           Arg3,Arg4,Arg5,Arg6,Arg7,Arg8,Arg9,Arg10,Arg11,Arg12,Arg13 , PreArg1,
+           PreArg2, PreArg3, PreArg4, PreArg5, PreArg6>(
+               object, method, pa1, pa2, pa3, pa4, pa5, pa6);
 }
 
 template <typename R, typename Class, typename MethodClass ,typename Arg1,
-    typename Arg2,typename Arg3,typename Arg4,typename Arg5,typename Arg6,
-    typename Arg7,typename Arg8,typename Arg9,typename Arg10,typename Arg11,
-    typename Arg12,typename Arg13 , typename PreArg1, typename PreArg2,
-    typename PreArg3, typename PreArg4, typename PreArg5, typename PreArg6>
+         typename Arg2,typename Arg3,typename Arg4,typename Arg5,typename Arg6,
+         typename Arg7,typename Arg8,typename Arg9,typename Arg10,typename Arg11,
+         typename Arg12,typename Arg13 , typename PreArg1, typename PreArg2,
+         typename PreArg3, typename PreArg4, typename PreArg5, typename PreArg6>
 Closure<R (Arg7, Arg8, Arg9, Arg10, Arg11, Arg12, Arg13)>* NewPermanentClosure(
     Class *object,
     R (MethodClass::*method)(Arg1, Arg2, Arg3, Arg4, Arg5, Arg6, Arg7, Arg8,
-        Arg9, Arg10, Arg11, Arg12, Arg13)
+                             Arg9, Arg10, Arg11, Arg12, Arg13)
     , PreArg1 pa1, PreArg2 pa2, PreArg3 pa3, PreArg4 pa4, PreArg5 pa5,
-        PreArg6 pa6) {
+    PreArg6 pa6) {
     return new MethodClosure_Arg7_Bind6<false, R, Class, MethodClass ,Arg1,
-        Arg2,Arg3,Arg4,Arg5,Arg6,Arg7,Arg8,Arg9,Arg10,Arg11,Arg12,Arg13 ,
-        PreArg1, PreArg2, PreArg3, PreArg4, PreArg5, PreArg6>(
-        object, method, pa1, pa2, pa3, pa4, pa5, pa6);
+           Arg2,Arg3,Arg4,Arg5,Arg6,Arg7,Arg8,Arg9,Arg10,Arg11,Arg12,Arg13 ,
+           PreArg1, PreArg2, PreArg3, PreArg4, PreArg5, PreArg6>(
+               object, method, pa1, pa2, pa3, pa4, pa5, pa6);
 }
 
 ////////////////////////////////////////////////////
@@ -8322,152 +8584,156 @@ Closure<R (Arg7, Arg8, Arg9, Arg10, Arg11, Arg12, Arg13)>* NewPermanentClosure(
 ////////////////////////////////////////////////////
 
 template <
-    bool SelfDeleting,
-    typename R
-    , typename Arg1    , typename Arg2    , typename Arg3    ,
-        typename Arg4    , typename Arg5    , typename Arg6    ,
-        typename Arg7    , typename Arg8    , typename Arg9    ,
-        typename Arg10    , typename Arg11    , typename Arg12    ,
-        typename Arg13    , typename PreArg1    , typename PreArg2    ,
-        typename PreArg3    , typename PreArg4    , typename PreArg5    ,
-        typename PreArg6>
+bool SelfDeleting,
+     typename R
+     , typename Arg1    , typename Arg2    , typename Arg3    ,
+     typename Arg4    , typename Arg5    , typename Arg6    ,
+     typename Arg7    , typename Arg8    , typename Arg9    ,
+     typename Arg10    , typename Arg11    , typename Arg12    ,
+     typename Arg13    , typename PreArg1    , typename PreArg2    ,
+     typename PreArg3    , typename PreArg4    , typename PreArg5    ,
+     typename PreArg6>
 class FunctionClosure_Arg7_Bind6 : public Closure<R (Arg7, Arg8, Arg9, Arg10,
-    Arg11, Arg12, Arg13)> {
+                Arg11, Arg12, Arg13)> {
     typedef R (*FunctionType)(Arg1, Arg2, Arg3, Arg4, Arg5, Arg6, Arg7, Arg8,
-        Arg9, Arg10, Arg11, Arg12, Arg13);
+                              Arg9, Arg10, Arg11, Arg12, Arg13);
 public:
     FunctionClosure_Arg7_Bind6(FunctionType function , PreArg1 pa1,
-        PreArg2 pa2, PreArg3 pa3, PreArg4 pa4, PreArg5 pa5, PreArg6 pa6):
+                               PreArg2 pa2, PreArg3 pa3, PreArg4 pa4, PreArg5 pa5, PreArg6 pa6):
         m_function(function) , m_pa1(pa1), m_pa2(pa2), m_pa3(pa3), m_pa4(pa4),
-            m_pa5(pa5), m_pa6(pa6) {}
+        m_pa5(pa5), m_pa6(pa6) {}
     virtual R Run(Arg7 arg7, Arg8 arg8, Arg9 arg9, Arg10 arg10, Arg11 arg11,
-        Arg12 arg12, Arg13 arg13) {
+                  Arg12 arg12, Arg13 arg13) {
         ConditionalAutoDeleter<SelfDeleting,
-            FunctionClosure_Arg7_Bind6> self_deleter(this);
+                               FunctionClosure_Arg7_Bind6> self_deleter(this);
         return m_function(m_pa1, m_pa2, m_pa3, m_pa4, m_pa5, m_pa6 ,arg7, arg8,
-            arg9, arg10, arg11, arg12, arg13);
+                          arg9, arg10, arg11, arg12, arg13);
     }
-    virtual bool IsSelfDelete() const { return SelfDeleting; }
+    virtual bool IsSelfDelete() const {
+        return SelfDeleting;
+    }
 private:
     FunctionType m_function;
-        PreArg1 m_pa1;
-        PreArg2 m_pa2;
-        PreArg3 m_pa3;
-        PreArg4 m_pa4;
-        PreArg5 m_pa5;
-        PreArg6 m_pa6;
-    };
+    PreArg1 m_pa1;
+    PreArg2 m_pa2;
+    PreArg3 m_pa3;
+    PreArg4 m_pa4;
+    PreArg5 m_pa5;
+    PreArg6 m_pa6;
+};
 
 template <typename R , typename Arg1, typename Arg2, typename Arg3,
-    typename Arg4, typename Arg5, typename Arg6, typename Arg7, typename Arg8,
-    typename Arg9, typename Arg10, typename Arg11, typename Arg12,
-    typename Arg13 , typename PreArg1, typename PreArg2, typename PreArg3,
-    typename PreArg4, typename PreArg5, typename PreArg6>
+         typename Arg4, typename Arg5, typename Arg6, typename Arg7, typename Arg8,
+         typename Arg9, typename Arg10, typename Arg11, typename Arg12,
+         typename Arg13 , typename PreArg1, typename PreArg2, typename PreArg3,
+         typename PreArg4, typename PreArg5, typename PreArg6>
 Closure<R (Arg7, Arg8, Arg9, Arg10, Arg11, Arg12,
-    Arg13)>* NewClosure(R (*function)(Arg1, Arg2, Arg3, Arg4, Arg5, Arg6, Arg7,
-    Arg8, Arg9, Arg10, Arg11, Arg12, Arg13)
-                                          , PreArg1 pa1, PreArg2 pa2,
-                                              PreArg3 pa3, PreArg4 pa4,
-                                              PreArg5 pa5, PreArg6 pa6) {
+           Arg13)>* NewClosure(R (*function)(Arg1, Arg2, Arg3, Arg4, Arg5, Arg6, Arg7,
+                               Arg8, Arg9, Arg10, Arg11, Arg12, Arg13)
+                               , PreArg1 pa1, PreArg2 pa2,
+                               PreArg3 pa3, PreArg4 pa4,
+                               PreArg5 pa5, PreArg6 pa6) {
     return new FunctionClosure_Arg7_Bind6<true, R , Arg1, Arg2, Arg3, Arg4,
-        Arg5, Arg6, Arg7, Arg8, Arg9, Arg10, Arg11, Arg12, Arg13 , PreArg1,
-        PreArg2, PreArg3, PreArg4, PreArg5, PreArg6>(function , pa1, pa2, pa3,
-        pa4, pa5, pa6);
+           Arg5, Arg6, Arg7, Arg8, Arg9, Arg10, Arg11, Arg12, Arg13 , PreArg1,
+           PreArg2, PreArg3, PreArg4, PreArg5, PreArg6>(function , pa1, pa2, pa3,
+                   pa4, pa5, pa6);
 }
 
 template <typename R , typename Arg1, typename Arg2, typename Arg3,
-    typename Arg4, typename Arg5, typename Arg6, typename Arg7, typename Arg8,
-    typename Arg9, typename Arg10, typename Arg11, typename Arg12,
-    typename Arg13 , typename PreArg1, typename PreArg2, typename PreArg3,
-    typename PreArg4, typename PreArg5, typename PreArg6>
+         typename Arg4, typename Arg5, typename Arg6, typename Arg7, typename Arg8,
+         typename Arg9, typename Arg10, typename Arg11, typename Arg12,
+         typename Arg13 , typename PreArg1, typename PreArg2, typename PreArg3,
+         typename PreArg4, typename PreArg5, typename PreArg6>
 Closure<R (Arg7, Arg8, Arg9, Arg10, Arg11, Arg12,
-    Arg13)>* NewPermanentClosure(R (*function)(Arg1, Arg2, Arg3, Arg4, Arg5,
-    Arg6, Arg7, Arg8, Arg9, Arg10, Arg11, Arg12, Arg13)
-                                          , PreArg1 pa1, PreArg2 pa2,
-                                              PreArg3 pa3, PreArg4 pa4,
-                                              PreArg5 pa5, PreArg6 pa6) {
+           Arg13)>* NewPermanentClosure(R (*function)(Arg1, Arg2, Arg3, Arg4, Arg5,
+                                        Arg6, Arg7, Arg8, Arg9, Arg10, Arg11, Arg12, Arg13)
+                                        , PreArg1 pa1, PreArg2 pa2,
+                                        PreArg3 pa3, PreArg4 pa4,
+                                        PreArg5 pa5, PreArg6 pa6) {
     return new FunctionClosure_Arg7_Bind6<false, R , Arg1, Arg2, Arg3, Arg4,
-        Arg5, Arg6, Arg7, Arg8, Arg9, Arg10, Arg11, Arg12, Arg13 , PreArg1,
-        PreArg2, PreArg3, PreArg4, PreArg5, PreArg6>(function , pa1, pa2, pa3,
-        pa4, pa5, pa6);
+           Arg5, Arg6, Arg7, Arg8, Arg9, Arg10, Arg11, Arg12, Arg13 , PreArg1,
+           PreArg2, PreArg3, PreArg4, PreArg5, PreArg6>(function , pa1, pa2, pa3,
+                   pa4, pa5, pa6);
 }
 
 template <
-    bool SelfDeleting,
-    typename R,
-    typename Class,
-    typename MethodClass
-    , typename Arg1    , typename Arg2    , typename Arg3    ,
-        typename Arg4    , typename Arg5    , typename Arg6    ,
-        typename Arg7    , typename Arg8    , typename Arg9    ,
-        typename Arg10    , typename Arg11    , typename Arg12    ,
-        typename Arg13    , typename Arg14    , typename PreArg1    ,
-        typename PreArg2    , typename PreArg3    , typename PreArg4    ,
-        typename PreArg5    , typename PreArg6    , typename PreArg7>
+bool SelfDeleting,
+     typename R,
+     typename Class,
+     typename MethodClass
+     , typename Arg1    , typename Arg2    , typename Arg3    ,
+     typename Arg4    , typename Arg5    , typename Arg6    ,
+     typename Arg7    , typename Arg8    , typename Arg9    ,
+     typename Arg10    , typename Arg11    , typename Arg12    ,
+     typename Arg13    , typename Arg14    , typename PreArg1    ,
+     typename PreArg2    , typename PreArg3    , typename PreArg4    ,
+     typename PreArg5    , typename PreArg6    , typename PreArg7>
 class MethodClosure_Arg7_Bind7 : public Closure<R (Arg8, Arg9, Arg10, Arg11,
-    Arg12, Arg13, Arg14)> {
+                Arg12, Arg13, Arg14)> {
     typedef R (MethodClass::*MethodType)(Arg1, Arg2, Arg3, Arg4, Arg5, Arg6,
-        Arg7, Arg8, Arg9, Arg10, Arg11, Arg12, Arg13, Arg14);
+                                         Arg7, Arg8, Arg9, Arg10, Arg11, Arg12, Arg13, Arg14);
 public:
     MethodClosure_Arg7_Bind7(Class *object, MethodType method , PreArg1 pa1,
-        PreArg2 pa2, PreArg3 pa3, PreArg4 pa4, PreArg5 pa5, PreArg6 pa6,
-        PreArg7 pa7):
+                             PreArg2 pa2, PreArg3 pa3, PreArg4 pa4, PreArg5 pa5, PreArg6 pa6,
+                             PreArg7 pa7):
         m_object(object), m_method(method) , m_pa1(pa1), m_pa2(pa2),
-            m_pa3(pa3), m_pa4(pa4), m_pa5(pa5), m_pa6(pa6), m_pa7(pa7) {}
+        m_pa3(pa3), m_pa4(pa4), m_pa5(pa5), m_pa6(pa6), m_pa7(pa7) {}
     virtual R Run(Arg8 arg8, Arg9 arg9, Arg10 arg10, Arg11 arg11, Arg12 arg12,
-        Arg13 arg13, Arg14 arg14) {
+                  Arg13 arg13, Arg14 arg14) {
         ConditionalAutoDeleter<SelfDeleting,
-            MethodClosure_Arg7_Bind7> self_deleter(this);
+                               MethodClosure_Arg7_Bind7> self_deleter(this);
         return (m_object->*m_method)(m_pa1, m_pa2, m_pa3, m_pa4, m_pa5, m_pa6,
-            m_pa7 ,arg8, arg9, arg10, arg11, arg12, arg13, arg14);
+                                     m_pa7 ,arg8, arg9, arg10, arg11, arg12, arg13, arg14);
     }
-    virtual bool IsSelfDelete() const { return SelfDeleting; }
+    virtual bool IsSelfDelete() const {
+        return SelfDeleting;
+    }
 private:
     Class* m_object;
     MethodType m_method;
-        PreArg1 m_pa1;
-        PreArg2 m_pa2;
-        PreArg3 m_pa3;
-        PreArg4 m_pa4;
-        PreArg5 m_pa5;
-        PreArg6 m_pa6;
-        PreArg7 m_pa7;
-    };
+    PreArg1 m_pa1;
+    PreArg2 m_pa2;
+    PreArg3 m_pa3;
+    PreArg4 m_pa4;
+    PreArg5 m_pa5;
+    PreArg6 m_pa6;
+    PreArg7 m_pa7;
+};
 
 template <typename R, typename Class, typename MethodClass ,typename Arg1,
-    typename Arg2,typename Arg3,typename Arg4,typename Arg5,typename Arg6,
-    typename Arg7,typename Arg8,typename Arg9,typename Arg10,typename Arg11,
-    typename Arg12,typename Arg13,typename Arg14 , typename PreArg1,
-    typename PreArg2, typename PreArg3, typename PreArg4, typename PreArg5,
-    typename PreArg6, typename PreArg7>
+         typename Arg2,typename Arg3,typename Arg4,typename Arg5,typename Arg6,
+         typename Arg7,typename Arg8,typename Arg9,typename Arg10,typename Arg11,
+         typename Arg12,typename Arg13,typename Arg14 , typename PreArg1,
+         typename PreArg2, typename PreArg3, typename PreArg4, typename PreArg5,
+         typename PreArg6, typename PreArg7>
 Closure<R (Arg8, Arg9, Arg10, Arg11, Arg12, Arg13, Arg14)>* NewClosure(
     Class *object,
     R (MethodClass::*method)(Arg1, Arg2, Arg3, Arg4, Arg5, Arg6, Arg7, Arg8,
-        Arg9, Arg10, Arg11, Arg12, Arg13, Arg14)
+                             Arg9, Arg10, Arg11, Arg12, Arg13, Arg14)
     , PreArg1 pa1, PreArg2 pa2, PreArg3 pa3, PreArg4 pa4, PreArg5 pa5,
-        PreArg6 pa6, PreArg7 pa7) {
+    PreArg6 pa6, PreArg7 pa7) {
     return new MethodClosure_Arg7_Bind7<true, R, Class, MethodClass ,Arg1,Arg2,
-        Arg3,Arg4,Arg5,Arg6,Arg7,Arg8,Arg9,Arg10,Arg11,Arg12,Arg13,Arg14 ,
-        PreArg1, PreArg2, PreArg3, PreArg4, PreArg5, PreArg6, PreArg7>(
-        object, method, pa1, pa2, pa3, pa4, pa5, pa6, pa7);
+           Arg3,Arg4,Arg5,Arg6,Arg7,Arg8,Arg9,Arg10,Arg11,Arg12,Arg13,Arg14 ,
+           PreArg1, PreArg2, PreArg3, PreArg4, PreArg5, PreArg6, PreArg7>(
+               object, method, pa1, pa2, pa3, pa4, pa5, pa6, pa7);
 }
 
 template <typename R, typename Class, typename MethodClass ,typename Arg1,
-    typename Arg2,typename Arg3,typename Arg4,typename Arg5,typename Arg6,
-    typename Arg7,typename Arg8,typename Arg9,typename Arg10,typename Arg11,
-    typename Arg12,typename Arg13,typename Arg14 , typename PreArg1,
-    typename PreArg2, typename PreArg3, typename PreArg4, typename PreArg5,
-    typename PreArg6, typename PreArg7>
+         typename Arg2,typename Arg3,typename Arg4,typename Arg5,typename Arg6,
+         typename Arg7,typename Arg8,typename Arg9,typename Arg10,typename Arg11,
+         typename Arg12,typename Arg13,typename Arg14 , typename PreArg1,
+         typename PreArg2, typename PreArg3, typename PreArg4, typename PreArg5,
+         typename PreArg6, typename PreArg7>
 Closure<R (Arg8, Arg9, Arg10, Arg11, Arg12, Arg13, Arg14)>* NewPermanentClosure(
     Class *object,
     R (MethodClass::*method)(Arg1, Arg2, Arg3, Arg4, Arg5, Arg6, Arg7, Arg8,
-        Arg9, Arg10, Arg11, Arg12, Arg13, Arg14)
+                             Arg9, Arg10, Arg11, Arg12, Arg13, Arg14)
     , PreArg1 pa1, PreArg2 pa2, PreArg3 pa3, PreArg4 pa4, PreArg5 pa5,
-        PreArg6 pa6, PreArg7 pa7) {
+    PreArg6 pa6, PreArg7 pa7) {
     return new MethodClosure_Arg7_Bind7<false, R, Class, MethodClass ,Arg1,
-        Arg2,Arg3,Arg4,Arg5,Arg6,Arg7,Arg8,Arg9,Arg10,Arg11,Arg12,Arg13,Arg14 ,
-        PreArg1, PreArg2, PreArg3, PreArg4, PreArg5, PreArg6, PreArg7>(
-        object, method, pa1, pa2, pa3, pa4, pa5, pa6, pa7);
+           Arg2,Arg3,Arg4,Arg5,Arg6,Arg7,Arg8,Arg9,Arg10,Arg11,Arg12,Arg13,Arg14 ,
+           PreArg1, PreArg2, PreArg3, PreArg4, PreArg5, PreArg6, PreArg7>(
+               object, method, pa1, pa2, pa3, pa4, pa5, pa6, pa7);
 }
 
 ////////////////////////////////////////////////////
@@ -8475,164 +8741,168 @@ Closure<R (Arg8, Arg9, Arg10, Arg11, Arg12, Arg13, Arg14)>* NewPermanentClosure(
 ////////////////////////////////////////////////////
 
 template <
-    bool SelfDeleting,
-    typename R
-    , typename Arg1    , typename Arg2    , typename Arg3    ,
-        typename Arg4    , typename Arg5    , typename Arg6    ,
-        typename Arg7    , typename Arg8    , typename Arg9    ,
-        typename Arg10    , typename Arg11    , typename Arg12    ,
-        typename Arg13    , typename Arg14    , typename PreArg1    ,
-        typename PreArg2    , typename PreArg3    , typename PreArg4    ,
-        typename PreArg5    , typename PreArg6    , typename PreArg7>
+bool SelfDeleting,
+     typename R
+     , typename Arg1    , typename Arg2    , typename Arg3    ,
+     typename Arg4    , typename Arg5    , typename Arg6    ,
+     typename Arg7    , typename Arg8    , typename Arg9    ,
+     typename Arg10    , typename Arg11    , typename Arg12    ,
+     typename Arg13    , typename Arg14    , typename PreArg1    ,
+     typename PreArg2    , typename PreArg3    , typename PreArg4    ,
+     typename PreArg5    , typename PreArg6    , typename PreArg7>
 class FunctionClosure_Arg7_Bind7 : public Closure<R (Arg8, Arg9, Arg10, Arg11,
-    Arg12, Arg13, Arg14)> {
+                Arg12, Arg13, Arg14)> {
     typedef R (*FunctionType)(Arg1, Arg2, Arg3, Arg4, Arg5, Arg6, Arg7, Arg8,
-        Arg9, Arg10, Arg11, Arg12, Arg13, Arg14);
+                              Arg9, Arg10, Arg11, Arg12, Arg13, Arg14);
 public:
     FunctionClosure_Arg7_Bind7(FunctionType function , PreArg1 pa1,
-        PreArg2 pa2, PreArg3 pa3, PreArg4 pa4, PreArg5 pa5, PreArg6 pa6,
-        PreArg7 pa7):
+                               PreArg2 pa2, PreArg3 pa3, PreArg4 pa4, PreArg5 pa5, PreArg6 pa6,
+                               PreArg7 pa7):
         m_function(function) , m_pa1(pa1), m_pa2(pa2), m_pa3(pa3), m_pa4(pa4),
-            m_pa5(pa5), m_pa6(pa6), m_pa7(pa7) {}
+        m_pa5(pa5), m_pa6(pa6), m_pa7(pa7) {}
     virtual R Run(Arg8 arg8, Arg9 arg9, Arg10 arg10, Arg11 arg11, Arg12 arg12,
-        Arg13 arg13, Arg14 arg14) {
+                  Arg13 arg13, Arg14 arg14) {
         ConditionalAutoDeleter<SelfDeleting,
-            FunctionClosure_Arg7_Bind7> self_deleter(this);
+                               FunctionClosure_Arg7_Bind7> self_deleter(this);
         return m_function(m_pa1, m_pa2, m_pa3, m_pa4, m_pa5, m_pa6, m_pa7 ,
-            arg8, arg9, arg10, arg11, arg12, arg13, arg14);
+                          arg8, arg9, arg10, arg11, arg12, arg13, arg14);
     }
-    virtual bool IsSelfDelete() const { return SelfDeleting; }
+    virtual bool IsSelfDelete() const {
+        return SelfDeleting;
+    }
 private:
     FunctionType m_function;
-        PreArg1 m_pa1;
-        PreArg2 m_pa2;
-        PreArg3 m_pa3;
-        PreArg4 m_pa4;
-        PreArg5 m_pa5;
-        PreArg6 m_pa6;
-        PreArg7 m_pa7;
-    };
+    PreArg1 m_pa1;
+    PreArg2 m_pa2;
+    PreArg3 m_pa3;
+    PreArg4 m_pa4;
+    PreArg5 m_pa5;
+    PreArg6 m_pa6;
+    PreArg7 m_pa7;
+};
 
 template <typename R , typename Arg1, typename Arg2, typename Arg3,
-    typename Arg4, typename Arg5, typename Arg6, typename Arg7, typename Arg8,
-    typename Arg9, typename Arg10, typename Arg11, typename Arg12,
-    typename Arg13, typename Arg14 , typename PreArg1, typename PreArg2,
-    typename PreArg3, typename PreArg4, typename PreArg5, typename PreArg6,
-    typename PreArg7>
+         typename Arg4, typename Arg5, typename Arg6, typename Arg7, typename Arg8,
+         typename Arg9, typename Arg10, typename Arg11, typename Arg12,
+         typename Arg13, typename Arg14 , typename PreArg1, typename PreArg2,
+         typename PreArg3, typename PreArg4, typename PreArg5, typename PreArg6,
+         typename PreArg7>
 Closure<R (Arg8, Arg9, Arg10, Arg11, Arg12, Arg13,
-    Arg14)>* NewClosure(R (*function)(Arg1, Arg2, Arg3, Arg4, Arg5, Arg6, Arg7,
-    Arg8, Arg9, Arg10, Arg11, Arg12, Arg13, Arg14)
-                                          , PreArg1 pa1, PreArg2 pa2,
-                                              PreArg3 pa3, PreArg4 pa4,
-                                              PreArg5 pa5, PreArg6 pa6,
-                                              PreArg7 pa7) {
+           Arg14)>* NewClosure(R (*function)(Arg1, Arg2, Arg3, Arg4, Arg5, Arg6, Arg7,
+                               Arg8, Arg9, Arg10, Arg11, Arg12, Arg13, Arg14)
+                               , PreArg1 pa1, PreArg2 pa2,
+                               PreArg3 pa3, PreArg4 pa4,
+                               PreArg5 pa5, PreArg6 pa6,
+                               PreArg7 pa7) {
     return new FunctionClosure_Arg7_Bind7<true, R , Arg1, Arg2, Arg3, Arg4,
-        Arg5, Arg6, Arg7, Arg8, Arg9, Arg10, Arg11, Arg12, Arg13, Arg14 ,
-        PreArg1, PreArg2, PreArg3, PreArg4, PreArg5, PreArg6,
-        PreArg7>(function , pa1, pa2, pa3, pa4, pa5, pa6, pa7);
+           Arg5, Arg6, Arg7, Arg8, Arg9, Arg10, Arg11, Arg12, Arg13, Arg14 ,
+           PreArg1, PreArg2, PreArg3, PreArg4, PreArg5, PreArg6,
+           PreArg7>(function , pa1, pa2, pa3, pa4, pa5, pa6, pa7);
 }
 
 template <typename R , typename Arg1, typename Arg2, typename Arg3,
-    typename Arg4, typename Arg5, typename Arg6, typename Arg7, typename Arg8,
-    typename Arg9, typename Arg10, typename Arg11, typename Arg12,
-    typename Arg13, typename Arg14 , typename PreArg1, typename PreArg2,
-    typename PreArg3, typename PreArg4, typename PreArg5, typename PreArg6,
-    typename PreArg7>
+         typename Arg4, typename Arg5, typename Arg6, typename Arg7, typename Arg8,
+         typename Arg9, typename Arg10, typename Arg11, typename Arg12,
+         typename Arg13, typename Arg14 , typename PreArg1, typename PreArg2,
+         typename PreArg3, typename PreArg4, typename PreArg5, typename PreArg6,
+         typename PreArg7>
 Closure<R (Arg8, Arg9, Arg10, Arg11, Arg12, Arg13,
-    Arg14)>* NewPermanentClosure(R (*function)(Arg1, Arg2, Arg3, Arg4, Arg5,
-    Arg6, Arg7, Arg8, Arg9, Arg10, Arg11, Arg12, Arg13, Arg14)
-                                          , PreArg1 pa1, PreArg2 pa2,
-                                              PreArg3 pa3, PreArg4 pa4,
-                                              PreArg5 pa5, PreArg6 pa6,
-                                              PreArg7 pa7) {
+           Arg14)>* NewPermanentClosure(R (*function)(Arg1, Arg2, Arg3, Arg4, Arg5,
+                                        Arg6, Arg7, Arg8, Arg9, Arg10, Arg11, Arg12, Arg13, Arg14)
+                                        , PreArg1 pa1, PreArg2 pa2,
+                                        PreArg3 pa3, PreArg4 pa4,
+                                        PreArg5 pa5, PreArg6 pa6,
+                                        PreArg7 pa7) {
     return new FunctionClosure_Arg7_Bind7<false, R , Arg1, Arg2, Arg3, Arg4,
-        Arg5, Arg6, Arg7, Arg8, Arg9, Arg10, Arg11, Arg12, Arg13, Arg14 ,
-        PreArg1, PreArg2, PreArg3, PreArg4, PreArg5, PreArg6,
-        PreArg7>(function , pa1, pa2, pa3, pa4, pa5, pa6, pa7);
+           Arg5, Arg6, Arg7, Arg8, Arg9, Arg10, Arg11, Arg12, Arg13, Arg14 ,
+           PreArg1, PreArg2, PreArg3, PreArg4, PreArg5, PreArg6,
+           PreArg7>(function , pa1, pa2, pa3, pa4, pa5, pa6, pa7);
 }
 
 template <
-    bool SelfDeleting,
-    typename R,
-    typename Class,
-    typename MethodClass
-    , typename Arg1    , typename Arg2    , typename Arg3    ,
-        typename Arg4    , typename Arg5    , typename Arg6    ,
-        typename Arg7    , typename Arg8    , typename Arg9    ,
-        typename Arg10    , typename Arg11    , typename Arg12    ,
-        typename Arg13    , typename Arg14    , typename Arg15    ,
-        typename PreArg1    , typename PreArg2    , typename PreArg3    ,
-        typename PreArg4    , typename PreArg5    , typename PreArg6    ,
-        typename PreArg7    , typename PreArg8>
+bool SelfDeleting,
+     typename R,
+     typename Class,
+     typename MethodClass
+     , typename Arg1    , typename Arg2    , typename Arg3    ,
+     typename Arg4    , typename Arg5    , typename Arg6    ,
+     typename Arg7    , typename Arg8    , typename Arg9    ,
+     typename Arg10    , typename Arg11    , typename Arg12    ,
+     typename Arg13    , typename Arg14    , typename Arg15    ,
+     typename PreArg1    , typename PreArg2    , typename PreArg3    ,
+     typename PreArg4    , typename PreArg5    , typename PreArg6    ,
+     typename PreArg7    , typename PreArg8>
 class MethodClosure_Arg7_Bind8 : public Closure<R (Arg9, Arg10, Arg11, Arg12,
-    Arg13, Arg14, Arg15)> {
+                Arg13, Arg14, Arg15)> {
     typedef R (MethodClass::*MethodType)(Arg1, Arg2, Arg3, Arg4, Arg5, Arg6,
-        Arg7, Arg8, Arg9, Arg10, Arg11, Arg12, Arg13, Arg14, Arg15);
+                                         Arg7, Arg8, Arg9, Arg10, Arg11, Arg12, Arg13, Arg14, Arg15);
 public:
     MethodClosure_Arg7_Bind8(Class *object, MethodType method , PreArg1 pa1,
-        PreArg2 pa2, PreArg3 pa3, PreArg4 pa4, PreArg5 pa5, PreArg6 pa6,
-        PreArg7 pa7, PreArg8 pa8):
+                             PreArg2 pa2, PreArg3 pa3, PreArg4 pa4, PreArg5 pa5, PreArg6 pa6,
+                             PreArg7 pa7, PreArg8 pa8):
         m_object(object), m_method(method) , m_pa1(pa1), m_pa2(pa2),
-            m_pa3(pa3), m_pa4(pa4), m_pa5(pa5), m_pa6(pa6), m_pa7(pa7),
-            m_pa8(pa8) {}
+        m_pa3(pa3), m_pa4(pa4), m_pa5(pa5), m_pa6(pa6), m_pa7(pa7),
+        m_pa8(pa8) {}
     virtual R Run(Arg9 arg9, Arg10 arg10, Arg11 arg11, Arg12 arg12,
-        Arg13 arg13, Arg14 arg14, Arg15 arg15) {
+                  Arg13 arg13, Arg14 arg14, Arg15 arg15) {
         ConditionalAutoDeleter<SelfDeleting,
-            MethodClosure_Arg7_Bind8> self_deleter(this);
+                               MethodClosure_Arg7_Bind8> self_deleter(this);
         return (m_object->*m_method)(m_pa1, m_pa2, m_pa3, m_pa4, m_pa5, m_pa6,
-            m_pa7, m_pa8 ,arg9, arg10, arg11, arg12, arg13, arg14, arg15);
+                                     m_pa7, m_pa8 ,arg9, arg10, arg11, arg12, arg13, arg14, arg15);
     }
-    virtual bool IsSelfDelete() const { return SelfDeleting; }
+    virtual bool IsSelfDelete() const {
+        return SelfDeleting;
+    }
 private:
     Class* m_object;
     MethodType m_method;
-        PreArg1 m_pa1;
-        PreArg2 m_pa2;
-        PreArg3 m_pa3;
-        PreArg4 m_pa4;
-        PreArg5 m_pa5;
-        PreArg6 m_pa6;
-        PreArg7 m_pa7;
-        PreArg8 m_pa8;
-    };
+    PreArg1 m_pa1;
+    PreArg2 m_pa2;
+    PreArg3 m_pa3;
+    PreArg4 m_pa4;
+    PreArg5 m_pa5;
+    PreArg6 m_pa6;
+    PreArg7 m_pa7;
+    PreArg8 m_pa8;
+};
 
 template <typename R, typename Class, typename MethodClass ,typename Arg1,
-    typename Arg2,typename Arg3,typename Arg4,typename Arg5,typename Arg6,
-    typename Arg7,typename Arg8,typename Arg9,typename Arg10,typename Arg11,
-    typename Arg12,typename Arg13,typename Arg14,typename Arg15 ,
-    typename PreArg1, typename PreArg2, typename PreArg3, typename PreArg4,
-    typename PreArg5, typename PreArg6, typename PreArg7, typename PreArg8>
+         typename Arg2,typename Arg3,typename Arg4,typename Arg5,typename Arg6,
+         typename Arg7,typename Arg8,typename Arg9,typename Arg10,typename Arg11,
+         typename Arg12,typename Arg13,typename Arg14,typename Arg15 ,
+         typename PreArg1, typename PreArg2, typename PreArg3, typename PreArg4,
+         typename PreArg5, typename PreArg6, typename PreArg7, typename PreArg8>
 Closure<R (Arg9, Arg10, Arg11, Arg12, Arg13, Arg14, Arg15)>* NewClosure(
     Class *object,
     R (MethodClass::*method)(Arg1, Arg2, Arg3, Arg4, Arg5, Arg6, Arg7, Arg8,
-        Arg9, Arg10, Arg11, Arg12, Arg13, Arg14, Arg15)
+                             Arg9, Arg10, Arg11, Arg12, Arg13, Arg14, Arg15)
     , PreArg1 pa1, PreArg2 pa2, PreArg3 pa3, PreArg4 pa4, PreArg5 pa5,
-        PreArg6 pa6, PreArg7 pa7, PreArg8 pa8) {
+    PreArg6 pa6, PreArg7 pa7, PreArg8 pa8) {
     return new MethodClosure_Arg7_Bind8<true, R, Class, MethodClass ,Arg1,Arg2,
-        Arg3,Arg4,Arg5,Arg6,Arg7,Arg8,Arg9,Arg10,Arg11,Arg12,Arg13,Arg14,
-        Arg15 , PreArg1, PreArg2, PreArg3, PreArg4, PreArg5, PreArg6, PreArg7,
-        PreArg8>(
-        object, method, pa1, pa2, pa3, pa4, pa5, pa6, pa7, pa8);
+           Arg3,Arg4,Arg5,Arg6,Arg7,Arg8,Arg9,Arg10,Arg11,Arg12,Arg13,Arg14,
+           Arg15 , PreArg1, PreArg2, PreArg3, PreArg4, PreArg5, PreArg6, PreArg7,
+           PreArg8>(
+               object, method, pa1, pa2, pa3, pa4, pa5, pa6, pa7, pa8);
 }
 
 template <typename R, typename Class, typename MethodClass ,typename Arg1,
-    typename Arg2,typename Arg3,typename Arg4,typename Arg5,typename Arg6,
-    typename Arg7,typename Arg8,typename Arg9,typename Arg10,typename Arg11,
-    typename Arg12,typename Arg13,typename Arg14,typename Arg15 ,
-    typename PreArg1, typename PreArg2, typename PreArg3, typename PreArg4,
-    typename PreArg5, typename PreArg6, typename PreArg7, typename PreArg8>
+         typename Arg2,typename Arg3,typename Arg4,typename Arg5,typename Arg6,
+         typename Arg7,typename Arg8,typename Arg9,typename Arg10,typename Arg11,
+         typename Arg12,typename Arg13,typename Arg14,typename Arg15 ,
+         typename PreArg1, typename PreArg2, typename PreArg3, typename PreArg4,
+         typename PreArg5, typename PreArg6, typename PreArg7, typename PreArg8>
 Closure<R (Arg9, Arg10, Arg11, Arg12, Arg13, Arg14,
-    Arg15)>* NewPermanentClosure(
-    Class *object,
-    R (MethodClass::*method)(Arg1, Arg2, Arg3, Arg4, Arg5, Arg6, Arg7, Arg8,
-        Arg9, Arg10, Arg11, Arg12, Arg13, Arg14, Arg15)
-    , PreArg1 pa1, PreArg2 pa2, PreArg3 pa3, PreArg4 pa4, PreArg5 pa5,
-        PreArg6 pa6, PreArg7 pa7, PreArg8 pa8) {
+           Arg15)>* NewPermanentClosure(
+               Class *object,
+               R (MethodClass::*method)(Arg1, Arg2, Arg3, Arg4, Arg5, Arg6, Arg7, Arg8,
+                                        Arg9, Arg10, Arg11, Arg12, Arg13, Arg14, Arg15)
+               , PreArg1 pa1, PreArg2 pa2, PreArg3 pa3, PreArg4 pa4, PreArg5 pa5,
+               PreArg6 pa6, PreArg7 pa7, PreArg8 pa8) {
     return new MethodClosure_Arg7_Bind8<false, R, Class, MethodClass ,Arg1,
-        Arg2,Arg3,Arg4,Arg5,Arg6,Arg7,Arg8,Arg9,Arg10,Arg11,Arg12,Arg13,Arg14,
-        Arg15 , PreArg1, PreArg2, PreArg3, PreArg4, PreArg5, PreArg6, PreArg7,
-        PreArg8>(
-        object, method, pa1, pa2, pa3, pa4, pa5, pa6, pa7, pa8);
+           Arg2,Arg3,Arg4,Arg5,Arg6,Arg7,Arg8,Arg9,Arg10,Arg11,Arg12,Arg13,Arg14,
+           Arg15 , PreArg1, PreArg2, PreArg3, PreArg4, PreArg5, PreArg6, PreArg7,
+           PreArg8>(
+               object, method, pa1, pa2, pa3, pa4, pa5, pa6, pa7, pa8);
 }
 
 ////////////////////////////////////////////////////
@@ -8640,135 +8910,139 @@ Closure<R (Arg9, Arg10, Arg11, Arg12, Arg13, Arg14,
 ////////////////////////////////////////////////////
 
 template <
-    bool SelfDeleting,
-    typename R
-    , typename Arg1    , typename Arg2    , typename Arg3    ,
-        typename Arg4    , typename Arg5    , typename Arg6    ,
-        typename Arg7    , typename Arg8    , typename Arg9    ,
-        typename Arg10    , typename Arg11    , typename Arg12    ,
-        typename Arg13    , typename Arg14    , typename Arg15    ,
-        typename PreArg1    , typename PreArg2    , typename PreArg3    ,
-        typename PreArg4    , typename PreArg5    , typename PreArg6    ,
-        typename PreArg7    , typename PreArg8>
+bool SelfDeleting,
+     typename R
+     , typename Arg1    , typename Arg2    , typename Arg3    ,
+     typename Arg4    , typename Arg5    , typename Arg6    ,
+     typename Arg7    , typename Arg8    , typename Arg9    ,
+     typename Arg10    , typename Arg11    , typename Arg12    ,
+     typename Arg13    , typename Arg14    , typename Arg15    ,
+     typename PreArg1    , typename PreArg2    , typename PreArg3    ,
+     typename PreArg4    , typename PreArg5    , typename PreArg6    ,
+     typename PreArg7    , typename PreArg8>
 class FunctionClosure_Arg7_Bind8 : public Closure<R (Arg9, Arg10, Arg11, Arg12,
-    Arg13, Arg14, Arg15)> {
+                Arg13, Arg14, Arg15)> {
     typedef R (*FunctionType)(Arg1, Arg2, Arg3, Arg4, Arg5, Arg6, Arg7, Arg8,
-        Arg9, Arg10, Arg11, Arg12, Arg13, Arg14, Arg15);
+                              Arg9, Arg10, Arg11, Arg12, Arg13, Arg14, Arg15);
 public:
     FunctionClosure_Arg7_Bind8(FunctionType function , PreArg1 pa1,
-        PreArg2 pa2, PreArg3 pa3, PreArg4 pa4, PreArg5 pa5, PreArg6 pa6,
-        PreArg7 pa7, PreArg8 pa8):
+                               PreArg2 pa2, PreArg3 pa3, PreArg4 pa4, PreArg5 pa5, PreArg6 pa6,
+                               PreArg7 pa7, PreArg8 pa8):
         m_function(function) , m_pa1(pa1), m_pa2(pa2), m_pa3(pa3), m_pa4(pa4),
-            m_pa5(pa5), m_pa6(pa6), m_pa7(pa7), m_pa8(pa8) {}
+        m_pa5(pa5), m_pa6(pa6), m_pa7(pa7), m_pa8(pa8) {}
     virtual R Run(Arg9 arg9, Arg10 arg10, Arg11 arg11, Arg12 arg12,
-        Arg13 arg13, Arg14 arg14, Arg15 arg15) {
+                  Arg13 arg13, Arg14 arg14, Arg15 arg15) {
         ConditionalAutoDeleter<SelfDeleting,
-            FunctionClosure_Arg7_Bind8> self_deleter(this);
+                               FunctionClosure_Arg7_Bind8> self_deleter(this);
         return m_function(m_pa1, m_pa2, m_pa3, m_pa4, m_pa5, m_pa6, m_pa7,
-            m_pa8 ,arg9, arg10, arg11, arg12, arg13, arg14, arg15);
+                          m_pa8 ,arg9, arg10, arg11, arg12, arg13, arg14, arg15);
     }
-    virtual bool IsSelfDelete() const { return SelfDeleting; }
+    virtual bool IsSelfDelete() const {
+        return SelfDeleting;
+    }
 private:
     FunctionType m_function;
-        PreArg1 m_pa1;
-        PreArg2 m_pa2;
-        PreArg3 m_pa3;
-        PreArg4 m_pa4;
-        PreArg5 m_pa5;
-        PreArg6 m_pa6;
-        PreArg7 m_pa7;
-        PreArg8 m_pa8;
-    };
+    PreArg1 m_pa1;
+    PreArg2 m_pa2;
+    PreArg3 m_pa3;
+    PreArg4 m_pa4;
+    PreArg5 m_pa5;
+    PreArg6 m_pa6;
+    PreArg7 m_pa7;
+    PreArg8 m_pa8;
+};
 
 template <typename R , typename Arg1, typename Arg2, typename Arg3,
-    typename Arg4, typename Arg5, typename Arg6, typename Arg7, typename Arg8,
-    typename Arg9, typename Arg10, typename Arg11, typename Arg12,
-    typename Arg13, typename Arg14, typename Arg15 , typename PreArg1,
-    typename PreArg2, typename PreArg3, typename PreArg4, typename PreArg5,
-    typename PreArg6, typename PreArg7, typename PreArg8>
+         typename Arg4, typename Arg5, typename Arg6, typename Arg7, typename Arg8,
+         typename Arg9, typename Arg10, typename Arg11, typename Arg12,
+         typename Arg13, typename Arg14, typename Arg15 , typename PreArg1,
+         typename PreArg2, typename PreArg3, typename PreArg4, typename PreArg5,
+         typename PreArg6, typename PreArg7, typename PreArg8>
 Closure<R (Arg9, Arg10, Arg11, Arg12, Arg13, Arg14,
-    Arg15)>* NewClosure(R (*function)(Arg1, Arg2, Arg3, Arg4, Arg5, Arg6, Arg7,
-    Arg8, Arg9, Arg10, Arg11, Arg12, Arg13, Arg14, Arg15)
-                                          , PreArg1 pa1, PreArg2 pa2,
-                                              PreArg3 pa3, PreArg4 pa4,
-                                              PreArg5 pa5, PreArg6 pa6,
-                                              PreArg7 pa7, PreArg8 pa8) {
+           Arg15)>* NewClosure(R (*function)(Arg1, Arg2, Arg3, Arg4, Arg5, Arg6, Arg7,
+                               Arg8, Arg9, Arg10, Arg11, Arg12, Arg13, Arg14, Arg15)
+                               , PreArg1 pa1, PreArg2 pa2,
+                               PreArg3 pa3, PreArg4 pa4,
+                               PreArg5 pa5, PreArg6 pa6,
+                               PreArg7 pa7, PreArg8 pa8) {
     return new FunctionClosure_Arg7_Bind8<true, R , Arg1, Arg2, Arg3, Arg4,
-        Arg5, Arg6, Arg7, Arg8, Arg9, Arg10, Arg11, Arg12, Arg13, Arg14,
-        Arg15 , PreArg1, PreArg2, PreArg3, PreArg4, PreArg5, PreArg6, PreArg7,
-        PreArg8>(function , pa1, pa2, pa3, pa4, pa5, pa6, pa7, pa8);
+           Arg5, Arg6, Arg7, Arg8, Arg9, Arg10, Arg11, Arg12, Arg13, Arg14,
+           Arg15 , PreArg1, PreArg2, PreArg3, PreArg4, PreArg5, PreArg6, PreArg7,
+           PreArg8>(function , pa1, pa2, pa3, pa4, pa5, pa6, pa7, pa8);
 }
 
 template <typename R , typename Arg1, typename Arg2, typename Arg3,
-    typename Arg4, typename Arg5, typename Arg6, typename Arg7, typename Arg8,
-    typename Arg9, typename Arg10, typename Arg11, typename Arg12,
-    typename Arg13, typename Arg14, typename Arg15 , typename PreArg1,
-    typename PreArg2, typename PreArg3, typename PreArg4, typename PreArg5,
-    typename PreArg6, typename PreArg7, typename PreArg8>
+         typename Arg4, typename Arg5, typename Arg6, typename Arg7, typename Arg8,
+         typename Arg9, typename Arg10, typename Arg11, typename Arg12,
+         typename Arg13, typename Arg14, typename Arg15 , typename PreArg1,
+         typename PreArg2, typename PreArg3, typename PreArg4, typename PreArg5,
+         typename PreArg6, typename PreArg7, typename PreArg8>
 Closure<R (Arg9, Arg10, Arg11, Arg12, Arg13, Arg14,
-    Arg15)>* NewPermanentClosure(R (*function)(Arg1, Arg2, Arg3, Arg4, Arg5,
-    Arg6, Arg7, Arg8, Arg9, Arg10, Arg11, Arg12, Arg13, Arg14, Arg15)
-                                          , PreArg1 pa1, PreArg2 pa2,
-                                              PreArg3 pa3, PreArg4 pa4,
-                                              PreArg5 pa5, PreArg6 pa6,
-                                              PreArg7 pa7, PreArg8 pa8) {
+           Arg15)>* NewPermanentClosure(R (*function)(Arg1, Arg2, Arg3, Arg4, Arg5,
+                                        Arg6, Arg7, Arg8, Arg9, Arg10, Arg11, Arg12, Arg13, Arg14, Arg15)
+                                        , PreArg1 pa1, PreArg2 pa2,
+                                        PreArg3 pa3, PreArg4 pa4,
+                                        PreArg5 pa5, PreArg6 pa6,
+                                        PreArg7 pa7, PreArg8 pa8) {
     return new FunctionClosure_Arg7_Bind8<false, R , Arg1, Arg2, Arg3, Arg4,
-        Arg5, Arg6, Arg7, Arg8, Arg9, Arg10, Arg11, Arg12, Arg13, Arg14,
-        Arg15 , PreArg1, PreArg2, PreArg3, PreArg4, PreArg5, PreArg6, PreArg7,
-        PreArg8>(function , pa1, pa2, pa3, pa4, pa5, pa6, pa7, pa8);
+           Arg5, Arg6, Arg7, Arg8, Arg9, Arg10, Arg11, Arg12, Arg13, Arg14,
+           Arg15 , PreArg1, PreArg2, PreArg3, PreArg4, PreArg5, PreArg6, PreArg7,
+           PreArg8>(function , pa1, pa2, pa3, pa4, pa5, pa6, pa7, pa8);
 }
 
 template <
-    bool SelfDeleting,
-    typename R,
-    typename Class,
-    typename MethodClass
-    , typename Arg1    , typename Arg2    , typename Arg3    ,
-        typename Arg4    , typename Arg5    , typename Arg6    ,
-        typename Arg7    , typename Arg8    >
+bool SelfDeleting,
+     typename R,
+     typename Class,
+     typename MethodClass
+     , typename Arg1    , typename Arg2    , typename Arg3    ,
+     typename Arg4    , typename Arg5    , typename Arg6    ,
+     typename Arg7    , typename Arg8    >
 class MethodClosure_Arg8_Bind0 : public Closure<R (Arg1, Arg2, Arg3, Arg4,
-    Arg5, Arg6, Arg7, Arg8)> {
+                Arg5, Arg6, Arg7, Arg8)> {
     typedef R (MethodClass::*MethodType)(Arg1, Arg2, Arg3, Arg4, Arg5, Arg6,
-        Arg7, Arg8);
+                                         Arg7, Arg8);
 public:
     MethodClosure_Arg8_Bind0(Class *object, MethodType method ):
         m_object(object), m_method(method)  {}
     virtual R Run(Arg1 arg1, Arg2 arg2, Arg3 arg3, Arg4 arg4, Arg5 arg5,
-        Arg6 arg6, Arg7 arg7, Arg8 arg8) {
+                  Arg6 arg6, Arg7 arg7, Arg8 arg8) {
         ConditionalAutoDeleter<SelfDeleting,
-            MethodClosure_Arg8_Bind0> self_deleter(this);
+                               MethodClosure_Arg8_Bind0> self_deleter(this);
         return (m_object->*m_method)( arg1, arg2, arg3, arg4, arg5, arg6, arg7,
-            arg8);
+                                      arg8);
     }
-    virtual bool IsSelfDelete() const { return SelfDeleting; }
+    virtual bool IsSelfDelete() const {
+        return SelfDeleting;
+    }
 private:
     Class* m_object;
     MethodType m_method;
-    };
+};
 
 template <typename R, typename Class, typename MethodClass ,typename Arg1,
-    typename Arg2,typename Arg3,typename Arg4,typename Arg5,typename Arg6,
-    typename Arg7,typename Arg8 >
+         typename Arg2,typename Arg3,typename Arg4,typename Arg5,typename Arg6,
+         typename Arg7,typename Arg8 >
 Closure<R (Arg1, Arg2, Arg3, Arg4, Arg5, Arg6, Arg7, Arg8)>* NewClosure(
     Class *object,
     R (MethodClass::*method)(Arg1, Arg2, Arg3, Arg4, Arg5, Arg6, Arg7, Arg8)
-    ) {
+) {
     return new MethodClosure_Arg8_Bind0<true, R, Class, MethodClass ,Arg1,Arg2,
-        Arg3,Arg4,Arg5,Arg6,Arg7,Arg8 >(
-        object, method);
+           Arg3,Arg4,Arg5,Arg6,Arg7,Arg8 >(
+               object, method);
 }
 
 template <typename R, typename Class, typename MethodClass ,typename Arg1,
-    typename Arg2,typename Arg3,typename Arg4,typename Arg5,typename Arg6,
-    typename Arg7,typename Arg8 >
+         typename Arg2,typename Arg3,typename Arg4,typename Arg5,typename Arg6,
+         typename Arg7,typename Arg8 >
 Closure<R (Arg1, Arg2, Arg3, Arg4, Arg5, Arg6, Arg7,
-    Arg8)>* NewPermanentClosure(
-    Class *object,
-    R (MethodClass::*method)(Arg1, Arg2, Arg3, Arg4, Arg5, Arg6, Arg7, Arg8)
-    ) {
+           Arg8)>* NewPermanentClosure(
+               Class *object,
+               R (MethodClass::*method)(Arg1, Arg2, Arg3, Arg4, Arg5, Arg6, Arg7, Arg8)
+           ) {
     return new MethodClosure_Arg8_Bind0<false, R, Class, MethodClass ,Arg1,
-        Arg2,Arg3,Arg4,Arg5,Arg6,Arg7,Arg8 >(
-        object, method);
+           Arg2,Arg3,Arg4,Arg5,Arg6,Arg7,Arg8 >(
+               object, method);
 }
 
 ////////////////////////////////////////////////////
@@ -8776,103 +9050,107 @@ Closure<R (Arg1, Arg2, Arg3, Arg4, Arg5, Arg6, Arg7,
 ////////////////////////////////////////////////////
 
 template <
-    bool SelfDeleting,
-    typename R
-    , typename Arg1    , typename Arg2    , typename Arg3    ,
-        typename Arg4    , typename Arg5    , typename Arg6    ,
-        typename Arg7    , typename Arg8    >
+bool SelfDeleting,
+     typename R
+     , typename Arg1    , typename Arg2    , typename Arg3    ,
+     typename Arg4    , typename Arg5    , typename Arg6    ,
+     typename Arg7    , typename Arg8    >
 class FunctionClosure_Arg8_Bind0 : public Closure<R (Arg1, Arg2, Arg3, Arg4,
-    Arg5, Arg6, Arg7, Arg8)> {
+                Arg5, Arg6, Arg7, Arg8)> {
     typedef R (*FunctionType)(Arg1, Arg2, Arg3, Arg4, Arg5, Arg6, Arg7, Arg8);
 public:
     FunctionClosure_Arg8_Bind0(FunctionType function ):
         m_function(function)  {}
     virtual R Run(Arg1 arg1, Arg2 arg2, Arg3 arg3, Arg4 arg4, Arg5 arg5,
-        Arg6 arg6, Arg7 arg7, Arg8 arg8) {
+                  Arg6 arg6, Arg7 arg7, Arg8 arg8) {
         ConditionalAutoDeleter<SelfDeleting,
-            FunctionClosure_Arg8_Bind0> self_deleter(this);
+                               FunctionClosure_Arg8_Bind0> self_deleter(this);
         return m_function( arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8);
     }
-    virtual bool IsSelfDelete() const { return SelfDeleting; }
+    virtual bool IsSelfDelete() const {
+        return SelfDeleting;
+    }
 private:
     FunctionType m_function;
-    };
+};
 
 template <typename R , typename Arg1, typename Arg2, typename Arg3,
-    typename Arg4, typename Arg5, typename Arg6, typename Arg7, typename Arg8 >
+         typename Arg4, typename Arg5, typename Arg6, typename Arg7, typename Arg8 >
 Closure<R (Arg1, Arg2, Arg3, Arg4, Arg5, Arg6, Arg7,
-    Arg8)>* NewClosure(R (*function)(Arg1, Arg2, Arg3, Arg4, Arg5, Arg6, Arg7,
-    Arg8)
-                                          ) {
+           Arg8)>* NewClosure(R (*function)(Arg1, Arg2, Arg3, Arg4, Arg5, Arg6, Arg7,
+                              Arg8)
+                             ) {
     return new FunctionClosure_Arg8_Bind0<true, R , Arg1, Arg2, Arg3, Arg4,
-        Arg5, Arg6, Arg7, Arg8 >(function );
+           Arg5, Arg6, Arg7, Arg8 >(function );
 }
 
 template <typename R , typename Arg1, typename Arg2, typename Arg3,
-    typename Arg4, typename Arg5, typename Arg6, typename Arg7, typename Arg8 >
+         typename Arg4, typename Arg5, typename Arg6, typename Arg7, typename Arg8 >
 Closure<R (Arg1, Arg2, Arg3, Arg4, Arg5, Arg6, Arg7,
-    Arg8)>* NewPermanentClosure(R (*function)(Arg1, Arg2, Arg3, Arg4, Arg5,
-    Arg6, Arg7, Arg8)
-                                          ) {
+           Arg8)>* NewPermanentClosure(R (*function)(Arg1, Arg2, Arg3, Arg4, Arg5,
+                                       Arg6, Arg7, Arg8)
+                                      ) {
     return new FunctionClosure_Arg8_Bind0<false, R , Arg1, Arg2, Arg3, Arg4,
-        Arg5, Arg6, Arg7, Arg8 >(function );
+           Arg5, Arg6, Arg7, Arg8 >(function );
 }
 
 template <
-    bool SelfDeleting,
-    typename R,
-    typename Class,
-    typename MethodClass
-    , typename Arg1    , typename Arg2    , typename Arg3    ,
-        typename Arg4    , typename Arg5    , typename Arg6    ,
-        typename Arg7    , typename Arg8    , typename Arg9    ,
-        typename PreArg1>
+bool SelfDeleting,
+     typename R,
+     typename Class,
+     typename MethodClass
+     , typename Arg1    , typename Arg2    , typename Arg3    ,
+     typename Arg4    , typename Arg5    , typename Arg6    ,
+     typename Arg7    , typename Arg8    , typename Arg9    ,
+     typename PreArg1>
 class MethodClosure_Arg8_Bind1 : public Closure<R (Arg2, Arg3, Arg4, Arg5,
-    Arg6, Arg7, Arg8, Arg9)> {
+                Arg6, Arg7, Arg8, Arg9)> {
     typedef R (MethodClass::*MethodType)(Arg1, Arg2, Arg3, Arg4, Arg5, Arg6,
-        Arg7, Arg8, Arg9);
+                                         Arg7, Arg8, Arg9);
 public:
     MethodClosure_Arg8_Bind1(Class *object, MethodType method , PreArg1 pa1):
         m_object(object), m_method(method) , m_pa1(pa1) {}
     virtual R Run(Arg2 arg2, Arg3 arg3, Arg4 arg4, Arg5 arg5, Arg6 arg6,
-        Arg7 arg7, Arg8 arg8, Arg9 arg9) {
+                  Arg7 arg7, Arg8 arg8, Arg9 arg9) {
         ConditionalAutoDeleter<SelfDeleting,
-            MethodClosure_Arg8_Bind1> self_deleter(this);
+                               MethodClosure_Arg8_Bind1> self_deleter(this);
         return (m_object->*m_method)(m_pa1 ,arg2, arg3, arg4, arg5, arg6, arg7,
-            arg8, arg9);
+                                     arg8, arg9);
     }
-    virtual bool IsSelfDelete() const { return SelfDeleting; }
+    virtual bool IsSelfDelete() const {
+        return SelfDeleting;
+    }
 private:
     Class* m_object;
     MethodType m_method;
-        PreArg1 m_pa1;
-    };
+    PreArg1 m_pa1;
+};
 
 template <typename R, typename Class, typename MethodClass ,typename Arg1,
-    typename Arg2,typename Arg3,typename Arg4,typename Arg5,typename Arg6,
-    typename Arg7,typename Arg8,typename Arg9 , typename PreArg1>
+         typename Arg2,typename Arg3,typename Arg4,typename Arg5,typename Arg6,
+         typename Arg7,typename Arg8,typename Arg9 , typename PreArg1>
 Closure<R (Arg2, Arg3, Arg4, Arg5, Arg6, Arg7, Arg8, Arg9)>* NewClosure(
     Class *object,
     R (MethodClass::*method)(Arg1, Arg2, Arg3, Arg4, Arg5, Arg6, Arg7, Arg8,
-        Arg9)
+                             Arg9)
     , PreArg1 pa1) {
     return new MethodClosure_Arg8_Bind1<true, R, Class, MethodClass ,Arg1,Arg2,
-        Arg3,Arg4,Arg5,Arg6,Arg7,Arg8,Arg9 , PreArg1>(
-        object, method, pa1);
+           Arg3,Arg4,Arg5,Arg6,Arg7,Arg8,Arg9 , PreArg1>(
+               object, method, pa1);
 }
 
 template <typename R, typename Class, typename MethodClass ,typename Arg1,
-    typename Arg2,typename Arg3,typename Arg4,typename Arg5,typename Arg6,
-    typename Arg7,typename Arg8,typename Arg9 , typename PreArg1>
+         typename Arg2,typename Arg3,typename Arg4,typename Arg5,typename Arg6,
+         typename Arg7,typename Arg8,typename Arg9 , typename PreArg1>
 Closure<R (Arg2, Arg3, Arg4, Arg5, Arg6, Arg7, Arg8,
-    Arg9)>* NewPermanentClosure(
-    Class *object,
-    R (MethodClass::*method)(Arg1, Arg2, Arg3, Arg4, Arg5, Arg6, Arg7, Arg8,
-        Arg9)
-    , PreArg1 pa1) {
+           Arg9)>* NewPermanentClosure(
+               Class *object,
+               R (MethodClass::*method)(Arg1, Arg2, Arg3, Arg4, Arg5, Arg6, Arg7, Arg8,
+                                        Arg9)
+               , PreArg1 pa1) {
     return new MethodClosure_Arg8_Bind1<false, R, Class, MethodClass ,Arg1,
-        Arg2,Arg3,Arg4,Arg5,Arg6,Arg7,Arg8,Arg9 , PreArg1>(
-        object, method, pa1);
+           Arg2,Arg3,Arg4,Arg5,Arg6,Arg7,Arg8,Arg9 , PreArg1>(
+               object, method, pa1);
 }
 
 ////////////////////////////////////////////////////
@@ -8880,113 +9158,117 @@ Closure<R (Arg2, Arg3, Arg4, Arg5, Arg6, Arg7, Arg8,
 ////////////////////////////////////////////////////
 
 template <
-    bool SelfDeleting,
-    typename R
-    , typename Arg1    , typename Arg2    , typename Arg3    ,
-        typename Arg4    , typename Arg5    , typename Arg6    ,
-        typename Arg7    , typename Arg8    , typename Arg9    ,
-        typename PreArg1>
+bool SelfDeleting,
+     typename R
+     , typename Arg1    , typename Arg2    , typename Arg3    ,
+     typename Arg4    , typename Arg5    , typename Arg6    ,
+     typename Arg7    , typename Arg8    , typename Arg9    ,
+     typename PreArg1>
 class FunctionClosure_Arg8_Bind1 : public Closure<R (Arg2, Arg3, Arg4, Arg5,
-    Arg6, Arg7, Arg8, Arg9)> {
+                Arg6, Arg7, Arg8, Arg9)> {
     typedef R (*FunctionType)(Arg1, Arg2, Arg3, Arg4, Arg5, Arg6, Arg7, Arg8,
-        Arg9);
+                              Arg9);
 public:
     FunctionClosure_Arg8_Bind1(FunctionType function , PreArg1 pa1):
         m_function(function) , m_pa1(pa1) {}
     virtual R Run(Arg2 arg2, Arg3 arg3, Arg4 arg4, Arg5 arg5, Arg6 arg6,
-        Arg7 arg7, Arg8 arg8, Arg9 arg9) {
+                  Arg7 arg7, Arg8 arg8, Arg9 arg9) {
         ConditionalAutoDeleter<SelfDeleting,
-            FunctionClosure_Arg8_Bind1> self_deleter(this);
+                               FunctionClosure_Arg8_Bind1> self_deleter(this);
         return m_function(m_pa1 ,arg2, arg3, arg4, arg5, arg6, arg7, arg8,
-            arg9);
+                          arg9);
     }
-    virtual bool IsSelfDelete() const { return SelfDeleting; }
+    virtual bool IsSelfDelete() const {
+        return SelfDeleting;
+    }
 private:
     FunctionType m_function;
-        PreArg1 m_pa1;
-    };
+    PreArg1 m_pa1;
+};
 
 template <typename R , typename Arg1, typename Arg2, typename Arg3,
-    typename Arg4, typename Arg5, typename Arg6, typename Arg7, typename Arg8,
-    typename Arg9 , typename PreArg1>
+         typename Arg4, typename Arg5, typename Arg6, typename Arg7, typename Arg8,
+         typename Arg9 , typename PreArg1>
 Closure<R (Arg2, Arg3, Arg4, Arg5, Arg6, Arg7, Arg8,
-    Arg9)>* NewClosure(R (*function)(Arg1, Arg2, Arg3, Arg4, Arg5, Arg6, Arg7,
-    Arg8, Arg9)
-                                          , PreArg1 pa1) {
+           Arg9)>* NewClosure(R (*function)(Arg1, Arg2, Arg3, Arg4, Arg5, Arg6, Arg7,
+                              Arg8, Arg9)
+                              , PreArg1 pa1) {
     return new FunctionClosure_Arg8_Bind1<true, R , Arg1, Arg2, Arg3, Arg4,
-        Arg5, Arg6, Arg7, Arg8, Arg9 , PreArg1>(function , pa1);
+           Arg5, Arg6, Arg7, Arg8, Arg9 , PreArg1>(function , pa1);
 }
 
 template <typename R , typename Arg1, typename Arg2, typename Arg3,
-    typename Arg4, typename Arg5, typename Arg6, typename Arg7, typename Arg8,
-    typename Arg9 , typename PreArg1>
+         typename Arg4, typename Arg5, typename Arg6, typename Arg7, typename Arg8,
+         typename Arg9 , typename PreArg1>
 Closure<R (Arg2, Arg3, Arg4, Arg5, Arg6, Arg7, Arg8,
-    Arg9)>* NewPermanentClosure(R (*function)(Arg1, Arg2, Arg3, Arg4, Arg5,
-    Arg6, Arg7, Arg8, Arg9)
-                                          , PreArg1 pa1) {
+           Arg9)>* NewPermanentClosure(R (*function)(Arg1, Arg2, Arg3, Arg4, Arg5,
+                                       Arg6, Arg7, Arg8, Arg9)
+                                       , PreArg1 pa1) {
     return new FunctionClosure_Arg8_Bind1<false, R , Arg1, Arg2, Arg3, Arg4,
-        Arg5, Arg6, Arg7, Arg8, Arg9 , PreArg1>(function , pa1);
+           Arg5, Arg6, Arg7, Arg8, Arg9 , PreArg1>(function , pa1);
 }
 
 template <
-    bool SelfDeleting,
-    typename R,
-    typename Class,
-    typename MethodClass
-    , typename Arg1    , typename Arg2    , typename Arg3    ,
-        typename Arg4    , typename Arg5    , typename Arg6    ,
-        typename Arg7    , typename Arg8    , typename Arg9    ,
-        typename Arg10    , typename PreArg1    , typename PreArg2>
+bool SelfDeleting,
+     typename R,
+     typename Class,
+     typename MethodClass
+     , typename Arg1    , typename Arg2    , typename Arg3    ,
+     typename Arg4    , typename Arg5    , typename Arg6    ,
+     typename Arg7    , typename Arg8    , typename Arg9    ,
+     typename Arg10    , typename PreArg1    , typename PreArg2>
 class MethodClosure_Arg8_Bind2 : public Closure<R (Arg3, Arg4, Arg5, Arg6,
-    Arg7, Arg8, Arg9, Arg10)> {
+                Arg7, Arg8, Arg9, Arg10)> {
     typedef R (MethodClass::*MethodType)(Arg1, Arg2, Arg3, Arg4, Arg5, Arg6,
-        Arg7, Arg8, Arg9, Arg10);
+                                         Arg7, Arg8, Arg9, Arg10);
 public:
     MethodClosure_Arg8_Bind2(Class *object, MethodType method , PreArg1 pa1,
-        PreArg2 pa2):
+                             PreArg2 pa2):
         m_object(object), m_method(method) , m_pa1(pa1), m_pa2(pa2) {}
     virtual R Run(Arg3 arg3, Arg4 arg4, Arg5 arg5, Arg6 arg6, Arg7 arg7,
-        Arg8 arg8, Arg9 arg9, Arg10 arg10) {
+                  Arg8 arg8, Arg9 arg9, Arg10 arg10) {
         ConditionalAutoDeleter<SelfDeleting,
-            MethodClosure_Arg8_Bind2> self_deleter(this);
+                               MethodClosure_Arg8_Bind2> self_deleter(this);
         return (m_object->*m_method)(m_pa1, m_pa2 ,arg3, arg4, arg5, arg6,
-            arg7, arg8, arg9, arg10);
+                                     arg7, arg8, arg9, arg10);
     }
-    virtual bool IsSelfDelete() const { return SelfDeleting; }
+    virtual bool IsSelfDelete() const {
+        return SelfDeleting;
+    }
 private:
     Class* m_object;
     MethodType m_method;
-        PreArg1 m_pa1;
-        PreArg2 m_pa2;
-    };
+    PreArg1 m_pa1;
+    PreArg2 m_pa2;
+};
 
 template <typename R, typename Class, typename MethodClass ,typename Arg1,
-    typename Arg2,typename Arg3,typename Arg4,typename Arg5,typename Arg6,
-    typename Arg7,typename Arg8,typename Arg9,typename Arg10 ,
-    typename PreArg1, typename PreArg2>
+         typename Arg2,typename Arg3,typename Arg4,typename Arg5,typename Arg6,
+         typename Arg7,typename Arg8,typename Arg9,typename Arg10 ,
+         typename PreArg1, typename PreArg2>
 Closure<R (Arg3, Arg4, Arg5, Arg6, Arg7, Arg8, Arg9, Arg10)>* NewClosure(
     Class *object,
     R (MethodClass::*method)(Arg1, Arg2, Arg3, Arg4, Arg5, Arg6, Arg7, Arg8,
-        Arg9, Arg10)
+                             Arg9, Arg10)
     , PreArg1 pa1, PreArg2 pa2) {
     return new MethodClosure_Arg8_Bind2<true, R, Class, MethodClass ,Arg1,Arg2,
-        Arg3,Arg4,Arg5,Arg6,Arg7,Arg8,Arg9,Arg10 , PreArg1, PreArg2>(
-        object, method, pa1, pa2);
+           Arg3,Arg4,Arg5,Arg6,Arg7,Arg8,Arg9,Arg10 , PreArg1, PreArg2>(
+               object, method, pa1, pa2);
 }
 
 template <typename R, typename Class, typename MethodClass ,typename Arg1,
-    typename Arg2,typename Arg3,typename Arg4,typename Arg5,typename Arg6,
-    typename Arg7,typename Arg8,typename Arg9,typename Arg10 ,
-    typename PreArg1, typename PreArg2>
+         typename Arg2,typename Arg3,typename Arg4,typename Arg5,typename Arg6,
+         typename Arg7,typename Arg8,typename Arg9,typename Arg10 ,
+         typename PreArg1, typename PreArg2>
 Closure<R (Arg3, Arg4, Arg5, Arg6, Arg7, Arg8, Arg9,
-    Arg10)>* NewPermanentClosure(
-    Class *object,
-    R (MethodClass::*method)(Arg1, Arg2, Arg3, Arg4, Arg5, Arg6, Arg7, Arg8,
-        Arg9, Arg10)
-    , PreArg1 pa1, PreArg2 pa2) {
+           Arg10)>* NewPermanentClosure(
+               Class *object,
+               R (MethodClass::*method)(Arg1, Arg2, Arg3, Arg4, Arg5, Arg6, Arg7, Arg8,
+                                        Arg9, Arg10)
+               , PreArg1 pa1, PreArg2 pa2) {
     return new MethodClosure_Arg8_Bind2<false, R, Class, MethodClass ,Arg1,
-        Arg2,Arg3,Arg4,Arg5,Arg6,Arg7,Arg8,Arg9,Arg10 , PreArg1, PreArg2>(
-        object, method, pa1, pa2);
+           Arg2,Arg3,Arg4,Arg5,Arg6,Arg7,Arg8,Arg9,Arg10 , PreArg1, PreArg2>(
+               object, method, pa1, pa2);
 }
 
 ////////////////////////////////////////////////////
@@ -8994,122 +9276,126 @@ Closure<R (Arg3, Arg4, Arg5, Arg6, Arg7, Arg8, Arg9,
 ////////////////////////////////////////////////////
 
 template <
-    bool SelfDeleting,
-    typename R
-    , typename Arg1    , typename Arg2    , typename Arg3    ,
-        typename Arg4    , typename Arg5    , typename Arg6    ,
-        typename Arg7    , typename Arg8    , typename Arg9    ,
-        typename Arg10    , typename PreArg1    , typename PreArg2>
+bool SelfDeleting,
+     typename R
+     , typename Arg1    , typename Arg2    , typename Arg3    ,
+     typename Arg4    , typename Arg5    , typename Arg6    ,
+     typename Arg7    , typename Arg8    , typename Arg9    ,
+     typename Arg10    , typename PreArg1    , typename PreArg2>
 class FunctionClosure_Arg8_Bind2 : public Closure<R (Arg3, Arg4, Arg5, Arg6,
-    Arg7, Arg8, Arg9, Arg10)> {
+                Arg7, Arg8, Arg9, Arg10)> {
     typedef R (*FunctionType)(Arg1, Arg2, Arg3, Arg4, Arg5, Arg6, Arg7, Arg8,
-        Arg9, Arg10);
+                              Arg9, Arg10);
 public:
     FunctionClosure_Arg8_Bind2(FunctionType function , PreArg1 pa1,
-        PreArg2 pa2):
+                               PreArg2 pa2):
         m_function(function) , m_pa1(pa1), m_pa2(pa2) {}
     virtual R Run(Arg3 arg3, Arg4 arg4, Arg5 arg5, Arg6 arg6, Arg7 arg7,
-        Arg8 arg8, Arg9 arg9, Arg10 arg10) {
+                  Arg8 arg8, Arg9 arg9, Arg10 arg10) {
         ConditionalAutoDeleter<SelfDeleting,
-            FunctionClosure_Arg8_Bind2> self_deleter(this);
+                               FunctionClosure_Arg8_Bind2> self_deleter(this);
         return m_function(m_pa1, m_pa2 ,arg3, arg4, arg5, arg6, arg7, arg8,
-            arg9, arg10);
+                          arg9, arg10);
     }
-    virtual bool IsSelfDelete() const { return SelfDeleting; }
+    virtual bool IsSelfDelete() const {
+        return SelfDeleting;
+    }
 private:
     FunctionType m_function;
-        PreArg1 m_pa1;
-        PreArg2 m_pa2;
-    };
+    PreArg1 m_pa1;
+    PreArg2 m_pa2;
+};
 
 template <typename R , typename Arg1, typename Arg2, typename Arg3,
-    typename Arg4, typename Arg5, typename Arg6, typename Arg7, typename Arg8,
-    typename Arg9, typename Arg10 , typename PreArg1, typename PreArg2>
+         typename Arg4, typename Arg5, typename Arg6, typename Arg7, typename Arg8,
+         typename Arg9, typename Arg10 , typename PreArg1, typename PreArg2>
 Closure<R (Arg3, Arg4, Arg5, Arg6, Arg7, Arg8, Arg9,
-    Arg10)>* NewClosure(R (*function)(Arg1, Arg2, Arg3, Arg4, Arg5, Arg6, Arg7,
-    Arg8, Arg9, Arg10)
-                                          , PreArg1 pa1, PreArg2 pa2) {
+           Arg10)>* NewClosure(R (*function)(Arg1, Arg2, Arg3, Arg4, Arg5, Arg6, Arg7,
+                               Arg8, Arg9, Arg10)
+                               , PreArg1 pa1, PreArg2 pa2) {
     return new FunctionClosure_Arg8_Bind2<true, R , Arg1, Arg2, Arg3, Arg4,
-        Arg5, Arg6, Arg7, Arg8, Arg9, Arg10 , PreArg1, PreArg2>(function , pa1,
-        pa2);
+           Arg5, Arg6, Arg7, Arg8, Arg9, Arg10 , PreArg1, PreArg2>(function , pa1,
+                   pa2);
 }
 
 template <typename R , typename Arg1, typename Arg2, typename Arg3,
-    typename Arg4, typename Arg5, typename Arg6, typename Arg7, typename Arg8,
-    typename Arg9, typename Arg10 , typename PreArg1, typename PreArg2>
+         typename Arg4, typename Arg5, typename Arg6, typename Arg7, typename Arg8,
+         typename Arg9, typename Arg10 , typename PreArg1, typename PreArg2>
 Closure<R (Arg3, Arg4, Arg5, Arg6, Arg7, Arg8, Arg9,
-    Arg10)>* NewPermanentClosure(R (*function)(Arg1, Arg2, Arg3, Arg4, Arg5,
-    Arg6, Arg7, Arg8, Arg9, Arg10)
-                                          , PreArg1 pa1, PreArg2 pa2) {
+           Arg10)>* NewPermanentClosure(R (*function)(Arg1, Arg2, Arg3, Arg4, Arg5,
+                                        Arg6, Arg7, Arg8, Arg9, Arg10)
+                                        , PreArg1 pa1, PreArg2 pa2) {
     return new FunctionClosure_Arg8_Bind2<false, R , Arg1, Arg2, Arg3, Arg4,
-        Arg5, Arg6, Arg7, Arg8, Arg9, Arg10 , PreArg1, PreArg2>(function , pa1,
-        pa2);
+           Arg5, Arg6, Arg7, Arg8, Arg9, Arg10 , PreArg1, PreArg2>(function , pa1,
+                   pa2);
 }
 
 template <
-    bool SelfDeleting,
-    typename R,
-    typename Class,
-    typename MethodClass
-    , typename Arg1    , typename Arg2    , typename Arg3    ,
-        typename Arg4    , typename Arg5    , typename Arg6    ,
-        typename Arg7    , typename Arg8    , typename Arg9    ,
-        typename Arg10    , typename Arg11    , typename PreArg1    ,
-        typename PreArg2    , typename PreArg3>
+bool SelfDeleting,
+     typename R,
+     typename Class,
+     typename MethodClass
+     , typename Arg1    , typename Arg2    , typename Arg3    ,
+     typename Arg4    , typename Arg5    , typename Arg6    ,
+     typename Arg7    , typename Arg8    , typename Arg9    ,
+     typename Arg10    , typename Arg11    , typename PreArg1    ,
+     typename PreArg2    , typename PreArg3>
 class MethodClosure_Arg8_Bind3 : public Closure<R (Arg4, Arg5, Arg6, Arg7,
-    Arg8, Arg9, Arg10, Arg11)> {
+                Arg8, Arg9, Arg10, Arg11)> {
     typedef R (MethodClass::*MethodType)(Arg1, Arg2, Arg3, Arg4, Arg5, Arg6,
-        Arg7, Arg8, Arg9, Arg10, Arg11);
+                                         Arg7, Arg8, Arg9, Arg10, Arg11);
 public:
     MethodClosure_Arg8_Bind3(Class *object, MethodType method , PreArg1 pa1,
-        PreArg2 pa2, PreArg3 pa3):
+                             PreArg2 pa2, PreArg3 pa3):
         m_object(object), m_method(method) , m_pa1(pa1), m_pa2(pa2),
-            m_pa3(pa3) {}
+        m_pa3(pa3) {}
     virtual R Run(Arg4 arg4, Arg5 arg5, Arg6 arg6, Arg7 arg7, Arg8 arg8,
-        Arg9 arg9, Arg10 arg10, Arg11 arg11) {
+                  Arg9 arg9, Arg10 arg10, Arg11 arg11) {
         ConditionalAutoDeleter<SelfDeleting,
-            MethodClosure_Arg8_Bind3> self_deleter(this);
+                               MethodClosure_Arg8_Bind3> self_deleter(this);
         return (m_object->*m_method)(m_pa1, m_pa2, m_pa3 ,arg4, arg5, arg6,
-            arg7, arg8, arg9, arg10, arg11);
+                                     arg7, arg8, arg9, arg10, arg11);
     }
-    virtual bool IsSelfDelete() const { return SelfDeleting; }
+    virtual bool IsSelfDelete() const {
+        return SelfDeleting;
+    }
 private:
     Class* m_object;
     MethodType m_method;
-        PreArg1 m_pa1;
-        PreArg2 m_pa2;
-        PreArg3 m_pa3;
-    };
+    PreArg1 m_pa1;
+    PreArg2 m_pa2;
+    PreArg3 m_pa3;
+};
 
 template <typename R, typename Class, typename MethodClass ,typename Arg1,
-    typename Arg2,typename Arg3,typename Arg4,typename Arg5,typename Arg6,
-    typename Arg7,typename Arg8,typename Arg9,typename Arg10,typename Arg11 ,
-    typename PreArg1, typename PreArg2, typename PreArg3>
+         typename Arg2,typename Arg3,typename Arg4,typename Arg5,typename Arg6,
+         typename Arg7,typename Arg8,typename Arg9,typename Arg10,typename Arg11 ,
+         typename PreArg1, typename PreArg2, typename PreArg3>
 Closure<R (Arg4, Arg5, Arg6, Arg7, Arg8, Arg9, Arg10, Arg11)>* NewClosure(
     Class *object,
     R (MethodClass::*method)(Arg1, Arg2, Arg3, Arg4, Arg5, Arg6, Arg7, Arg8,
-        Arg9, Arg10, Arg11)
+                             Arg9, Arg10, Arg11)
     , PreArg1 pa1, PreArg2 pa2, PreArg3 pa3) {
     return new MethodClosure_Arg8_Bind3<true, R, Class, MethodClass ,Arg1,Arg2,
-        Arg3,Arg4,Arg5,Arg6,Arg7,Arg8,Arg9,Arg10,Arg11 , PreArg1, PreArg2,
-        PreArg3>(
-        object, method, pa1, pa2, pa3);
+           Arg3,Arg4,Arg5,Arg6,Arg7,Arg8,Arg9,Arg10,Arg11 , PreArg1, PreArg2,
+           PreArg3>(
+               object, method, pa1, pa2, pa3);
 }
 
 template <typename R, typename Class, typename MethodClass ,typename Arg1,
-    typename Arg2,typename Arg3,typename Arg4,typename Arg5,typename Arg6,
-    typename Arg7,typename Arg8,typename Arg9,typename Arg10,typename Arg11 ,
-    typename PreArg1, typename PreArg2, typename PreArg3>
+         typename Arg2,typename Arg3,typename Arg4,typename Arg5,typename Arg6,
+         typename Arg7,typename Arg8,typename Arg9,typename Arg10,typename Arg11 ,
+         typename PreArg1, typename PreArg2, typename PreArg3>
 Closure<R (Arg4, Arg5, Arg6, Arg7, Arg8, Arg9, Arg10,
-    Arg11)>* NewPermanentClosure(
-    Class *object,
-    R (MethodClass::*method)(Arg1, Arg2, Arg3, Arg4, Arg5, Arg6, Arg7, Arg8,
-        Arg9, Arg10, Arg11)
-    , PreArg1 pa1, PreArg2 pa2, PreArg3 pa3) {
+           Arg11)>* NewPermanentClosure(
+               Class *object,
+               R (MethodClass::*method)(Arg1, Arg2, Arg3, Arg4, Arg5, Arg6, Arg7, Arg8,
+                                        Arg9, Arg10, Arg11)
+               , PreArg1 pa1, PreArg2 pa2, PreArg3 pa3) {
     return new MethodClosure_Arg8_Bind3<false, R, Class, MethodClass ,Arg1,
-        Arg2,Arg3,Arg4,Arg5,Arg6,Arg7,Arg8,Arg9,Arg10,Arg11 , PreArg1, PreArg2,
-        PreArg3>(
-        object, method, pa1, pa2, pa3);
+           Arg2,Arg3,Arg4,Arg5,Arg6,Arg7,Arg8,Arg9,Arg10,Arg11 , PreArg1, PreArg2,
+           PreArg3>(
+               object, method, pa1, pa2, pa3);
 }
 
 ////////////////////////////////////////////////////
@@ -9117,132 +9403,136 @@ Closure<R (Arg4, Arg5, Arg6, Arg7, Arg8, Arg9, Arg10,
 ////////////////////////////////////////////////////
 
 template <
-    bool SelfDeleting,
-    typename R
-    , typename Arg1    , typename Arg2    , typename Arg3    ,
-        typename Arg4    , typename Arg5    , typename Arg6    ,
-        typename Arg7    , typename Arg8    , typename Arg9    ,
-        typename Arg10    , typename Arg11    , typename PreArg1    ,
-        typename PreArg2    , typename PreArg3>
+bool SelfDeleting,
+     typename R
+     , typename Arg1    , typename Arg2    , typename Arg3    ,
+     typename Arg4    , typename Arg5    , typename Arg6    ,
+     typename Arg7    , typename Arg8    , typename Arg9    ,
+     typename Arg10    , typename Arg11    , typename PreArg1    ,
+     typename PreArg2    , typename PreArg3>
 class FunctionClosure_Arg8_Bind3 : public Closure<R (Arg4, Arg5, Arg6, Arg7,
-    Arg8, Arg9, Arg10, Arg11)> {
+                Arg8, Arg9, Arg10, Arg11)> {
     typedef R (*FunctionType)(Arg1, Arg2, Arg3, Arg4, Arg5, Arg6, Arg7, Arg8,
-        Arg9, Arg10, Arg11);
+                              Arg9, Arg10, Arg11);
 public:
     FunctionClosure_Arg8_Bind3(FunctionType function , PreArg1 pa1,
-        PreArg2 pa2, PreArg3 pa3):
+                               PreArg2 pa2, PreArg3 pa3):
         m_function(function) , m_pa1(pa1), m_pa2(pa2), m_pa3(pa3) {}
     virtual R Run(Arg4 arg4, Arg5 arg5, Arg6 arg6, Arg7 arg7, Arg8 arg8,
-        Arg9 arg9, Arg10 arg10, Arg11 arg11) {
+                  Arg9 arg9, Arg10 arg10, Arg11 arg11) {
         ConditionalAutoDeleter<SelfDeleting,
-            FunctionClosure_Arg8_Bind3> self_deleter(this);
+                               FunctionClosure_Arg8_Bind3> self_deleter(this);
         return m_function(m_pa1, m_pa2, m_pa3 ,arg4, arg5, arg6, arg7, arg8,
-            arg9, arg10, arg11);
+                          arg9, arg10, arg11);
     }
-    virtual bool IsSelfDelete() const { return SelfDeleting; }
+    virtual bool IsSelfDelete() const {
+        return SelfDeleting;
+    }
 private:
     FunctionType m_function;
-        PreArg1 m_pa1;
-        PreArg2 m_pa2;
-        PreArg3 m_pa3;
-    };
+    PreArg1 m_pa1;
+    PreArg2 m_pa2;
+    PreArg3 m_pa3;
+};
 
 template <typename R , typename Arg1, typename Arg2, typename Arg3,
-    typename Arg4, typename Arg5, typename Arg6, typename Arg7, typename Arg8,
-    typename Arg9, typename Arg10, typename Arg11 , typename PreArg1,
-    typename PreArg2, typename PreArg3>
+         typename Arg4, typename Arg5, typename Arg6, typename Arg7, typename Arg8,
+         typename Arg9, typename Arg10, typename Arg11 , typename PreArg1,
+         typename PreArg2, typename PreArg3>
 Closure<R (Arg4, Arg5, Arg6, Arg7, Arg8, Arg9, Arg10,
-    Arg11)>* NewClosure(R (*function)(Arg1, Arg2, Arg3, Arg4, Arg5, Arg6, Arg7,
-    Arg8, Arg9, Arg10, Arg11)
-                                          , PreArg1 pa1, PreArg2 pa2,
-                                              PreArg3 pa3) {
+           Arg11)>* NewClosure(R (*function)(Arg1, Arg2, Arg3, Arg4, Arg5, Arg6, Arg7,
+                               Arg8, Arg9, Arg10, Arg11)
+                               , PreArg1 pa1, PreArg2 pa2,
+                               PreArg3 pa3) {
     return new FunctionClosure_Arg8_Bind3<true, R , Arg1, Arg2, Arg3, Arg4,
-        Arg5, Arg6, Arg7, Arg8, Arg9, Arg10, Arg11 , PreArg1, PreArg2,
-        PreArg3>(function , pa1, pa2, pa3);
+           Arg5, Arg6, Arg7, Arg8, Arg9, Arg10, Arg11 , PreArg1, PreArg2,
+           PreArg3>(function , pa1, pa2, pa3);
 }
 
 template <typename R , typename Arg1, typename Arg2, typename Arg3,
-    typename Arg4, typename Arg5, typename Arg6, typename Arg7, typename Arg8,
-    typename Arg9, typename Arg10, typename Arg11 , typename PreArg1,
-    typename PreArg2, typename PreArg3>
+         typename Arg4, typename Arg5, typename Arg6, typename Arg7, typename Arg8,
+         typename Arg9, typename Arg10, typename Arg11 , typename PreArg1,
+         typename PreArg2, typename PreArg3>
 Closure<R (Arg4, Arg5, Arg6, Arg7, Arg8, Arg9, Arg10,
-    Arg11)>* NewPermanentClosure(R (*function)(Arg1, Arg2, Arg3, Arg4, Arg5,
-    Arg6, Arg7, Arg8, Arg9, Arg10, Arg11)
-                                          , PreArg1 pa1, PreArg2 pa2,
-                                              PreArg3 pa3) {
+           Arg11)>* NewPermanentClosure(R (*function)(Arg1, Arg2, Arg3, Arg4, Arg5,
+                                        Arg6, Arg7, Arg8, Arg9, Arg10, Arg11)
+                                        , PreArg1 pa1, PreArg2 pa2,
+                                        PreArg3 pa3) {
     return new FunctionClosure_Arg8_Bind3<false, R , Arg1, Arg2, Arg3, Arg4,
-        Arg5, Arg6, Arg7, Arg8, Arg9, Arg10, Arg11 , PreArg1, PreArg2,
-        PreArg3>(function , pa1, pa2, pa3);
+           Arg5, Arg6, Arg7, Arg8, Arg9, Arg10, Arg11 , PreArg1, PreArg2,
+           PreArg3>(function , pa1, pa2, pa3);
 }
 
 template <
-    bool SelfDeleting,
-    typename R,
-    typename Class,
-    typename MethodClass
-    , typename Arg1    , typename Arg2    , typename Arg3    ,
-        typename Arg4    , typename Arg5    , typename Arg6    ,
-        typename Arg7    , typename Arg8    , typename Arg9    ,
-        typename Arg10    , typename Arg11    , typename Arg12    ,
-        typename PreArg1    , typename PreArg2    , typename PreArg3    ,
-        typename PreArg4>
+bool SelfDeleting,
+     typename R,
+     typename Class,
+     typename MethodClass
+     , typename Arg1    , typename Arg2    , typename Arg3    ,
+     typename Arg4    , typename Arg5    , typename Arg6    ,
+     typename Arg7    , typename Arg8    , typename Arg9    ,
+     typename Arg10    , typename Arg11    , typename Arg12    ,
+     typename PreArg1    , typename PreArg2    , typename PreArg3    ,
+     typename PreArg4>
 class MethodClosure_Arg8_Bind4 : public Closure<R (Arg5, Arg6, Arg7, Arg8,
-    Arg9, Arg10, Arg11, Arg12)> {
+                Arg9, Arg10, Arg11, Arg12)> {
     typedef R (MethodClass::*MethodType)(Arg1, Arg2, Arg3, Arg4, Arg5, Arg6,
-        Arg7, Arg8, Arg9, Arg10, Arg11, Arg12);
+                                         Arg7, Arg8, Arg9, Arg10, Arg11, Arg12);
 public:
     MethodClosure_Arg8_Bind4(Class *object, MethodType method , PreArg1 pa1,
-        PreArg2 pa2, PreArg3 pa3, PreArg4 pa4):
+                             PreArg2 pa2, PreArg3 pa3, PreArg4 pa4):
         m_object(object), m_method(method) , m_pa1(pa1), m_pa2(pa2),
-            m_pa3(pa3), m_pa4(pa4) {}
+        m_pa3(pa3), m_pa4(pa4) {}
     virtual R Run(Arg5 arg5, Arg6 arg6, Arg7 arg7, Arg8 arg8, Arg9 arg9,
-        Arg10 arg10, Arg11 arg11, Arg12 arg12) {
+                  Arg10 arg10, Arg11 arg11, Arg12 arg12) {
         ConditionalAutoDeleter<SelfDeleting,
-            MethodClosure_Arg8_Bind4> self_deleter(this);
+                               MethodClosure_Arg8_Bind4> self_deleter(this);
         return (m_object->*m_method)(m_pa1, m_pa2, m_pa3, m_pa4 ,arg5, arg6,
-            arg7, arg8, arg9, arg10, arg11, arg12);
+                                     arg7, arg8, arg9, arg10, arg11, arg12);
     }
-    virtual bool IsSelfDelete() const { return SelfDeleting; }
+    virtual bool IsSelfDelete() const {
+        return SelfDeleting;
+    }
 private:
     Class* m_object;
     MethodType m_method;
-        PreArg1 m_pa1;
-        PreArg2 m_pa2;
-        PreArg3 m_pa3;
-        PreArg4 m_pa4;
-    };
+    PreArg1 m_pa1;
+    PreArg2 m_pa2;
+    PreArg3 m_pa3;
+    PreArg4 m_pa4;
+};
 
 template <typename R, typename Class, typename MethodClass ,typename Arg1,
-    typename Arg2,typename Arg3,typename Arg4,typename Arg5,typename Arg6,
-    typename Arg7,typename Arg8,typename Arg9,typename Arg10,typename Arg11,
-    typename Arg12 , typename PreArg1, typename PreArg2, typename PreArg3,
-    typename PreArg4>
+         typename Arg2,typename Arg3,typename Arg4,typename Arg5,typename Arg6,
+         typename Arg7,typename Arg8,typename Arg9,typename Arg10,typename Arg11,
+         typename Arg12 , typename PreArg1, typename PreArg2, typename PreArg3,
+         typename PreArg4>
 Closure<R (Arg5, Arg6, Arg7, Arg8, Arg9, Arg10, Arg11, Arg12)>* NewClosure(
     Class *object,
     R (MethodClass::*method)(Arg1, Arg2, Arg3, Arg4, Arg5, Arg6, Arg7, Arg8,
-        Arg9, Arg10, Arg11, Arg12)
+                             Arg9, Arg10, Arg11, Arg12)
     , PreArg1 pa1, PreArg2 pa2, PreArg3 pa3, PreArg4 pa4) {
     return new MethodClosure_Arg8_Bind4<true, R, Class, MethodClass ,Arg1,Arg2,
-        Arg3,Arg4,Arg5,Arg6,Arg7,Arg8,Arg9,Arg10,Arg11,Arg12 , PreArg1,
-        PreArg2, PreArg3, PreArg4>(
-        object, method, pa1, pa2, pa3, pa4);
+           Arg3,Arg4,Arg5,Arg6,Arg7,Arg8,Arg9,Arg10,Arg11,Arg12 , PreArg1,
+           PreArg2, PreArg3, PreArg4>(
+               object, method, pa1, pa2, pa3, pa4);
 }
 
 template <typename R, typename Class, typename MethodClass ,typename Arg1,
-    typename Arg2,typename Arg3,typename Arg4,typename Arg5,typename Arg6,
-    typename Arg7,typename Arg8,typename Arg9,typename Arg10,typename Arg11,
-    typename Arg12 , typename PreArg1, typename PreArg2, typename PreArg3,
-    typename PreArg4>
+         typename Arg2,typename Arg3,typename Arg4,typename Arg5,typename Arg6,
+         typename Arg7,typename Arg8,typename Arg9,typename Arg10,typename Arg11,
+         typename Arg12 , typename PreArg1, typename PreArg2, typename PreArg3,
+         typename PreArg4>
 Closure<R (Arg5, Arg6, Arg7, Arg8, Arg9, Arg10, Arg11,
-    Arg12)>* NewPermanentClosure(
-    Class *object,
-    R (MethodClass::*method)(Arg1, Arg2, Arg3, Arg4, Arg5, Arg6, Arg7, Arg8,
-        Arg9, Arg10, Arg11, Arg12)
-    , PreArg1 pa1, PreArg2 pa2, PreArg3 pa3, PreArg4 pa4) {
+           Arg12)>* NewPermanentClosure(
+               Class *object,
+               R (MethodClass::*method)(Arg1, Arg2, Arg3, Arg4, Arg5, Arg6, Arg7, Arg8,
+                                        Arg9, Arg10, Arg11, Arg12)
+               , PreArg1 pa1, PreArg2 pa2, PreArg3 pa3, PreArg4 pa4) {
     return new MethodClosure_Arg8_Bind4<false, R, Class, MethodClass ,Arg1,
-        Arg2,Arg3,Arg4,Arg5,Arg6,Arg7,Arg8,Arg9,Arg10,Arg11,Arg12 , PreArg1,
-        PreArg2, PreArg3, PreArg4>(
-        object, method, pa1, pa2, pa3, pa4);
+           Arg2,Arg3,Arg4,Arg5,Arg6,Arg7,Arg8,Arg9,Arg10,Arg11,Arg12 , PreArg1,
+           PreArg2, PreArg3, PreArg4>(
+               object, method, pa1, pa2, pa3, pa4);
 }
 
 ////////////////////////////////////////////////////
@@ -9250,135 +9540,139 @@ Closure<R (Arg5, Arg6, Arg7, Arg8, Arg9, Arg10, Arg11,
 ////////////////////////////////////////////////////
 
 template <
-    bool SelfDeleting,
-    typename R
-    , typename Arg1    , typename Arg2    , typename Arg3    ,
-        typename Arg4    , typename Arg5    , typename Arg6    ,
-        typename Arg7    , typename Arg8    , typename Arg9    ,
-        typename Arg10    , typename Arg11    , typename Arg12    ,
-        typename PreArg1    , typename PreArg2    , typename PreArg3    ,
-        typename PreArg4>
+bool SelfDeleting,
+     typename R
+     , typename Arg1    , typename Arg2    , typename Arg3    ,
+     typename Arg4    , typename Arg5    , typename Arg6    ,
+     typename Arg7    , typename Arg8    , typename Arg9    ,
+     typename Arg10    , typename Arg11    , typename Arg12    ,
+     typename PreArg1    , typename PreArg2    , typename PreArg3    ,
+     typename PreArg4>
 class FunctionClosure_Arg8_Bind4 : public Closure<R (Arg5, Arg6, Arg7, Arg8,
-    Arg9, Arg10, Arg11, Arg12)> {
+                Arg9, Arg10, Arg11, Arg12)> {
     typedef R (*FunctionType)(Arg1, Arg2, Arg3, Arg4, Arg5, Arg6, Arg7, Arg8,
-        Arg9, Arg10, Arg11, Arg12);
+                              Arg9, Arg10, Arg11, Arg12);
 public:
     FunctionClosure_Arg8_Bind4(FunctionType function , PreArg1 pa1,
-        PreArg2 pa2, PreArg3 pa3, PreArg4 pa4):
+                               PreArg2 pa2, PreArg3 pa3, PreArg4 pa4):
         m_function(function) , m_pa1(pa1), m_pa2(pa2), m_pa3(pa3), m_pa4(pa4) {}
     virtual R Run(Arg5 arg5, Arg6 arg6, Arg7 arg7, Arg8 arg8, Arg9 arg9,
-        Arg10 arg10, Arg11 arg11, Arg12 arg12) {
+                  Arg10 arg10, Arg11 arg11, Arg12 arg12) {
         ConditionalAutoDeleter<SelfDeleting,
-            FunctionClosure_Arg8_Bind4> self_deleter(this);
+                               FunctionClosure_Arg8_Bind4> self_deleter(this);
         return m_function(m_pa1, m_pa2, m_pa3, m_pa4 ,arg5, arg6, arg7, arg8,
-            arg9, arg10, arg11, arg12);
+                          arg9, arg10, arg11, arg12);
     }
-    virtual bool IsSelfDelete() const { return SelfDeleting; }
+    virtual bool IsSelfDelete() const {
+        return SelfDeleting;
+    }
 private:
     FunctionType m_function;
-        PreArg1 m_pa1;
-        PreArg2 m_pa2;
-        PreArg3 m_pa3;
-        PreArg4 m_pa4;
-    };
+    PreArg1 m_pa1;
+    PreArg2 m_pa2;
+    PreArg3 m_pa3;
+    PreArg4 m_pa4;
+};
 
 template <typename R , typename Arg1, typename Arg2, typename Arg3,
-    typename Arg4, typename Arg5, typename Arg6, typename Arg7, typename Arg8,
-    typename Arg9, typename Arg10, typename Arg11, typename Arg12 ,
-    typename PreArg1, typename PreArg2, typename PreArg3, typename PreArg4>
+         typename Arg4, typename Arg5, typename Arg6, typename Arg7, typename Arg8,
+         typename Arg9, typename Arg10, typename Arg11, typename Arg12 ,
+         typename PreArg1, typename PreArg2, typename PreArg3, typename PreArg4>
 Closure<R (Arg5, Arg6, Arg7, Arg8, Arg9, Arg10, Arg11,
-    Arg12)>* NewClosure(R (*function)(Arg1, Arg2, Arg3, Arg4, Arg5, Arg6, Arg7,
-    Arg8, Arg9, Arg10, Arg11, Arg12)
-                                          , PreArg1 pa1, PreArg2 pa2,
-                                              PreArg3 pa3, PreArg4 pa4) {
+           Arg12)>* NewClosure(R (*function)(Arg1, Arg2, Arg3, Arg4, Arg5, Arg6, Arg7,
+                               Arg8, Arg9, Arg10, Arg11, Arg12)
+                               , PreArg1 pa1, PreArg2 pa2,
+                               PreArg3 pa3, PreArg4 pa4) {
     return new FunctionClosure_Arg8_Bind4<true, R , Arg1, Arg2, Arg3, Arg4,
-        Arg5, Arg6, Arg7, Arg8, Arg9, Arg10, Arg11, Arg12 , PreArg1, PreArg2,
-        PreArg3, PreArg4>(function , pa1, pa2, pa3, pa4);
+           Arg5, Arg6, Arg7, Arg8, Arg9, Arg10, Arg11, Arg12 , PreArg1, PreArg2,
+           PreArg3, PreArg4>(function , pa1, pa2, pa3, pa4);
 }
 
 template <typename R , typename Arg1, typename Arg2, typename Arg3,
-    typename Arg4, typename Arg5, typename Arg6, typename Arg7, typename Arg8,
-    typename Arg9, typename Arg10, typename Arg11, typename Arg12 ,
-    typename PreArg1, typename PreArg2, typename PreArg3, typename PreArg4>
+         typename Arg4, typename Arg5, typename Arg6, typename Arg7, typename Arg8,
+         typename Arg9, typename Arg10, typename Arg11, typename Arg12 ,
+         typename PreArg1, typename PreArg2, typename PreArg3, typename PreArg4>
 Closure<R (Arg5, Arg6, Arg7, Arg8, Arg9, Arg10, Arg11,
-    Arg12)>* NewPermanentClosure(R (*function)(Arg1, Arg2, Arg3, Arg4, Arg5,
-    Arg6, Arg7, Arg8, Arg9, Arg10, Arg11, Arg12)
-                                          , PreArg1 pa1, PreArg2 pa2,
-                                              PreArg3 pa3, PreArg4 pa4) {
+           Arg12)>* NewPermanentClosure(R (*function)(Arg1, Arg2, Arg3, Arg4, Arg5,
+                                        Arg6, Arg7, Arg8, Arg9, Arg10, Arg11, Arg12)
+                                        , PreArg1 pa1, PreArg2 pa2,
+                                        PreArg3 pa3, PreArg4 pa4) {
     return new FunctionClosure_Arg8_Bind4<false, R , Arg1, Arg2, Arg3, Arg4,
-        Arg5, Arg6, Arg7, Arg8, Arg9, Arg10, Arg11, Arg12 , PreArg1, PreArg2,
-        PreArg3, PreArg4>(function , pa1, pa2, pa3, pa4);
+           Arg5, Arg6, Arg7, Arg8, Arg9, Arg10, Arg11, Arg12 , PreArg1, PreArg2,
+           PreArg3, PreArg4>(function , pa1, pa2, pa3, pa4);
 }
 
 template <
-    bool SelfDeleting,
-    typename R,
-    typename Class,
-    typename MethodClass
-    , typename Arg1    , typename Arg2    , typename Arg3    ,
-        typename Arg4    , typename Arg5    , typename Arg6    ,
-        typename Arg7    , typename Arg8    , typename Arg9    ,
-        typename Arg10    , typename Arg11    , typename Arg12    ,
-        typename Arg13    , typename PreArg1    , typename PreArg2    ,
-        typename PreArg3    , typename PreArg4    , typename PreArg5>
+bool SelfDeleting,
+     typename R,
+     typename Class,
+     typename MethodClass
+     , typename Arg1    , typename Arg2    , typename Arg3    ,
+     typename Arg4    , typename Arg5    , typename Arg6    ,
+     typename Arg7    , typename Arg8    , typename Arg9    ,
+     typename Arg10    , typename Arg11    , typename Arg12    ,
+     typename Arg13    , typename PreArg1    , typename PreArg2    ,
+     typename PreArg3    , typename PreArg4    , typename PreArg5>
 class MethodClosure_Arg8_Bind5 : public Closure<R (Arg6, Arg7, Arg8, Arg9,
-    Arg10, Arg11, Arg12, Arg13)> {
+                Arg10, Arg11, Arg12, Arg13)> {
     typedef R (MethodClass::*MethodType)(Arg1, Arg2, Arg3, Arg4, Arg5, Arg6,
-        Arg7, Arg8, Arg9, Arg10, Arg11, Arg12, Arg13);
+                                         Arg7, Arg8, Arg9, Arg10, Arg11, Arg12, Arg13);
 public:
     MethodClosure_Arg8_Bind5(Class *object, MethodType method , PreArg1 pa1,
-        PreArg2 pa2, PreArg3 pa3, PreArg4 pa4, PreArg5 pa5):
+                             PreArg2 pa2, PreArg3 pa3, PreArg4 pa4, PreArg5 pa5):
         m_object(object), m_method(method) , m_pa1(pa1), m_pa2(pa2),
-            m_pa3(pa3), m_pa4(pa4), m_pa5(pa5) {}
+        m_pa3(pa3), m_pa4(pa4), m_pa5(pa5) {}
     virtual R Run(Arg6 arg6, Arg7 arg7, Arg8 arg8, Arg9 arg9, Arg10 arg10,
-        Arg11 arg11, Arg12 arg12, Arg13 arg13) {
+                  Arg11 arg11, Arg12 arg12, Arg13 arg13) {
         ConditionalAutoDeleter<SelfDeleting,
-            MethodClosure_Arg8_Bind5> self_deleter(this);
+                               MethodClosure_Arg8_Bind5> self_deleter(this);
         return (m_object->*m_method)(m_pa1, m_pa2, m_pa3, m_pa4, m_pa5 ,arg6,
-            arg7, arg8, arg9, arg10, arg11, arg12, arg13);
+                                     arg7, arg8, arg9, arg10, arg11, arg12, arg13);
     }
-    virtual bool IsSelfDelete() const { return SelfDeleting; }
+    virtual bool IsSelfDelete() const {
+        return SelfDeleting;
+    }
 private:
     Class* m_object;
     MethodType m_method;
-        PreArg1 m_pa1;
-        PreArg2 m_pa2;
-        PreArg3 m_pa3;
-        PreArg4 m_pa4;
-        PreArg5 m_pa5;
-    };
+    PreArg1 m_pa1;
+    PreArg2 m_pa2;
+    PreArg3 m_pa3;
+    PreArg4 m_pa4;
+    PreArg5 m_pa5;
+};
 
 template <typename R, typename Class, typename MethodClass ,typename Arg1,
-    typename Arg2,typename Arg3,typename Arg4,typename Arg5,typename Arg6,
-    typename Arg7,typename Arg8,typename Arg9,typename Arg10,typename Arg11,
-    typename Arg12,typename Arg13 , typename PreArg1, typename PreArg2,
-    typename PreArg3, typename PreArg4, typename PreArg5>
+         typename Arg2,typename Arg3,typename Arg4,typename Arg5,typename Arg6,
+         typename Arg7,typename Arg8,typename Arg9,typename Arg10,typename Arg11,
+         typename Arg12,typename Arg13 , typename PreArg1, typename PreArg2,
+         typename PreArg3, typename PreArg4, typename PreArg5>
 Closure<R (Arg6, Arg7, Arg8, Arg9, Arg10, Arg11, Arg12, Arg13)>* NewClosure(
     Class *object,
     R (MethodClass::*method)(Arg1, Arg2, Arg3, Arg4, Arg5, Arg6, Arg7, Arg8,
-        Arg9, Arg10, Arg11, Arg12, Arg13)
+                             Arg9, Arg10, Arg11, Arg12, Arg13)
     , PreArg1 pa1, PreArg2 pa2, PreArg3 pa3, PreArg4 pa4, PreArg5 pa5) {
     return new MethodClosure_Arg8_Bind5<true, R, Class, MethodClass ,Arg1,Arg2,
-        Arg3,Arg4,Arg5,Arg6,Arg7,Arg8,Arg9,Arg10,Arg11,Arg12,Arg13 , PreArg1,
-        PreArg2, PreArg3, PreArg4, PreArg5>(
-        object, method, pa1, pa2, pa3, pa4, pa5);
+           Arg3,Arg4,Arg5,Arg6,Arg7,Arg8,Arg9,Arg10,Arg11,Arg12,Arg13 , PreArg1,
+           PreArg2, PreArg3, PreArg4, PreArg5>(
+               object, method, pa1, pa2, pa3, pa4, pa5);
 }
 
 template <typename R, typename Class, typename MethodClass ,typename Arg1,
-    typename Arg2,typename Arg3,typename Arg4,typename Arg5,typename Arg6,
-    typename Arg7,typename Arg8,typename Arg9,typename Arg10,typename Arg11,
-    typename Arg12,typename Arg13 , typename PreArg1, typename PreArg2,
-    typename PreArg3, typename PreArg4, typename PreArg5>
+         typename Arg2,typename Arg3,typename Arg4,typename Arg5,typename Arg6,
+         typename Arg7,typename Arg8,typename Arg9,typename Arg10,typename Arg11,
+         typename Arg12,typename Arg13 , typename PreArg1, typename PreArg2,
+         typename PreArg3, typename PreArg4, typename PreArg5>
 Closure<R (Arg6, Arg7, Arg8, Arg9, Arg10, Arg11, Arg12,
-    Arg13)>* NewPermanentClosure(
-    Class *object,
-    R (MethodClass::*method)(Arg1, Arg2, Arg3, Arg4, Arg5, Arg6, Arg7, Arg8,
-        Arg9, Arg10, Arg11, Arg12, Arg13)
-    , PreArg1 pa1, PreArg2 pa2, PreArg3 pa3, PreArg4 pa4, PreArg5 pa5) {
+           Arg13)>* NewPermanentClosure(
+               Class *object,
+               R (MethodClass::*method)(Arg1, Arg2, Arg3, Arg4, Arg5, Arg6, Arg7, Arg8,
+                                        Arg9, Arg10, Arg11, Arg12, Arg13)
+               , PreArg1 pa1, PreArg2 pa2, PreArg3 pa3, PreArg4 pa4, PreArg5 pa5) {
     return new MethodClosure_Arg8_Bind5<false, R, Class, MethodClass ,Arg1,
-        Arg2,Arg3,Arg4,Arg5,Arg6,Arg7,Arg8,Arg9,Arg10,Arg11,Arg12,Arg13 ,
-        PreArg1, PreArg2, PreArg3, PreArg4, PreArg5>(
-        object, method, pa1, pa2, pa3, pa4, pa5);
+           Arg2,Arg3,Arg4,Arg5,Arg6,Arg7,Arg8,Arg9,Arg10,Arg11,Arg12,Arg13 ,
+           PreArg1, PreArg2, PreArg3, PreArg4, PreArg5>(
+               object, method, pa1, pa2, pa3, pa4, pa5);
 }
 
 ////////////////////////////////////////////////////
@@ -9386,149 +9680,153 @@ Closure<R (Arg6, Arg7, Arg8, Arg9, Arg10, Arg11, Arg12,
 ////////////////////////////////////////////////////
 
 template <
-    bool SelfDeleting,
-    typename R
-    , typename Arg1    , typename Arg2    , typename Arg3    ,
-        typename Arg4    , typename Arg5    , typename Arg6    ,
-        typename Arg7    , typename Arg8    , typename Arg9    ,
-        typename Arg10    , typename Arg11    , typename Arg12    ,
-        typename Arg13    , typename PreArg1    , typename PreArg2    ,
-        typename PreArg3    , typename PreArg4    , typename PreArg5>
+bool SelfDeleting,
+     typename R
+     , typename Arg1    , typename Arg2    , typename Arg3    ,
+     typename Arg4    , typename Arg5    , typename Arg6    ,
+     typename Arg7    , typename Arg8    , typename Arg9    ,
+     typename Arg10    , typename Arg11    , typename Arg12    ,
+     typename Arg13    , typename PreArg1    , typename PreArg2    ,
+     typename PreArg3    , typename PreArg4    , typename PreArg5>
 class FunctionClosure_Arg8_Bind5 : public Closure<R (Arg6, Arg7, Arg8, Arg9,
-    Arg10, Arg11, Arg12, Arg13)> {
+                Arg10, Arg11, Arg12, Arg13)> {
     typedef R (*FunctionType)(Arg1, Arg2, Arg3, Arg4, Arg5, Arg6, Arg7, Arg8,
-        Arg9, Arg10, Arg11, Arg12, Arg13);
+                              Arg9, Arg10, Arg11, Arg12, Arg13);
 public:
     FunctionClosure_Arg8_Bind5(FunctionType function , PreArg1 pa1,
-        PreArg2 pa2, PreArg3 pa3, PreArg4 pa4, PreArg5 pa5):
+                               PreArg2 pa2, PreArg3 pa3, PreArg4 pa4, PreArg5 pa5):
         m_function(function) , m_pa1(pa1), m_pa2(pa2), m_pa3(pa3), m_pa4(pa4),
-            m_pa5(pa5) {}
+        m_pa5(pa5) {}
     virtual R Run(Arg6 arg6, Arg7 arg7, Arg8 arg8, Arg9 arg9, Arg10 arg10,
-        Arg11 arg11, Arg12 arg12, Arg13 arg13) {
+                  Arg11 arg11, Arg12 arg12, Arg13 arg13) {
         ConditionalAutoDeleter<SelfDeleting,
-            FunctionClosure_Arg8_Bind5> self_deleter(this);
+                               FunctionClosure_Arg8_Bind5> self_deleter(this);
         return m_function(m_pa1, m_pa2, m_pa3, m_pa4, m_pa5 ,arg6, arg7, arg8,
-            arg9, arg10, arg11, arg12, arg13);
+                          arg9, arg10, arg11, arg12, arg13);
     }
-    virtual bool IsSelfDelete() const { return SelfDeleting; }
+    virtual bool IsSelfDelete() const {
+        return SelfDeleting;
+    }
 private:
     FunctionType m_function;
-        PreArg1 m_pa1;
-        PreArg2 m_pa2;
-        PreArg3 m_pa3;
-        PreArg4 m_pa4;
-        PreArg5 m_pa5;
-    };
+    PreArg1 m_pa1;
+    PreArg2 m_pa2;
+    PreArg3 m_pa3;
+    PreArg4 m_pa4;
+    PreArg5 m_pa5;
+};
 
 template <typename R , typename Arg1, typename Arg2, typename Arg3,
-    typename Arg4, typename Arg5, typename Arg6, typename Arg7, typename Arg8,
-    typename Arg9, typename Arg10, typename Arg11, typename Arg12,
-    typename Arg13 , typename PreArg1, typename PreArg2, typename PreArg3,
-    typename PreArg4, typename PreArg5>
+         typename Arg4, typename Arg5, typename Arg6, typename Arg7, typename Arg8,
+         typename Arg9, typename Arg10, typename Arg11, typename Arg12,
+         typename Arg13 , typename PreArg1, typename PreArg2, typename PreArg3,
+         typename PreArg4, typename PreArg5>
 Closure<R (Arg6, Arg7, Arg8, Arg9, Arg10, Arg11, Arg12,
-    Arg13)>* NewClosure(R (*function)(Arg1, Arg2, Arg3, Arg4, Arg5, Arg6, Arg7,
-    Arg8, Arg9, Arg10, Arg11, Arg12, Arg13)
-                                          , PreArg1 pa1, PreArg2 pa2,
-                                              PreArg3 pa3, PreArg4 pa4,
-                                              PreArg5 pa5) {
+           Arg13)>* NewClosure(R (*function)(Arg1, Arg2, Arg3, Arg4, Arg5, Arg6, Arg7,
+                               Arg8, Arg9, Arg10, Arg11, Arg12, Arg13)
+                               , PreArg1 pa1, PreArg2 pa2,
+                               PreArg3 pa3, PreArg4 pa4,
+                               PreArg5 pa5) {
     return new FunctionClosure_Arg8_Bind5<true, R , Arg1, Arg2, Arg3, Arg4,
-        Arg5, Arg6, Arg7, Arg8, Arg9, Arg10, Arg11, Arg12, Arg13 , PreArg1,
-        PreArg2, PreArg3, PreArg4, PreArg5>(function , pa1, pa2, pa3, pa4,
-        pa5);
+           Arg5, Arg6, Arg7, Arg8, Arg9, Arg10, Arg11, Arg12, Arg13 , PreArg1,
+           PreArg2, PreArg3, PreArg4, PreArg5>(function , pa1, pa2, pa3, pa4,
+                   pa5);
 }
 
 template <typename R , typename Arg1, typename Arg2, typename Arg3,
-    typename Arg4, typename Arg5, typename Arg6, typename Arg7, typename Arg8,
-    typename Arg9, typename Arg10, typename Arg11, typename Arg12,
-    typename Arg13 , typename PreArg1, typename PreArg2, typename PreArg3,
-    typename PreArg4, typename PreArg5>
+         typename Arg4, typename Arg5, typename Arg6, typename Arg7, typename Arg8,
+         typename Arg9, typename Arg10, typename Arg11, typename Arg12,
+         typename Arg13 , typename PreArg1, typename PreArg2, typename PreArg3,
+         typename PreArg4, typename PreArg5>
 Closure<R (Arg6, Arg7, Arg8, Arg9, Arg10, Arg11, Arg12,
-    Arg13)>* NewPermanentClosure(R (*function)(Arg1, Arg2, Arg3, Arg4, Arg5,
-    Arg6, Arg7, Arg8, Arg9, Arg10, Arg11, Arg12, Arg13)
-                                          , PreArg1 pa1, PreArg2 pa2,
-                                              PreArg3 pa3, PreArg4 pa4,
-                                              PreArg5 pa5) {
+           Arg13)>* NewPermanentClosure(R (*function)(Arg1, Arg2, Arg3, Arg4, Arg5,
+                                        Arg6, Arg7, Arg8, Arg9, Arg10, Arg11, Arg12, Arg13)
+                                        , PreArg1 pa1, PreArg2 pa2,
+                                        PreArg3 pa3, PreArg4 pa4,
+                                        PreArg5 pa5) {
     return new FunctionClosure_Arg8_Bind5<false, R , Arg1, Arg2, Arg3, Arg4,
-        Arg5, Arg6, Arg7, Arg8, Arg9, Arg10, Arg11, Arg12, Arg13 , PreArg1,
-        PreArg2, PreArg3, PreArg4, PreArg5>(function , pa1, pa2, pa3, pa4,
-        pa5);
+           Arg5, Arg6, Arg7, Arg8, Arg9, Arg10, Arg11, Arg12, Arg13 , PreArg1,
+           PreArg2, PreArg3, PreArg4, PreArg5>(function , pa1, pa2, pa3, pa4,
+                   pa5);
 }
 
 template <
-    bool SelfDeleting,
-    typename R,
-    typename Class,
-    typename MethodClass
-    , typename Arg1    , typename Arg2    , typename Arg3    ,
-        typename Arg4    , typename Arg5    , typename Arg6    ,
-        typename Arg7    , typename Arg8    , typename Arg9    ,
-        typename Arg10    , typename Arg11    , typename Arg12    ,
-        typename Arg13    , typename Arg14    , typename PreArg1    ,
-        typename PreArg2    , typename PreArg3    , typename PreArg4    ,
-        typename PreArg5    , typename PreArg6>
+bool SelfDeleting,
+     typename R,
+     typename Class,
+     typename MethodClass
+     , typename Arg1    , typename Arg2    , typename Arg3    ,
+     typename Arg4    , typename Arg5    , typename Arg6    ,
+     typename Arg7    , typename Arg8    , typename Arg9    ,
+     typename Arg10    , typename Arg11    , typename Arg12    ,
+     typename Arg13    , typename Arg14    , typename PreArg1    ,
+     typename PreArg2    , typename PreArg3    , typename PreArg4    ,
+     typename PreArg5    , typename PreArg6>
 class MethodClosure_Arg8_Bind6 : public Closure<R (Arg7, Arg8, Arg9, Arg10,
-    Arg11, Arg12, Arg13, Arg14)> {
+                Arg11, Arg12, Arg13, Arg14)> {
     typedef R (MethodClass::*MethodType)(Arg1, Arg2, Arg3, Arg4, Arg5, Arg6,
-        Arg7, Arg8, Arg9, Arg10, Arg11, Arg12, Arg13, Arg14);
+                                         Arg7, Arg8, Arg9, Arg10, Arg11, Arg12, Arg13, Arg14);
 public:
     MethodClosure_Arg8_Bind6(Class *object, MethodType method , PreArg1 pa1,
-        PreArg2 pa2, PreArg3 pa3, PreArg4 pa4, PreArg5 pa5, PreArg6 pa6):
+                             PreArg2 pa2, PreArg3 pa3, PreArg4 pa4, PreArg5 pa5, PreArg6 pa6):
         m_object(object), m_method(method) , m_pa1(pa1), m_pa2(pa2),
-            m_pa3(pa3), m_pa4(pa4), m_pa5(pa5), m_pa6(pa6) {}
+        m_pa3(pa3), m_pa4(pa4), m_pa5(pa5), m_pa6(pa6) {}
     virtual R Run(Arg7 arg7, Arg8 arg8, Arg9 arg9, Arg10 arg10, Arg11 arg11,
-        Arg12 arg12, Arg13 arg13, Arg14 arg14) {
+                  Arg12 arg12, Arg13 arg13, Arg14 arg14) {
         ConditionalAutoDeleter<SelfDeleting,
-            MethodClosure_Arg8_Bind6> self_deleter(this);
+                               MethodClosure_Arg8_Bind6> self_deleter(this);
         return (m_object->*m_method)(m_pa1, m_pa2, m_pa3, m_pa4, m_pa5, m_pa6 ,
-            arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14);
+                                     arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14);
     }
-    virtual bool IsSelfDelete() const { return SelfDeleting; }
+    virtual bool IsSelfDelete() const {
+        return SelfDeleting;
+    }
 private:
     Class* m_object;
     MethodType m_method;
-        PreArg1 m_pa1;
-        PreArg2 m_pa2;
-        PreArg3 m_pa3;
-        PreArg4 m_pa4;
-        PreArg5 m_pa5;
-        PreArg6 m_pa6;
-    };
+    PreArg1 m_pa1;
+    PreArg2 m_pa2;
+    PreArg3 m_pa3;
+    PreArg4 m_pa4;
+    PreArg5 m_pa5;
+    PreArg6 m_pa6;
+};
 
 template <typename R, typename Class, typename MethodClass ,typename Arg1,
-    typename Arg2,typename Arg3,typename Arg4,typename Arg5,typename Arg6,
-    typename Arg7,typename Arg8,typename Arg9,typename Arg10,typename Arg11,
-    typename Arg12,typename Arg13,typename Arg14 , typename PreArg1,
-    typename PreArg2, typename PreArg3, typename PreArg4, typename PreArg5,
-    typename PreArg6>
+         typename Arg2,typename Arg3,typename Arg4,typename Arg5,typename Arg6,
+         typename Arg7,typename Arg8,typename Arg9,typename Arg10,typename Arg11,
+         typename Arg12,typename Arg13,typename Arg14 , typename PreArg1,
+         typename PreArg2, typename PreArg3, typename PreArg4, typename PreArg5,
+         typename PreArg6>
 Closure<R (Arg7, Arg8, Arg9, Arg10, Arg11, Arg12, Arg13, Arg14)>* NewClosure(
     Class *object,
     R (MethodClass::*method)(Arg1, Arg2, Arg3, Arg4, Arg5, Arg6, Arg7, Arg8,
-        Arg9, Arg10, Arg11, Arg12, Arg13, Arg14)
+                             Arg9, Arg10, Arg11, Arg12, Arg13, Arg14)
     , PreArg1 pa1, PreArg2 pa2, PreArg3 pa3, PreArg4 pa4, PreArg5 pa5,
-        PreArg6 pa6) {
+    PreArg6 pa6) {
     return new MethodClosure_Arg8_Bind6<true, R, Class, MethodClass ,Arg1,Arg2,
-        Arg3,Arg4,Arg5,Arg6,Arg7,Arg8,Arg9,Arg10,Arg11,Arg12,Arg13,Arg14 ,
-        PreArg1, PreArg2, PreArg3, PreArg4, PreArg5, PreArg6>(
-        object, method, pa1, pa2, pa3, pa4, pa5, pa6);
+           Arg3,Arg4,Arg5,Arg6,Arg7,Arg8,Arg9,Arg10,Arg11,Arg12,Arg13,Arg14 ,
+           PreArg1, PreArg2, PreArg3, PreArg4, PreArg5, PreArg6>(
+               object, method, pa1, pa2, pa3, pa4, pa5, pa6);
 }
 
 template <typename R, typename Class, typename MethodClass ,typename Arg1,
-    typename Arg2,typename Arg3,typename Arg4,typename Arg5,typename Arg6,
-    typename Arg7,typename Arg8,typename Arg9,typename Arg10,typename Arg11,
-    typename Arg12,typename Arg13,typename Arg14 , typename PreArg1,
-    typename PreArg2, typename PreArg3, typename PreArg4, typename PreArg5,
-    typename PreArg6>
+         typename Arg2,typename Arg3,typename Arg4,typename Arg5,typename Arg6,
+         typename Arg7,typename Arg8,typename Arg9,typename Arg10,typename Arg11,
+         typename Arg12,typename Arg13,typename Arg14 , typename PreArg1,
+         typename PreArg2, typename PreArg3, typename PreArg4, typename PreArg5,
+         typename PreArg6>
 Closure<R (Arg7, Arg8, Arg9, Arg10, Arg11, Arg12, Arg13,
-    Arg14)>* NewPermanentClosure(
-    Class *object,
-    R (MethodClass::*method)(Arg1, Arg2, Arg3, Arg4, Arg5, Arg6, Arg7, Arg8,
-        Arg9, Arg10, Arg11, Arg12, Arg13, Arg14)
-    , PreArg1 pa1, PreArg2 pa2, PreArg3 pa3, PreArg4 pa4, PreArg5 pa5,
-        PreArg6 pa6) {
+           Arg14)>* NewPermanentClosure(
+               Class *object,
+               R (MethodClass::*method)(Arg1, Arg2, Arg3, Arg4, Arg5, Arg6, Arg7, Arg8,
+                                        Arg9, Arg10, Arg11, Arg12, Arg13, Arg14)
+               , PreArg1 pa1, PreArg2 pa2, PreArg3 pa3, PreArg4 pa4, PreArg5 pa5,
+               PreArg6 pa6) {
     return new MethodClosure_Arg8_Bind6<false, R, Class, MethodClass ,Arg1,
-        Arg2,Arg3,Arg4,Arg5,Arg6,Arg7,Arg8,Arg9,Arg10,Arg11,Arg12,Arg13,Arg14 ,
-        PreArg1, PreArg2, PreArg3, PreArg4, PreArg5, PreArg6>(
-        object, method, pa1, pa2, pa3, pa4, pa5, pa6);
+           Arg2,Arg3,Arg4,Arg5,Arg6,Arg7,Arg8,Arg9,Arg10,Arg11,Arg12,Arg13,Arg14 ,
+           PreArg1, PreArg2, PreArg3, PreArg4, PreArg5, PreArg6>(
+               object, method, pa1, pa2, pa3, pa4, pa5, pa6);
 }
 
 ////////////////////////////////////////////////////
@@ -9536,154 +9834,158 @@ Closure<R (Arg7, Arg8, Arg9, Arg10, Arg11, Arg12, Arg13,
 ////////////////////////////////////////////////////
 
 template <
-    bool SelfDeleting,
-    typename R
-    , typename Arg1    , typename Arg2    , typename Arg3    ,
-        typename Arg4    , typename Arg5    , typename Arg6    ,
-        typename Arg7    , typename Arg8    , typename Arg9    ,
-        typename Arg10    , typename Arg11    , typename Arg12    ,
-        typename Arg13    , typename Arg14    , typename PreArg1    ,
-        typename PreArg2    , typename PreArg3    , typename PreArg4    ,
-        typename PreArg5    , typename PreArg6>
+bool SelfDeleting,
+     typename R
+     , typename Arg1    , typename Arg2    , typename Arg3    ,
+     typename Arg4    , typename Arg5    , typename Arg6    ,
+     typename Arg7    , typename Arg8    , typename Arg9    ,
+     typename Arg10    , typename Arg11    , typename Arg12    ,
+     typename Arg13    , typename Arg14    , typename PreArg1    ,
+     typename PreArg2    , typename PreArg3    , typename PreArg4    ,
+     typename PreArg5    , typename PreArg6>
 class FunctionClosure_Arg8_Bind6 : public Closure<R (Arg7, Arg8, Arg9, Arg10,
-    Arg11, Arg12, Arg13, Arg14)> {
+                Arg11, Arg12, Arg13, Arg14)> {
     typedef R (*FunctionType)(Arg1, Arg2, Arg3, Arg4, Arg5, Arg6, Arg7, Arg8,
-        Arg9, Arg10, Arg11, Arg12, Arg13, Arg14);
+                              Arg9, Arg10, Arg11, Arg12, Arg13, Arg14);
 public:
     FunctionClosure_Arg8_Bind6(FunctionType function , PreArg1 pa1,
-        PreArg2 pa2, PreArg3 pa3, PreArg4 pa4, PreArg5 pa5, PreArg6 pa6):
+                               PreArg2 pa2, PreArg3 pa3, PreArg4 pa4, PreArg5 pa5, PreArg6 pa6):
         m_function(function) , m_pa1(pa1), m_pa2(pa2), m_pa3(pa3), m_pa4(pa4),
-            m_pa5(pa5), m_pa6(pa6) {}
+        m_pa5(pa5), m_pa6(pa6) {}
     virtual R Run(Arg7 arg7, Arg8 arg8, Arg9 arg9, Arg10 arg10, Arg11 arg11,
-        Arg12 arg12, Arg13 arg13, Arg14 arg14) {
+                  Arg12 arg12, Arg13 arg13, Arg14 arg14) {
         ConditionalAutoDeleter<SelfDeleting,
-            FunctionClosure_Arg8_Bind6> self_deleter(this);
+                               FunctionClosure_Arg8_Bind6> self_deleter(this);
         return m_function(m_pa1, m_pa2, m_pa3, m_pa4, m_pa5, m_pa6 ,arg7, arg8,
-            arg9, arg10, arg11, arg12, arg13, arg14);
+                          arg9, arg10, arg11, arg12, arg13, arg14);
     }
-    virtual bool IsSelfDelete() const { return SelfDeleting; }
+    virtual bool IsSelfDelete() const {
+        return SelfDeleting;
+    }
 private:
     FunctionType m_function;
-        PreArg1 m_pa1;
-        PreArg2 m_pa2;
-        PreArg3 m_pa3;
-        PreArg4 m_pa4;
-        PreArg5 m_pa5;
-        PreArg6 m_pa6;
-    };
+    PreArg1 m_pa1;
+    PreArg2 m_pa2;
+    PreArg3 m_pa3;
+    PreArg4 m_pa4;
+    PreArg5 m_pa5;
+    PreArg6 m_pa6;
+};
 
 template <typename R , typename Arg1, typename Arg2, typename Arg3,
-    typename Arg4, typename Arg5, typename Arg6, typename Arg7, typename Arg8,
-    typename Arg9, typename Arg10, typename Arg11, typename Arg12,
-    typename Arg13, typename Arg14 , typename PreArg1, typename PreArg2,
-    typename PreArg3, typename PreArg4, typename PreArg5, typename PreArg6>
+         typename Arg4, typename Arg5, typename Arg6, typename Arg7, typename Arg8,
+         typename Arg9, typename Arg10, typename Arg11, typename Arg12,
+         typename Arg13, typename Arg14 , typename PreArg1, typename PreArg2,
+         typename PreArg3, typename PreArg4, typename PreArg5, typename PreArg6>
 Closure<R (Arg7, Arg8, Arg9, Arg10, Arg11, Arg12, Arg13,
-    Arg14)>* NewClosure(R (*function)(Arg1, Arg2, Arg3, Arg4, Arg5, Arg6, Arg7,
-    Arg8, Arg9, Arg10, Arg11, Arg12, Arg13, Arg14)
-                                          , PreArg1 pa1, PreArg2 pa2,
-                                              PreArg3 pa3, PreArg4 pa4,
-                                              PreArg5 pa5, PreArg6 pa6) {
+           Arg14)>* NewClosure(R (*function)(Arg1, Arg2, Arg3, Arg4, Arg5, Arg6, Arg7,
+                               Arg8, Arg9, Arg10, Arg11, Arg12, Arg13, Arg14)
+                               , PreArg1 pa1, PreArg2 pa2,
+                               PreArg3 pa3, PreArg4 pa4,
+                               PreArg5 pa5, PreArg6 pa6) {
     return new FunctionClosure_Arg8_Bind6<true, R , Arg1, Arg2, Arg3, Arg4,
-        Arg5, Arg6, Arg7, Arg8, Arg9, Arg10, Arg11, Arg12, Arg13, Arg14 ,
-        PreArg1, PreArg2, PreArg3, PreArg4, PreArg5, PreArg6>(function , pa1,
-        pa2, pa3, pa4, pa5, pa6);
+           Arg5, Arg6, Arg7, Arg8, Arg9, Arg10, Arg11, Arg12, Arg13, Arg14 ,
+           PreArg1, PreArg2, PreArg3, PreArg4, PreArg5, PreArg6>(function , pa1,
+                   pa2, pa3, pa4, pa5, pa6);
 }
 
 template <typename R , typename Arg1, typename Arg2, typename Arg3,
-    typename Arg4, typename Arg5, typename Arg6, typename Arg7, typename Arg8,
-    typename Arg9, typename Arg10, typename Arg11, typename Arg12,
-    typename Arg13, typename Arg14 , typename PreArg1, typename PreArg2,
-    typename PreArg3, typename PreArg4, typename PreArg5, typename PreArg6>
+         typename Arg4, typename Arg5, typename Arg6, typename Arg7, typename Arg8,
+         typename Arg9, typename Arg10, typename Arg11, typename Arg12,
+         typename Arg13, typename Arg14 , typename PreArg1, typename PreArg2,
+         typename PreArg3, typename PreArg4, typename PreArg5, typename PreArg6>
 Closure<R (Arg7, Arg8, Arg9, Arg10, Arg11, Arg12, Arg13,
-    Arg14)>* NewPermanentClosure(R (*function)(Arg1, Arg2, Arg3, Arg4, Arg5,
-    Arg6, Arg7, Arg8, Arg9, Arg10, Arg11, Arg12, Arg13, Arg14)
-                                          , PreArg1 pa1, PreArg2 pa2,
-                                              PreArg3 pa3, PreArg4 pa4,
-                                              PreArg5 pa5, PreArg6 pa6) {
+           Arg14)>* NewPermanentClosure(R (*function)(Arg1, Arg2, Arg3, Arg4, Arg5,
+                                        Arg6, Arg7, Arg8, Arg9, Arg10, Arg11, Arg12, Arg13, Arg14)
+                                        , PreArg1 pa1, PreArg2 pa2,
+                                        PreArg3 pa3, PreArg4 pa4,
+                                        PreArg5 pa5, PreArg6 pa6) {
     return new FunctionClosure_Arg8_Bind6<false, R , Arg1, Arg2, Arg3, Arg4,
-        Arg5, Arg6, Arg7, Arg8, Arg9, Arg10, Arg11, Arg12, Arg13, Arg14 ,
-        PreArg1, PreArg2, PreArg3, PreArg4, PreArg5, PreArg6>(function , pa1,
-        pa2, pa3, pa4, pa5, pa6);
+           Arg5, Arg6, Arg7, Arg8, Arg9, Arg10, Arg11, Arg12, Arg13, Arg14 ,
+           PreArg1, PreArg2, PreArg3, PreArg4, PreArg5, PreArg6>(function , pa1,
+                   pa2, pa3, pa4, pa5, pa6);
 }
 
 template <
-    bool SelfDeleting,
-    typename R,
-    typename Class,
-    typename MethodClass
-    , typename Arg1    , typename Arg2    , typename Arg3    ,
-        typename Arg4    , typename Arg5    , typename Arg6    ,
-        typename Arg7    , typename Arg8    , typename Arg9    ,
-        typename Arg10    , typename Arg11    , typename Arg12    ,
-        typename Arg13    , typename Arg14    , typename Arg15    ,
-        typename PreArg1    , typename PreArg2    , typename PreArg3    ,
-        typename PreArg4    , typename PreArg5    , typename PreArg6    ,
-        typename PreArg7>
+bool SelfDeleting,
+     typename R,
+     typename Class,
+     typename MethodClass
+     , typename Arg1    , typename Arg2    , typename Arg3    ,
+     typename Arg4    , typename Arg5    , typename Arg6    ,
+     typename Arg7    , typename Arg8    , typename Arg9    ,
+     typename Arg10    , typename Arg11    , typename Arg12    ,
+     typename Arg13    , typename Arg14    , typename Arg15    ,
+     typename PreArg1    , typename PreArg2    , typename PreArg3    ,
+     typename PreArg4    , typename PreArg5    , typename PreArg6    ,
+     typename PreArg7>
 class MethodClosure_Arg8_Bind7 : public Closure<R (Arg8, Arg9, Arg10, Arg11,
-    Arg12, Arg13, Arg14, Arg15)> {
+                Arg12, Arg13, Arg14, Arg15)> {
     typedef R (MethodClass::*MethodType)(Arg1, Arg2, Arg3, Arg4, Arg5, Arg6,
-        Arg7, Arg8, Arg9, Arg10, Arg11, Arg12, Arg13, Arg14, Arg15);
+                                         Arg7, Arg8, Arg9, Arg10, Arg11, Arg12, Arg13, Arg14, Arg15);
 public:
     MethodClosure_Arg8_Bind7(Class *object, MethodType method , PreArg1 pa1,
-        PreArg2 pa2, PreArg3 pa3, PreArg4 pa4, PreArg5 pa5, PreArg6 pa6,
-        PreArg7 pa7):
+                             PreArg2 pa2, PreArg3 pa3, PreArg4 pa4, PreArg5 pa5, PreArg6 pa6,
+                             PreArg7 pa7):
         m_object(object), m_method(method) , m_pa1(pa1), m_pa2(pa2),
-            m_pa3(pa3), m_pa4(pa4), m_pa5(pa5), m_pa6(pa6), m_pa7(pa7) {}
+        m_pa3(pa3), m_pa4(pa4), m_pa5(pa5), m_pa6(pa6), m_pa7(pa7) {}
     virtual R Run(Arg8 arg8, Arg9 arg9, Arg10 arg10, Arg11 arg11, Arg12 arg12,
-        Arg13 arg13, Arg14 arg14, Arg15 arg15) {
+                  Arg13 arg13, Arg14 arg14, Arg15 arg15) {
         ConditionalAutoDeleter<SelfDeleting,
-            MethodClosure_Arg8_Bind7> self_deleter(this);
+                               MethodClosure_Arg8_Bind7> self_deleter(this);
         return (m_object->*m_method)(m_pa1, m_pa2, m_pa3, m_pa4, m_pa5, m_pa6,
-            m_pa7 ,arg8, arg9, arg10, arg11, arg12, arg13, arg14, arg15);
+                                     m_pa7 ,arg8, arg9, arg10, arg11, arg12, arg13, arg14, arg15);
     }
-    virtual bool IsSelfDelete() const { return SelfDeleting; }
+    virtual bool IsSelfDelete() const {
+        return SelfDeleting;
+    }
 private:
     Class* m_object;
     MethodType m_method;
-        PreArg1 m_pa1;
-        PreArg2 m_pa2;
-        PreArg3 m_pa3;
-        PreArg4 m_pa4;
-        PreArg5 m_pa5;
-        PreArg6 m_pa6;
-        PreArg7 m_pa7;
-    };
+    PreArg1 m_pa1;
+    PreArg2 m_pa2;
+    PreArg3 m_pa3;
+    PreArg4 m_pa4;
+    PreArg5 m_pa5;
+    PreArg6 m_pa6;
+    PreArg7 m_pa7;
+};
 
 template <typename R, typename Class, typename MethodClass ,typename Arg1,
-    typename Arg2,typename Arg3,typename Arg4,typename Arg5,typename Arg6,
-    typename Arg7,typename Arg8,typename Arg9,typename Arg10,typename Arg11,
-    typename Arg12,typename Arg13,typename Arg14,typename Arg15 ,
-    typename PreArg1, typename PreArg2, typename PreArg3, typename PreArg4,
-    typename PreArg5, typename PreArg6, typename PreArg7>
+         typename Arg2,typename Arg3,typename Arg4,typename Arg5,typename Arg6,
+         typename Arg7,typename Arg8,typename Arg9,typename Arg10,typename Arg11,
+         typename Arg12,typename Arg13,typename Arg14,typename Arg15 ,
+         typename PreArg1, typename PreArg2, typename PreArg3, typename PreArg4,
+         typename PreArg5, typename PreArg6, typename PreArg7>
 Closure<R (Arg8, Arg9, Arg10, Arg11, Arg12, Arg13, Arg14, Arg15)>* NewClosure(
     Class *object,
     R (MethodClass::*method)(Arg1, Arg2, Arg3, Arg4, Arg5, Arg6, Arg7, Arg8,
-        Arg9, Arg10, Arg11, Arg12, Arg13, Arg14, Arg15)
+                             Arg9, Arg10, Arg11, Arg12, Arg13, Arg14, Arg15)
     , PreArg1 pa1, PreArg2 pa2, PreArg3 pa3, PreArg4 pa4, PreArg5 pa5,
-        PreArg6 pa6, PreArg7 pa7) {
+    PreArg6 pa6, PreArg7 pa7) {
     return new MethodClosure_Arg8_Bind7<true, R, Class, MethodClass ,Arg1,Arg2,
-        Arg3,Arg4,Arg5,Arg6,Arg7,Arg8,Arg9,Arg10,Arg11,Arg12,Arg13,Arg14,
-        Arg15 , PreArg1, PreArg2, PreArg3, PreArg4, PreArg5, PreArg6, PreArg7>(
-        object, method, pa1, pa2, pa3, pa4, pa5, pa6, pa7);
+           Arg3,Arg4,Arg5,Arg6,Arg7,Arg8,Arg9,Arg10,Arg11,Arg12,Arg13,Arg14,
+           Arg15 , PreArg1, PreArg2, PreArg3, PreArg4, PreArg5, PreArg6, PreArg7>(
+               object, method, pa1, pa2, pa3, pa4, pa5, pa6, pa7);
 }
 
 template <typename R, typename Class, typename MethodClass ,typename Arg1,
-    typename Arg2,typename Arg3,typename Arg4,typename Arg5,typename Arg6,
-    typename Arg7,typename Arg8,typename Arg9,typename Arg10,typename Arg11,
-    typename Arg12,typename Arg13,typename Arg14,typename Arg15 ,
-    typename PreArg1, typename PreArg2, typename PreArg3, typename PreArg4,
-    typename PreArg5, typename PreArg6, typename PreArg7>
+         typename Arg2,typename Arg3,typename Arg4,typename Arg5,typename Arg6,
+         typename Arg7,typename Arg8,typename Arg9,typename Arg10,typename Arg11,
+         typename Arg12,typename Arg13,typename Arg14,typename Arg15 ,
+         typename PreArg1, typename PreArg2, typename PreArg3, typename PreArg4,
+         typename PreArg5, typename PreArg6, typename PreArg7>
 Closure<R (Arg8, Arg9, Arg10, Arg11, Arg12, Arg13, Arg14,
-    Arg15)>* NewPermanentClosure(
-    Class *object,
-    R (MethodClass::*method)(Arg1, Arg2, Arg3, Arg4, Arg5, Arg6, Arg7, Arg8,
-        Arg9, Arg10, Arg11, Arg12, Arg13, Arg14, Arg15)
-    , PreArg1 pa1, PreArg2 pa2, PreArg3 pa3, PreArg4 pa4, PreArg5 pa5,
-        PreArg6 pa6, PreArg7 pa7) {
+           Arg15)>* NewPermanentClosure(
+               Class *object,
+               R (MethodClass::*method)(Arg1, Arg2, Arg3, Arg4, Arg5, Arg6, Arg7, Arg8,
+                                        Arg9, Arg10, Arg11, Arg12, Arg13, Arg14, Arg15)
+               , PreArg1 pa1, PreArg2 pa2, PreArg3 pa3, PreArg4 pa4, PreArg5 pa5,
+               PreArg6 pa6, PreArg7 pa7) {
     return new MethodClosure_Arg8_Bind7<false, R, Class, MethodClass ,Arg1,
-        Arg2,Arg3,Arg4,Arg5,Arg6,Arg7,Arg8,Arg9,Arg10,Arg11,Arg12,Arg13,Arg14,
-        Arg15 , PreArg1, PreArg2, PreArg3, PreArg4, PreArg5, PreArg6, PreArg7>(
-        object, method, pa1, pa2, pa3, pa4, pa5, pa6, pa7);
+           Arg2,Arg3,Arg4,Arg5,Arg6,Arg7,Arg8,Arg9,Arg10,Arg11,Arg12,Arg13,Arg14,
+           Arg15 , PreArg1, PreArg2, PreArg3, PreArg4, PreArg5, PreArg6, PreArg7>(
+               object, method, pa1, pa2, pa3, pa4, pa5, pa6, pa7);
 }
 
 ////////////////////////////////////////////////////
@@ -9691,168 +9993,172 @@ Closure<R (Arg8, Arg9, Arg10, Arg11, Arg12, Arg13, Arg14,
 ////////////////////////////////////////////////////
 
 template <
-    bool SelfDeleting,
-    typename R
-    , typename Arg1    , typename Arg2    , typename Arg3    ,
-        typename Arg4    , typename Arg5    , typename Arg6    ,
-        typename Arg7    , typename Arg8    , typename Arg9    ,
-        typename Arg10    , typename Arg11    , typename Arg12    ,
-        typename Arg13    , typename Arg14    , typename Arg15    ,
-        typename PreArg1    , typename PreArg2    , typename PreArg3    ,
-        typename PreArg4    , typename PreArg5    , typename PreArg6    ,
-        typename PreArg7>
+bool SelfDeleting,
+     typename R
+     , typename Arg1    , typename Arg2    , typename Arg3    ,
+     typename Arg4    , typename Arg5    , typename Arg6    ,
+     typename Arg7    , typename Arg8    , typename Arg9    ,
+     typename Arg10    , typename Arg11    , typename Arg12    ,
+     typename Arg13    , typename Arg14    , typename Arg15    ,
+     typename PreArg1    , typename PreArg2    , typename PreArg3    ,
+     typename PreArg4    , typename PreArg5    , typename PreArg6    ,
+     typename PreArg7>
 class FunctionClosure_Arg8_Bind7 : public Closure<R (Arg8, Arg9, Arg10, Arg11,
-    Arg12, Arg13, Arg14, Arg15)> {
+                Arg12, Arg13, Arg14, Arg15)> {
     typedef R (*FunctionType)(Arg1, Arg2, Arg3, Arg4, Arg5, Arg6, Arg7, Arg8,
-        Arg9, Arg10, Arg11, Arg12, Arg13, Arg14, Arg15);
+                              Arg9, Arg10, Arg11, Arg12, Arg13, Arg14, Arg15);
 public:
     FunctionClosure_Arg8_Bind7(FunctionType function , PreArg1 pa1,
-        PreArg2 pa2, PreArg3 pa3, PreArg4 pa4, PreArg5 pa5, PreArg6 pa6,
-        PreArg7 pa7):
+                               PreArg2 pa2, PreArg3 pa3, PreArg4 pa4, PreArg5 pa5, PreArg6 pa6,
+                               PreArg7 pa7):
         m_function(function) , m_pa1(pa1), m_pa2(pa2), m_pa3(pa3), m_pa4(pa4),
-            m_pa5(pa5), m_pa6(pa6), m_pa7(pa7) {}
+        m_pa5(pa5), m_pa6(pa6), m_pa7(pa7) {}
     virtual R Run(Arg8 arg8, Arg9 arg9, Arg10 arg10, Arg11 arg11, Arg12 arg12,
-        Arg13 arg13, Arg14 arg14, Arg15 arg15) {
+                  Arg13 arg13, Arg14 arg14, Arg15 arg15) {
         ConditionalAutoDeleter<SelfDeleting,
-            FunctionClosure_Arg8_Bind7> self_deleter(this);
+                               FunctionClosure_Arg8_Bind7> self_deleter(this);
         return m_function(m_pa1, m_pa2, m_pa3, m_pa4, m_pa5, m_pa6, m_pa7 ,
-            arg8, arg9, arg10, arg11, arg12, arg13, arg14, arg15);
+                          arg8, arg9, arg10, arg11, arg12, arg13, arg14, arg15);
     }
-    virtual bool IsSelfDelete() const { return SelfDeleting; }
+    virtual bool IsSelfDelete() const {
+        return SelfDeleting;
+    }
 private:
     FunctionType m_function;
-        PreArg1 m_pa1;
-        PreArg2 m_pa2;
-        PreArg3 m_pa3;
-        PreArg4 m_pa4;
-        PreArg5 m_pa5;
-        PreArg6 m_pa6;
-        PreArg7 m_pa7;
-    };
+    PreArg1 m_pa1;
+    PreArg2 m_pa2;
+    PreArg3 m_pa3;
+    PreArg4 m_pa4;
+    PreArg5 m_pa5;
+    PreArg6 m_pa6;
+    PreArg7 m_pa7;
+};
 
 template <typename R , typename Arg1, typename Arg2, typename Arg3,
-    typename Arg4, typename Arg5, typename Arg6, typename Arg7, typename Arg8,
-    typename Arg9, typename Arg10, typename Arg11, typename Arg12,
-    typename Arg13, typename Arg14, typename Arg15 , typename PreArg1,
-    typename PreArg2, typename PreArg3, typename PreArg4, typename PreArg5,
-    typename PreArg6, typename PreArg7>
+         typename Arg4, typename Arg5, typename Arg6, typename Arg7, typename Arg8,
+         typename Arg9, typename Arg10, typename Arg11, typename Arg12,
+         typename Arg13, typename Arg14, typename Arg15 , typename PreArg1,
+         typename PreArg2, typename PreArg3, typename PreArg4, typename PreArg5,
+         typename PreArg6, typename PreArg7>
 Closure<R (Arg8, Arg9, Arg10, Arg11, Arg12, Arg13, Arg14,
-    Arg15)>* NewClosure(R (*function)(Arg1, Arg2, Arg3, Arg4, Arg5, Arg6, Arg7,
-    Arg8, Arg9, Arg10, Arg11, Arg12, Arg13, Arg14, Arg15)
-                                          , PreArg1 pa1, PreArg2 pa2,
-                                              PreArg3 pa3, PreArg4 pa4,
-                                              PreArg5 pa5, PreArg6 pa6,
-                                              PreArg7 pa7) {
+           Arg15)>* NewClosure(R (*function)(Arg1, Arg2, Arg3, Arg4, Arg5, Arg6, Arg7,
+                               Arg8, Arg9, Arg10, Arg11, Arg12, Arg13, Arg14, Arg15)
+                               , PreArg1 pa1, PreArg2 pa2,
+                               PreArg3 pa3, PreArg4 pa4,
+                               PreArg5 pa5, PreArg6 pa6,
+                               PreArg7 pa7) {
     return new FunctionClosure_Arg8_Bind7<true, R , Arg1, Arg2, Arg3, Arg4,
-        Arg5, Arg6, Arg7, Arg8, Arg9, Arg10, Arg11, Arg12, Arg13, Arg14,
-        Arg15 , PreArg1, PreArg2, PreArg3, PreArg4, PreArg5, PreArg6,
-        PreArg7>(function , pa1, pa2, pa3, pa4, pa5, pa6, pa7);
+           Arg5, Arg6, Arg7, Arg8, Arg9, Arg10, Arg11, Arg12, Arg13, Arg14,
+           Arg15 , PreArg1, PreArg2, PreArg3, PreArg4, PreArg5, PreArg6,
+           PreArg7>(function , pa1, pa2, pa3, pa4, pa5, pa6, pa7);
 }
 
 template <typename R , typename Arg1, typename Arg2, typename Arg3,
-    typename Arg4, typename Arg5, typename Arg6, typename Arg7, typename Arg8,
-    typename Arg9, typename Arg10, typename Arg11, typename Arg12,
-    typename Arg13, typename Arg14, typename Arg15 , typename PreArg1,
-    typename PreArg2, typename PreArg3, typename PreArg4, typename PreArg5,
-    typename PreArg6, typename PreArg7>
+         typename Arg4, typename Arg5, typename Arg6, typename Arg7, typename Arg8,
+         typename Arg9, typename Arg10, typename Arg11, typename Arg12,
+         typename Arg13, typename Arg14, typename Arg15 , typename PreArg1,
+         typename PreArg2, typename PreArg3, typename PreArg4, typename PreArg5,
+         typename PreArg6, typename PreArg7>
 Closure<R (Arg8, Arg9, Arg10, Arg11, Arg12, Arg13, Arg14,
-    Arg15)>* NewPermanentClosure(R (*function)(Arg1, Arg2, Arg3, Arg4, Arg5,
-    Arg6, Arg7, Arg8, Arg9, Arg10, Arg11, Arg12, Arg13, Arg14, Arg15)
-                                          , PreArg1 pa1, PreArg2 pa2,
-                                              PreArg3 pa3, PreArg4 pa4,
-                                              PreArg5 pa5, PreArg6 pa6,
-                                              PreArg7 pa7) {
+           Arg15)>* NewPermanentClosure(R (*function)(Arg1, Arg2, Arg3, Arg4, Arg5,
+                                        Arg6, Arg7, Arg8, Arg9, Arg10, Arg11, Arg12, Arg13, Arg14, Arg15)
+                                        , PreArg1 pa1, PreArg2 pa2,
+                                        PreArg3 pa3, PreArg4 pa4,
+                                        PreArg5 pa5, PreArg6 pa6,
+                                        PreArg7 pa7) {
     return new FunctionClosure_Arg8_Bind7<false, R , Arg1, Arg2, Arg3, Arg4,
-        Arg5, Arg6, Arg7, Arg8, Arg9, Arg10, Arg11, Arg12, Arg13, Arg14,
-        Arg15 , PreArg1, PreArg2, PreArg3, PreArg4, PreArg5, PreArg6,
-        PreArg7>(function , pa1, pa2, pa3, pa4, pa5, pa6, pa7);
+           Arg5, Arg6, Arg7, Arg8, Arg9, Arg10, Arg11, Arg12, Arg13, Arg14,
+           Arg15 , PreArg1, PreArg2, PreArg3, PreArg4, PreArg5, PreArg6,
+           PreArg7>(function , pa1, pa2, pa3, pa4, pa5, pa6, pa7);
 }
 
 template <
-    bool SelfDeleting,
-    typename R,
-    typename Class,
-    typename MethodClass
-    , typename Arg1    , typename Arg2    , typename Arg3    ,
-        typename Arg4    , typename Arg5    , typename Arg6    ,
-        typename Arg7    , typename Arg8    , typename Arg9    ,
-        typename Arg10    , typename Arg11    , typename Arg12    ,
-        typename Arg13    , typename Arg14    , typename Arg15    ,
-        typename Arg16    , typename PreArg1    , typename PreArg2    ,
-        typename PreArg3    , typename PreArg4    , typename PreArg5    ,
-        typename PreArg6    , typename PreArg7    , typename PreArg8>
+bool SelfDeleting,
+     typename R,
+     typename Class,
+     typename MethodClass
+     , typename Arg1    , typename Arg2    , typename Arg3    ,
+     typename Arg4    , typename Arg5    , typename Arg6    ,
+     typename Arg7    , typename Arg8    , typename Arg9    ,
+     typename Arg10    , typename Arg11    , typename Arg12    ,
+     typename Arg13    , typename Arg14    , typename Arg15    ,
+     typename Arg16    , typename PreArg1    , typename PreArg2    ,
+     typename PreArg3    , typename PreArg4    , typename PreArg5    ,
+     typename PreArg6    , typename PreArg7    , typename PreArg8>
 class MethodClosure_Arg8_Bind8 : public Closure<R (Arg9, Arg10, Arg11, Arg12,
-    Arg13, Arg14, Arg15, Arg16)> {
+                Arg13, Arg14, Arg15, Arg16)> {
     typedef R (MethodClass::*MethodType)(Arg1, Arg2, Arg3, Arg4, Arg5, Arg6,
-        Arg7, Arg8, Arg9, Arg10, Arg11, Arg12, Arg13, Arg14, Arg15, Arg16);
+                                         Arg7, Arg8, Arg9, Arg10, Arg11, Arg12, Arg13, Arg14, Arg15, Arg16);
 public:
     MethodClosure_Arg8_Bind8(Class *object, MethodType method , PreArg1 pa1,
-        PreArg2 pa2, PreArg3 pa3, PreArg4 pa4, PreArg5 pa5, PreArg6 pa6,
-        PreArg7 pa7, PreArg8 pa8):
+                             PreArg2 pa2, PreArg3 pa3, PreArg4 pa4, PreArg5 pa5, PreArg6 pa6,
+                             PreArg7 pa7, PreArg8 pa8):
         m_object(object), m_method(method) , m_pa1(pa1), m_pa2(pa2),
-            m_pa3(pa3), m_pa4(pa4), m_pa5(pa5), m_pa6(pa6), m_pa7(pa7),
-            m_pa8(pa8) {}
+        m_pa3(pa3), m_pa4(pa4), m_pa5(pa5), m_pa6(pa6), m_pa7(pa7),
+        m_pa8(pa8) {}
     virtual R Run(Arg9 arg9, Arg10 arg10, Arg11 arg11, Arg12 arg12,
-        Arg13 arg13, Arg14 arg14, Arg15 arg15, Arg16 arg16) {
+                  Arg13 arg13, Arg14 arg14, Arg15 arg15, Arg16 arg16) {
         ConditionalAutoDeleter<SelfDeleting,
-            MethodClosure_Arg8_Bind8> self_deleter(this);
+                               MethodClosure_Arg8_Bind8> self_deleter(this);
         return (m_object->*m_method)(m_pa1, m_pa2, m_pa3, m_pa4, m_pa5, m_pa6,
-            m_pa7, m_pa8 ,arg9, arg10, arg11, arg12, arg13, arg14, arg15,
-            arg16);
+                                     m_pa7, m_pa8 ,arg9, arg10, arg11, arg12, arg13, arg14, arg15,
+                                     arg16);
     }
-    virtual bool IsSelfDelete() const { return SelfDeleting; }
+    virtual bool IsSelfDelete() const {
+        return SelfDeleting;
+    }
 private:
     Class* m_object;
     MethodType m_method;
-        PreArg1 m_pa1;
-        PreArg2 m_pa2;
-        PreArg3 m_pa3;
-        PreArg4 m_pa4;
-        PreArg5 m_pa5;
-        PreArg6 m_pa6;
-        PreArg7 m_pa7;
-        PreArg8 m_pa8;
-    };
+    PreArg1 m_pa1;
+    PreArg2 m_pa2;
+    PreArg3 m_pa3;
+    PreArg4 m_pa4;
+    PreArg5 m_pa5;
+    PreArg6 m_pa6;
+    PreArg7 m_pa7;
+    PreArg8 m_pa8;
+};
 
 template <typename R, typename Class, typename MethodClass ,typename Arg1,
-    typename Arg2,typename Arg3,typename Arg4,typename Arg5,typename Arg6,
-    typename Arg7,typename Arg8,typename Arg9,typename Arg10,typename Arg11,
-    typename Arg12,typename Arg13,typename Arg14,typename Arg15,
-    typename Arg16 , typename PreArg1, typename PreArg2, typename PreArg3,
-    typename PreArg4, typename PreArg5, typename PreArg6, typename PreArg7,
-    typename PreArg8>
+         typename Arg2,typename Arg3,typename Arg4,typename Arg5,typename Arg6,
+         typename Arg7,typename Arg8,typename Arg9,typename Arg10,typename Arg11,
+         typename Arg12,typename Arg13,typename Arg14,typename Arg15,
+         typename Arg16 , typename PreArg1, typename PreArg2, typename PreArg3,
+         typename PreArg4, typename PreArg5, typename PreArg6, typename PreArg7,
+         typename PreArg8>
 Closure<R (Arg9, Arg10, Arg11, Arg12, Arg13, Arg14, Arg15, Arg16)>* NewClosure(
     Class *object,
     R (MethodClass::*method)(Arg1, Arg2, Arg3, Arg4, Arg5, Arg6, Arg7, Arg8,
-        Arg9, Arg10, Arg11, Arg12, Arg13, Arg14, Arg15, Arg16)
+                             Arg9, Arg10, Arg11, Arg12, Arg13, Arg14, Arg15, Arg16)
     , PreArg1 pa1, PreArg2 pa2, PreArg3 pa3, PreArg4 pa4, PreArg5 pa5,
-        PreArg6 pa6, PreArg7 pa7, PreArg8 pa8) {
+    PreArg6 pa6, PreArg7 pa7, PreArg8 pa8) {
     return new MethodClosure_Arg8_Bind8<true, R, Class, MethodClass ,Arg1,Arg2,
-        Arg3,Arg4,Arg5,Arg6,Arg7,Arg8,Arg9,Arg10,Arg11,Arg12,Arg13,Arg14,Arg15,
-        Arg16 , PreArg1, PreArg2, PreArg3, PreArg4, PreArg5, PreArg6, PreArg7,
-        PreArg8>(
-        object, method, pa1, pa2, pa3, pa4, pa5, pa6, pa7, pa8);
+           Arg3,Arg4,Arg5,Arg6,Arg7,Arg8,Arg9,Arg10,Arg11,Arg12,Arg13,Arg14,Arg15,
+           Arg16 , PreArg1, PreArg2, PreArg3, PreArg4, PreArg5, PreArg6, PreArg7,
+           PreArg8>(
+               object, method, pa1, pa2, pa3, pa4, pa5, pa6, pa7, pa8);
 }
 
 template <typename R, typename Class, typename MethodClass ,typename Arg1,
-    typename Arg2,typename Arg3,typename Arg4,typename Arg5,typename Arg6,
-    typename Arg7,typename Arg8,typename Arg9,typename Arg10,typename Arg11,
-    typename Arg12,typename Arg13,typename Arg14,typename Arg15,
-    typename Arg16 , typename PreArg1, typename PreArg2, typename PreArg3,
-    typename PreArg4, typename PreArg5, typename PreArg6, typename PreArg7,
-    typename PreArg8>
+         typename Arg2,typename Arg3,typename Arg4,typename Arg5,typename Arg6,
+         typename Arg7,typename Arg8,typename Arg9,typename Arg10,typename Arg11,
+         typename Arg12,typename Arg13,typename Arg14,typename Arg15,
+         typename Arg16 , typename PreArg1, typename PreArg2, typename PreArg3,
+         typename PreArg4, typename PreArg5, typename PreArg6, typename PreArg7,
+         typename PreArg8>
 Closure<R (Arg9, Arg10, Arg11, Arg12, Arg13, Arg14, Arg15,
-    Arg16)>* NewPermanentClosure(
-    Class *object,
-    R (MethodClass::*method)(Arg1, Arg2, Arg3, Arg4, Arg5, Arg6, Arg7, Arg8,
-        Arg9, Arg10, Arg11, Arg12, Arg13, Arg14, Arg15, Arg16)
-    , PreArg1 pa1, PreArg2 pa2, PreArg3 pa3, PreArg4 pa4, PreArg5 pa5,
-        PreArg6 pa6, PreArg7 pa7, PreArg8 pa8) {
+           Arg16)>* NewPermanentClosure(
+               Class *object,
+               R (MethodClass::*method)(Arg1, Arg2, Arg3, Arg4, Arg5, Arg6, Arg7, Arg8,
+                                        Arg9, Arg10, Arg11, Arg12, Arg13, Arg14, Arg15, Arg16)
+               , PreArg1 pa1, PreArg2 pa2, PreArg3 pa3, PreArg4 pa4, PreArg5 pa5,
+               PreArg6 pa6, PreArg7 pa7, PreArg8 pa8) {
     return new MethodClosure_Arg8_Bind8<false, R, Class, MethodClass ,Arg1,
-        Arg2,Arg3,Arg4,Arg5,Arg6,Arg7,Arg8,Arg9,Arg10,Arg11,Arg12,Arg13,Arg14,
-        Arg15,Arg16 , PreArg1, PreArg2, PreArg3, PreArg4, PreArg5, PreArg6,
-        PreArg7, PreArg8>(
-        object, method, pa1, pa2, pa3, pa4, pa5, pa6, pa7, pa8);
+           Arg2,Arg3,Arg4,Arg5,Arg6,Arg7,Arg8,Arg9,Arg10,Arg11,Arg12,Arg13,Arg14,
+           Arg15,Arg16 , PreArg1, PreArg2, PreArg3, PreArg4, PreArg5, PreArg6,
+           PreArg7, PreArg8>(
+               object, method, pa1, pa2, pa3, pa4, pa5, pa6, pa7, pa8);
 }
 
 ////////////////////////////////////////////////////
@@ -9860,82 +10166,84 @@ Closure<R (Arg9, Arg10, Arg11, Arg12, Arg13, Arg14, Arg15,
 ////////////////////////////////////////////////////
 
 template <
-    bool SelfDeleting,
-    typename R
-    , typename Arg1    , typename Arg2    , typename Arg3    ,
-        typename Arg4    , typename Arg5    , typename Arg6    ,
-        typename Arg7    , typename Arg8    , typename Arg9    ,
-        typename Arg10    , typename Arg11    , typename Arg12    ,
-        typename Arg13    , typename Arg14    , typename Arg15    ,
-        typename Arg16    , typename PreArg1    , typename PreArg2    ,
-        typename PreArg3    , typename PreArg4    , typename PreArg5    ,
-        typename PreArg6    , typename PreArg7    , typename PreArg8>
+bool SelfDeleting,
+     typename R
+     , typename Arg1    , typename Arg2    , typename Arg3    ,
+     typename Arg4    , typename Arg5    , typename Arg6    ,
+     typename Arg7    , typename Arg8    , typename Arg9    ,
+     typename Arg10    , typename Arg11    , typename Arg12    ,
+     typename Arg13    , typename Arg14    , typename Arg15    ,
+     typename Arg16    , typename PreArg1    , typename PreArg2    ,
+     typename PreArg3    , typename PreArg4    , typename PreArg5    ,
+     typename PreArg6    , typename PreArg7    , typename PreArg8>
 class FunctionClosure_Arg8_Bind8 : public Closure<R (Arg9, Arg10, Arg11, Arg12,
-    Arg13, Arg14, Arg15, Arg16)> {
+                Arg13, Arg14, Arg15, Arg16)> {
     typedef R (*FunctionType)(Arg1, Arg2, Arg3, Arg4, Arg5, Arg6, Arg7, Arg8,
-        Arg9, Arg10, Arg11, Arg12, Arg13, Arg14, Arg15, Arg16);
+                              Arg9, Arg10, Arg11, Arg12, Arg13, Arg14, Arg15, Arg16);
 public:
     FunctionClosure_Arg8_Bind8(FunctionType function , PreArg1 pa1,
-        PreArg2 pa2, PreArg3 pa3, PreArg4 pa4, PreArg5 pa5, PreArg6 pa6,
-        PreArg7 pa7, PreArg8 pa8):
+                               PreArg2 pa2, PreArg3 pa3, PreArg4 pa4, PreArg5 pa5, PreArg6 pa6,
+                               PreArg7 pa7, PreArg8 pa8):
         m_function(function) , m_pa1(pa1), m_pa2(pa2), m_pa3(pa3), m_pa4(pa4),
-            m_pa5(pa5), m_pa6(pa6), m_pa7(pa7), m_pa8(pa8) {}
+        m_pa5(pa5), m_pa6(pa6), m_pa7(pa7), m_pa8(pa8) {}
     virtual R Run(Arg9 arg9, Arg10 arg10, Arg11 arg11, Arg12 arg12,
-        Arg13 arg13, Arg14 arg14, Arg15 arg15, Arg16 arg16) {
+                  Arg13 arg13, Arg14 arg14, Arg15 arg15, Arg16 arg16) {
         ConditionalAutoDeleter<SelfDeleting,
-            FunctionClosure_Arg8_Bind8> self_deleter(this);
+                               FunctionClosure_Arg8_Bind8> self_deleter(this);
         return m_function(m_pa1, m_pa2, m_pa3, m_pa4, m_pa5, m_pa6, m_pa7,
-            m_pa8 ,arg9, arg10, arg11, arg12, arg13, arg14, arg15, arg16);
+                          m_pa8 ,arg9, arg10, arg11, arg12, arg13, arg14, arg15, arg16);
     }
-    virtual bool IsSelfDelete() const { return SelfDeleting; }
+    virtual bool IsSelfDelete() const {
+        return SelfDeleting;
+    }
 private:
     FunctionType m_function;
-        PreArg1 m_pa1;
-        PreArg2 m_pa2;
-        PreArg3 m_pa3;
-        PreArg4 m_pa4;
-        PreArg5 m_pa5;
-        PreArg6 m_pa6;
-        PreArg7 m_pa7;
-        PreArg8 m_pa8;
-    };
+    PreArg1 m_pa1;
+    PreArg2 m_pa2;
+    PreArg3 m_pa3;
+    PreArg4 m_pa4;
+    PreArg5 m_pa5;
+    PreArg6 m_pa6;
+    PreArg7 m_pa7;
+    PreArg8 m_pa8;
+};
 
 template <typename R , typename Arg1, typename Arg2, typename Arg3,
-    typename Arg4, typename Arg5, typename Arg6, typename Arg7, typename Arg8,
-    typename Arg9, typename Arg10, typename Arg11, typename Arg12,
-    typename Arg13, typename Arg14, typename Arg15, typename Arg16 ,
-    typename PreArg1, typename PreArg2, typename PreArg3, typename PreArg4,
-    typename PreArg5, typename PreArg6, typename PreArg7, typename PreArg8>
+         typename Arg4, typename Arg5, typename Arg6, typename Arg7, typename Arg8,
+         typename Arg9, typename Arg10, typename Arg11, typename Arg12,
+         typename Arg13, typename Arg14, typename Arg15, typename Arg16 ,
+         typename PreArg1, typename PreArg2, typename PreArg3, typename PreArg4,
+         typename PreArg5, typename PreArg6, typename PreArg7, typename PreArg8>
 Closure<R (Arg9, Arg10, Arg11, Arg12, Arg13, Arg14, Arg15,
-    Arg16)>* NewClosure(R (*function)(Arg1, Arg2, Arg3, Arg4, Arg5, Arg6, Arg7,
-    Arg8, Arg9, Arg10, Arg11, Arg12, Arg13, Arg14, Arg15, Arg16)
-                                          , PreArg1 pa1, PreArg2 pa2,
-                                              PreArg3 pa3, PreArg4 pa4,
-                                              PreArg5 pa5, PreArg6 pa6,
-                                              PreArg7 pa7, PreArg8 pa8) {
+           Arg16)>* NewClosure(R (*function)(Arg1, Arg2, Arg3, Arg4, Arg5, Arg6, Arg7,
+                               Arg8, Arg9, Arg10, Arg11, Arg12, Arg13, Arg14, Arg15, Arg16)
+                               , PreArg1 pa1, PreArg2 pa2,
+                               PreArg3 pa3, PreArg4 pa4,
+                               PreArg5 pa5, PreArg6 pa6,
+                               PreArg7 pa7, PreArg8 pa8) {
     return new FunctionClosure_Arg8_Bind8<true, R , Arg1, Arg2, Arg3, Arg4,
-        Arg5, Arg6, Arg7, Arg8, Arg9, Arg10, Arg11, Arg12, Arg13, Arg14, Arg15,
-        Arg16 , PreArg1, PreArg2, PreArg3, PreArg4, PreArg5, PreArg6, PreArg7,
-        PreArg8>(function , pa1, pa2, pa3, pa4, pa5, pa6, pa7, pa8);
+           Arg5, Arg6, Arg7, Arg8, Arg9, Arg10, Arg11, Arg12, Arg13, Arg14, Arg15,
+           Arg16 , PreArg1, PreArg2, PreArg3, PreArg4, PreArg5, PreArg6, PreArg7,
+           PreArg8>(function , pa1, pa2, pa3, pa4, pa5, pa6, pa7, pa8);
 }
 
 template <typename R , typename Arg1, typename Arg2, typename Arg3,
-    typename Arg4, typename Arg5, typename Arg6, typename Arg7, typename Arg8,
-    typename Arg9, typename Arg10, typename Arg11, typename Arg12,
-    typename Arg13, typename Arg14, typename Arg15, typename Arg16 ,
-    typename PreArg1, typename PreArg2, typename PreArg3, typename PreArg4,
-    typename PreArg5, typename PreArg6, typename PreArg7, typename PreArg8>
+         typename Arg4, typename Arg5, typename Arg6, typename Arg7, typename Arg8,
+         typename Arg9, typename Arg10, typename Arg11, typename Arg12,
+         typename Arg13, typename Arg14, typename Arg15, typename Arg16 ,
+         typename PreArg1, typename PreArg2, typename PreArg3, typename PreArg4,
+         typename PreArg5, typename PreArg6, typename PreArg7, typename PreArg8>
 Closure<R (Arg9, Arg10, Arg11, Arg12, Arg13, Arg14, Arg15,
-    Arg16)>* NewPermanentClosure(R (*function)(Arg1, Arg2, Arg3, Arg4, Arg5,
-    Arg6, Arg7, Arg8, Arg9, Arg10, Arg11, Arg12, Arg13, Arg14, Arg15, Arg16)
-                                          , PreArg1 pa1, PreArg2 pa2,
-                                              PreArg3 pa3, PreArg4 pa4,
-                                              PreArg5 pa5, PreArg6 pa6,
-                                              PreArg7 pa7, PreArg8 pa8) {
+           Arg16)>* NewPermanentClosure(R (*function)(Arg1, Arg2, Arg3, Arg4, Arg5,
+                                        Arg6, Arg7, Arg8, Arg9, Arg10, Arg11, Arg12, Arg13, Arg14, Arg15, Arg16)
+                                        , PreArg1 pa1, PreArg2 pa2,
+                                        PreArg3 pa3, PreArg4 pa4,
+                                        PreArg5 pa5, PreArg6 pa6,
+                                        PreArg7 pa7, PreArg8 pa8) {
     return new FunctionClosure_Arg8_Bind8<false, R , Arg1, Arg2, Arg3, Arg4,
-        Arg5, Arg6, Arg7, Arg8, Arg9, Arg10, Arg11, Arg12, Arg13, Arg14, Arg15,
-        Arg16 , PreArg1, PreArg2, PreArg3, PreArg4, PreArg5, PreArg6, PreArg7,
-        PreArg8>(function , pa1, pa2, pa3, pa4, pa5, pa6, pa7, pa8);
+           Arg5, Arg6, Arg7, Arg8, Arg9, Arg10, Arg11, Arg12, Arg13, Arg14, Arg15,
+           Arg16 , PreArg1, PreArg2, PreArg3, PreArg4, PreArg5, PreArg6, PreArg7,
+           PreArg8>(function , pa1, pa2, pa3, pa4, pa5, pa6, pa7, pa8);
 }
 
 } // namespace toft
