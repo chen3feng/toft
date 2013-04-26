@@ -10,7 +10,7 @@ namespace toft {
 
 void ClassRegistryBase::DoAddClass(const std::string& entry_name,
                                    GetFunction getter) {
-    typename ClassMap::iterator it = m_class_map.find(entry_name);
+    ClassMap::iterator it = m_class_map.find(entry_name);
     if (it != m_class_map.end()) {
         fprintf(stderr,
                 "ClassRegister: class %s already registered. "
@@ -26,7 +26,7 @@ void ClassRegistryBase::DoAddClass(const std::string& entry_name,
 }
 
 void* ClassRegistryBase::DoGetObject(const std::string& entry_name) const {
-    typename ClassMap::const_iterator it =
+    ClassMap::const_iterator it =
         m_class_map.find(entry_name);
     if (it == m_class_map.end()) {
         return NULL;
