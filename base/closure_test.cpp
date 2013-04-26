@@ -14,6 +14,7 @@
 
 // GLOBAL_NOLINT(runtime/int)
 // GLOBAL_NOLINT(readability/casting)
+// GLOBAL_NOLINT(readability/function)
 
 namespace toft {
 
@@ -93,7 +94,7 @@ short Rtest2_1(char preA, short preB, int c) {
 //   preArg_Arg(last)
 int Rtest0_2(char a, short b) {
     printf("Rtest0_2(),a=%c,b=%d\r\n", a, b);
-    return int(9900);
+    return 9900;
 }
 int Rtest1_2(char preA, char a, int b) {
     printf("Rtest1_2(),preA=%c,a=%c,b=%d\r\n", preA, a, b);
@@ -186,7 +187,7 @@ public:
     //   preArg_Arg(last)
     int Rtest0_2(char a, short b) {
         printf("Rtest0_2(),a=%c,b=%d\r\n", a, b);
-        return int(9900);
+        return 9900;
     }
     int Rtest1_2(char preA, char a, int b) {
         printf("Rtest1_2(),preA=%c,a=%c,b=%d\r\n", preA, a, b);
@@ -204,7 +205,7 @@ TEST(Closure, ClosureVoid)
 {
     // Closure0
     Closure<void()> * cb = NewClosure(test0);
-    ASSERT_TRUE(cb->IsSelfDelete());
+    ASSERT_FALSE(cb->IsPermanent());
     cb->Run();
 
     cb = NewClosure(test1, 'a');
@@ -290,7 +291,7 @@ TEST(Closure, PermanentVoidClosure)
 {
     // Closure0
     scoped_ptr<Closure<void()> > cb(NewPermanentClosure(test0));
-    ASSERT_FALSE(cb->IsSelfDelete());
+    ASSERT_TRUE(cb->IsPermanent());
     cb->Run();
 
     cb.reset(NewPermanentClosure(test1, 'a'));
@@ -388,11 +389,6 @@ TEST(Closure, MethodClosureVoid)
 
     cb = NewClosure(&obj, &TestClass::test3, 'a', 456, 9800);
     cb->Run();
-}
-
-TEST(Closure, MethodClosureReturn)
-{
-    TestClass obj;
 
     // Closure1
     Closure<void (char)>* cb0_1 = NewClosure(&obj, &TestClass::test0_1);
@@ -414,9 +410,11 @@ TEST(Closure, MethodClosureReturn)
     // Closure3
     Closure<void (char, short, int)>* cb0_3 = NewClosure(&obj, &TestClass::test0_3);
     cb0_3->Run('a', 456, 78909);
+}
 
-    //------Closure------------
-    printf("\r\n------Closure------------\r\n");
+TEST(Closure, MethodClosureReturn)
+{
+    TestClass obj;
 
     // Closure0
     Closure<char ()>* rcb = NewClosure(&obj, &TestClass::Rtest0);
