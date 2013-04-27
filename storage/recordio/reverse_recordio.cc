@@ -1,25 +1,22 @@
 // Copyright (C) 2013, The Toft Authors.
-// Author: An Qin (anqin.qin@gmail.com)
+// Author: An Qin <anqin.qin@gmail.com>
 //
 // Description:
 
-#include "toft/storage/recordio/inv_record_io.h"
+#include "toft/storage/recordio/reverse_recordio.h"
 
 #include "thirdparty/glog/logging.h"
 
 namespace toft {
 
-InvRecordWriter::InvRecordWriter() {}
-
-InvRecordWriter::~InvRecordWriter() {}
-
-bool InvRecordWriter::Reset(File *file) {
-    DCHECK(file != NULL);
-    m_file = file;
-    return true;
+ReverseRecordWriter::ReverseRecordWriter(File *file)
+    : m_file(file) {
+    CHECK(m_file != NULL);
 }
 
-bool InvRecordWriter::WriteMessage(const ::google::protobuf::Message& message) {
+ReverseRecordWriter::~ReverseRecordWriter() {}
+
+bool ReverseRecordWriter::WriteMessage(const ::google::protobuf::Message& message) {
     std::string output;
     if (!message.IsInitialized()) {
         LOG(WARNING) << "Missing required fields."
@@ -35,7 +32,7 @@ bool InvRecordWriter::WriteMessage(const ::google::protobuf::Message& message) {
     return true;
 }
 
-bool InvRecordWriter::WriteRecord(const char *data, uint32_t size) {
+bool ReverseRecordWriter::WriteRecord(const char *data, uint32_t size) {
     if (!Write(data, size)) {
         return false;
     }
@@ -45,16 +42,20 @@ bool InvRecordWriter::WriteRecord(const char *data, uint32_t size) {
     return true;
 }
 
-bool InvRecordWriter::WriteRecord(const std::string& data) {
+bool ReverseRecordWriter::WriteRecord(const std::string& data) {
     return WriteRecord(data.data(), data.size());
 }
 
-bool InvRecordWriter::Write(const char *data, uint32_t size) {
+bool ReverseRecordWriter::WriteRecord(const StringPiece& data) {
+    return WriteRecord(data.data(), data.size());
+}
+
+bool ReverseRecordWriter::Write(const char *data, uint32_t size) {
     uint32_t write_size = 0;
     while (write_size < size) {
         int32_t ret = m_file->Write(data + write_size, size - write_size);
         if (ret == -1) {
-            LOG(ERROR) << "InvRecordWriter error.";
+            LOG(ERROR) << "ReverseRecordWriter error.";
             return false;
         }
         write_size += ret;
@@ -63,25 +64,25 @@ bool InvRecordWriter::Write(const char *data, uint32_t size) {
 }
 
 
-InvRecordReader::InvRecordReader()
-    : m_buffer_size(1 * 1024 * 1024) {
+ReverseRecordReader::ReverseRecordReader(File *file)
+    : m_file(file),
+      m_buffer_size(1 * 1024 * 1024) {
+    CHECK(m_file != NULL);
     m_buffer.reset(new char[m_buffer_size]);
+    Reset();
 }
 
-InvRecordReader::~InvRecordReader() {
-}
+ReverseRecordReader::~ReverseRecordReader() {}
 
-bool InvRecordReader::Reset(File *file) {
-    DCHECK(file != NULL);
-    m_file = file;
-    if (-1 == m_file->Seek(0, SEEK_END)) {
-        LOG(ERROR) << "InvRecordReader Reset error.";
+bool ReverseRecordReader::Reset() {
+    if (!m_file->Seek(0, SEEK_END)) {
+        LOG(ERROR) << "ReverseRecordReader Reset error.";
         return false;
     }
     return true;
 }
 
-int InvRecordReader::Next() {
+int ReverseRecordReader::Next() {
     // read size
     int64_t ret = m_file->Tell();
     if (ret == -1) {
@@ -125,8 +126,7 @@ int InvRecordReader::Next() {
     return 1;
 }
 
-bool InvRecordReader::ReadMessage(::google::protobuf::Message *message) {
-    std::string str(m_buffer.get(), m_data_size);
+bool ReverseRecordReader::ReadMessage(::google::protobuf::Message *message) {
     if (!message->ParseFromArray(m_buffer.get(), m_data_size)) {
         LOG(WARNING) << "Missing required fields.";
         return false;
@@ -134,7 +134,7 @@ bool InvRecordReader::ReadMessage(::google::protobuf::Message *message) {
     return true;
 }
 
-bool InvRecordReader::ReadNextMessage(::google::protobuf::Message *message) {
+bool ReverseRecordReader::ReadNextMessage(::google::protobuf::Message *message) {
     while (Next() == 1) {
         std::string str(m_buffer.get(), m_data_size);
         if (message->ParseFromArray(m_buffer.get(), m_data_size)) {
@@ -144,23 +144,33 @@ bool InvRecordReader::ReadNextMessage(::google::protobuf::Message *message) {
     return false;
 }
 
-bool InvRecordReader::ReadRecord(const char **data, uint32_t *size) {
+bool ReverseRecordReader::ReadRecord(const char **data, uint32_t *size) {
     *data = m_buffer.get();
     *size = m_data_size;
     return true;
 }
 
-bool InvRecordReader::ReadRecord(std::string *data) {
-    data->assign(m_buffer.get());
+bool ReverseRecordReader::ReadRecord(std::string *data) {
+    data->assign(m_buffer.get(), m_data_size);
     return true;
 }
 
-bool InvRecordReader::Read(char *data, uint32_t size) {
+bool ReverseRecordReader::ReadRecord(StringPiece* data) {
+    const char* buffer = NULL;
+    uint32_t size;
+    if (!ReadRecord(&buffer, &size)) {
+        return false;
+    }
+    data->set(buffer, size);
+    return true;
+}
+
+bool ReverseRecordReader::Read(char *data, uint32_t size) {
     // After reading, file pointer need to seek back to the start position of
     // data. Prepare for next reading.
     // Seek back
     int32_t offset = 0 - size;
-    if (-1 == m_file->Seek(offset, SEEK_CUR)) {
+    if (!m_file->Seek(offset, SEEK_CUR)) {
         LOG(ERROR) << "Seek error before read.";
         return false;
     }
@@ -177,7 +187,7 @@ bool InvRecordReader::Read(char *data, uint32_t size) {
     }
 
     // Seek back
-    if (-1 == m_file->Seek(offset, SEEK_CUR)) {
+    if (!m_file->Seek(offset, SEEK_CUR)) {
         LOG(ERROR) << "Seek error after read.";
         return false;
     }
