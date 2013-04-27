@@ -17,7 +17,7 @@ class FileSystem;
 
 // A abstruct object.
 //
-// All error reported by error.
+// All errors are reported by errno.
 class File {
     DECLARE_UNCOPYABLE(File);
 protected:
@@ -38,9 +38,9 @@ public:
     virtual int64_t Write(const void* buffer, int64_t size) = 0;
     virtual bool Flush() = 0;
 
-    // Close a file object. After close, all other operations are invalid.
+    // Close a file object. After closed, all other operations are invalid.
     // You can call close multiple time safely. Close a closed file object
-    // will return false.
+    // will return true.
     virtual bool Close() = 0;
 
     // Seek to offset from whence.
@@ -88,6 +88,10 @@ public:
     virtual File* Open(const std::string& file_path, const char* mode) = 0;
     virtual bool Exists(const std::string& file_path) = 0;
     virtual bool Delete(const std::string& file_path) = 0;
+    virtual bool ReadAll(const std::string& file_path, std::string* buffer,
+                         size_t max_size);
+    virtual bool ReadLines(const std::string& file_path,
+                           std::vector<std::string>* lines);
 };
 
 // Defile the file_system class registry, user can register their own

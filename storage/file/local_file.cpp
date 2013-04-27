@@ -3,6 +3,10 @@
 //
 // Author: CHEN Feng <chen3feng@gmail.com>
 
+#ifndef _FILE_OFFSET_BITS
+#define _FILE_OFFSET_BITS 64
+#endif
+
 #include "toft/storage/file/local_file.h"
 #include <string.h>
 #include <unistd.h>
@@ -20,7 +24,7 @@ File* LocalFileSystem::Open(const std::string& file_path, const char* mode)
         return NULL;
     try {
         return new LocalFile(fp);
-    } catch (std::bad_alloc) {
+    } catch (std::bad_alloc& e) {
         fclose(fp);
     }
     return NULL;
@@ -83,12 +87,12 @@ bool LocalFile::Close()
 
 bool LocalFile::Seek(int64_t offset, int whence)
 {
-    return fseek(m_fp, offset, whence) == 0;
+    return fseeko(m_fp, offset, whence) == 0;
 }
 
 int64_t LocalFile::Tell()
 {
-    return ftell(m_fp);
+    return ftello(m_fp);
 }
 
 bool LocalFile::ReadLine(std::string* line, size_t max_size)
