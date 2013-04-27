@@ -14,6 +14,40 @@ namespace toft {
 FileSystem::FileSystem() {}
 FileSystem::~FileSystem() {}
 
+bool FileSystem::ReadAll(const std::string& file_path, std::string* buffer,
+                         size_t max_size)
+{
+    scoped_ptr<File> fp(File::Open(file_path, "r"));
+    if (!fp)
+        return false;
+    std::string tmp(max_size, '\0');
+    int64_t nread = fp->Read(&tmp[0], max_size);
+    if (nread < 0)
+        return false;
+    tmp.resize(nread);
+    buffer->swap(tmp);
+    return true;
+}
+
+bool FileSystem::ReadLines(const std::string& file_path,
+                           std::vector<std::string>* lines)
+{
+    scoped_ptr<File> fp(File::Open(file_path, "r"));
+    if (!fp)
+        return false;
+    lines->clear();
+    std::string line;
+    while (fp->ReadLine(&line))
+        lines->push_back(line);
+    return true;
+}
+
+/////////////////////////////////////////////////////////////////////////////
+// File
+
+File::File() {}
+File::~File() {}
+
 FileSystem* File::GetFileSystemByPath(const std::string& file_path)
 {
     // "/mfs/abc" -> "mfs"
@@ -26,12 +60,6 @@ FileSystem* File::GetFileSystemByPath(const std::string& file_path)
     }
     return TOFT_GET_FILE_SYSTEM("local");
 }
-
-/////////////////////////////////////////////////////////////////////////////
-// File
-
-File::File() {}
-File::~File() {}
 
 File* File::Open(const std::string& file_path, const char* mode)
 {
@@ -54,29 +82,14 @@ bool File::Delete(const std::string& file_path)
 bool File::ReadAll(const std::string& file_path, std::string* buffer,
                    size_t max_size)
 {
-    scoped_ptr<File> fp(File::Open(file_path, "r"));
-    if (!fp)
-        return false;
-    std::string tmp(max_size, '\0');
-    int64_t nread = fp->Read(&tmp[0], max_size);
-    if (nread < 0)
-        return false;
-    tmp.resize(nread);
-    buffer->swap(tmp);
-    return true;
+    FileSystem* fs = GetFileSystemByPath(file_path);
+    return fs->ReadAll(file_path, buffer, max_size);
 }
-
 
 bool File::ReadLines(const std::string& file_path, std::vector<std::string>* lines)
 {
-    scoped_ptr<File> fp(File::Open(file_path, "r"));
-    if (!fp)
-        return false;
-    lines->clear();
-    std::string line;
-    while (fp->ReadLine(&line))
-        lines->push_back(line);
-    return true;
+    FileSystem* fs = GetFileSystemByPath(file_path);
+    return fs->ReadLines(file_path, lines);
 }
 
 } // namespace toft
