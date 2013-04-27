@@ -243,7 +243,7 @@ public:
         assert(!empty());
         erase(front());
     }
-    void back_back()
+    void pop_back()
     {
         assert(!empty());
         erase(back());
