@@ -1,23 +1,20 @@
 // Copyright (C) 2013, The Toft Authors.
-// Author: An Qin (anqin.qin@gmail.com)
+// Author: An Qin <anqin.qin@gmail.com>
 //
 // Description:
 
-#include "toft/storage/recordio/record_io.h"
+#include "toft/storage/recordio/recordio.h"
 
 #include "thirdparty/glog/logging.h"
 
 namespace toft {
 
-RecordWriter::RecordWriter() {}
+RecordWriter::RecordWriter(File *file)
+    : m_file(file) {
+    CHECK(m_file != NULL);
+}
 
 RecordWriter::~RecordWriter() {}
-
-bool RecordWriter::Reset(File *file) {
-    DCHECK(file != NULL);
-    m_file = file;
-    return true;
-}
 
 bool RecordWriter::WriteMessage(const ::google::protobuf::Message& message) {
     std::string output;
@@ -49,6 +46,10 @@ bool RecordWriter::WriteRecord(const std::string& data) {
     return WriteRecord(data.data(), data.size());
 }
 
+bool RecordWriter::WriteRecord(const StringPiece& data) {
+    return WriteRecord(data.data(), data.size());
+}
+
 bool RecordWriter::Write(const char *data, uint32_t size) {
     uint32_t write_size = 0;
     while (write_size < size) {
@@ -62,24 +63,23 @@ bool RecordWriter::Write(const char *data, uint32_t size) {
     return true;
 }
 
-
-RecordReader::RecordReader()
-    : m_buffer_size(1 * 1024 * 1024) {
+RecordReader::RecordReader(File *file)
+    : m_file(file),
+      m_buffer_size(1 * 1024 * 1024) {
+    CHECK(m_file != NULL);
     m_buffer.reset(new char[m_buffer_size]);
+    Reset();
 }
 
-RecordReader::~RecordReader() {
-}
+RecordReader::~RecordReader() {}
 
-bool RecordReader::Reset(File *file) {
-    DCHECK(file != NULL);
-    m_file = file;
-    if (-1 == m_file->Seek(0, SEEK_END)) {
+bool RecordReader::Reset() {
+    if (!m_file->Seek(0, SEEK_END)) {
         LOG(ERROR) << "RecordReader Reset error.";
         return false;
     }
     m_file_size = m_file->Tell();
-    if (-1 == m_file->Seek(0, SEEK_SET)) {
+    if (!m_file->Seek(0, SEEK_SET)) {
         LOG(ERROR) << "RecordReader Reset error.";
         return false;
     }
@@ -156,7 +156,17 @@ bool RecordReader::ReadRecord(const char **data, uint32_t *size) {
 }
 
 bool RecordReader::ReadRecord(std::string *data) {
-    data->assign(m_buffer.get());
+    data->assign(m_buffer.get(), m_data_size);
+    return true;
+}
+
+bool RecordReader::ReadRecord(StringPiece* data) {
+    const char* buffer = NULL;
+    uint32_t size;
+    if (!ReadRecord(&buffer, &size)) {
+        return false;
+    }
+    data->set(buffer, size);
     return true;
 }
 
