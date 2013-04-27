@@ -10,6 +10,8 @@
 #include <cstddef>
 #include <iterator>
 
+namespace toft {
+
 struct list_node
 {
     list_node* prev;
@@ -243,7 +245,7 @@ public:
         assert(!empty());
         erase(front());
     }
-    void back_back()
+    void pop_back()
     {
         assert(!empty());
         erase(back());
@@ -290,5 +292,7 @@ private:
 private:
     list_node m_head;
 };
+
+} // namespace toft
 
 #endif // TOFT_BASE_INTRUSIVE_LIST_H
