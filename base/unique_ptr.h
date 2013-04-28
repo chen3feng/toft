@@ -59,9 +59,9 @@ struct default_delete<FILE>
 
 // unique_ptr_base, put common members here
 template <
-    typename Type,
-    typename Deleter
->
+typename Type,
+         typename Deleter
+         >
 class unique_ptr_base
 {
 public:
@@ -171,9 +171,9 @@ private:
 /// @tparam Type object type
 /// @tparam Deleter deleter functor
 template <
-    typename Type,
-    typename Deleter = default_delete<Type>
->
+typename Type,
+         typename Deleter = default_delete<Type>
+         >
 class unique_ptr : public unique_ptr_base<Type, Deleter>
 {
     typedef unique_ptr_base<Type, Deleter> base;
@@ -225,9 +225,9 @@ public:
 /// @tparam Type object type
 /// @tparam Deleter deleter functor
 template <
-    typename Type,
-    typename Deleter
->
+typename Type,
+         typename Deleter
+         >
 class unique_ptr<Type[], Deleter> : public unique_ptr_base<Type, Deleter>
 {
     typedef unique_ptr_base<Type, Deleter> base;
@@ -288,6 +288,48 @@ template <class Type, class Deleter>
 void swap(unique_ptr<Type, Deleter>& lhs, unique_ptr<Type, Deleter>& rhs)
 {
     lhs.swap(rhs);
+}
+
+template<typename T, typename D, typename U, typename E>
+inline bool operator==(const unique_ptr<T, D>& x,
+                       const unique_ptr<U, E>& y)
+{
+    return x.get() == y.get();
+}
+
+template<typename T, typename D, typename U, typename E>
+inline bool operator!=(const unique_ptr<T, D>& x,
+                       const unique_ptr<U, E>& y)
+{
+    return !(x.get() == y.get());
+}
+
+template<typename T, typename D, typename U, typename E>
+inline bool operator<(const unique_ptr<T, D>& x,
+                      const unique_ptr<U, E>& y)
+{
+    return x.get() < y.get();
+}
+
+template<typename T, typename D, typename U, typename E>
+inline bool operator<=(const unique_ptr<T, D>& x,
+                       const unique_ptr<U, E>& y)
+{
+    return !(y.get() < x.get());
+}
+
+template<typename T, typename D, typename U, typename E>
+inline bool operator>(const unique_ptr<T, D>& x,
+                      const unique_ptr<U, E>& y)
+{
+    return y.get() < x.get();
+}
+
+template<typename T, typename D, typename U, typename E>
+inline bool operator>=(const unique_ptr<T, D>& x,
+                       const unique_ptr<U, E>& y)
+{
+    return !(x.get() < y.get());
 }
 
 } // namespace std
