@@ -11,6 +11,7 @@
 #include <string.h>
 #include <unistd.h>
 #include "toft/base/string/algorithm.h"
+#include "toft/base/unique_ptr.h"
 
 namespace toft {
 
@@ -19,15 +20,10 @@ namespace toft {
 
 File* LocalFileSystem::Open(const std::string& file_path, const char* mode)
 {
-    FILE* fp = fopen(file_path.c_str(), mode);
+    unique_ptr<FILE, int (*)(FILE*)> fp(fopen(file_path.c_str(), mode), &fclose);
     if (!fp)
         return NULL;
-    try {
-        return new LocalFile(fp);
-    } catch (std::bad_alloc& e) {
-        fclose(fp);
-    }
-    return NULL;
+    return new LocalFile(fp.release());
 }
 
 bool LocalFileSystem::Exists(const std::string& file_path)
