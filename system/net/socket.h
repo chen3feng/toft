@@ -164,7 +164,6 @@ private:
 
 private:
     SOCKET m_handle;
-    bool m_ExceptionEnabled;
 };
 
 /// Listen streaming connections from client

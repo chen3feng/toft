@@ -23,7 +23,6 @@ int StringScan(
 
 )
 {
-
     const FormatScanArg* args[] = {
 
 $range j 1..i

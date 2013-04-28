@@ -345,15 +345,16 @@ bool DataSocket::Receive(
         if (n != SOCKET_ERROR_RETURN)
         {
             *received_size = n;
-            return true;
+            break;
         }
         else if (!IsInterruptedAndRestart(auto_restart))
         {
             *received_size = 0;
             ReportError("Receive");
-            return false;
+            break;
         }
     }
+    return *received_size > 0;
 }
 
 bool DataSocket::Receive(
