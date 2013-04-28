@@ -22,11 +22,11 @@ AtomicAnd
 AtomicOr
 AtomicXor
 
-T AtomicExchange<Operation>(T& target, T value)
+T Atomic<Operation>(T* target, T value)
 Operation:
     atomically
     {
-        target operation value;
+        *target operation value;
         return target;
     }
 
@@ -41,13 +41,13 @@ AtomicExchangeOr
 AtomicExchangeXor
 
 Prototype:
-    T AtomicExchange<Operation>(T& target, T value)
+    T AtomicExchange<Operation>(T* target, T value)
 
 Operation:
     atomically
     {
-        T old = target;
-        target operation value;
+        T old = *target;
+        *target operation value;
         return old;
     }
 
@@ -56,15 +56,15 @@ Operation:
 // compare and change
 
 Prototype:
-    bool AtomicCompareExchange(T& value, T compare, T exchange, T& old)
+    bool AtomicCompareExchange(T* value, T compare, T exchange, T* old)
 
 Operation:
     atomically
     {
-        old = value;
-        if (value == compare)
+        old = *value;
+        if (*value == compare)
         {
-            value = exchange;
+            *value = exchange;
             return true;
         }
         return false;

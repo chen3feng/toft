@@ -18,7 +18,6 @@ int StringScan(
     const FormatScanArg& arg1
 )
 {
-
     const FormatScanArg* args[] = {
         &arg1,
     };
@@ -31,7 +30,6 @@ int StringScan(
     const FormatScanArg& arg2
 )
 {
-
     const FormatScanArg* args[] = {
         &arg1,
         &arg2,
@@ -46,7 +44,6 @@ int StringScan(
     const FormatScanArg& arg3
 )
 {
-
     const FormatScanArg* args[] = {
         &arg1,
         &arg2,
@@ -63,7 +60,6 @@ int StringScan(
     const FormatScanArg& arg4
 )
 {
-
     const FormatScanArg* args[] = {
         &arg1,
         &arg2,
@@ -82,7 +78,6 @@ int StringScan(
     const FormatScanArg& arg5
 )
 {
-
     const FormatScanArg* args[] = {
         &arg1,
         &arg2,
@@ -103,7 +98,6 @@ int StringScan(
     const FormatScanArg& arg6
 )
 {
-
     const FormatScanArg* args[] = {
         &arg1,
         &arg2,
@@ -126,7 +120,6 @@ int StringScan(
     const FormatScanArg& arg7
 )
 {
-
     const FormatScanArg* args[] = {
         &arg1,
         &arg2,
@@ -151,7 +144,6 @@ int StringScan(
     const FormatScanArg& arg8
 )
 {
-
     const FormatScanArg* args[] = {
         &arg1,
         &arg2,
@@ -178,7 +170,6 @@ int StringScan(
     const FormatScanArg& arg9
 )
 {
-
     const FormatScanArg* args[] = {
         &arg1,
         &arg2,
@@ -207,7 +198,6 @@ int StringScan(
     const FormatScanArg& arg10
 )
 {
-
     const FormatScanArg* args[] = {
         &arg1,
         &arg2,
@@ -238,7 +228,6 @@ int StringScan(
     const FormatScanArg& arg11
 )
 {
-
     const FormatScanArg* args[] = {
         &arg1,
         &arg2,
@@ -271,7 +260,6 @@ int StringScan(
     const FormatScanArg& arg12
 )
 {
-
     const FormatScanArg* args[] = {
         &arg1,
         &arg2,
@@ -306,7 +294,6 @@ int StringScan(
     const FormatScanArg& arg13
 )
 {
-
     const FormatScanArg* args[] = {
         &arg1,
         &arg2,
@@ -343,7 +330,6 @@ int StringScan(
     const FormatScanArg& arg14
 )
 {
-
     const FormatScanArg* args[] = {
         &arg1,
         &arg2,
@@ -382,7 +368,6 @@ int StringScan(
     const FormatScanArg& arg15
 )
 {
-
     const FormatScanArg* args[] = {
         &arg1,
         &arg2,
@@ -423,7 +408,6 @@ int StringScan(
     const FormatScanArg& arg16
 )
 {
-
     const FormatScanArg* args[] = {
         &arg1,
         &arg2,

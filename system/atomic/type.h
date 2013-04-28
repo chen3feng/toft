@@ -9,6 +9,7 @@
 
 namespace toft {
 
+// Atomic integer
 template <typename T>
 class Atomic
 {
@@ -169,6 +170,7 @@ private:
     T m_value;
 };
 
+// Atomic pointer
 template <typename T>
 class Atomic<T*>
 {
