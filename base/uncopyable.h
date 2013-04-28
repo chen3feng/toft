@@ -6,6 +6,8 @@
 #ifndef TOFT_BASE_UNCOPYABLE_H
 #define TOFT_BASE_UNCOPYABLE_H
 
+#include "toft/base/cxx11.h"
+
 //  Private copy constructor and copy assignment ensure classes derived from
 //  class Uncopyable cannot be copied.
 
@@ -13,17 +15,41 @@
 
 namespace toft {
 
-/// the private base class way
+/// The macro way
+#ifdef TOFT_CXX11_ENABLED
+#define TOFT_DECLARE_UNCOPYABLE(Class) \
+private: \
+    Class(const Class&) = delete; \
+    Class& operator=(const Class&) = delete
+#else
+#define TOFT_DECLARE_UNCOPYABLE(Class) \
+private: \
+    Class(const Class&); \
+    Class& operator=(const Class&)
+#endif
+
+/*
+
+Usage:
+
+class Foo {
+    TOFT_DECLARE_UNCOPYABLE(Foo);
+public:
+    Foo();
+    ~Foo();
+};
+
+*/
+
+/// The private base class way
 namespace uncopyable_details  // protection from unintended ADL
 {
 class Uncopyable
 {
+    TOFT_DECLARE_UNCOPYABLE(Uncopyable);
 protected:
     Uncopyable() {}
     ~Uncopyable() {}
-private:  // emphasize the following members are private
-    Uncopyable(const Uncopyable&);
-    const Uncopyable& operator=(const Uncopyable&);
 };
 } // namespace uncopyable_details
 
@@ -35,25 +61,6 @@ Usage:
 
 class Foo : private Uncopyable
 {
-};
-
-*/
-
-/// The macro way
-#define DECLARE_UNCOPYABLE(Class) \
-private: \
-    Class(const Class&); \
-    Class& operator=(const Class&)
-
-/*
-
-Usage:
-
-class Foo {
-    DECLARE_UNCOPYABLE(Foo);
-public:
-    Foo();
-    ~Foo();
 };
 
 */

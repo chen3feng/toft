@@ -48,7 +48,7 @@ public:
 
 class Semaphore
 {
-    DECLARE_UNCOPYABLE(Semaphore);
+    TOFT_DECLARE_UNCOPYABLE(Semaphore);
 
 public:
     explicit Semaphore(unsigned int value)
@@ -95,7 +95,7 @@ private:
 /// named semaphone can be used for cross process sync
 class NamedSemaphore
 {
-    DECLARE_UNCOPYABLE(NamedSemaphore);
+    TOFT_DECLARE_UNCOPYABLE(NamedSemaphore);
 
 public:
     explicit NamedSemaphore() : m_sem(NULL) {}
