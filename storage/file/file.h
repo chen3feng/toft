@@ -19,7 +19,7 @@ class FileSystem;
 //
 // All errors are reported by errno.
 class File {
-    DECLARE_UNCOPYABLE(File);
+    TOFT_DECLARE_UNCOPYABLE(File);
 protected:
     // You can't construct a File object, you must carete it by the static Open
     // method.
@@ -80,7 +80,7 @@ private:
 // A abstruct FileSystem object represent a why of file processing.
 // FileSystem must be registered as singleton.
 class FileSystem {
-    DECLARE_UNCOPYABLE(FileSystem);
+    TOFT_DECLARE_UNCOPYABLE(FileSystem);
 protected:
     FileSystem();
     virtual ~FileSystem();

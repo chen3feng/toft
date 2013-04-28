@@ -16,7 +16,7 @@ namespace toft {
 
 class ThreadGroup
 {
-    DECLARE_UNCOPYABLE(ThreadGroup);
+    TOFT_DECLARE_UNCOPYABLE(ThreadGroup);
 public:
     ThreadGroup();
     ThreadGroup(const std::function<void ()>& callback, size_t count);

@@ -15,7 +15,7 @@ namespace toft {
 // 由用户直接传入线程函数使用
 class Thread
 {
-    DECLARE_UNCOPYABLE(Thread);
+    TOFT_DECLARE_UNCOPYABLE(Thread);
     class Impl;
 public:
     // 默认构造的线程对象
