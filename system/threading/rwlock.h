@@ -19,7 +19,7 @@ namespace toft {
 // Reader/Writer lock
 class RwLock
 {
-    DECLARE_UNCOPYABLE(RwLock);
+    TOFT_DECLARE_UNCOPYABLE(RwLock);
 public:
     typedef ScopedReaderLocker<RwLock> ReaderLocker;
     typedef ScopedWriterLocker<RwLock> WriterLocker;

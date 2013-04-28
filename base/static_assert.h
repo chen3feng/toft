@@ -10,7 +10,7 @@
 
 #ifdef TOFT_CXX11_ENABLED
 
-#define STATIC_ASSERT(e, ...) static_assert(e, "" __VA_ARGS__)
+#define TOFT_STATIC_ASSERT(e, ...) static_assert(e, "" __VA_ARGS__)
 
 #else
 

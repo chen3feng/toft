@@ -30,7 +30,7 @@ namespace toft {
 // If you want to release a thread after each call, Semaphore is a good choice.
 class AutoResetEvent
 {
-    DECLARE_UNCOPYABLE(AutoResetEvent);
+    TOFT_DECLARE_UNCOPYABLE(AutoResetEvent);
 public:
     // init_state: initial state is signaled or non-signaled
     explicit AutoResetEvent(bool init_state = false);
@@ -82,7 +82,7 @@ private:
 // can be released while the object's state is signaled.
 class ManualResetEvent
 {
-    DECLARE_UNCOPYABLE(ManualResetEvent);
+    TOFT_DECLARE_UNCOPYABLE(ManualResetEvent);
 public:
     // init_state: initial state is signaled or non-signaled
     explicit ManualResetEvent(bool init_state = false);

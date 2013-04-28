@@ -27,7 +27,7 @@ namespace internal {
 
 class MutexBase
 {
-    DECLARE_UNCOPYABLE(MutexBase);
+    TOFT_DECLARE_UNCOPYABLE(MutexBase);
 protected:
     // Mutex type converter
     explicit MutexBase(int type);

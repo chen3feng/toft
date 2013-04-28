@@ -629,7 +629,8 @@ TEST(Closure, Reference)
 }
 #endif
 
-#if __GXX_EXPERIMENTAL_CXX0X__
+#ifdef TOFT_CXX11_ENABLED
+
 TEST(Closure, FunctorClosure)
 {
     int n = 0;

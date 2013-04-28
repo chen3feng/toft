@@ -19,7 +19,7 @@ namespace toft {
 // some time may be slower, be careful!
 class SpinLock
 {
-    DECLARE_UNCOPYABLE(SpinLock);
+    TOFT_DECLARE_UNCOPYABLE(SpinLock);
 public:
     typedef ScopedLocker<SpinLock> Locker;
 public:
