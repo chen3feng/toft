@@ -7,6 +7,7 @@
 #ifndef TOFT_BASE_STRING_FORMAT_SCAN_H
 #define TOFT_BASE_STRING_FORMAT_SCAN_H
 
+#include <string>
 #include "toft/base/string/format/scan_arg.h"
 
 // GLOBAL_NOLINT(build/include_what_you_use)
@@ -22,6 +23,13 @@ $range j 1..i
 
 int StringScan(
     const char* string, const char* format,
+    $for j,
+    [[const FormatScanArg& arg$j]]
+
+);
+
+int StringScan(
+    const std::string& string, const char* format,
     $for j,
     [[const FormatScanArg& arg$j]]
 

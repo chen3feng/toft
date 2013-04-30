@@ -11,6 +11,7 @@
 #ifndef TOFT_BASE_STRING_FORMAT_SCAN_H
 #define TOFT_BASE_STRING_FORMAT_SCAN_H
 
+#include <string>
 #include "toft/base/string/format/scan_arg.h"
 
 // GLOBAL_NOLINT(build/include_what_you_use)
@@ -23,7 +24,18 @@ int StringScan(
 );
 
 int StringScan(
+    const std::string& string, const char* format,
+    const FormatScanArg& arg1
+);
+
+int StringScan(
     const char* string, const char* format,
+    const FormatScanArg& arg1,
+    const FormatScanArg& arg2
+);
+
+int StringScan(
+    const std::string& string, const char* format,
     const FormatScanArg& arg1,
     const FormatScanArg& arg2
 );
@@ -36,7 +48,22 @@ int StringScan(
 );
 
 int StringScan(
+    const std::string& string, const char* format,
+    const FormatScanArg& arg1,
+    const FormatScanArg& arg2,
+    const FormatScanArg& arg3
+);
+
+int StringScan(
     const char* string, const char* format,
+    const FormatScanArg& arg1,
+    const FormatScanArg& arg2,
+    const FormatScanArg& arg3,
+    const FormatScanArg& arg4
+);
+
+int StringScan(
+    const std::string& string, const char* format,
     const FormatScanArg& arg1,
     const FormatScanArg& arg2,
     const FormatScanArg& arg3,
@@ -53,7 +80,26 @@ int StringScan(
 );
 
 int StringScan(
+    const std::string& string, const char* format,
+    const FormatScanArg& arg1,
+    const FormatScanArg& arg2,
+    const FormatScanArg& arg3,
+    const FormatScanArg& arg4,
+    const FormatScanArg& arg5
+);
+
+int StringScan(
     const char* string, const char* format,
+    const FormatScanArg& arg1,
+    const FormatScanArg& arg2,
+    const FormatScanArg& arg3,
+    const FormatScanArg& arg4,
+    const FormatScanArg& arg5,
+    const FormatScanArg& arg6
+);
+
+int StringScan(
+    const std::string& string, const char* format,
     const FormatScanArg& arg1,
     const FormatScanArg& arg2,
     const FormatScanArg& arg3,
@@ -74,7 +120,30 @@ int StringScan(
 );
 
 int StringScan(
+    const std::string& string, const char* format,
+    const FormatScanArg& arg1,
+    const FormatScanArg& arg2,
+    const FormatScanArg& arg3,
+    const FormatScanArg& arg4,
+    const FormatScanArg& arg5,
+    const FormatScanArg& arg6,
+    const FormatScanArg& arg7
+);
+
+int StringScan(
     const char* string, const char* format,
+    const FormatScanArg& arg1,
+    const FormatScanArg& arg2,
+    const FormatScanArg& arg3,
+    const FormatScanArg& arg4,
+    const FormatScanArg& arg5,
+    const FormatScanArg& arg6,
+    const FormatScanArg& arg7,
+    const FormatScanArg& arg8
+);
+
+int StringScan(
+    const std::string& string, const char* format,
     const FormatScanArg& arg1,
     const FormatScanArg& arg2,
     const FormatScanArg& arg3,
@@ -99,7 +168,34 @@ int StringScan(
 );
 
 int StringScan(
+    const std::string& string, const char* format,
+    const FormatScanArg& arg1,
+    const FormatScanArg& arg2,
+    const FormatScanArg& arg3,
+    const FormatScanArg& arg4,
+    const FormatScanArg& arg5,
+    const FormatScanArg& arg6,
+    const FormatScanArg& arg7,
+    const FormatScanArg& arg8,
+    const FormatScanArg& arg9
+);
+
+int StringScan(
     const char* string, const char* format,
+    const FormatScanArg& arg1,
+    const FormatScanArg& arg2,
+    const FormatScanArg& arg3,
+    const FormatScanArg& arg4,
+    const FormatScanArg& arg5,
+    const FormatScanArg& arg6,
+    const FormatScanArg& arg7,
+    const FormatScanArg& arg8,
+    const FormatScanArg& arg9,
+    const FormatScanArg& arg10
+);
+
+int StringScan(
+    const std::string& string, const char* format,
     const FormatScanArg& arg1,
     const FormatScanArg& arg2,
     const FormatScanArg& arg3,
@@ -128,7 +224,38 @@ int StringScan(
 );
 
 int StringScan(
+    const std::string& string, const char* format,
+    const FormatScanArg& arg1,
+    const FormatScanArg& arg2,
+    const FormatScanArg& arg3,
+    const FormatScanArg& arg4,
+    const FormatScanArg& arg5,
+    const FormatScanArg& arg6,
+    const FormatScanArg& arg7,
+    const FormatScanArg& arg8,
+    const FormatScanArg& arg9,
+    const FormatScanArg& arg10,
+    const FormatScanArg& arg11
+);
+
+int StringScan(
     const char* string, const char* format,
+    const FormatScanArg& arg1,
+    const FormatScanArg& arg2,
+    const FormatScanArg& arg3,
+    const FormatScanArg& arg4,
+    const FormatScanArg& arg5,
+    const FormatScanArg& arg6,
+    const FormatScanArg& arg7,
+    const FormatScanArg& arg8,
+    const FormatScanArg& arg9,
+    const FormatScanArg& arg10,
+    const FormatScanArg& arg11,
+    const FormatScanArg& arg12
+);
+
+int StringScan(
+    const std::string& string, const char* format,
     const FormatScanArg& arg1,
     const FormatScanArg& arg2,
     const FormatScanArg& arg3,
@@ -161,7 +288,42 @@ int StringScan(
 );
 
 int StringScan(
+    const std::string& string, const char* format,
+    const FormatScanArg& arg1,
+    const FormatScanArg& arg2,
+    const FormatScanArg& arg3,
+    const FormatScanArg& arg4,
+    const FormatScanArg& arg5,
+    const FormatScanArg& arg6,
+    const FormatScanArg& arg7,
+    const FormatScanArg& arg8,
+    const FormatScanArg& arg9,
+    const FormatScanArg& arg10,
+    const FormatScanArg& arg11,
+    const FormatScanArg& arg12,
+    const FormatScanArg& arg13
+);
+
+int StringScan(
     const char* string, const char* format,
+    const FormatScanArg& arg1,
+    const FormatScanArg& arg2,
+    const FormatScanArg& arg3,
+    const FormatScanArg& arg4,
+    const FormatScanArg& arg5,
+    const FormatScanArg& arg6,
+    const FormatScanArg& arg7,
+    const FormatScanArg& arg8,
+    const FormatScanArg& arg9,
+    const FormatScanArg& arg10,
+    const FormatScanArg& arg11,
+    const FormatScanArg& arg12,
+    const FormatScanArg& arg13,
+    const FormatScanArg& arg14
+);
+
+int StringScan(
+    const std::string& string, const char* format,
     const FormatScanArg& arg1,
     const FormatScanArg& arg2,
     const FormatScanArg& arg3,
@@ -198,7 +360,46 @@ int StringScan(
 );
 
 int StringScan(
+    const std::string& string, const char* format,
+    const FormatScanArg& arg1,
+    const FormatScanArg& arg2,
+    const FormatScanArg& arg3,
+    const FormatScanArg& arg4,
+    const FormatScanArg& arg5,
+    const FormatScanArg& arg6,
+    const FormatScanArg& arg7,
+    const FormatScanArg& arg8,
+    const FormatScanArg& arg9,
+    const FormatScanArg& arg10,
+    const FormatScanArg& arg11,
+    const FormatScanArg& arg12,
+    const FormatScanArg& arg13,
+    const FormatScanArg& arg14,
+    const FormatScanArg& arg15
+);
+
+int StringScan(
     const char* string, const char* format,
+    const FormatScanArg& arg1,
+    const FormatScanArg& arg2,
+    const FormatScanArg& arg3,
+    const FormatScanArg& arg4,
+    const FormatScanArg& arg5,
+    const FormatScanArg& arg6,
+    const FormatScanArg& arg7,
+    const FormatScanArg& arg8,
+    const FormatScanArg& arg9,
+    const FormatScanArg& arg10,
+    const FormatScanArg& arg11,
+    const FormatScanArg& arg12,
+    const FormatScanArg& arg13,
+    const FormatScanArg& arg14,
+    const FormatScanArg& arg15,
+    const FormatScanArg& arg16
+);
+
+int StringScan(
+    const std::string& string, const char* format,
     const FormatScanArg& arg1,
     const FormatScanArg& arg2,
     const FormatScanArg& arg3,
