@@ -25,13 +25,22 @@ int StringScan(
 {
     const FormatScanArg* args[] = {
 
-$range j 1..i
 $for j [[
         &arg$j,
 
 ]]
     };
     return StringVScan(string, format, args, $i);
+}
+
+int StringScan(
+    const std::string& string, const char* format,
+    $for j,
+    [[const FormatScanArg& arg$j]]
+
+)
+{
+    return StringScan(string.c_str(), format, $for j, [[arg$j]]);
 }
 
 ]]

@@ -1,0 +1,107 @@
+// Copyright (c) 2011, The Toft Authors.
+// All rights reserved.
+//
+// Author: CHEN Feng <chen3feng@gmail.com>
+// Created: 04/30/11
+// Description: string concat
+
+#ifndef TOFT_BASE_STRING_CONCAT_H
+#define TOFT_BASE_STRING_CONCAT_H
+#pragma once
+
+#include <string>
+#include "toft/base/string/append_1.h"
+
+namespace toft {
+
+////////////////////////////////////////////////////////////////
+// Append to output param str
+
+$var n = 32
+$range i 2..n
+
+$for i [[
+
+$range j 1..i
+
+template <
+    $for j,
+    [[typename T$j]]
+
+>
+void StringAppend(
+    std::string* str,
+    $for j,
+    [[const T$j& a$j]]
+
+)
+{
+
+$for j [[
+    StringAppend(str, a$j);
+
+]]
+}
+
+]]
+
+/////////////////////////////////////////////////////////////////////////////
+// Concat and return result
+
+$range i 1..n
+
+$for i [[
+
+$range j 1..i
+
+template <
+    $for j,
+    [[typename T$j]]
+
+>
+std::string StringConcat(
+    $for j,
+    [[const T$j& a$j]]
+
+)
+{
+    std::string result;
+    size_t guess_size = $for j + [[internal::GuessStringSize(a$j)]];
+
+    result.reserve(guess_size);
+    (void) guess_size;
+
+    StringAppend(&result, $for j, [[a$j]]);
+    return result;
+}
+
+]]
+
+/////////////////////////////////////////////////////////////////////////////
+// Concat to output param
+
+$for i [[
+
+$range j 1..i
+
+template <
+    $for j,
+    [[typename T$j]]
+
+>
+void StringConcatTo(
+    std::string* result,
+    $for j,
+    [[const T$j& a$j]]
+
+)
+{
+    result->clear();
+    StringAppend(result, $for j, [[a$j]]);
+}
+
+]]
+
+} // namespace toft
+
+#endif // TOFT_BASE_STRING_CONCAT_H

@@ -1,0 +1,22 @@
+package toft.base.string.concat.test;
+
+message TestEmbededMessage
+{
+    required string s1 = 1;
+    required string s2 = 2;
+    repeated int32 n3 = 3;
+}
+
+message TestMessage
+{
+    required string s1 = 1;
+    required string s2 = 2;
+    required string s3 = 3;
+    required int32 n4 = 4;
+    required int32 n5 = 5;
+    required int32 n6 = 6;
+    required int32 n7 = 7;
+    required int32 n8 = 8;
+    required bytes f9 = 9;
+    required TestEmbededMessage m10 = 10;
+};

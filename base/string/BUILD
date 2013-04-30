@@ -4,6 +4,12 @@ cc_library(
 )
 
 cc_library(
+    name = '_concat',
+    srcs = 'concat.cpp',
+    deps = ':_number',
+)
+
+cc_library(
     name = '_string_piece',
     srcs = 'string_piece.cpp',
     deps = ':_compare'
@@ -27,12 +33,29 @@ cc_library(
     deps = [
         ':_algorithm',
         ':_compare',
+        ':_concat',
         ':_string_piece',
         ':_number',
         './format:_format',
     ]
 )
 
+proto_library(
+    name = 'concat_test_proto',
+    srcs = 'concat_test.proto'
+)
+
+cc_test(
+    name = 'concat_test',
+    srcs = ['concat_test.cpp'],
+    deps = [
+        ':_concat',
+        './format:_format',
+        ':concat_test_proto',
+        '//thirdparty/perftools:profiler'
+    ],
+    optimize = 'O3'
+)
 
 cc_test(
     name = 'number_test',
