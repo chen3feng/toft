@@ -77,12 +77,10 @@ bool HttpRequest::ParseStartLine(const StringPiece& data, HttpMessage::ErrorType
     m_uri = fields[1];
 
     if (fields.size() == 3) {
-        std::string version;
-        if (!ParseVersionString(fields[2], &version)) {
+        if (!ParseVersion(fields[2])) {
             *error = ERROR_VERSION_UNSUPPORTED;
             return false;
         }
-        SetVersion(version);
     }
 
     return true;
@@ -91,8 +89,9 @@ bool HttpRequest::ParseStartLine(const StringPiece& data, HttpMessage::ErrorType
 void HttpRequest::AppendStartLineToString(std::string* result) const {
     CHECK_NE(m_method, METHOD_UNKNOWN);
     StringAppend(result, GetMethodName(m_method), " ", m_uri);
-    if (!Version().empty()) {
-        StringAppend(result, " ", "HTTP/", Version());
+    HttpVersion version = Version();
+    if (!version.IsEmpty()) {
+        StringAppend(result, " ", "HTTP/", version.Major(), ".", version.Minor());
     }
 }
 

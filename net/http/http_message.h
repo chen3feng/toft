@@ -10,6 +10,7 @@
 #include <vector>
 #include "toft/base/string/string_piece.h"
 #include "toft/net/http/http_headers.h"
+#include "toft/net/http/http_version.h"
 
 namespace toft {
 
@@ -28,7 +29,7 @@ public:
         ERROR_MESSAGE_NOT_COMPLETE,
     };
 
-    HttpMessage() : m_version("1.1") {}
+    HttpMessage() : m_version(1, 1) {}
     virtual ~HttpMessage() {}
     virtual void Reset();
 
@@ -43,9 +44,16 @@ public:
         return result;
     }
 
-    const std::string& Version() const { return m_version; }
-    void SetVersion(const std::string& version) {
+    HttpVersion Version() const { return m_version; }
+    void SetVersion(const HttpVersion& version) {
         m_version = version;
+    }
+
+    void SetVersion(int major, int minor) {
+        m_version = HttpVersion(major, minor);
+    }
+    void ClearVersion() {
+        m_version.Clear();
     }
 
     const std::string& Body() const { return m_body; }
@@ -112,7 +120,7 @@ public:
     std::string ToString() const;
 
 protected:
-    bool ParseVersionString(const std::string& version_str, std::string* version);
+    bool ParseVersion(const std::string& version_str);
 
     // append without ending "\r\n"
     virtual void AppendStartLineToString(std::string* result) const = 0;
@@ -125,7 +133,7 @@ protected:
     }
 
 private:
-    std::string m_version;
+    HttpVersion m_version;
     HttpHeaders m_headers;
     std::string m_body;
 };

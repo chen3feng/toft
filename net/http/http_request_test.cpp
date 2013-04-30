@@ -28,23 +28,23 @@ TEST(HttpMessage, ParseRequest)
 TEST(HttpRequest, Swap)
 {
     HttpRequest req1;
-    req1.SetVersion("1.0");
+    req1.SetVersion(1, 0);
     req1.SetHeader("A", "1");
     req1.SetBody("hello");
 
     HttpRequest req2;
-    req2.SetVersion("1.1");
+    req2.SetVersion(1, 1);
     req2.SetHeader("B", "1");
     req2.SetBody("world");
 
     std::swap(req1, req2);
 
-    EXPECT_EQ("1.1", req1.Version());
+    EXPECT_EQ(HttpVersion(1, 1), req1.Version());
     EXPECT_FALSE(req1.HasHeader("A"));
     EXPECT_TRUE(req1.HasHeader("B"));
     EXPECT_EQ("world", req1.Body());
 
-    EXPECT_EQ("1.0", req2.Version());
+    EXPECT_EQ(HttpVersion(1, 0), req2.Version());
     EXPECT_FALSE(req2.HasHeader("B"));
     EXPECT_TRUE(req2.HasHeader("A"));
     EXPECT_EQ("hello", req2.Body());

@@ -6,21 +6,25 @@
 
 #include "toft/base/string/algorithm.h"
 #include "toft/base/string/concat.h"
+#include "toft/base/string/format.h"
 #include "toft/base/string/number.h"
 
 namespace toft {
 
-bool HttpMessage::ParseVersionString(const std::string& version_str,
-                                     std::string* version)
+bool HttpMessage::ParseVersion(const std::string& version_str)
 {
     if (!StringStartsWith(version_str, "HTTP/"))
         return false;
-    *version = version_str.substr(5);
+    const std::string& ver = version_str.substr(5);
+    int major, minor;
+    if (StringScan(ver, "%d.%d", &major, &minor) != 2)
+        return false;
+    SetVersion(HttpVersion(major, minor));
     return true;
 }
 
 void HttpMessage::Reset() {
-    m_version.clear();
+    m_version.Clear();
     m_headers.Clear();
     m_body.clear();
 }
@@ -165,7 +169,7 @@ int HttpMessage::GetContentLength() {
 bool HttpMessage::IsKeepAlive() const {
     const std::string* alive;
     if (!GetHeader("Connection", &alive)) {
-        if (m_version < "1.1") {
+        if (m_version < HttpVersion(1, 1)) {
             return false;
         }
         return true;

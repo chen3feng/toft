@@ -99,12 +99,10 @@ bool HttpResponse::ParseStartLine(const StringPiece& data, HttpMessage::ErrorTyp
         return false;
     }
 
-    std::string version;
-    if (!ParseVersionString(fields[0], &version)) {
+    if (!ParseVersion(fields[0])) {
         *error = ERROR_VERSION_UNSUPPORTED;
         return false;
     }
-    SetVersion(version);
 
     if (!StringToNumber(fields[1], &m_status, 10)) {
         *error = ERROR_RESPONSE_STATUS_NOT_FOUND;
@@ -119,8 +117,8 @@ bool HttpResponse::ParseStartLine(const StringPiece& data, HttpMessage::ErrorTyp
 }
 
 void HttpResponse::AppendStartLineToString(std::string* result) const {
-    StringAppend(result, "HTTP/", Version(), " ", m_status, " ",
-                 StatusCodeToReasonPhraseSafe(m_status));
+    StringAppend(result, "HTTP/", Version().Major(), ".", Version().Major(),
+                 " ", m_status, " ", StatusCodeToReasonPhraseSafe(m_status));
 }
 
 void HttpResponse::FillWithHtmlPage(StatusCode code, const StringPiece& title,

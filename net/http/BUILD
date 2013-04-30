@@ -44,3 +44,9 @@ cc_test(
     deps = ':http'
 )
 
+cc_test(
+    name = 'http_version_test',
+    srcs = 'http_version_test.cpp',
+    deps = ':http'
+)
+
