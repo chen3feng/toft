@@ -77,7 +77,7 @@ TEST(DomainResolver, Invalid)
 {
     std::vector<IpAddress> addresses;
     int error;
-    EXPECT_FALSE(toft::DomainResolver::ResolveIpAddress("non-exist.domaon", &addresses, &error));
+    EXPECT_FALSE(toft::DomainResolver::ResolveIpAddress("non-exist.domaon...", &addresses, &error));
     EXPECT_NE(0, error);
     EXPECT_TRUE(toft::DomainResolver::IsFatalError(error));
     EXPECT_EQ("Unknown host", toft::DomainResolver::ErrorString(error));
