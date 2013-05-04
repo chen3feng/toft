@@ -169,7 +169,7 @@ bool ReverseRecordReader::Read(char *data, uint32_t size) {
     // After reading, file pointer need to seek back to the start position of
     // data. Prepare for next reading.
     // Seek back
-    int32_t offset = 0 - size;
+    int32_t offset = -static_cast<int32_t>(size);
     if (!m_file->Seek(offset, SEEK_CUR)) {
         LOG(ERROR) << "Seek error before read.";
         return false;
