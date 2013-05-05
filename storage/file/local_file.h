@@ -16,6 +16,7 @@ class LocalFileSystem : public FileSystem {
 public:
     virtual File* Open(const std::string& file_path, const char* mode);
     virtual bool Exists(const std::string& file_path);
+    virtual bool IsDir(const std::string& dir);
     virtual bool Delete(const std::string& file_path);
 };
 
