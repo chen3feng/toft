@@ -1,0 +1,17 @@
+enum ImportEnumLite {
+  IMPORT_LITE_FOO = 7;
+  IMPORT_LITE_BAR = 8;
+  IMPORT_LITE_BAZ = 9;
+}
+
+message NameInfo {
+  required string first_name  = 1;
+  required string second_name = 2;
+}
+
+message Person {
+  required NameInfo name        = 1;
+  required int32 age            = 2;
+  optional string address       = 3;
+  repeated string phone_number  = 4;
+}
