@@ -13,6 +13,7 @@
 #include "thirdparty/google/protobuf/descriptor.h"
 #include "thirdparty/glog/logging.h"
 #include "thirdparty/jsoncpp/json.h"
+#include "toft/base/string/number.h"
 
 namespace google {
 namespace protobuf {
@@ -23,18 +24,18 @@ static Json::Value CreateNode(const FieldDescriptor* field,
   Json::Value node;
   switch (field->cpp_type()) {
     case FieldDescriptor::CPPTYPE_INT32:
-      node[field->name()] = static_cast<int64_t>(reflection->GetInt32(message, field));
+      node[field->name()] = reflection->GetInt32(message, field);
       break;
     case FieldDescriptor::CPPTYPE_INT64:
-      node[field->name()] = reflection->GetInt64(message,
-                                                              field);
+      node[field->name()] = toft::IntegerToString(reflection->GetInt64(message,
+                                                              field));
       break;
     case FieldDescriptor::CPPTYPE_UINT32:
-      node[field->name()] = static_cast<int64_t>(reflection->GetUInt32(message, field));
+      node[field->name()] = reflection->GetUInt32(message, field);
       break;
     case FieldDescriptor::CPPTYPE_UINT64:
-      node[field->name()] = reflection->GetUInt64(message,
-                                                               field);
+      node[field->name()] = toft::IntegerToString(reflection->GetUInt64(message,
+                                                               field));
       break;
     case FieldDescriptor::CPPTYPE_DOUBLE:
       node[field->name()] = reflection->GetDouble(message, field);
@@ -68,17 +69,17 @@ static Json::Value CreateNodeOfRepeatedFiled(const FieldDescriptor* field,
   Json::Value node;
   switch (field->cpp_type()) {
     case FieldDescriptor::CPPTYPE_INT32:
-      node[field->name()] = static_cast<int64_t>(reflection->GetRepeatedInt32(message, field, index));
+      node[field->name()] = reflection->GetRepeatedInt32(message, field, index);
       break;
       //FIXME(yeshunping): Is there other solusion ?
     case FieldDescriptor::CPPTYPE_INT64:
-      node[field->name()] = reflection->GetRepeatedInt64(message, field, index);
+      node[field->name()] = toft::IntegerToString(reflection->GetRepeatedInt64(message, field, index));
       break;
     case FieldDescriptor::CPPTYPE_UINT32:
-      node[field->name()] = static_cast<int64_t>(reflection->GetRepeatedUInt32(message, field, index));
+      node[field->name()] = reflection->GetRepeatedUInt32(message, field, index);
       break;
     case FieldDescriptor::CPPTYPE_UINT64:
-      node[field->name()] = reflection->GetRepeatedUInt64(message, field, index);
+      node[field->name()] = toft::IntegerToString(reflection->GetRepeatedUInt64(message, field, index));
       break;
     case FieldDescriptor::CPPTYPE_DOUBLE:
       node[field->name()] = reflection->GetRepeatedDouble(message, field, index);

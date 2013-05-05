@@ -40,20 +40,6 @@ TEST(JsonFormatUnittest, PrintToJson) {
   LOG(INFO) << "text format for Message:\n" << p.Utf8DebugString();
 }
 
-TEST(JsoncppUnittest, ParseInt64) {
-  string fast_str;
-  string path = "json_styled_string.txt";
-  toft::File::ReadAll(path, &fast_str);
-  LOG(INFO) << fast_str;
-  Json::Reader reader;
-  Json::Value root;
-  reader.parse(fast_str, root);
-  uint64_t index = 4;
-  Json::Value node = root[index];
-  EXPECT_TRUE(node.isMember("address_id"));
-  EXPECT_EQ(node["address_id"].asInt(), 434798436777434024L);
-}
-
 TEST(JsonFormatUnittest, ParseFromFastJsonString) {
   string fast_str;
   string path = "json_fast_string.txt";
