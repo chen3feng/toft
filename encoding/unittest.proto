@@ -14,4 +14,5 @@ message Person {
   required int32 age            = 2;
   optional string address       = 3;
   repeated string phone_number  = 4;
+  required int64 address_id        = 5;
 }

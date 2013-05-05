@@ -10,8 +10,10 @@
 #include "thirdparty/gtest/gtest.h"
 #include "toft/encoding/unittest.pb.h"
 #include "toft/storage/file/file.h"
+#include "toft/hash/hash.h"
 #include "thirdparty/glog/logging.h"
 #include "thirdparty/google/protobuf/text_format.h"
+#include "thirdparty/jsoncpp/json.h"
 
 namespace google {
 namespace protobuf {
@@ -25,6 +27,7 @@ TEST(JsonFormatUnittest, PrintToJson) {
   p.set_address("beijing");
   p.add_phone_number("15100000000");
   p.add_phone_number("15100000001");
+  p.set_address_id(toft::Fingerprint(p.address()));
 
   string styled_str;
   google::protobuf::JsonFormat::PrintToStyledString(p, &styled_str);
@@ -37,6 +40,19 @@ TEST(JsonFormatUnittest, PrintToJson) {
   LOG(INFO) << "text format for Message:\n" << p.Utf8DebugString();
 }
 
+TEST(JsoncppUnittest, ParseInt64) {
+  string fast_str;
+  string path = "json_styled_string.txt";
+  toft::File::ReadAll(path, &fast_str);
+  LOG(INFO) << fast_str;
+  Json::Reader reader;
+  Json::Value root;
+  reader.parse(fast_str, root);
+  uint64_t index = 4;
+  Json::Value node = root[index];
+  EXPECT_TRUE(node.isMember("address_id"));
+  EXPECT_EQ(node["address_id"].asInt(), 434798436777434024L);
+}
 
 TEST(JsonFormatUnittest, ParseFromFastJsonString) {
   string fast_str;

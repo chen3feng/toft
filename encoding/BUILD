@@ -41,6 +41,7 @@ cc_test(
     deps = [':json_format',
             ':unittest_proto',
             '//toft/storage/file:file',
+            '//toft/hash:hash',
             ],
     testdata = ['debug_string.txt',
                 'json_fast_string.txt',
