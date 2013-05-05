@@ -8,10 +8,15 @@
 #endif
 
 #include "toft/storage/file/local_file.h"
+
 #include <string.h>
+#include <sys/stat.h>
+#include <dirent.h>
 #include <unistd.h>
+
 #include "toft/base/string/algorithm.h"
 #include "toft/base/unique_ptr.h"
+#include "thirdparty/glog/logging.h"
 
 namespace toft {
 
@@ -29,6 +34,17 @@ File* LocalFileSystem::Open(const std::string& file_path, const char* mode)
 bool LocalFileSystem::Exists(const std::string& file_path)
 {
     return access(file_path.c_str(), F_OK) == 0;
+}
+
+bool LocalFileSystem::IsDir(const std::string& dir) {
+  struct stat buf;
+
+  if (lstat(dir.c_str(), &buf) < 0) {
+    LOG(ERROR) << "lstat error for dir:" << dir;
+    return false;
+  }
+
+  return S_ISDIR(buf.st_mode);
 }
 
 bool LocalFileSystem::Delete(const std::string& file_path)

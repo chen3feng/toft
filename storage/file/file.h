@@ -64,6 +64,8 @@ public:
     // Delete file
     static bool Delete(const std::string& file_path);
 
+    static bool IsDir(const std::string& dir);
+
     // Read all bytes into *buffer, at most max_size if file too large.
     static bool ReadAll(const std::string& file_path, std::string* buffer,
                         size_t max_size = 64*1024*1024);
@@ -86,6 +88,7 @@ protected:
     virtual ~FileSystem();
 public:
     virtual File* Open(const std::string& file_path, const char* mode) = 0;
+    virtual bool IsDir(const std::string& dir) = 0;
     virtual bool Exists(const std::string& file_path) = 0;
     virtual bool Delete(const std::string& file_path) = 0;
     virtual bool ReadAll(const std::string& file_path, std::string* buffer,
