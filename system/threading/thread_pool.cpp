@@ -22,10 +22,7 @@ ThreadPool::ThreadPool(int32_t min_thread_num,
       m_idle_timeout(idle_timeout_ms),
       m_stack_size(stack_size),
       m_exited(false) {
-    if (m_min_thread_num < 0) {
-        m_min_thread_num = 0;
-    }
-
+    CHECK_GE(m_min_thread_num, 0);
     if (m_max_thread_num < 0) {
         m_max_thread_num = m_min_thread_num + 1;
     }
@@ -56,16 +53,8 @@ void ThreadPool::Terminate(bool is_wait) {
         m_event_relase_all_task.TimedWait(m_idle_timeout);
     }
 
-    while (!m_completed_tasks.empty()) {
-        TaskNode* task_node = PickCompleteTask();
-        delete task_node;
-    }
-
-    while (!m_pending_tasks.empty()) {
-        TaskNode* task_node = PickPendingTask();
-        delete task_node->callback;
-        delete task_node;
-    }
+    ReleaseAllCompleteTasks();
+    ReleaseAllPendingTasks();
 
     MutexLocker locker(m_mutex_thread);
     while (!m_idle_threads.empty()) {
@@ -95,10 +84,7 @@ void ThreadPool::AddPriorityTask(std::function<void ()> callback) {
 void ThreadPool::AddTaskInternal(bool is_priority,
                                  Closure<void ()>* callback,
                                  std::function<void ()> function) {
-    if (m_exited) {
-        return;
-    }
-
+    CHECK(!m_exited);
     TaskNode* task_node = PickCompleteTask(true);
     task_node->callback = callback;
     task_node->function = function;
@@ -180,6 +166,26 @@ void ThreadPool::AddPendingTask(TaskNode* task_node, bool is_priority) {
 void ThreadPool::AddCompleteTask(TaskNode* task_node) {
     MutexLocker locker(m_mutex_task);
     m_completed_tasks.push_back(task_node);
+}
+
+void ThreadPool::ReleaseAllCompleteTasks() {
+    MutexLocker locker(m_mutex_task);
+    while (!m_completed_tasks.empty()) {
+        TaskNode* task_node = &m_completed_tasks.front();
+        m_completed_tasks.pop_front();
+        delete task_node;
+    }
+}
+
+void ThreadPool::ReleaseAllPendingTasks() {
+    MutexLocker locker(m_mutex_task);
+    while (!m_pending_tasks.empty()) {
+        TaskNode* task_node = &m_pending_tasks.front();
+        m_pending_tasks.pop_front();
+        m_pending_task_num--;
+        delete task_node->callback;
+        delete task_node;
+    }
 }
 
 ThreadPool::TaskNode* ThreadPool::PickPendingTask() {

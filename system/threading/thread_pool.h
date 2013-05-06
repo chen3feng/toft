@@ -59,6 +59,8 @@ private:
 
     void AddPendingTask(TaskNode* task_node, bool is_priority = false);
     void AddCompleteTask(TaskNode* task_node);
+    void ReleaseAllPendingTasks();
+    void ReleaseAllCompleteTasks();
 
     TaskNode* PickPendingTask();
     TaskNode* PickCompleteTask(bool is_new = false);
