@@ -103,7 +103,6 @@ void ThreadPool::AddTaskInternal(bool is_priority,
     task_node->callback = callback;
     task_node->function = function;
 
-//     AddTaskNodeToList(m_pending_tasks, task_node, is_priority, true);
     AddPendingTask(task_node, is_priority);
     if (NeedNewThread()) {
         AddThreadNodeToList();
@@ -142,7 +141,6 @@ void ThreadPool::ThreadRunner() {
         task_node = PickPendingTask();
         if (task_node) {
             task_node->Run();
-//             AddTaskNodeToList(m_completed_tasks, task_node);
             AddCompleteTask(task_node);
         } else {
             m_cur_busy_thread_num--;
