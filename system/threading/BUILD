@@ -46,12 +46,27 @@ cc_library(
 )
 
 cc_library(
+    name = '_thread_pool',
+    srcs = [
+        'thread_pool.cpp'
+    ],
+    deps = [
+        ':_sync_object',
+        ':_this_thread',
+        ':_thread',
+        '//toft/base:closure',
+        '//toft/system/atomic:atomic'
+    ]
+)
+
+cc_library(
     name = 'threading',
     deps = [
         ':_sync_object',
         ':_this_thread',
         ':_thread',
         ':_thread_group',
+        ':_thread_pool'
     ]
 )
 
@@ -115,5 +130,13 @@ cc_test(
     deps = [
         ':_sync_object',
         ':_thread_group',
+    ]
+)
+
+cc_test(
+    name = 'thread_pool_test',
+    srcs = 'thread_pool_test.cpp',
+    deps = [
+        ':threading',
     ]
 )
