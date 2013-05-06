@@ -62,7 +62,7 @@ static const struct {
 
 // static
 const char* HttpResponse::InternalStatusCodeToReasonPhrase(
-    int status_code,
+    StatusCode status_code,
     const char* no_match)
 {
     for (int i = 0; ; ++i) {
@@ -75,7 +75,7 @@ const char* HttpResponse::InternalStatusCodeToReasonPhrase(
     }
 }
 
-const char* HttpResponse::StatusCodeToDescription(int status_code)
+const char* HttpResponse::StatusCodeToDescription(StatusCode status_code)
 {
     for (int i = 0; ; ++i) {
         if (kResponseStatus[i].status_code == -1) {
@@ -104,15 +104,17 @@ bool HttpResponse::ParseStartLine(const StringPiece& data, HttpMessage::ErrorTyp
         return false;
     }
 
-    if (!StringToNumber(fields[1], &m_status, 10)) {
+    int status;
+    if (!StringToNumber(fields[1], &status, 10)) {
         *error = ERROR_RESPONSE_STATUS_NOT_FOUND;
         return false;
     }
-    if (m_status < 100 || m_status > 999) {
+    if (status < 100 || status > 999) {
         *error = ERROR_RESPONSE_STATUS_NOT_FOUND;
         return false;
     }
 
+    m_status = static_cast<StatusCode>(status);
     return true;
 }
 
@@ -143,7 +145,7 @@ void HttpResponse::FillWithHtmlPage(StatusCode code, const StringPiece& title,
 
 void HttpResponse::Reset() {
     HttpMessage::Reset();
-    m_status = -1;
+    m_status = Status_None;
 }
 
 } // namespace toft
