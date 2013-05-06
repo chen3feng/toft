@@ -20,6 +20,7 @@ class HttpResponse: public HttpMessage {
 public:
     // See RFC2616: 10 Status Code Definition
     enum StatusCode {
+        Status_None               = 0,
         Status_Continue           = 100,
         Status_SwitchingProtocols = 101,
 
@@ -71,22 +72,22 @@ public:
                           const StringPiece& body = "");
 
 public:
-    HttpResponse() : m_status(-1) {}
+    HttpResponse() : m_status(Status_None) {}
     ~HttpResponse() {}
     virtual void Reset();
 
-    int Status() const { return m_status; }
-    void SetStatus(int status) {
+    StatusCode Status() const { return m_status; }
+    void SetStatus(StatusCode status) {
         m_status = status;
     }
-    static const char* StatusCodeToReasonPhrase(int status_code) {
+    static const char* StatusCodeToReasonPhrase(StatusCode status_code) {
         return InternalStatusCodeToReasonPhrase(status_code, NULL);
     }
-    static const char* StatusCodeToReasonPhraseSafe(int status_code) {
-        return InternalStatusCodeToReasonPhrase(status_code, "unused");
+    static const char* StatusCodeToReasonPhraseSafe(StatusCode status_code) {
+        return InternalStatusCodeToReasonPhrase(status_code, "Unknown");
     }
 
-    static const char* StatusCodeToDescription(int status_code);
+    static const char* StatusCodeToDescription(StatusCode status_code);
 
     void Swap(HttpResponse* other) {
         HttpMessage::Swap(other);
@@ -96,11 +97,11 @@ public:
 
 private:
     static const char* InternalStatusCodeToReasonPhrase(
-        int status_code, const char* no_match);
+        StatusCode status_code, const char* no_match);
     virtual void AppendStartLineToString(std::string* result) const;
     virtual bool ParseStartLine(const StringPiece& data, ErrorType* error);
 
-    int m_status;
+    StatusCode m_status;
 };
 
 } // namespace toft

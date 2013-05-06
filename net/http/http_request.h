@@ -19,7 +19,7 @@ namespace toft {
 class HttpRequest : public HttpMessage {
 public:
     enum MethodType {
-        METHOD_UNKNOWN = -1,
+        METHOD_UNKNOWN = 0,
         METHOD_HEAD,
         METHOD_GET,
         METHOD_POST,
@@ -38,11 +38,11 @@ public:
     virtual void Reset();
 
 public:
-    static int GetMethodByName(const char* method_name);
-    static const char* GetMethodName(int method);
+    static MethodType GetMethodByName(const char* method_name);
+    static const char* GetMethodName(MethodType method);
 
-    int Method() const { return m_method; }
-    void SetMethod(int method) {
+    MethodType Method() const { return m_method; }
+    void SetMethod(MethodType method) {
         m_method = method;
     }
 
@@ -62,7 +62,7 @@ private:
     virtual void AppendStartLineToString(std::string* result) const;
     virtual bool ParseStartLine(const StringPiece& data, ErrorType* error = NULL);
 
-    int m_method;
+    MethodType m_method;
     std::string m_uri;
 };
 

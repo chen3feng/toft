@@ -74,9 +74,12 @@ TEST(HttpMessage, NonstrictParseResponse2)
 
 TEST(HttpResponse, ReasonPhrase)
 {
-    EXPECT_STREQ("OK", HttpResponse::StatusCodeToReasonPhrase(200));
-    EXPECT_STREQ("Not Found", HttpResponse::StatusCodeToReasonPhrase(404));
-    EXPECT_STREQ(NULL, HttpResponse::StatusCodeToReasonPhrase(1000));
+    EXPECT_STREQ("OK",
+                 HttpResponse::StatusCodeToReasonPhrase(HttpResponse::Status_OK));
+    EXPECT_STREQ("Not Found", HttpResponse::StatusCodeToReasonPhrase(
+            HttpResponse::Status_NotFound));
+    EXPECT_STREQ(NULL, HttpResponse::StatusCodeToReasonPhrase(
+            static_cast<HttpResponse::StatusCode>(1000)));
 }
 
 TEST(HttpResponse, Swap)
@@ -154,7 +157,7 @@ TEST(HttpResponse, IsKeepAlive)
 TEST(HttpResponse, HeadersToString)
 {
     HttpResponse response;
-    response.SetStatus(200);
+    response.SetStatus(HttpResponse::Status_OK);
     response.AddHeader("Content-Length", "100");
     response.AddHeader("Connection", "keep-alive");
     std::string headers = response.HeadersToString();
