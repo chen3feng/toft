@@ -243,12 +243,12 @@ public:
     void pop_front()
     {
         assert(!empty());
-        erase(front());
+        erase(&front());
     }
     void pop_back()
     {
         assert(!empty());
-        erase(back());
+        erase(&back());
     }
 
     static void erase(iterator it)
