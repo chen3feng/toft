@@ -8,8 +8,11 @@
 #endif
 
 #include "toft/storage/file/local_file.h"
+
 #include <string.h>
 #include <unistd.h>
+#include <sys/stat.h>
+
 #include "toft/base/string/algorithm.h"
 #include "toft/base/unique_ptr.h"
 
@@ -20,7 +23,8 @@ namespace toft {
 
 File* LocalFileSystem::Open(const std::string& file_path, const char* mode)
 {
-    unique_ptr<FILE, int (*)(FILE*)> fp(fopen(file_path.c_str(), mode), &fclose);
+    std::unique_ptr<FILE, int (*)(FILE*)>
+        fp(fopen(file_path.c_str(), mode), &fclose);
     if (!fp)
         return NULL;
     return new LocalFile(fp.release());
@@ -34,6 +38,17 @@ bool LocalFileSystem::Exists(const std::string& file_path)
 bool LocalFileSystem::Delete(const std::string& file_path)
 {
     return remove(file_path.c_str()) == 0;
+}
+
+bool LocalFileSystem::GetTimes(const std::string& file_path, FileTimes* times) {
+    struct stat buf;
+    int ret = stat(file_path.c_str(), &buf);
+    if (ret < 0)
+        return false;
+    times->access_time = buf.st_atime;
+    times->modify_time = buf.st_mtime;
+    times->change_time = buf.st_ctime;
+    return true;
 }
 
 TOFT_REGISTER_FILE_SYSTEM("local", LocalFileSystem);

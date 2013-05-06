@@ -8,12 +8,19 @@
 #pragma once
 
 #include <stdint.h>
+#include <time.h>
 #include "toft/base/class_registry.h"
 #include "toft/base/uncopyable.h"
 
 namespace toft {
 
 class FileSystem;
+
+struct FileTimes {
+    time_t access_time;
+    time_t modify_time;
+    time_t change_time;
+};
 
 // A abstruct object.
 //
@@ -64,6 +71,9 @@ public:
     // Delete file
     static bool Delete(const std::string& file_path);
 
+    // Get times attributes of path
+    static bool GetTimes(const std::string& file_path, FileTimes* times);
+
     // Read all bytes into *buffer, at most max_size if file too large.
     static bool ReadAll(const std::string& file_path, std::string* buffer,
                         size_t max_size = 64*1024*1024);
@@ -88,6 +98,7 @@ public:
     virtual File* Open(const std::string& file_path, const char* mode) = 0;
     virtual bool Exists(const std::string& file_path) = 0;
     virtual bool Delete(const std::string& file_path) = 0;
+    virtual bool GetTimes(const std::string& file_path, FileTimes* times) = 0;
     virtual bool ReadAll(const std::string& file_path, std::string* buffer,
                          size_t max_size);
     virtual bool ReadLines(const std::string& file_path,
