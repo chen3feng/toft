@@ -17,6 +17,7 @@ public:
     virtual File* Open(const std::string& file_path, const char* mode);
     virtual bool Exists(const std::string& file_path);
     virtual bool Delete(const std::string& file_path);
+    virtual bool GetTimes(const std::string& file_path, FileTimes* times);
 };
 
 // Represent a file object on local mounted file system

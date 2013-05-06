@@ -73,6 +73,11 @@ bool File::Exists(const std::string& file_path)
     return fs->Exists(file_path);
 }
 
+bool File::GetTimes(const std::string& file_path, FileTimes* times) {
+    FileSystem* fs = GetFileSystemByPath(file_path);
+    return fs->GetTimes(file_path, times);
+}
+
 bool File::Delete(const std::string& file_path)
 {
     FileSystem* fs = GetFileSystemByPath(file_path);
