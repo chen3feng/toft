@@ -127,6 +127,15 @@ TEST_F(FileTest, Delete) {
     EXPECT_FALSE(File::Delete("no-file.dat"));
 }
 
+TEST_F(FileTest, GetTimes) {
+    FileTimes times = {};
+    EXPECT_FALSE(File::GetTimes("non-exist.dat", &times));
+    EXPECT_TRUE(File::GetTimes(kFileName, &times));
+    EXPECT_GT(times.access_time, 0);
+    EXPECT_GT(times.modify_time, 0);
+    EXPECT_GT(times.change_time, 0);
+}
+
 TEST_F(FileTest, OpenDirAsFile)
 {
     scoped_ptr<File> fp(File::Open("/bin", "wb"));
