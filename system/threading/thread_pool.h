@@ -19,10 +19,10 @@ namespace toft {
 
 class ThreadPool {
 public:
-    ThreadPool(int32_t min_thread_num = 0,
-               int32_t max_thread_num = -1,
-               int32_t idle_timeout = 60000,
-               size_t stack_size = 0);
+    explicit ThreadPool(int32_t min_thread_num = 0,
+                        int32_t max_thread_num = -1,
+                        int32_t idle_timeout_ms = 60000, /* in ms */
+                        size_t stack_size = 0);
     ~ThreadPool();
 
     void Terminate(bool is_wait = true);
@@ -57,13 +57,11 @@ private:
     void ThreadRunner();
     void ThreadRuntine(ThreadNode* thread_node);
 
-    void AddTaskNodeToList(intrusive_list<TaskNode>& tasks_list,
-                           TaskNode* task_node,
-                           bool is_push_front = false,
-                           bool is_pending_task = false);
-    TaskNode* PickTaskNodeFromList(intrusive_list<TaskNode>& tasks_list,
-                                   bool is_pending_task = false,
-                                   bool is_new = false);
+    void AddPendingTask(TaskNode* task_node, bool is_priority = false);
+    void AddCompleteTask(TaskNode* task_node);
+
+    TaskNode* PickPendingTask();
+    TaskNode* PickCompleteTask(bool is_new = false);
 
     void AddThreadNodeToList();
 

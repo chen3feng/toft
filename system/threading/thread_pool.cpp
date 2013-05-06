@@ -13,13 +13,13 @@ namespace toft {
 
 ThreadPool::ThreadPool(int32_t min_thread_num,
                        int32_t max_thread_num,
-                       int32_t idle_timeout,
+                       int32_t idle_timeout_ms,
                        size_t stack_size)
     : m_min_thread_num(min_thread_num),
       m_max_thread_num(max_thread_num),
       m_cur_thread_num(0), m_cur_busy_thread_num(0),
       m_pending_task_num(0),
-      m_idle_timeout(idle_timeout),
+      m_idle_timeout(idle_timeout_ms),
       m_stack_size(stack_size),
       m_exited(false) {
     if (m_min_thread_num < 0) {
@@ -57,12 +57,12 @@ void ThreadPool::Terminate(bool is_wait) {
     }
 
     while (!m_completed_tasks.empty()) {
-        TaskNode* task_node = PickTaskNodeFromList(m_completed_tasks);
+        TaskNode* task_node = PickCompleteTask();
         delete task_node;
     }
 
     while (!m_pending_tasks.empty()) {
-        TaskNode* task_node = PickTaskNodeFromList(m_pending_tasks);
+        TaskNode* task_node = PickPendingTask();
         delete task_node->callback;
         delete task_node;
     }
@@ -99,11 +99,12 @@ void ThreadPool::AddTaskInternal(bool is_priority,
         return;
     }
 
-    TaskNode* task_node = PickTaskNodeFromList(m_completed_tasks, false, true);
+    TaskNode* task_node = PickCompleteTask(true);
     task_node->callback = callback;
     task_node->function = function;
 
-    AddTaskNodeToList(m_pending_tasks, task_node, is_priority, true);
+//     AddTaskNodeToList(m_pending_tasks, task_node, is_priority, true);
+    AddPendingTask(task_node, is_priority);
     if (NeedNewThread()) {
         AddThreadNodeToList();
     }
@@ -138,10 +139,11 @@ void ThreadPool::ThreadRunner() {
 
     TaskNode* task_node = NULL;
     while (!m_exited) {
-        task_node = PickTaskNodeFromList(m_pending_tasks, true);
+        task_node = PickPendingTask();
         if (task_node) {
             task_node->Run();
-            AddTaskNodeToList(m_completed_tasks, task_node);
+//             AddTaskNodeToList(m_completed_tasks, task_node);
+            AddCompleteTask(task_node);
         } else {
             m_cur_busy_thread_num--;
             if (!m_event_new_task.TimedWait(m_idle_timeout)
@@ -167,34 +169,39 @@ void ThreadPool::ThreadRuntine(ThreadNode* thread_node) {
     }
 }
 
-void ThreadPool::AddTaskNodeToList(intrusive_list<TaskNode>& tasks_list,
-                                   TaskNode* task_node,
-                                   bool is_push_front,
-                                   bool is_pending_task) {
+void ThreadPool::AddPendingTask(TaskNode* task_node, bool is_priority) {
     MutexLocker locker(m_mutex_task);
-    if (is_push_front) {
-        tasks_list.push_front(task_node);
+    if (is_priority) {
+        m_pending_tasks.push_front(task_node);
     } else {
-        tasks_list.push_back(task_node);
+        m_pending_tasks.push_back(task_node);
     }
-    if (is_pending_task) {
-        m_pending_task_num++;
-    }
+    m_pending_task_num++;
 }
 
-ThreadPool::TaskNode*
-ThreadPool::PickTaskNodeFromList(intrusive_list<TaskNode>& tasks_list,
-                                 bool is_pending_task,
-                                 bool is_new) {
+void ThreadPool::AddCompleteTask(TaskNode* task_node) {
+    MutexLocker locker(m_mutex_task);
+    m_completed_tasks.push_back(task_node);
+}
+
+ThreadPool::TaskNode* ThreadPool::PickPendingTask() {
     TaskNode* task_node = NULL;
     MutexLocker locker(m_mutex_task);
-    if (!tasks_list.empty()) {
-        task_node = &tasks_list.front();
-        tasks_list.pop_front();
+    if (!m_pending_tasks.empty()) {
+        task_node = &m_pending_tasks.front();
+        m_pending_tasks.pop_front();
+        m_pending_task_num--;
     }
 
-    if (is_pending_task) {
-        m_pending_task_num--;
+    return task_node;
+}
+
+ThreadPool::TaskNode* ThreadPool::PickCompleteTask(bool is_new) {
+    TaskNode* task_node = NULL;
+    MutexLocker locker(m_mutex_task);
+    if (!m_completed_tasks.empty()) {
+        task_node = &m_completed_tasks.front();
+        m_completed_tasks.pop_front();
     }
 
     if (!task_node && is_new) {
