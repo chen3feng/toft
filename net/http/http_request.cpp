@@ -16,7 +16,7 @@ namespace toft {
 // NOTE: The order must be consistent with enum values because GetMethodName
 // access this table by method_type enum as index
 static const struct {
-    int method;
+    HttpRequest::MethodType method;
     const char* method_name;
 } kValidMethodNames[] = {
     { HttpRequest::METHOD_HEAD, "HEAD" },
@@ -37,24 +37,24 @@ void HttpRequest::Reset() {
 }
 
 // static
-int HttpRequest::GetMethodByName(const char* method_name) {
-    for (int i = 0; ; ++i) {
-        if (kValidMethodNames[i].method_name == NULL) {
-            return HttpRequest::METHOD_UNKNOWN;
-        }
+HttpRequest::MethodType HttpRequest::GetMethodByName(const char* method_name) {
+    int i = 0;
+    while (kValidMethodNames[i].method_name != NULL) {
         // Method is case sensitive.
         if (strcmp(method_name, kValidMethodNames[i].method_name) == 0) {
             return kValidMethodNames[i].method;
         }
+        ++i;
     }
+    return HttpRequest::METHOD_UNKNOWN;
 }
 
 // static
-const char* HttpRequest::GetMethodName(int method) {
+const char* HttpRequest::GetMethodName(MethodType method) {
     if (method <= METHOD_UNKNOWN || method >= METHOD_UPPER_BOUND) {
         return NULL;
     }
-    return kValidMethodNames[method].method_name;
+    return kValidMethodNames[method - 1].method_name; // Start from 1
 }
 
 bool HttpRequest::ParseStartLine(const StringPiece& data, HttpMessage::ErrorType* error) {
