@@ -84,9 +84,6 @@ private:
     int32_t m_idle_timeout;
     size_t m_stack_size;
     Atomic<bool> m_exited;
-
-//     int32_t m_pending_tasks_num;
-//     int32_t m_completed_tasks_num;
 };
 
 } // namespace toft
