@@ -30,7 +30,7 @@ ThreadPool::ThreadPool(int32_t min_thread_num,
         m_max_thread_num = m_min_thread_num + 1;
     }
 
-    if (m_min_thread_num > m_max_thread_num) {
+    if (m_max_thread_num < m_min_thread_num) {
         m_max_thread_num = m_min_thread_num;
     }
 }
@@ -196,12 +196,13 @@ ThreadPool::TaskNode* ThreadPool::PickPendingTask() {
 
 ThreadPool::TaskNode* ThreadPool::PickCompleteTask(bool is_new) {
     TaskNode* task_node = NULL;
-    MutexLocker locker(m_mutex_task);
-    if (!m_completed_tasks.empty()) {
-        task_node = &m_completed_tasks.front();
-        m_completed_tasks.pop_front();
+    {
+        MutexLocker locker(m_mutex_task);
+        if (!m_completed_tasks.empty()) {
+            task_node = &m_completed_tasks.front();
+            m_completed_tasks.pop_front();
+        }
     }
-
     if (!task_node && is_new) {
         task_node = new TaskNode;
     }
