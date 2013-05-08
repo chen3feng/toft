@@ -29,16 +29,20 @@ TEST(JsonFormatUnittest, PrintToJson) {
     p.add_phone_number("15100000001");
     p.set_address_id(toft::Fingerprint(p.address()));
     p.set_people_type(HAN_ZU);
+    LOG(INFO)<< "text format for Message:\n" << p.Utf8DebugString();
 
     string styled_str;
     google::protobuf::JsonFormat::PrintToStyledString(p, &styled_str);
-    LOG(INFO)<< "StyledString json format for Message:\n" << styled_str;
+    string expected_styled_str;
+    toft::File::ReadAll("json_styled_string.txt", &expected_styled_str);
+    EXPECT_EQ(styled_str, expected_styled_str);
 
     string fast_str;
     google::protobuf::JsonFormat::PrintToFastString(p, &fast_str);
-    LOG(INFO)<< "FastString json format for Message:\n" << fast_str;
-
-    LOG(INFO)<< "text format for Message:\n" << p.Utf8DebugString();
+    VLOG(3)<< "FastString json format for Message:\n" << fast_str;
+    string expected_fast_str;
+    toft::File::ReadAll("json_fast_string.txt", &expected_fast_str);
+    EXPECT_EQ(fast_str, expected_fast_str);
 }
 
 void TestJsonString(const string& json_file) {
