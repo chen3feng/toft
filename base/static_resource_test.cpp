@@ -14,7 +14,7 @@ static const char RESOURCE_test[] = "hello";
 
 TEST(StaticResource, Test)
 {
-    StringPiece resource = STATIC_RESOURCE(test);
+    StringPiece resource = TOFT_STATIC_RESOURCE(test);
     EXPECT_STREQ(RESOURCE_test, resource.data());
 }
 

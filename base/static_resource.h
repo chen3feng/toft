@@ -15,10 +15,10 @@
 /// @param name name of the resource
 ///
 /// example:
-/// StringPiece icon = STATIC_RESOURCE(poppy_favicon_ico);
-/// RegisterStaticResource("/favicon.ico", STATIC_RESOURCE(poppy_favicon_ico))
+/// StringPiece icon = TOFT_STATIC_RESOURCE(poppy_favicon_ico);
+/// RegisterStaticResource("/favicon.ico", TOFT_STATIC_RESOURCE(poppy_favicon_ico))
 ///
-#define STATIC_RESOURCE(name) \
+#define TOFT_STATIC_RESOURCE(name) \
     StringPiece(RESOURCE_##name, sizeof(RESOURCE_##name))
 
 #endif // TOFT_BASE_STATIC_RESOURCE_H
