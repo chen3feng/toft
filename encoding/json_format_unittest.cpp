@@ -28,6 +28,7 @@ TEST(JsonFormatUnittest, PrintToJson) {
     p.add_phone_number("15100000000");
     p.add_phone_number("15100000001");
     p.set_address_id(toft::Fingerprint(p.address()));
+    p.set_people_type(HAN_ZU);
 
     string styled_str;
     google::protobuf::JsonFormat::PrintToStyledString(p, &styled_str);
@@ -40,27 +41,9 @@ TEST(JsonFormatUnittest, PrintToJson) {
     LOG(INFO)<< "text format for Message:\n" << p.Utf8DebugString();
 }
 
-TEST(JsonFormatUnittest, ParseFromFastJsonString) {
-    string fast_str;
-    string path = "json_fast_string.txt";
-    toft::File::ReadAll(path, &fast_str);
-    Person pb;
-    google::protobuf::JsonFormat::ParseFromJsonString(fast_str, &pb);
-
-    Person expected_pb;
-    {
-        string content;
-        string path = "debug_string.txt";
-        toft::File::ReadAll(path, &content);
-        google::protobuf::TextFormat::ParseFromString(content, &expected_pb);
-    }
-    EXPECT_EQ(pb.SerializeAsString(), expected_pb.SerializeAsString());
-}
-
-TEST(JsonFormatUnittest, ParseFromStyledJsonString) {
+void TestJsonString(const string& json_file) {
     string styled_str;
-    string path = "json_styled_string.txt";
-    toft::File::ReadAll(path, &styled_str);
+    toft::File::ReadAll(json_file, &styled_str);
     Person pb;
     google::protobuf::JsonFormat::ParseFromJsonString(styled_str, &pb);
 
@@ -72,6 +55,16 @@ TEST(JsonFormatUnittest, ParseFromStyledJsonString) {
         google::protobuf::TextFormat::ParseFromString(content, &expected_pb);
     }
     EXPECT_EQ(pb.SerializeAsString(), expected_pb.SerializeAsString());
+}
+
+TEST(JsonFormatUnittest, ParseFromFastJsonString) {
+    string path = "json_fast_string.txt";
+    TestJsonString(path);
+}
+
+TEST(JsonFormatUnittest, ParseFromStyledJsonString) {
+    string path = "json_styled_string.txt";
+    TestJsonString(path);
 }
 }  // namespace protobuf
 }  // namespace google

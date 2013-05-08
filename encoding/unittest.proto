@@ -1,7 +1,8 @@
-enum ImportEnumLite {
-  IMPORT_LITE_FOO = 7;
-  IMPORT_LITE_BAR = 8;
-  IMPORT_LITE_BAZ = 9;
+enum PeopleType {
+  HAN_ZU  = 0;
+  ZANG_ZU = 1;
+  DAI_ZU  = 2;
+  MAN_ZU  = 3;
 }
 
 message NameInfo {
@@ -14,5 +15,6 @@ message Person {
   required int32 age            = 2;
   optional string address       = 3;
   repeated string phone_number  = 4;
-  required int64 address_id        = 5;
+  required int64 address_id     = 5;
+  required PeopleType people_type = 6;
 }
