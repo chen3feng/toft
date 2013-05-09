@@ -7,24 +7,37 @@
 #include <string>
 
 #include "thirdparty/google/protobuf/message.h"
-// test diff
-namespace google {
-namespace protobuf {
+#include "toft/base/uncopyable.h"
+
+namespace Json {
+class Value;
+}
+
+namespace toft {
 
 // This class implements protocol buffer json format.  Printing and parsing
 // protocol messages in json format is useful for javascript
-class JsonFormat {
+class ProtoJsonFormat {
 public:
-    static bool PrintToStyledString(const Message& message, string* output);
-    static bool PrintToFastString(const Message& message, string* output);
+    static bool PrintToStyledString(const google::protobuf::Message& message,
+                                    std::string* output);
 
-    static bool ParseFromJsonString(const string& input, Message* output);
+    static bool PrintToFastString(const google::protobuf::Message& message,
+                                  std::string* output);
+
+    static bool WriteToValue(const google::protobuf::Message& message,
+                             Json::Value* output);
+
+    static bool ParseFromValue(const Json::Value& input,
+                               google::protobuf::Message* output);
+
+    static bool ParseFromString(const std::string& input,
+                                google::protobuf::Message* output);
 
 private:
-    GOOGLE_DISALLOW_EVIL_CONSTRUCTORS(JsonFormat);
+    TOFT_DECLARE_UNCOPYABLE(ProtoJsonFormat);
 };
 
-}  // namespace protobuf
+}  // namespace toft
 
-}  // namespace google
 #endif  // TOFT_ENCODING_JSON_FORMAT_H_

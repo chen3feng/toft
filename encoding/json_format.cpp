@@ -3,12 +3,10 @@
 
 #include "toft/encoding/json_format.h"
 
-#include <float.h>
-#include <math.h>
 #include <stdio.h>
 
-#include <limits>
-#include <stack>
+#include <limits.h>
+#include <string>
 #include <vector>
 
 #include "thirdparty/glog/logging.h"
@@ -16,14 +14,19 @@
 #include "thirdparty/jsoncpp/json.h"
 #include "toft/base/string/number.h"
 
-//  test for blade
-namespace google {
-namespace protobuf {
+namespace toft {
 
-bool SetValueForMessage(Message* pb,
-                        const string& field_name,
-                        const Json::Value& value);
-bool ParseFromJsonValue(const Json::Value& root, Message* pb);
+using google::protobuf::Descriptor;
+using google::protobuf::EnumValueDescriptor;
+using google::protobuf::EnumDescriptor;
+using google::protobuf::FieldDescriptor;
+using google::protobuf::Message;
+using google::protobuf::Reflection;
+
+static bool SetValueForMessage(const std::string& field_name,
+                               const Json::Value& value,
+                               Message* pb);
+static bool ParseFromJsonValue(const Json::Value& root, Message* pb);
 
 static void CreateNode(const FieldDescriptor* field,
                        const Reflection* reflection,
@@ -52,7 +55,6 @@ static void CreateNode(const FieldDescriptor* field,
         (*node)[field->name()] = reflection->GetBool(message, field);
         break;
     case FieldDescriptor::CPPTYPE_ENUM:
-        VLOG(3) << "enum value:" << reflection->GetEnum(message, field)->number();
         (*node)[field->name()] = reflection->GetEnum(message, field)->number();
         break;
     case FieldDescriptor::CPPTYPE_STRING:
@@ -111,16 +113,15 @@ static void CreateNodeOfRepeatedFiled(const FieldDescriptor* field,
     }
 }
 
-static Json::Value MessageToJsonValue(const Message& message) {
+bool ProtoJsonFormat::WriteToValue(const Message& message, Json::Value* root) {
     const Reflection* reflection = message.GetReflection();
-    Json::Value root;
     Json::FastWriter writer;
-    vector<const FieldDescriptor*> fields;
+    std::vector<const FieldDescriptor*> fields;
     reflection->ListFields(message, &fields);
 
     for (size_t i = 0; i < fields.size(); i++) {
         const FieldDescriptor* field = fields[i];
-        const string& field_name = field->name();
+        const std::string& field_name = field->name();
 
         if (field->cpp_type() != FieldDescriptor::CPPTYPE_MESSAGE) {
             if (field->is_repeated()) {
@@ -129,26 +130,28 @@ static Json::Value MessageToJsonValue(const Message& message) {
                 for (int k = 0; k < field_size; ++k) {
                     CreateNodeOfRepeatedFiled(field, reflection, message, k, &node);
                 }
-                root[field_name] = node;
+                (*root)[field_name] = node;
             } else {
-                CreateNode(field, reflection, message, &root);
+                CreateNode(field, reflection, message, root);
             }
         } else {
             const Message& sub_message = reflection->GetMessage(message, field);
-            root[field_name] = MessageToJsonValue(sub_message);
+            WriteToValue(sub_message, &((*root)[field_name]));
         }
     }
-    return root;
+    return true;
 }
 
-bool JsonFormat::PrintToStyledString(const Message& message, string* output) {
-    Json::Value root = MessageToJsonValue(message);
+bool ProtoJsonFormat::PrintToStyledString(const Message& message, std::string* output) {
+    Json::Value root;
+    WriteToValue(message, &root);
     output->assign(root.toStyledString());
     return true;
 }
 
-bool JsonFormat::PrintToFastString(const Message& message, string* output) {
-    Json::Value root = MessageToJsonValue(message);
+bool ProtoJsonFormat::PrintToFastString(const Message& message, std::string* output) {
+    Json::Value root;
+    WriteToValue(message, &root);
     Json::FastWriter writer;
     output->assign(writer.write(root));
     return true;
@@ -163,8 +166,11 @@ static bool SetSingleValueForMessage(const Reflection* reflection,
         reflection->SetInt32(pb, field, node.asInt());
         break;
     case FieldDescriptor::CPPTYPE_INT64: {
-        int64 number = 0;
-        toft::StringToNumber(node.asString(), &number);
+        int64_t number = 0;
+        if (!toft::StringToNumber(node.asString(), &number)) {
+            LOG(WARNING) << "fail to convert to interger:" << node.asString();
+            return false;
+        }
         reflection->SetInt64(pb, field, number);
         break;
     }
@@ -173,7 +179,10 @@ static bool SetSingleValueForMessage(const Reflection* reflection,
         break;
     case FieldDescriptor::CPPTYPE_UINT64: {
         uint64_t number = 0;
-        toft::StringToNumber(node.asString(), &number);
+        if (!toft::StringToNumber(node.asString(), &number)) {
+            LOG(WARNING) << "fail to convert to interger:" << node.asString();
+            return false;
+        }
         reflection->SetUInt64(pb, field, number);
         break;
     }
@@ -219,8 +228,11 @@ static bool SetRepeatedValueForMessage(const Reflection* reflection,
         reflection->AddInt32(pb, field, sub_node.asInt());
         break;
     case FieldDescriptor::CPPTYPE_INT64: {
-        int64 number = 0;
-        toft::StringToNumber(sub_node.asString(), &number);
+        int64_t number = 0;
+        if (!toft::StringToNumber(sub_node.asString(), &number)) {
+            LOG(WARNING) << "fail to convert to interger:" << sub_node.asString();
+            return false;
+        }
         reflection->AddInt64(pb, field, number);
         break;
     }
@@ -229,7 +241,10 @@ static bool SetRepeatedValueForMessage(const Reflection* reflection,
         break;
     case FieldDescriptor::CPPTYPE_UINT64: {
         uint64_t number = 0;
-        toft::StringToNumber(sub_node.asString(), &number);
+        if (!toft::StringToNumber(sub_node.asString(), &number)) {
+            LOG(WARNING) << "fail to convert to interger:" << sub_node.asString();
+            return false;
+        }
         reflection->AddUInt64(pb, field, number);
         break;
     }
@@ -262,9 +277,9 @@ static bool SetRepeatedValueForMessage(const Reflection* reflection,
     return true;
 }
 
-bool SetValueForMessage(Message* pb,
-                        const string& field_name,
-                        const Json::Value& value) {
+static bool SetValueForMessage(const std::string& field_name,
+                               const Json::Value& value,
+                               Message* pb) {
     const Reflection* reflection =  pb->GetReflection();
     const Descriptor* descriptor = pb->GetDescriptor();
     const FieldDescriptor* field = descriptor->FindFieldByName(field_name);
@@ -287,31 +302,39 @@ bool SetValueForMessage(Message* pb,
     }
 }
 
-bool ParseFromJsonValue(const Json::Value& root, Message* pb) {
-    string pb_type = pb->GetTypeName();
-    VLOG(20)<< "set info for type:" << pb_type;
+static bool ParseFromJsonValue(const Json::Value& root, Message* pb) {
+    std::string pb_type = pb->GetTypeName();
+    VLOG(20) << "set info for type:" << pb_type;
 
     Json::Value::Members members = root.getMemberNames();
     for (size_t i = 0; i < members.size(); ++i) {
-        VLOG(21)<< "member:" << members[i];
-        const string& field_name = members[i];
+        VLOG(21) << "member:" << members[i];
+        const std::string& field_name = members[i];
         Json::Value sub_node;
         sub_node = root.get(field_name, sub_node);
-        if (!SetValueForMessage(pb, field_name, sub_node)) {
-            return false;
+        if (sub_node.isNull()) {
+            const FieldDescriptor* field = pb->GetDescriptor()->FindFieldByName(field_name);
+            if (field && field->is_required()) {
+                LOG(ERROR) << "isNull, but it required, field name:" << field_name;
+                return false;
+            }
+        } else {
+            if (!SetValueForMessage(field_name, sub_node, pb)) {
+                return false;
+            }
         }
     }
     return true;
 }
 
-bool JsonFormat::ParseFromJsonString(const string& input, Message* pb) {
-    // TODO(yeshunping) : implement it
+bool ProtoJsonFormat::ParseFromString(const std::string& input, Message* pb) {
     Json::Reader reader;
     Json::Value root;
     reader.parse(input, root, false);
-    VLOG(3) << root.toStyledString();
     return ParseFromJsonValue(root, pb);
 }
 
-}  // namespace protobuf
-}  // namespace google
+bool ProtoJsonFormat::ParseFromValue(const Json::Value& input, Message* output) {
+    return ParseFromJsonValue(input, output);
+}
+}  // namespace toft
