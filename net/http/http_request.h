@@ -60,7 +60,7 @@ public:
 
 private:
     virtual void AppendStartLineToString(std::string* result) const;
-    virtual bool ParseStartLine(const StringPiece& data, ErrorType* error = NULL);
+    virtual bool ParseStartLine(const StringPiece& data, ErrorCode* error = NULL);
 
     MethodType m_method;
     std::string m_uri;
