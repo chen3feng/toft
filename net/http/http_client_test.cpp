@@ -5,10 +5,8 @@
 // Created: 11/05/11
 // Description:
 
-#include <iostream>
-
-#include "toft/base/string/concat.h"
 #include "toft/net/http/http_client.h"
+#include <iostream>
 #include "thirdparty/gtest/gtest.h"
 
 namespace toft {
@@ -26,7 +24,7 @@ TEST_F(HttpClientTest, GetWithBadURI)
 {
     HttpClient client;
     HttpResponse response;
-    HttpClient::ErrorType error;
+    HttpClient::ErrorCode error;
     std::string bad_uri = "http://-www.qq.com";
     EXPECT_FALSE(client.Get(bad_uri, &response, &error));
     EXPECT_EQ(HttpClient::ERROR_INVALID_URI_ADDRESS, error);
@@ -36,7 +34,7 @@ TEST_F(HttpClientTest, GetWithBadProxy)
 {
     HttpClient client;
     HttpResponse response;
-    HttpClient::ErrorType error;
+    HttpClient::ErrorCode error;
     client.SetProxy("http://-proxy.tencent.com:8080");
     EXPECT_FALSE(client.Get(m_server_address + "/hello.txt", &response, &error));
     EXPECT_EQ(HttpClient::ERROR_INVALID_PROXY_ADDRESS, error);
@@ -49,7 +47,7 @@ TEST_F(HttpClientTest, GetWithoutProxy)
     HttpClient::Options options;
     options.Headers().Add("Content-Type", "text/plain");
     client.SetUserAgent("TestDownloader");
-    HttpClient::ErrorType error;
+    HttpClient::ErrorCode error;
     EXPECT_TRUE(client.Get(m_server_address + "/robots.txt", &response, &error));
     EXPECT_EQ(HttpClient::SUCCESS, error);
     EXPECT_EQ(HttpResponse::Status_OK, response.Status());
@@ -83,13 +81,13 @@ TEST_F(HttpClientTest, Post)
     HttpClient client;
     HttpResponse response;
     HttpClient::Options options;
-    HttpClient::ErrorType error;
+    HttpClient::ErrorCode error;
     std::string data = "Post Content";
     EXPECT_FALSE(client.Post(m_server_address + "/Post",
-                                data,
-                                options,
-                                &response,
-                                &error));
+                             data,
+                             options,
+                             &response,
+                             &error));
     EXPECT_NE(error, HttpClient::SUCCESS);
     EXPECT_EQ(HttpResponse::Status_NotFound, response.Status());
 }
@@ -99,13 +97,13 @@ TEST_F(HttpClientTest, Put)
     HttpClient client;
     HttpResponse response;
     HttpClient::Options options;
-    HttpClient::ErrorType error;
+    HttpClient::ErrorCode error;
     std::string data = "Put Content";
     EXPECT_TRUE(client.Put(m_server_address + "/Put",
-                                data,
-                                options,
-                                &response,
-                                &error));
+                           data,
+                           options,
+                           &response,
+                           &error));
     EXPECT_EQ(HttpClient::SUCCESS, error);
     // www.qq.com always return 200.
     EXPECT_EQ(HttpResponse::Status_OK, response.Status());
@@ -116,11 +114,11 @@ TEST_F(HttpClientTest, Delete)
     HttpClient client;
     HttpResponse response;
     HttpClient::Options options;
-    HttpClient::ErrorType error;
+    HttpClient::ErrorCode error;
     EXPECT_TRUE(client.Delete(m_server_address + "/Delete",
-                                  options,
-                                  &response,
-                                  &error));
+                              options,
+                              &response,
+                              &error));
     EXPECT_EQ(HttpClient::SUCCESS, error);
     EXPECT_EQ(HttpResponse::Status_OK, response.Status());
 }

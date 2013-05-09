@@ -36,7 +36,7 @@ size_t kDefaultMaxResponseLength = 1024 * 1024 * 2;
 bool ResolveAddress(const std::string& host,
                     uint16_t port,
                     std::vector<SocketAddressInet4> *sa,
-                    HttpClient::ErrorType *error)
+                    HttpClient::ErrorCode *error)
 {
     std::vector<IpAddress> ipaddr;
     int error_code;
@@ -63,15 +63,7 @@ bool ResolveAddress(const std::string& host,
 // body.
 bool ResponseStatusHasContent(int http_status)
 {
-    if (http_status < 200) {
-        return false;
-    } else if (http_status == 204) {
-        return false;
-    } else if (http_status == 304) {
-        return false;
-    }
-
-    return true;
+    return http_status >= 200 && http_status != 204 && http_status != 304;
 }
 
 void AppendHeaderToRequest(const std::string& path,
@@ -168,7 +160,7 @@ public:
         return false;
     }
 
-    HttpClient::ErrorType GetLastError() const
+    HttpClient::ErrorCode GetLastError() const
     {
         return m_error_code;
     }
@@ -183,7 +175,7 @@ private:
             return false;
         }
 
-        return SendRequest(request) && RecvResponse(response);
+        return SendRequest(request) && ReceiveResponse(response);
     }
 
     bool SendRequest(const HttpRequest& request)
@@ -199,7 +191,7 @@ private:
         return true;
     }
 
-    bool RecvResponse(HttpResponse* response)
+    bool ReceiveResponse(HttpResponse* response)
     {
         std::unique_ptr<char[]> buffer(new char[m_max_response_length]);
         char *buff = buffer.get();
@@ -235,7 +227,7 @@ private:
         p += 4;
 
         StringPiece piece(buff, p - buff);
-        HttpMessage::ErrorType message_error;
+        HttpMessage::ErrorCode message_error;
         if (!m_response.ParseHeaders(piece, &message_error)) {
             m_error_code = HttpClient::ERROR_INVALID_RESPONSE_HEADER;
             return false;
@@ -248,10 +240,10 @@ private:
         } else if (m_response.HasHeader("Transfer-Encoding")
                && m_response.GetHeader("Transfer-Encoding") != "identity") {
             // chunked content
-            RecvBodyWithChunks(p, end, current);
+            ReceiveBodyWithChunks(p, end, current);
         } else if (m_response.HasHeader("Content-Length")) {
             // Content-Length field is given
-            RecvBodyWithContentLength(p, end, current);
+            ReceiveBodyWithContentLength(p, end, current);
         } else if (m_response.HasHeader("Content-Type") &&
                    m_response.GetHeader("Content-Type") == "multipart/byteranges") {
             // not supported yet
@@ -259,7 +251,7 @@ private:
             return false;
         } else {
             // for the case the HTTP server close the connection
-            RecvBodyWithConnectionReset(p, end, current);
+            ReceiveBodyWithConnectionReset(p, end, current);
         }
 
         std::swap(m_response, *response);
@@ -271,7 +263,7 @@ private:
     }
 
     // For response with a HEADER Content-Length
-    void RecvBodyWithContentLength(char *begin, char *end, char* current)
+    void ReceiveBodyWithContentLength(char *begin, char *end, char* current)
     {
         std::string body;
         body.reserve(end - begin + 1);
@@ -295,7 +287,7 @@ private:
     }
 
     // For content data in chunks
-    void RecvBodyWithChunks(char *begin, char *end, char* current)
+    void ReceiveBodyWithChunks(char *begin, char *end, char* current)
     {
         std::string body;
         body.reserve(m_max_response_length);
@@ -304,7 +296,7 @@ private:
         while (begin < end) {
             size_t received = 0;
 
-            *current = 0;
+            *current = 0; // For the following strstr.
             char *p = strstr(begin, "\r\n");
             if (p != NULL) {
                 int chunk_size = 0;
@@ -349,7 +341,7 @@ private:
     }
 
     // Old HTTP servers will close connection after send response package
-    void RecvBodyWithConnectionReset(char *begin, char *end, char* current)
+    void ReceiveBodyWithConnectionReset(char *begin, char *end, char* current)
     {
         size_t received;
         if (m_connector.ReceiveAll(current, end - current, &received) ||
@@ -366,7 +358,7 @@ private:
     URI m_proxy_uri;
     StreamSocket m_connector;
     HttpResponse m_response;
-    HttpClient::ErrorType m_error_code;
+    HttpClient::ErrorCode m_error_code;
     size_t m_max_response_length;
 };
 
@@ -420,7 +412,7 @@ HttpClient::~HttpClient()
 {
 }
 
-const char* HttpClient::GetErrorMessage(ErrorType err_code)
+const char* HttpClient::GetErrorMessage(ErrorCode err_code)
 {
     size_t size = sizeof(kErrorMessage) / sizeof(kErrorMessage[0]);
     for (size_t k = 0; k < size; ++k) {
@@ -459,9 +451,9 @@ bool HttpClient::Request(HttpRequest::MethodType method,
                          const std::string& data,
                          const HttpClient::Options& options,
                          HttpResponse *response,
-                         ErrorType *error)
+                         ErrorCode *error)
 {
-    ErrorType error_placeholder;
+    ErrorCode error_placeholder;
     if (error == NULL) {
         error = &error_placeholder;
     }
@@ -481,14 +473,14 @@ bool HttpClient::Request(HttpRequest::MethodType method,
 bool HttpClient::Get(const std::string& url,
                      const Options& options,
                      HttpResponse *response,
-                     ErrorType *error)
+                     ErrorCode *error)
 {
     return Request(HttpRequest::METHOD_GET, url, "", options, response, error);
 }
 
 bool HttpClient::Get(const std::string& url,
                      HttpResponse* response,
-                     ErrorType *error)
+                     ErrorCode *error)
 {
     return Get(url, Options(), response, error);
 }
@@ -497,7 +489,7 @@ bool HttpClient::Post(const std::string& url,
                       const std::string& data,
                       const Options& options,
                       HttpResponse *response,
-                      ErrorType *error)
+                      ErrorCode *error)
 {
     return Request(HttpRequest::METHOD_POST, url, data, options, response, error);
 }
@@ -505,7 +497,7 @@ bool HttpClient::Post(const std::string& url,
 bool HttpClient::Post(const std::string& url,
                       const std::string& data,
                       HttpResponse* response,
-                      ErrorType *error)
+                      ErrorCode *error)
 {
     return Post(url, data, Options(), response, error);
 }
@@ -514,7 +506,7 @@ bool HttpClient::Put(const std::string& url,
                      const std::string& data,
                      const Options& options,
                      HttpResponse* response,
-                     ErrorType* error)
+                     ErrorCode* error)
 {
     return Request(HttpRequest::METHOD_PUT, url, data, options, response, error);
 }
@@ -522,7 +514,7 @@ bool HttpClient::Put(const std::string& url,
 bool HttpClient::Put(const std::string& url,
                      const std::string& data,
                      HttpResponse* response,
-                     ErrorType* error)
+                     ErrorCode* error)
 {
     return Put(url, data, Options(), response, error);
 }
@@ -530,14 +522,14 @@ bool HttpClient::Put(const std::string& url,
 bool HttpClient::Delete(const std::string& url,
                         const Options& options,
                         HttpResponse* response,
-                        ErrorType* error)
+                        ErrorCode* error)
 {
     return Request(HttpRequest::METHOD_DELETE, url, "", options, response, error);
 }
 
 bool HttpClient::Delete(const std::string& url,
                         HttpResponse* response,
-                        ErrorType* error)
+                        ErrorCode* error)
 {
     return Delete(url, Options(), response, error);
 }

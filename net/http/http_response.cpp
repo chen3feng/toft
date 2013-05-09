@@ -87,8 +87,8 @@ const char* HttpResponse::StatusCodeToDescription(StatusCode status_code)
     }
 }
 
-bool HttpResponse::ParseStartLine(const StringPiece& data, HttpMessage::ErrorType* error) {
-    ErrorType error_placeholder;
+bool HttpResponse::ParseStartLine(const StringPiece& data, HttpMessage::ErrorCode* error) {
+    ErrorCode error_placeholder;
     if (error == NULL)
         error = &error_placeholder;
 

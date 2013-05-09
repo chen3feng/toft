@@ -18,7 +18,7 @@ namespace toft {
 // response. It includes the start line, headers and body.
 class HttpMessage {
 public:
-    enum ErrorType {
+    enum ErrorCode {
         SUCCESS = 0,
         ERROR_NO_START_LINE,
         ERROR_START_LINE_NOT_COMPLETE,
@@ -35,8 +35,8 @@ public:
 
 public:
     // Parse http headers (including the start line) from data.
-    // return: error code which is defined as ErrorType.
-    virtual bool ParseHeaders(const StringPiece& data, ErrorType* error = NULL);
+    // return: error code which is defined as ErrorCode.
+    virtual bool ParseHeaders(const StringPiece& data, ErrorCode* error = NULL);
 
     std::string StartLine() const {
         std::string result;
@@ -124,7 +124,7 @@ protected:
 
     // append without ending "\r\n"
     virtual void AppendStartLineToString(std::string* result) const = 0;
-    virtual bool ParseStartLine(const StringPiece& data, HttpMessage::ErrorType* error) = 0;
+    virtual bool ParseStartLine(const StringPiece& data, HttpMessage::ErrorCode* error) = 0;
     void Swap(HttpMessage* other) {
         using std::swap;
         swap(m_version, other->m_version);

@@ -24,7 +24,7 @@ namespace toft {
 // stream mode( which is neccessary to download huge file.), etc.
 class HttpClient {
 public:
-    enum ErrorType {
+    enum ErrorCode {
         SUCCESS = 0,
         ERROR_INVALID_URI_ADDRESS,
         ERROR_INVALID_PROXY_ADDRESS,
@@ -41,7 +41,7 @@ public:
     };
 
     // query error message from error code
-    static const char* GetErrorMessage(ErrorType error);
+    static const char* GetErrorMessage(ErrorCode error);
 
 public:
     // Per-request options
@@ -75,20 +75,20 @@ public:
     // Request url with GET method, output stored into response object.
     bool Get(const std::string& url,
              HttpResponse* response,
-             ErrorType* error = NULL);
+             ErrorCode* error = NULL);
 
     // Request url with GET method, output stored into response object.
     // Some options supported, for example, http socket proxy.
     bool Get(const std::string& url,
              const Options& options,
              HttpResponse* response,
-             ErrorType* error = NULL);
+             ErrorCode* error = NULL);
 
     // Request url with POST method, output stored into response object.
     bool Post(const std::string& url,
               const std::string& data,
               HttpResponse* response,
-              ErrorType* error = NULL);
+              ErrorCode* error = NULL);
 
     // Request url with POST method, output stored into response object.
     // Some options supported, for example, http socket proxy.
@@ -96,14 +96,14 @@ public:
               const std::string& data,
               const Options& options,
               HttpResponse* response,
-              ErrorType* error = NULL);
+              ErrorCode* error = NULL);
 
     // Request url with PUT method, output stored into response object.
     // Some options supported, for example, http socket proxy.
     bool Put(const std::string& url,
              const std::string& data,
              HttpResponse* response,
-             ErrorType* error = NULL);
+             ErrorCode* error = NULL);
 
     // Request url with PUT method, output stored into response object.
     // Some options supported, for example, http socket proxy.
@@ -111,20 +111,20 @@ public:
              const std::string& data,
              const Options& options,
              HttpResponse* response,
-             ErrorType* error = NULL);
+             ErrorCode* error = NULL);
 
     // Request url with DELETE method, output stored into response object.
     // Some options supported, for example, http socket proxy.
     bool Delete(const std::string& url,
                 HttpResponse* response,
-                ErrorType* error = NULL);
+                ErrorCode* error = NULL);
 
     // Request url with DELETE method, output stored into response object.
     // Some options supported, for example, http socket proxy.
     bool Delete(const std::string& url,
                 const Options& options,
                 HttpResponse* response,
-                ErrorType* error = NULL);
+                ErrorCode* error = NULL);
 
 private:
     bool Request(HttpRequest::MethodType method,
@@ -132,11 +132,11 @@ private:
                  const std::string& data,
                  const Options& options,
                  HttpResponse *response,
-                 ErrorType *error);
+                 ErrorCode *error);
 
 private:
     static const struct ErrorMessage {
-        ErrorType err_code;
+        ErrorCode err_code;
         const char* err_msg;
     } kErrorMessage[];
 
