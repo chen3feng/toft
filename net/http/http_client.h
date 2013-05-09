@@ -5,8 +5,8 @@
 // Created: 11/05/11
 // Description:
 
-#ifndef TOFT_NET_HTTP_HTTP_DOWNLOADER_H
-#define TOFT_NET_HTTP_HTTP_DOWNLOADER_H
+#ifndef TOFT_NET_HTTP_HTTP_CLIENT_H
+#define TOFT_NET_HTTP_HTTP_CLIENT_H
 #pragma once
 
 #include <string>
@@ -42,15 +42,6 @@ public:
 
     // query error message from error code
     static const char* GetErrorMessage(ErrorType error);
-
-    // Resolve domain address, output is a vector of SocketAddressInet4
-    // domain example:
-    //  www.qq.com
-    //  192.168.1.1
-    static bool ResolveAddress(const std::string& domain,
-                               uint16_t port,
-                               std::vector<SocketAddressInet4> *address,
-                               ErrorType *error = NULL);
 
 public:
     // Per-request options
@@ -156,4 +147,4 @@ private:
 
 } // namespace toft
 
-#endif // TOFT_NET_HTTP_HTTP_DOWNLOADER_H
+#endif // TOFT_NET_HTTP_HTTP_CLIENT_H

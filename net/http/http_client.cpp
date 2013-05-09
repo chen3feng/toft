@@ -6,29 +6,58 @@
 // Description:
 
 #include "toft/net/http/http_client.h"
+
 #include <algorithm>
 #include <utility>
 
-#include "toft/base/unique_ptr.h"
 #include "toft/base/string/algorithm.h"
 #include "toft/base/string/number.h"
+#include "toft/base/unique_ptr.h"
 #include "toft/net/http/http_message.h"
 #include "toft/net/mime/mime.h"
 #include "toft/net/uri/uri.h"
 #include "toft/system/net/domain_resolver.h"
+
 #include "thirdparty/glog/logging.h"
 
 namespace toft {
 
 namespace {
 
-static const char kHttpScheme[] = "http";
-static const char kDefaultPath[] = "/";
-static const char kDefaultHttpPort[] = "80";
-static size_t kDefaultMaxResponseLength = 1024 * 1024 * 2;
+const char kHttpScheme[] = "http";
+const char kDefaultPath[] = "/";
+const char kDefaultHttpPort[] = "80";
+size_t kDefaultMaxResponseLength = 1024 * 1024 * 2;
 
-typedef HttpClient::Options Options;
-typedef HttpClient::ErrorType ErrorType;
+// Resolve domain address, output is a vector of SocketAddressInet4
+// domain example:
+//  www.qq.com
+//  192.168.1.1
+bool ResolveAddress(const std::string& host,
+                    uint16_t port,
+                    std::vector<SocketAddressInet4> *sa,
+                    HttpClient::ErrorType *error)
+{
+    std::vector<IpAddress> ipaddr;
+    int error_code;
+    if (!DomainResolver::ResolveIpAddress(
+            host,
+            &ipaddr,
+            &error_code)) {
+        *error = HttpClient::ERROR_FAIL_TO_RESOLVE_ADDRESS;
+        return false;
+    }
+
+    std::vector<SocketAddressInet4> sock_addr;
+    for (std::vector<IpAddress>::const_iterator it = ipaddr.begin();
+        it != ipaddr.end();
+        ++it) {
+        sock_addr.push_back(SocketAddressInet4(*it, port));
+    }
+    sa->swap(sock_addr);
+
+    return true;
+}
 
 // according to RFC2616, HTTP STATUS 1xx, 204, and 304 doesn't have a HTTP
 // body.
@@ -44,8 +73,6 @@ bool ResponseStatusHasContent(int http_status)
 
     return true;
 }
-
-using namespace toft;
 
 void AppendHeaderToRequest(const std::string& path,
                            const HttpHeaders& headers,
@@ -63,7 +90,7 @@ class DownloadTask {
 public:
     explicit DownloadTask(HttpClient *http_client)
         : m_connector(AF_INET, IPPROTO_TCP),
-          m_err_code(HttpClient::SUCCESS),
+          m_error_code(HttpClient::SUCCESS),
           m_max_response_length(0)
     {
         m_connector.SetLinger(true, 1);
@@ -75,13 +102,13 @@ public:
     }
 
     bool ProcessRequest(const std::string& url,
-                        const Options& options,
+                        const HttpClient::Options& options,
                         HttpRequest* request,
                         HttpResponse *response)
     {
         URI *uri = NULL;
         if (!m_uri.Parse(url)) {
-            m_err_code = HttpClient::ERROR_INVALID_URI_ADDRESS;
+            m_error_code = HttpClient::ERROR_INVALID_URI_ADDRESS;
             return false;
         }
         uri = &m_uri;
@@ -102,7 +129,7 @@ public:
 
         if (!m_http_client->Proxy().empty()) {
             if (!m_proxy_uri.Parse(m_http_client->Proxy())) {
-                m_err_code = HttpClient::ERROR_INVALID_PROXY_ADDRESS;
+                m_error_code = HttpClient::ERROR_INVALID_PROXY_ADDRESS;
                 return false;
             }
             uri = &m_proxy_uri;
@@ -117,7 +144,7 @@ public:
         } else if (uri->Scheme().empty() || uri->Scheme() == kHttpScheme) {
             port_str = kDefaultHttpPort;
         } else {
-            m_err_code = HttpClient::ERROR_PROTOCAL_NOT_SUPPORTED;
+            m_error_code = HttpClient::ERROR_PROTOCAL_NOT_SUPPORTED;
             return false;
         }
 
@@ -126,7 +153,7 @@ public:
             return false;
 
         std::vector<SocketAddressInet4> sa;
-        if (!HttpClient::ResolveAddress(host, port, &sa, &m_err_code)) {
+        if (!ResolveAddress(host, port, &sa, &m_error_code)) {
             return false;
         }
 
@@ -141,9 +168,9 @@ public:
         return false;
     }
 
-    ErrorType GetLastError() const
+    HttpClient::ErrorType GetLastError() const
     {
-        return m_err_code;
+        return m_error_code;
     }
 
 private:
@@ -152,7 +179,7 @@ private:
                         HttpResponse* response)
     {
         if (!m_connector.Connect(addr)) {
-            m_err_code = HttpClient::ERROR_FAIL_TO_CONNECT_SERVER;
+            m_error_code = HttpClient::ERROR_FAIL_TO_CONNECT_SERVER;
             return false;
         }
 
@@ -166,7 +193,7 @@ private:
         VLOG(5) << headers << std::endl;
 
         if (!m_connector.SendAll(headers.c_str(), headers.length())) {
-            m_err_code = HttpClient::ERROR_FAIL_TO_SEND_REQUEST;
+            m_error_code = HttpClient::ERROR_FAIL_TO_SEND_REQUEST;
             return false;
         }
         return true;
@@ -186,10 +213,10 @@ private:
             if (!m_connector.Receive(buff + total_received,
                                      buffer_length,
                                      &received_length)) {
-                m_err_code = HttpClient::ERROR_FAIL_TO_GET_RESPONSE;
+                m_error_code = HttpClient::ERROR_FAIL_TO_GET_RESPONSE;
                 return false;
             } else if (received_length == 0) {
-                m_err_code = HttpClient::ERROR_FAIL_TO_GET_RESPONSE;
+                m_error_code = HttpClient::ERROR_FAIL_TO_GET_RESPONSE;
                 VLOG(4) << "The peer reset the network connection.";
                 return false;
             }
@@ -202,7 +229,7 @@ private:
         } while (p == NULL && buffer_length > 0);
 
         if (p == NULL) {
-            m_err_code = HttpClient::ERROR_INVALID_RESPONSE_HEADER;
+            m_error_code = HttpClient::ERROR_INVALID_RESPONSE_HEADER;
             return false;
         }
         p += 4;
@@ -210,7 +237,7 @@ private:
         StringPiece piece(buff, p - buff);
         HttpMessage::ErrorType message_error;
         if (!m_response.ParseHeaders(piece, &message_error)) {
-            m_err_code = HttpClient::ERROR_INVALID_RESPONSE_HEADER;
+            m_error_code = HttpClient::ERROR_INVALID_RESPONSE_HEADER;
             return false;
         }
 
@@ -228,7 +255,7 @@ private:
         } else if (m_response.HasHeader("Content-Type") &&
                    m_response.GetHeader("Content-Type") == "multipart/byteranges") {
             // not supported yet
-            m_err_code = HttpClient::ERROR_CONTENT_TYPE_NOT_SUPPORTED;
+            m_error_code = HttpClient::ERROR_CONTENT_TYPE_NOT_SUPPORTED;
             return false;
         } else {
             // for the case the HTTP server close the connection
@@ -238,7 +265,7 @@ private:
         std::swap(m_response, *response);
 
         if (response->Status() != HttpResponse::Status_OK)
-            m_err_code = HttpClient::ERROR_HTTP_STATUS_CODE;
+            m_error_code = HttpClient::ERROR_HTTP_STATUS_CODE;
 
         return true;
     }
@@ -260,7 +287,7 @@ private:
             if (!m_connector.ReceiveAll(current,
                                         download,
                                         &received)) {
-                m_err_code = HttpClient::ERROR_FAIL_TO_GET_RESPONSE;
+                m_error_code = HttpClient::ERROR_FAIL_TO_GET_RESPONSE;
             }
             body.append(current, received);
         }
@@ -282,7 +309,7 @@ private:
             if (p != NULL) {
                 int chunk_size = 0;
                 if (sscanf(begin, "%x", &chunk_size) != 1) { // NOLINT(runtime/printf)
-                    m_err_code = HttpClient::ERROR_FAIL_TO_READ_CHUNKSIZE;
+                    m_error_code = HttpClient::ERROR_FAIL_TO_READ_CHUNKSIZE;
                     return;
                 }
                 begin = p + 2;
@@ -299,7 +326,7 @@ private:
                 if (downloaded < chunk_size) {
                     size_t length = chunk_size - downloaded;
                     if (!m_connector.ReceiveAll(current, length, &received)) {
-                        m_err_code = HttpClient::ERROR_FAIL_TO_GET_RESPONSE;
+                        m_error_code = HttpClient::ERROR_FAIL_TO_GET_RESPONSE;
                         return;
                     }
                     current += received;
@@ -312,7 +339,7 @@ private:
                 // there is not enough content to get a whole CHUNK header
                 // download more data.
                 if (!m_connector.Receive(current, buffer_length, &received)) {
-                    m_err_code = HttpClient::ERROR_FAIL_TO_GET_RESPONSE;
+                    m_error_code = HttpClient::ERROR_FAIL_TO_GET_RESPONSE;
                     return;
                 }
                 current += received;
@@ -339,11 +366,11 @@ private:
     URI m_proxy_uri;
     StreamSocket m_connector;
     HttpResponse m_response;
-    ErrorType m_err_code;
+    HttpClient::ErrorType m_error_code;
     size_t m_max_response_length;
 };
 
-} // anonymous namespace
+} // namespace
 
 const HttpClient::ErrorMessage HttpClient::kErrorMessage[] =
 {
@@ -393,32 +420,6 @@ HttpClient::~HttpClient()
 {
 }
 
-bool HttpClient::ResolveAddress(const std::string& host,
-                                    uint16_t port,
-                                    std::vector<SocketAddressInet4> *sa,
-                                    ErrorType *error)
-{
-    std::vector<IpAddress> ipaddr;
-    int error_code;
-    if (!DomainResolver::ResolveIpAddress(
-            host,
-            &ipaddr,
-            &error_code)) {
-        *error = HttpClient::ERROR_FAIL_TO_RESOLVE_ADDRESS;
-        return false;
-    }
-
-    std::vector<SocketAddressInet4> sock_addr;
-    for (std::vector<IpAddress>::const_iterator it = ipaddr.begin();
-        it != ipaddr.end();
-        ++it) {
-        sock_addr.push_back(SocketAddressInet4(*it, port));
-    }
-    sa->swap(sock_addr);
-
-    return true;
-}
-
 const char* HttpClient::GetErrorMessage(ErrorType err_code)
 {
     size_t size = sizeof(kErrorMessage) / sizeof(kErrorMessage[0]);
@@ -454,11 +455,11 @@ const std::string& HttpClient::UserAgent() const
 }
 
 bool HttpClient::Request(HttpRequest::MethodType method,
-                             const std::string& url,
-                             const std::string& data,
-                             const Options& options,
-                             HttpResponse *response,
-                             ErrorType *error)
+                         const std::string& url,
+                         const std::string& data,
+                         const HttpClient::Options& options,
+                         HttpResponse *response,
+                         ErrorType *error)
 {
     ErrorType error_placeholder;
     if (error == NULL) {
@@ -478,65 +479,65 @@ bool HttpClient::Request(HttpRequest::MethodType method,
 }
 
 bool HttpClient::Get(const std::string& url,
-                         const Options& options,
-                         HttpResponse *response,
-                         ErrorType *error)
+                     const Options& options,
+                     HttpResponse *response,
+                     ErrorType *error)
 {
     return Request(HttpRequest::METHOD_GET, url, "", options, response, error);
 }
 
 bool HttpClient::Get(const std::string& url,
-                         HttpResponse* response,
-                         ErrorType *error)
+                     HttpResponse* response,
+                     ErrorType *error)
 {
     return Get(url, Options(), response, error);
 }
 
 bool HttpClient::Post(const std::string& url,
-                          const std::string& data,
-                          const Options& options,
-                          HttpResponse *response,
-                          ErrorType *error)
+                      const std::string& data,
+                      const Options& options,
+                      HttpResponse *response,
+                      ErrorType *error)
 {
     return Request(HttpRequest::METHOD_POST, url, data, options, response, error);
 }
 
 bool HttpClient::Post(const std::string& url,
-                          const std::string& data,
-                          HttpResponse* response,
-                          ErrorType *error)
+                      const std::string& data,
+                      HttpResponse* response,
+                      ErrorType *error)
 {
     return Post(url, data, Options(), response, error);
 }
 
 bool HttpClient::Put(const std::string& url,
-                         const std::string& data,
-                         const Options& options,
-                         HttpResponse* response,
-                         ErrorType* error)
+                     const std::string& data,
+                     const Options& options,
+                     HttpResponse* response,
+                     ErrorType* error)
 {
     return Request(HttpRequest::METHOD_PUT, url, data, options, response, error);
 }
 
 bool HttpClient::Put(const std::string& url,
-                         const std::string& data,
-                         HttpResponse* response,
-                         ErrorType* error)
+                     const std::string& data,
+                     HttpResponse* response,
+                     ErrorType* error)
 {
     return Put(url, data, Options(), response, error);
 }
 
 bool HttpClient::Delete(const std::string& url,
-                            const Options& options,
-                            HttpResponse* response,
-                            ErrorType* error)
+                        const Options& options,
+                        HttpResponse* response,
+                        ErrorType* error)
 {
     return Request(HttpRequest::METHOD_DELETE, url, "", options, response, error);
 }
 
 bool HttpClient::Delete(const std::string& url,
-                            HttpResponse* response,
-                            ErrorType* error)
+                        HttpResponse* response,
+                        ErrorType* error)
 {
     return Delete(url, Options(), response, error);
 }
