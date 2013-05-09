@@ -1,0 +1,10 @@
+name {
+  first_name: "Ye"
+  second_name: "Shunping"
+}
+age: 30
+address: "beijing"
+phone_number: "15100000000"
+phone_number: "15100000001"
+address_id: 434798436777434024
+people_type: HAN_ZU
