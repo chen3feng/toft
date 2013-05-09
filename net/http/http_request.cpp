@@ -57,8 +57,8 @@ const char* HttpRequest::GetMethodName(MethodType method) {
     return kValidMethodNames[method - 1].method_name; // Start from 1
 }
 
-bool HttpRequest::ParseStartLine(const StringPiece& data, HttpMessage::ErrorType* error) {
-    ErrorType error_placeholder;
+bool HttpRequest::ParseStartLine(const StringPiece& data, HttpMessage::ErrorCode* error) {
+    ErrorCode error_placeholder;
     if (error == NULL)
         error = &error_placeholder;
 

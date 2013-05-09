@@ -130,8 +130,8 @@ bool HttpMessage::HasHeader(const StringPiece& header_name) const {
     return m_headers.Has(header_name);
 }
 
-bool HttpMessage::ParseHeaders(const StringPiece& data, HttpMessage::ErrorType* error) {
-    HttpMessage::ErrorType error_placeholder;
+bool HttpMessage::ParseHeaders(const StringPiece& data, HttpMessage::ErrorCode* error) {
+    HttpMessage::ErrorCode error_placeholder;
     if (error == NULL)
         error = &error_placeholder;
 
@@ -152,7 +152,7 @@ bool HttpMessage::ParseHeaders(const StringPiece& data, HttpMessage::ErrorType* 
 
     int error_code = 0;
     bool result = m_headers.Parse(data.substr(pos + 1), &error_code);
-    *error = static_cast<HttpMessage::ErrorType>(error_code);
+    *error = static_cast<HttpMessage::ErrorCode>(error_code);
     return result;
 }
 

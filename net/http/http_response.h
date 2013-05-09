@@ -99,7 +99,7 @@ private:
     static const char* InternalStatusCodeToReasonPhrase(
         StatusCode status_code, const char* no_match);
     virtual void AppendStartLineToString(std::string* result) const;
-    virtual bool ParseStartLine(const StringPiece& data, ErrorType* error);
+    virtual bool ParseStartLine(const StringPiece& data, ErrorCode* error);
 
     StatusCode m_status;
 };
