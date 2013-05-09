@@ -1,0 +1,11 @@
+{
+   "address" : "beijing",
+   "address_id" : "434798436777434024",
+   "age" : 30,
+   "name" : {
+      "first_name" : "Ye",
+      "second_name" : "Shunping"
+   },
+   "people_type" : 0,
+   "phone_number" : [ "15100000000", "15100000001" ]
+}
