@@ -1,7 +1,7 @@
 // Copyright (c) 2013, The Toft Authors. All rights reserved.
 // Author: Ye Shunping <yeshunping@gmail.com>
 
-#include "toft/encoding/json_format.h"
+#include "toft/encoding/proto_json_format.h"
 
 #include <math.h>
 #include <stdlib.h>
@@ -27,7 +27,7 @@ TEST(JsonFormatUnittest, PrintToJson) {
     p.add_phone_number("15100000001");
     p.set_address_id(434798436777434024L);
     p.set_people_type(toft::HAN_ZU);
-    LOG(INFO)<< "text format for Message:\n" << p.Utf8DebugString();
+    LOG(INFO)<< "Text format for Message:\n" << p.Utf8DebugString();
 
     std::string styled_str;
     ProtoJsonFormat::PrintToStyledString(p, &styled_str);

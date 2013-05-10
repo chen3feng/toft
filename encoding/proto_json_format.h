@@ -1,8 +1,8 @@
 // Copyright (c) 2013, The Toft Authors. All rights reserved.
 // Author: Ye Shunping <yeshunping@gmail.com>
 
-#ifndef TOFT_ENCODING_JSON_FORMAT_H_
-#define TOFT_ENCODING_JSON_FORMAT_H_
+#ifndef TOFT_ENCODING_PROTO_JSON_FORMAT_H_
+#define TOFT_ENCODING_PROTO_JSON_FORMAT_H_
 
 #include <string>
 
@@ -40,4 +40,4 @@ private:
 
 }  // namespace toft
 
-#endif  // TOFT_ENCODING_JSON_FORMAT_H_
+#endif  // TOFT_ENCODING_PROTO_JSON_FORMAT_H_

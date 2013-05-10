@@ -1,7 +1,7 @@
 // Copyright (c) 2013, The Toft Authors. All rights reserved.
 // Author: Ye Shunping <yeshunping@gmail.com>
 
-#include "toft/encoding/json_format.h"
+#include "toft/encoding/proto_json_format.h"
 
 #include <stdio.h>
 
@@ -168,7 +168,7 @@ static bool SetSingleValueForMessage(const Reflection* reflection,
     case FieldDescriptor::CPPTYPE_INT64: {
         int64_t number = 0;
         if (!toft::StringToNumber(node.asString(), &number)) {
-            LOG(WARNING) << "fail to convert to interger:" << node.asString();
+            LOG(WARNING) << "Fail to convert to interger:" << node.asString();
             return false;
         }
         reflection->SetInt64(pb, field, number);
@@ -180,7 +180,7 @@ static bool SetSingleValueForMessage(const Reflection* reflection,
     case FieldDescriptor::CPPTYPE_UINT64: {
         uint64_t number = 0;
         if (!toft::StringToNumber(node.asString(), &number)) {
-            LOG(WARNING) << "fail to convert to interger:" << node.asString();
+            LOG(WARNING) << "Fail to convert to interger:" << node.asString();
             return false;
         }
         reflection->SetUInt64(pb, field, number);
@@ -230,7 +230,7 @@ static bool SetRepeatedValueForMessage(const Reflection* reflection,
     case FieldDescriptor::CPPTYPE_INT64: {
         int64_t number = 0;
         if (!toft::StringToNumber(sub_node.asString(), &number)) {
-            LOG(WARNING) << "fail to convert to interger:" << sub_node.asString();
+            LOG(WARNING) << "Fail to convert to interger:" << sub_node.asString();
             return false;
         }
         reflection->AddInt64(pb, field, number);
@@ -242,7 +242,7 @@ static bool SetRepeatedValueForMessage(const Reflection* reflection,
     case FieldDescriptor::CPPTYPE_UINT64: {
         uint64_t number = 0;
         if (!toft::StringToNumber(sub_node.asString(), &number)) {
-            LOG(WARNING) << "fail to convert to interger:" << sub_node.asString();
+            LOG(WARNING) << "Fail to convert to interger:" << sub_node.asString();
             return false;
         }
         reflection->AddUInt64(pb, field, number);
@@ -271,7 +271,7 @@ static bool SetRepeatedValueForMessage(const Reflection* reflection,
         LOG(INFO)<< "Not implemented";
         break;
         default:
-        CHECK(false) << "bad type:" << field->cpp_type();
+        CHECK(false) << "Bad type:" << field->cpp_type();
         break;
     }
     return true;
@@ -284,12 +284,12 @@ static bool SetValueForMessage(const std::string& field_name,
     const Descriptor* descriptor = pb->GetDescriptor();
     const FieldDescriptor* field = descriptor->FindFieldByName(field_name);
     if (field == NULL) {
-        LOG(ERROR) << "no field:" << field_name << ", type:" << pb->GetTypeName();
+        LOG(ERROR) << "No field:" << field_name << ", type:" << pb->GetTypeName();
         return false;
     }
     if (field->is_repeated()) {
         if (value.type() != Json::arrayValue) {
-            LOG(INFO) << "expect array, but real time is:" << value.type();
+            LOG(INFO) << "Expect array, but real time is:" << value.type();
             return false;
         }
         Json::Value::const_iterator it = value.begin();
@@ -304,18 +304,18 @@ static bool SetValueForMessage(const std::string& field_name,
 
 static bool ParseFromJsonValue(const Json::Value& root, Message* pb) {
     std::string pb_type = pb->GetTypeName();
-    VLOG(20) << "set info for type:" << pb_type;
+    VLOG(20) << "Set info for type:" << pb_type;
 
     Json::Value::Members members = root.getMemberNames();
     for (size_t i = 0; i < members.size(); ++i) {
-        VLOG(21) << "member:" << members[i];
+        VLOG(21) << "Member:" << members[i];
         const std::string& field_name = members[i];
         Json::Value sub_node;
         sub_node = root.get(field_name, sub_node);
         if (sub_node.isNull()) {
             const FieldDescriptor* field = pb->GetDescriptor()->FindFieldByName(field_name);
             if (field && field->is_required()) {
-                LOG(ERROR) << "isNull, but it required, field name:" << field_name;
+                LOG(ERROR) << "IsNull, but it required, field name:" << field_name;
                 return false;
             }
         } else {

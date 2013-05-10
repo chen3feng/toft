@@ -27,8 +27,8 @@ proto_library(
 )
 
 cc_library(
-    name = 'json_format',
-    srcs = 'json_format.cpp',
+    name = 'proto_json_format',
+    srcs = 'proto_json_format.cpp',
     deps = ['//thirdparty/glog:glog',
             '//thirdparty/jsoncpp:jsoncpp',
             '//thirdparty/protobuf:protobuf',
@@ -36,9 +36,9 @@ cc_library(
 )
 
 cc_test(
-    name = 'json_format_unittest',
-    srcs = 'json_format_unittest.cpp',
-    deps = [':json_format',
+    name = 'proto_json_format_unittest',
+    srcs = 'proto_json_format_unittest.cpp',
+    deps = [':proto_json_format',
             ':unittest_proto',
             '//toft/storage/file:file',
             ],
