@@ -1,0 +1,25 @@
+// Copyright (c) 2013, The Toft Authors. All rights reserved.
+// Author: Ye Shunping <yeshunping@gmail.com>
+
+package toft;
+
+enum PeopleType {
+    HAN_ZU  = 0;
+    ZANG_ZU = 1;
+    DAI_ZU  = 2;
+    MAN_ZU  = 3;
+}
+
+message NameInfo {
+    required string first_name  = 1;
+    required string second_name = 2;
+}
+
+message Person {
+    required NameInfo name        = 1;
+    required int32 age            = 2;
+    optional string address       = 3;
+    repeated string phone_number  = 4;
+    required int64 address_id     = 5;
+    required PeopleType people_type = 6;
+}
