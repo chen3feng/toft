@@ -12,7 +12,7 @@
 namespace toft {
 
 // Used for ASCII encoding only.
-// If you want to processe locale ralated text, please using <ctype.h>
+// If you want to process locale ralated text, please using <ctype.h>
 struct Ascii
 {
 private:
