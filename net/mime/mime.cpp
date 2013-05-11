@@ -11,6 +11,7 @@
 #include <vector>
 
 #include "toft/base/string/algorithm.h"
+
 #include "thirdparty/glog/logging.h"
 
 namespace toft {
@@ -41,7 +42,7 @@ MimeType::MapType& MimeType::DoGetMap()
         SplitStringByAnyOf(line, " \t", &result);
         for (std::vector<std::string>::iterator iter = result.begin() + 1;
              iter != result.end(); ++iter) {
-            std::string ext = mime_map[*iter];
+            const std::string& ext = mime_map[*iter];
             if (ext.empty()) {
                 mime_map[*iter] = result[0];
             }
@@ -71,8 +72,8 @@ bool MimeType::Set(const std::string& mime)
 
 bool MimeType::Match(const MimeType& mime) const
 {
-    return ((m_type == mime.m_type) || (m_type == "*") || (mime.m_type == "*"))
-            && ((m_subtype == mime.m_subtype) || (m_subtype == "*") || (mime.m_subtype == "*"));
+    return (m_type == mime.m_type || m_type == "*" || mime.m_type == "*") &&
+           (m_subtype == mime.m_subtype || m_subtype == "*" || mime.m_subtype == "*");
 }
 
 bool MimeType::Match(const std::string& mime) const
