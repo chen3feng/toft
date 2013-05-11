@@ -6,11 +6,15 @@
 
 #include <string>
 
-#include "thirdparty/google/protobuf/message.h"
 #include "toft/base/uncopyable.h"
 
 namespace Json {
 class Value;
+}
+namespace google {
+namespace protobuf {
+class Message;
+}
 }
 
 namespace toft {
