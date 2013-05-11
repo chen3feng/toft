@@ -270,8 +270,8 @@ static bool SetRepeatedValueForMessage(const Reflection* reflection,
     case FieldDescriptor::CPPTYPE_MESSAGE:
         LOG(INFO)<< "Not implemented";
         break;
-        default:
-        CHECK(false) << "Bad type:" << field->cpp_type();
+    default:
+        LOG(FATAL) << "Bad type:" << field->cpp_type();
         break;
     }
     return true;
@@ -315,7 +315,7 @@ static bool ParseFromJsonValue(const Json::Value& root, Message* pb) {
         if (sub_node.isNull()) {
             const FieldDescriptor* field = pb->GetDescriptor()->FindFieldByName(field_name);
             if (field && field->is_required()) {
-                LOG(ERROR) << "IsNull, but it required, field name:" << field_name;
+                LOG(ERROR) << "Missing required field:" << field_name;
                 return false;
             }
         } else {
