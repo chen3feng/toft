@@ -45,7 +45,7 @@ TEST_F(HttpClientTest, GetWithoutProxy)
     HttpClient client;
     HttpResponse response;
     HttpClient::Options options;
-    options.Headers().Add("Content-Type", "text/plain");
+    options.AddHeader("Content-Type", "text/plain");
     client.SetUserAgent("TestDownloader");
     HttpClient::ErrorCode error;
     EXPECT_TRUE(client.Get(m_server_address + "/robots.txt", &response, &error));

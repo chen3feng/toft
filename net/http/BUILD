@@ -25,6 +25,14 @@ cc_library(
     ]
 )
 
+cc_library(
+    name = 'http',
+    deps = [
+        ':_http_client',
+        ':_http_message',
+    ]
+)
+
 cc_test(
     name = 'http_client_test',
     srcs = 'http_client_test.cpp',
