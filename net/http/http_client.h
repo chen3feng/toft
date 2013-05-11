@@ -3,7 +3,6 @@
 //
 // Author: DongPing HUANG <hdping99@gmail.com>
 // Created: 11/05/11
-// Description:
 
 #ifndef TOFT_NET_HTTP_HTTP_CLIENT_H
 #define TOFT_NET_HTTP_HTTP_CLIENT_H
@@ -41,7 +40,7 @@ public:
     };
 
     // query error message from error code
-    static const char* GetErrorMessage(ErrorCode error);
+    static const char* GetErrorMessage(ErrorCode error_code);
 
 public:
     // Per-request options
@@ -50,7 +49,7 @@ public:
         Options() : m_encoding(""), m_max_response_length(0) {}
         Options& SetAcceptLanguage(const std::string& languages);
         const std::string& AccpetLanguage() const;
-        HttpHeaders& Headers();
+        Options& AddHeader(const std::string& name, const std::string& value);
         const HttpHeaders& Headers() const;
         Options& SetMaxResponseLength(size_t length);
         size_t MaxResponseLength() const;
@@ -99,7 +98,6 @@ public:
               ErrorCode* error = NULL);
 
     // Request url with PUT method, output stored into response object.
-    // Some options supported, for example, http socket proxy.
     bool Put(const std::string& url,
              const std::string& data,
              HttpResponse* response,
@@ -114,7 +112,6 @@ public:
              ErrorCode* error = NULL);
 
     // Request url with DELETE method, output stored into response object.
-    // Some options supported, for example, http socket proxy.
     bool Delete(const std::string& url,
                 HttpResponse* response,
                 ErrorCode* error = NULL);
@@ -133,12 +130,6 @@ private:
                  const Options& options,
                  HttpResponse *response,
                  ErrorCode *error);
-
-private:
-    static const struct ErrorMessage {
-        ErrorCode err_code;
-        const char* err_msg;
-    } kErrorMessage[];
 
 private:
     std::string m_proxy;

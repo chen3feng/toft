@@ -3,7 +3,6 @@
 //
 // Author: DongPing HUANG <hdping99@gmail.com>
 // Created: 11/05/11
-// Description:
 
 #include "toft/net/http/http_client.h"
 
@@ -364,35 +363,19 @@ private:
 
 } // namespace
 
-const HttpClient::ErrorMessage HttpClient::kErrorMessage[] =
+HttpClient::Options& HttpClient::Options::AddHeader(const std::string& name,
+                                                    const std::string& value)
 {
-    { SUCCESS,                          "Success"                           },
-    { ERROR_INVALID_URI_ADDRESS,        "Invalid URI address"               },
-    { ERROR_INVALID_PROXY_ADDRESS,      "Invalid proxy address"             },
-    { ERROR_INVALID_RESPONSE_HEADER,    "Invalid response header"           },
-    { ERROR_FAIL_TO_RESOLVE_ADDRESS,    "Failed to resolve address"         },
-    { ERROR_FAIL_TO_SEND_REQUEST,       "Failed to send request"            },
-    { ERROR_FAIL_TO_GET_RESPONSE,       "Failed to get response"            },
-    { ERROR_FAIL_TO_CONNECT_SERVER,     "Failed to connect to server"       },
-    { ERROR_FAIL_TO_READ_CHUNKSIZE,     "Failed to read chunk size"         },
-    { ERROR_PROTOCAL_NOT_SUPPORTED,     "Protocal is not supported"         },
-    { ERROR_CONTENT_TYPE_NOT_SUPPORTED, "Content type is not supported yet" },
-};
+    m_headers.Add(name, value);
+    return *this;
+}
 
-HttpHeaders&
-HttpClient::Options::Headers()
+const HttpHeaders& HttpClient::Options::Headers() const
 {
     return m_headers;
 }
 
-const HttpHeaders&
-HttpClient::Options::Headers() const
-{
-    return m_headers;
-}
-
-HttpClient::Options&
-HttpClient::Options::SetMaxResponseLength(size_t length)
+HttpClient::Options& HttpClient::Options::SetMaxResponseLength(size_t length)
 {
     m_max_response_length = length;
     return *this;
@@ -412,13 +395,36 @@ HttpClient::~HttpClient()
 {
 }
 
-const char* HttpClient::GetErrorMessage(ErrorCode err_code)
+const char* HttpClient::GetErrorMessage(ErrorCode error_code)
 {
-    size_t size = sizeof(kErrorMessage) / sizeof(kErrorMessage[0]);
-    for (size_t k = 0; k < size; ++k) {
-        if (err_code == kErrorMessage[k].err_code) {
-            return kErrorMessage[k].err_msg;
-        }
+    switch (error_code) {
+    case SUCCESS:
+        return "Success";
+    case ERROR_INVALID_URI_ADDRESS:
+        return "Invalid URI address";
+    case ERROR_INVALID_PROXY_ADDRESS:
+        return "Invalid proxy address";
+    case ERROR_INVALID_RESPONSE_HEADER:
+        return "Invalid response header";
+    case ERROR_FAIL_TO_RESOLVE_ADDRESS:
+        return "Failed to resolve address";
+    case ERROR_FAIL_TO_SEND_REQUEST:
+        return "Failed to send request";
+    case ERROR_FAIL_TO_GET_RESPONSE:
+        return "Failed to get response";
+    case ERROR_FAIL_TO_CONNECT_SERVER:
+        return "Failed to connect to server";
+    case ERROR_FAIL_TO_READ_CHUNKSIZE:
+        return "Failed to read chunk size";
+    case ERROR_PROTOCAL_NOT_SUPPORTED:
+        return "Protocal is not supported";
+    case ERROR_CONTENT_TYPE_NOT_SUPPORTED:
+        return "Content type is not supported yet";
+    case ERROR_HTTP_STATUS_CODE:
+        return "Error http status code";
+    case ERROR_TOO_MANY_REDIRECTS:
+        return "Too many redirections";
+    // DO NOT ADD default: here, or not handled error_code will be ignored.
     }
 
     return NULL;
