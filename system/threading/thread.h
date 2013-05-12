@@ -66,7 +66,7 @@ public:
 private:
     // Make the compile check misuse Thread as BaseThread
     // Note the prototype is different with BaseThread::Entry
-    virtual void Entry() const;
+    virtual void Entry() const {}
 
 private:
     Impl* m_pimpl;
