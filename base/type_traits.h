@@ -8,7 +8,7 @@
 #define TOFT_BASE_TYPE_TRAITS_H
 #pragma once
 
-#include <features.h>
+#include "base/cxx11.h"
 
 #if __GNUC_PREREQ(4, 1)
 #define TOFT_HAS_STD_TR1_TYPE_TRAITS
