@@ -85,10 +85,10 @@ public:
         Unlock();
     }
 
-public: // only for test and debug, should not be used in normal code logical
+public: // Only for test and debug, should not be used in normal code logical
     void AssertReaderLocked() const
     {
-        // accessing pthread private data: nonportable but no other way
+        // Accessing pthread private data: nonportable but no other way
         assert(m_lock.__data.__nr_readers != 0);
     }
 
