@@ -25,6 +25,17 @@ cc_library(
     ]
 )
 
+cc_library(
+    name = 'http_server',
+    srcs = [
+        'http_handler.cpp',
+        'http_server.cpp',
+    ],
+    deps = [
+        ':http_types'
+    ]
+)
+
 cc_test(
     name = 'http_client_test',
     srcs = 'http_client_test.cpp',

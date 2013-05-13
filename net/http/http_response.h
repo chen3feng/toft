@@ -16,7 +16,7 @@
 namespace toft {
 
 // Describes a http response.
-class HttpResponse: public HttpMessage {
+class HttpResponse : public HttpMessage {
 public:
     // See RFC2616: 10 Status Code Definition
     enum StatusCode {
