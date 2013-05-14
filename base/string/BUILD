@@ -40,18 +40,12 @@ cc_library(
     ]
 )
 
-proto_library(
-    name = 'concat_test_proto',
-    srcs = 'concat_test.proto'
-)
-
 cc_test(
     name = 'concat_test',
     srcs = ['concat_test.cpp'],
     deps = [
         ':_concat',
         './format:_format',
-        ':concat_test_proto',
         '//thirdparty/perftools:profiler'
     ],
     optimize = 'O3'
