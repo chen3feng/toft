@@ -316,7 +316,7 @@ char* WriteDoubleToBuffer(double value, char* buffer)
         strcpy(buffer, "-inf"); // NOLINT
         return buffer + 4;
     }
-    else if (IsNaN(value))
+    else if (isnan(value))
     {
         strcpy(buffer, "nan"); // NOLINT
         return buffer + 3;
@@ -344,7 +344,7 @@ char* WriteFloatToBuffer(float value, char* buffer)
         strcpy(buffer, "-inf"); // NOLINT
         return buffer + 4;
     }
-    else if (IsNaN(value))
+    else if (isnan(value))
     {
         strcpy(buffer, "nan"); // NOLINT
         return buffer + 3;

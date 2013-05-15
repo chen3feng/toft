@@ -1,7 +1,8 @@
-// Copyright (c) 2011, The Toft Authors. All rights reserved.
-/// @brief Convert string to number and number to string
-/// @author hsiaokangliu
-/// @date 2010-11-25
+// Copyright (c) 2011, The Toft Authors.
+// All rights reserved.
+// @author hsiaokangliu
+// @date 2010-11-25
+// @brief Convert string to number and number to string
 
 #ifndef TOFT_BASE_STRING_NUMBER_H
 #define TOFT_BASE_STRING_NUMBER_H
@@ -105,12 +106,6 @@ const int kMaxIntegerStringSize = 32;
 const int kMaxDoubleStringSize = 32;
 const int kMaxFloatStringSize = 24;
 
-/// @brief judge a number if it's nan
-inline bool IsNaN(double value)
-{
-    return !(value > value) && !(value <= value);
-}
-
 /// @brief write number to buffer as string
 /// @return end of result
 /// @note without '\0' appended
@@ -137,6 +132,7 @@ void AppendIntegerToString(long long n, std::string* str);
 void AppendIntegerToString(unsigned long long n, std::string* str);
 
 /// @brief convert number to hex string
+/// @return end of result
 /// buffer size should be at least [2 * sizeof(value) + 1]
 char* WriteHexUInt16ToBuffer(uint16_t value, char* buffer);
 char* WriteHexUInt32ToBuffer(uint32_t value, char* buffer);

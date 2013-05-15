@@ -6,8 +6,8 @@
 // Description: test string concat
 
 #include "toft/base/string/concat.h"
-#include "toft/base/string/concat_test.pb.h"
 #include "toft/base/string/format.h"
+
 #include "thirdparty/gtest/gtest.h"
 #include "thirdparty/perftools/profiler.h"
 #include "thirdparty/protobuf/text_format.h"
@@ -204,40 +204,6 @@ TEST_F(PerformanceTest, StringConcatTo)
                        "ABCD",
                        1, 2, 3);
     }
-}
-
-TEST_F(PerformanceTest, ProtoBuf)
-{
-    toft::base::string::concat::test::TestMessage msg;
-    msg.set_s1("hello");
-    msg.set_s2(",");
-    msg.set_s3("world");
-    msg.set_n4(100000000);
-    msg.set_n5(200000000);
-    msg.set_n6(300000000);
-    msg.set_n7(400000000);
-    msg.set_n8(500000000);
-    msg.set_f9("\xFF\x95\x27");
-    msg.mutable_m10()->set_s1("ABCD");
-    msg.mutable_m10()->set_s2("ABCD");
-    msg.mutable_m10()->add_n3(1);
-    msg.mutable_m10()->add_n3(2);
-    msg.mutable_m10()->add_n3(3);
-    std::string str;
-    google::protobuf::TextFormat::PrintToString(msg, &str);
-    std::cout << str << std::endl;
-    std::string result;
-    for (int i = 0; i < kTestLoopCount; ++i)
-        msg.SerializeToString(&result);
-}
-
-int main(int argc, char** argv)
-{
-    ProfilerStart(argv[0]);
-    testing::InitGoogleTest(&argc, argv);
-    int n = RUN_ALL_TESTS();
-    ProfilerStop();
-    return n;
 }
 
 } // namespace toft

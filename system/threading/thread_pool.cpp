@@ -114,7 +114,7 @@ bool ThreadPool::NeedNewThread() {
 void ThreadPool::Task::Run() const {
     if (callback) {
         callback->Run();
-    } else if(function) {
+    } else if (function) {
         function();
     }
 }
@@ -230,13 +230,12 @@ void ThreadPool::AddThreadNodeToList() {
     } else {
         thread_node = new ThreadNode();
     }
-    thread_node->Initialize(std::bind(&ThreadPool::ThreadRuntine, this, thread_node));
     m_working_threads.push_back(thread_node);
     m_cur_thread_num++;
     if (m_stack_size > 0) {
         thread_node->SetStackSize(m_stack_size);
     }
-    thread_node->Start();
+    thread_node->Start(std::bind(&ThreadPool::ThreadRuntine, this, thread_node));
 }
 
 } // namespace toft

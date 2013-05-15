@@ -36,20 +36,6 @@ typedef ::testing::Types<short, unsigned short, int, unsigned int,
                          double, long double> NumericTypes;
 INSTANTIATE_TYPED_TEST_CASE_P(NumericTypes, StringNumberTest, NumericTypes);
 
-TEST(StringNumber, IsNaN)
-{
-    float f = 1.000;
-    ASSERT_FALSE(IsNaN(f));
-    f = 1.223e+20;
-    ASSERT_FALSE(IsNaN(f));
-#ifdef __GNUC__
-    f = INFINITY;
-    ASSERT_FALSE(IsNaN(f));
-#endif
-    f = sqrt(-1.0);
-    ASSERT_TRUE(IsNaN(f));
-}
-
 TEST(StringNumber, IntegerToStringBuffer)
 {
     char buffer[1024];

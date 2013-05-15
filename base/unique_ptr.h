@@ -121,12 +121,10 @@ public:
     // Assigns ptr to the stored pointer
     void reset(pointer ptr = pointer())
     {
-        if (m_ptr != ptr)
-        {
-            if (m_ptr)
-                m_deleter(m_ptr);
-            m_ptr = ptr;
-        }
+        assert(!ptr || ptr != m_ptr);
+        std::swap(m_ptr, ptr);
+        if (ptr)
+            m_deleter(ptr);
     }
 
     // Get stored pointer

@@ -39,15 +39,6 @@ void ThreadGroup::Add(const std::function<void ()>& callback, size_t count)
     }
 }
 
-void ThreadGroup::Start()
-{
-    assert(Size() > 0);
-    for (size_t i = 0; i < m_threads.size(); ++i)
-    {
-        m_threads[i]->Start();
-    }
-}
-
 void ThreadGroup::Join()
 {
     // TODO(chen3feng): using pthread_barrier
