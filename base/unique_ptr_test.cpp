@@ -40,7 +40,7 @@ TEST_F(UniquePtrTest, Release) {
 }
 
 TEST_F(UniquePtrTest, Reset) {
-    int* q = p.get();
+    int* q = new int(1);
     p.reset(q);
     EXPECT_EQ(q, p.get());
 }

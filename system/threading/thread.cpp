@@ -34,11 +34,6 @@ public:
         m_function = function;
     }
 
-    bool IsInitialized() const
-    {
-        return m_function != NULL;
-    }
-
 private:
     virtual void Entry()
     {
@@ -74,6 +69,7 @@ Thread::Thread(): m_pimpl(new Impl())
 Thread::Thread(const std::function<void ()>& function) :
     m_pimpl(new Impl(function))
 {
+    m_pimpl->Start();
 }
 
 Thread::~Thread()
@@ -82,27 +78,20 @@ Thread::~Thread()
     m_pimpl = NULL;
 }
 
-void Thread::Initialize(const std::function<void ()>& function)
-{
-    m_pimpl->Initialize(function);
-}
-
 void Thread::SetStackSize(size_t size)
 {
     return m_pimpl->SetStackSize(size);
 }
 
-void Thread::Start()
+void Thread::Start(const std::function<void ()>& function)
 {
-    if (!m_pimpl->IsInitialized())
-        TOFT_CHECK_ERRNO_ERROR(EINVAL);
+    m_pimpl->Initialize(function);
     m_pimpl->Start();
 }
 
-bool Thread::TryStart()
+bool Thread::TryStart(const std::function<void ()>& function)
 {
-    if (!m_pimpl->IsInitialized())
-        TOFT_CHECK_ERRNO_ERROR(EINVAL);
+    m_pimpl->Initialize(function);
     return m_pimpl->TryStart();
 }
 
