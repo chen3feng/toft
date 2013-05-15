@@ -37,8 +37,8 @@ TEST(ThisThread, IsMainThread)
 {
     EXPECT_TRUE(ThisThread::IsMain());
     bool is_main = true;
-    Thread thread(std::bind(IsMainThreadTestThread, &is_main));
-    EXPECT_TRUE(thread.TryStart());
+    Thread thread;
+    EXPECT_TRUE(thread.TryStart(std::bind(IsMainThreadTestThread, &is_main)));
     thread.Join();
     EXPECT_FALSE(is_main);
 }
