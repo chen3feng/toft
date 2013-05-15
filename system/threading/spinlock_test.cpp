@@ -37,7 +37,6 @@ TEST(MutexTest, ThreadMutex)
     int n = 0;
     Mutex lock;
     ThreadGroup thread_group(std::bind(TestThread, &n, &lock), 4);
-    thread_group.Start();
     thread_group.Join();
 }
 

@@ -25,18 +25,15 @@ public:
     explicit Thread(const std::function<void ()>& function);
     virtual ~Thread();
 
-    // Must be called before Start if default constructed.
-    void Initialize(const std::function<void ()>& function);
-
     // Can only call before Start.
     void SetStackSize(size_t size);
 
     // A thread will not be started unless Start is called.
     // If failed, fatal error occured.
-    void Start();
+    void Start(const std::function<void ()>& function);
 
     // If failed because limitation, return false.
-    bool TryStart();
+    bool TryStart(const std::function<void ()>& function);
 
     // Wait for a thread finish.
     // Only not detached thread call be joined.
