@@ -37,7 +37,6 @@ const int ThreadGroupTest::kCount;
 TEST_F(ThreadGroupTest, Test)
 {
     ThreadGroup thread_group(std::bind(&ThreadGroupTest::TestThread, this), 4);
-    thread_group.Start();
     thread_group.Join();
     EXPECT_GE(n, kCount);
     EXPECT_EQ(4U, thread_group.Size());
@@ -50,7 +49,6 @@ TEST_F(ThreadGroupTest, Add)
     EXPECT_EQ(3U, thread_group.Size());
     thread_group.Add(std::bind(&ThreadGroupTest::TestThread, this));
     EXPECT_EQ(4U, thread_group.Size());
-    thread_group.Start();
     thread_group.Join();
     EXPECT_GE(n, kCount);
     EXPECT_EQ(4U, thread_group.Size());

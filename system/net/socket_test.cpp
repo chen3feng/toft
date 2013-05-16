@@ -3,6 +3,7 @@
 
 #include "toft/system/net/socket.h"
 #include "toft/system/threading/thread.h"
+#
 #include "thirdparty/gtest/gtest.h"
 
 namespace toft {
@@ -55,8 +56,7 @@ protected:
         SocketAddressInet address("127.0.0.1:0");
         EXPECT_TRUE(m_listener.Bind(address));
         EXPECT_TRUE(m_listener.GetLocalAddress(&m_address));
-        m_thread.Initialize(std::bind(&DatagramSocketTest::IoThread, this));
-        m_thread.Start();
+        m_thread.Start(std::bind(&DatagramSocketTest::IoThread, this));
     }
 
     ~DatagramSocketTest()
@@ -119,8 +119,7 @@ protected:
         EXPECT_TRUE(m_listener.Bind(address));
         EXPECT_TRUE(m_listener.GetLocalAddress(&m_address));
         EXPECT_TRUE(m_listener.Listen());
-        m_thread.Initialize(std::bind(&StreamSocketTest::IoThread, this));
-        m_thread.Start();
+        m_thread.Start(std::bind(&StreamSocketTest::IoThread, this));
     }
     ~StreamSocketTest()
     {
