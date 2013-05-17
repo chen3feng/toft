@@ -9,21 +9,99 @@
 
 #include "toft/storage/file/local_file.h"
 
+#include <dirent.h>
 #include <string.h>
 #include <unistd.h>
 #include <sys/stat.h>
 
 #include "toft/base/string/algorithm.h"
 #include "toft/base/unique_ptr.h"
+#include "toft/storage/path/path.h"
+#include "toft/text/wildcard.h"
 
 namespace toft {
+namespace {
+
+class LocalFileIterator : public FileIterator {
+public:
+    explicit LocalFileIterator(DIR* dp, const std::string& dir,
+                               const std::string& pattern,
+                               int include_types, int exclude_types)
+        : m_dp(dp, closedir), m_dir(dir), m_pattern(pattern),
+          m_include_types(include_types), m_exclude_types(exclude_types) {}
+    ~LocalFileIterator() {}
+
+    bool GetNext(FileEntry* entry) {
+        for (;;) {
+            dirent* de = readdir(m_dp.get()); // NOLINT(runtime/threadsafe_fn)
+            if (!de)
+                return false;
+
+            if (strcmp(de->d_name, ".") == 0 || strcmp(de->d_name, "..") == 0) {
+                continue;
+            }
+
+            int type = GetType(de);
+            if ((type & m_include_types) == 0)
+                continue;
+            if ((type & m_exclude_types) != 0)
+                continue;
+
+            if (!Wildcard::Match(m_pattern, de->d_name))
+                continue;
+
+            entry->type = type;
+            entry->name = de->d_name;
+            return true;
+        }
+    }
+
+private:
+    int GetType(dirent* de) const {
+        int type = FileType_None;
+        if (de->d_type != DT_UNKNOWN) { // Not all filesystem support d_type
+            switch (de->d_type) {
+            case DT_REG:
+                type |= FileType_Regular;
+                break;
+            case DT_DIR:
+                type |= FileType_Directory;
+                break;
+            case DT_LNK:
+                type |= FileType_Link;
+                break;
+            }
+        } else {
+            std::string path = Path::Join(m_dir, de->d_name);
+            struct stat buf;
+            if (lstat(path.c_str(), &buf) == 0) {
+                if (S_ISREG(buf.st_mode))
+                    type |= FileType_Regular;
+                if (S_ISDIR(buf.st_mode))
+                    type |= FileType_Directory;
+                if (S_ISLNK(buf.st_mode))
+                    type |= FileType_Link;
+            }
+        }
+        return type;
+    }
+
+private:
+    std::unique_ptr<DIR, int(*)(DIR*)> m_dp; // NOLINT
+    std::string m_dir;
+    std::string m_pattern;
+    int m_include_types;
+    int m_exclude_types;
+};
+
+} // namespace
 
 /////////////////////////////////////////////////////////////////////////////
 // LocalFileSystem
 
 File* LocalFileSystem::Open(const std::string& file_path, const char* mode)
 {
-    std::unique_ptr<FILE, int (*)(FILE*)>
+    std::unique_ptr<FILE, int (*)(FILE*)> // NOLINT
         fp(fopen(file_path.c_str(), mode), &fclose);
     if (!fp)
         return NULL;
@@ -40,6 +118,10 @@ bool LocalFileSystem::Delete(const std::string& file_path)
     return remove(file_path.c_str()) == 0;
 }
 
+bool LocalFileSystem::Rename(const std::string& from, const std::string& to) {
+    return rename(from.c_str(), to.c_str()) == 0;
+}
+
 bool LocalFileSystem::GetTimes(const std::string& file_path, FileTimes* times) {
     struct stat buf;
     int ret = stat(file_path.c_str(), &buf);
@@ -49,6 +131,18 @@ bool LocalFileSystem::GetTimes(const std::string& file_path, FileTimes* times) {
     times->modify_time = buf.st_mtime;
     times->change_time = buf.st_ctime;
     return true;
+}
+
+FileIterator* LocalFileSystem::Iterate(const std::string& dir,
+                                       const std::string& pattern,
+                                       int include_types,
+                                       int exclude_types) {
+    // NOLINT
+    std::unique_ptr<DIR, int(*)(DIR*)> dp(opendir(dir.c_str()), closedir);
+    if (!dp)
+        return NULL;
+    return new LocalFileIterator(dp.release(), dir, pattern, include_types,
+                                 exclude_types);
 }
 
 TOFT_REGISTER_FILE_SYSTEM("local", LocalFileSystem);
