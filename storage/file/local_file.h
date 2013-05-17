@@ -20,6 +20,10 @@ public:
     virtual bool Delete(const std::string& file_path);
     virtual bool Rename(const std::string& from, const std::string& to);
     virtual bool GetTimes(const std::string& file_path, FileTimes* times);
+    virtual FileIterator* Iterate(const std::string& dir,
+                                  const std::string& pattern,
+                                  int include_types,
+                                  int exclude_types);
 };
 
 // Represent a file object on local mounted file system

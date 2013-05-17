@@ -24,6 +24,33 @@ struct FileTimes {
     time_t change_time;
 };
 
+// File type flags
+enum FileType {
+    FileType_None = 0,      // Nothing
+    FileType_Regular = 1,   // Regular file
+    FileType_Directory = 2, // Directory
+    FileType_Link = 4,      // Symbolic Link
+    FileType_All = FileType_Regular | FileType_Directory | FileType_Link,
+};
+
+// File iteration entry.
+struct FileEntry {
+    int type; // FileType enum combination.
+    std::string name; // Without dir.
+};
+
+// To iterate file entries in a a dir
+class FileIterator {
+protected:
+    FileIterator() {}
+public:
+    virtual ~FileIterator() {}
+
+    // Return true if next file entry exist and obtained.
+    // Return false means iteration is complete.
+    virtual bool GetNext(FileEntry* entry) = 0;
+};
+
 // A abstruct object.
 //
 // All errors are reported by errno.
@@ -92,6 +119,12 @@ public:
     static bool ReadLines(const std::string& file_path,
                           std::vector<std::string>* lines);
 
+    // Get a iterator to iterate the entries of the dir.
+    static FileIterator* Iterate(const std::string& dir,
+                                 const std::string& pattern = "*",
+                                 int include_type = FileType_All,
+                                 int exclude_type = FileType_None);
+
 private:
     static FileSystem* GetFileSystemByPath(const std::string& file_path);
 };
@@ -113,6 +146,10 @@ public:
                          size_t max_size);
     virtual bool ReadLines(const std::string& file_path,
                            std::vector<std::string>* lines);
+    virtual FileIterator* Iterate(const std::string& dir,
+                                  const std::string& pattern,
+                                  int include_types,
+                                  int exclude_types) = 0;
 };
 
 // Defile the file_system class registry, user can register their own

@@ -110,5 +110,11 @@ bool File::ReadLines(const std::string& file_path, std::vector<std::string>* lin
     return fs->ReadLines(file_path, lines);
 }
 
+FileIterator* File::Iterate(const std::string& dir, const std::string& pattern,
+                            int include_types, int exclude_types) {
+    FileSystem* fs = GetFileSystemByPath(dir);
+    return fs->Iterate(dir, pattern, include_types, exclude_types);
+}
+
 } // namespace toft
 

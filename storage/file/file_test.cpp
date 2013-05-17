@@ -10,7 +10,7 @@
 
 namespace toft {
 
-const char* const kFileName = "testfile.txt";
+const char* const kFileName = "testdata/testfile.txt";
 
 class FileTest : public testing::Test {
 protected:
@@ -23,7 +23,16 @@ TEST_F(FileTest, Open) {
     EXPECT_TRUE(fp);
 }
 
+TEST_F(FileTest, OpenDirAsFile)
+{
+    scoped_ptr<File> fp(File::Open("/bin", "wb"));
+    ASSERT_FALSE(fp);
+}
+
 TEST_F(FileTest, Close) {
+    scoped_ptr<File> fp(File::Open(kFileName, "r"));
+    EXPECT_TRUE(fp->Close());
+    EXPECT_TRUE(fp->Close());
 }
 
 TEST_F(FileTest, Read) {
@@ -144,10 +153,45 @@ TEST_F(FileTest, GetTimes) {
     EXPECT_GT(times.change_time, 0);
 }
 
-TEST_F(FileTest, OpenDirAsFile)
-{
-    scoped_ptr<File> fp(File::Open("/bin", "wb"));
-    ASSERT_FALSE(fp);
+TEST_F(FileTest, Iterate) {
+    scoped_ptr<FileIterator> i(File::Iterate("testdata", "*"));
+    FileEntry entry;
+    while (i->GetNext(&entry)) {
+        if (entry.name == "testfile.txt")
+            EXPECT_EQ(FileType_Regular, entry.type);
+        else if (entry.name == "testfile.link")
+            EXPECT_EQ(FileType_Link, entry.type);
+        else if (entry.name == "dir")
+            EXPECT_EQ(FileType_Directory, entry.type);
+        else
+            EXPECT_TRUE(false) << "Unknown file: " << entry.name;
+    }
+}
+
+TEST_F(FileTest, IterateWithPattern) {
+    scoped_ptr<FileIterator> i(File::Iterate("testdata", "*.txt"));
+    ASSERT_TRUE(i);
+    FileEntry entry;
+    while (i->GetNext(&entry)) {
+        ASSERT_EQ("testfile.txt", entry.name);
+    }
+}
+
+TEST_F(FileTest, IterateWithIncludeTypes) {
+    scoped_ptr<FileIterator> i(File::Iterate("testdata", "*", FileType_Link));
+    FileEntry entry;
+    while (i->GetNext(&entry)) {
+        ASSERT_EQ("testfile.link", entry.name);
+    }
+}
+
+TEST_F(FileTest, IterateWithExcludeTypes) {
+    scoped_ptr<FileIterator> i(File::Iterate("testdata", "*", FileType_All,
+                                             FileType_Directory));
+    FileEntry entry;
+    while (i->GetNext(&entry)) {
+        ASSERT_NE("dir", entry.name);
+    }
 }
 
 } // namespace toft
