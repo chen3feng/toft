@@ -9,6 +9,8 @@
 
 #include <stdint.h>
 #include <time.h>
+#include <string>
+#include <vector>
 #include "toft/base/class_registry.h"
 #include "toft/base/uncopyable.h"
 
@@ -27,10 +29,12 @@ struct FileTimes {
 // All errors are reported by errno.
 class File {
     TOFT_DECLARE_UNCOPYABLE(File);
+
 protected:
     // You can't construct a File object, you must carete it by the static Open
     // method.
     File();
+
 public:
     virtual ~File();
 
@@ -43,6 +47,8 @@ public:
     // Return the number of bytes read.
     // Return -1 if error occurs.
     virtual int64_t Write(const void* buffer, int64_t size) = 0;
+
+    // Write of all user-space buffered data to file system.
     virtual bool Flush() = 0;
 
     // Close a file object. After closed, all other operations are invalid.
@@ -71,6 +77,9 @@ public:
     // Delete file
     static bool Delete(const std::string& file_path);
 
+    // Rename file
+    static bool Rename(const std::string& from, const std::string& to);
+
     // Get times attributes of path
     static bool GetTimes(const std::string& file_path, FileTimes* times);
 
@@ -98,6 +107,7 @@ public:
     virtual File* Open(const std::string& file_path, const char* mode) = 0;
     virtual bool Exists(const std::string& file_path) = 0;
     virtual bool Delete(const std::string& file_path) = 0;
+    virtual bool Rename(const std::string& from, const std::string& to) = 0;
     virtual bool GetTimes(const std::string& file_path, FileTimes* times) = 0;
     virtual bool ReadAll(const std::string& file_path, std::string* buffer,
                          size_t max_size);

@@ -23,7 +23,7 @@ namespace toft {
 
 File* LocalFileSystem::Open(const std::string& file_path, const char* mode)
 {
-    std::unique_ptr<FILE, int (*)(FILE*)>
+    std::unique_ptr<FILE, int (*)(FILE*)> // NOLINT
         fp(fopen(file_path.c_str(), mode), &fclose);
     if (!fp)
         return NULL;
@@ -38,6 +38,10 @@ bool LocalFileSystem::Exists(const std::string& file_path)
 bool LocalFileSystem::Delete(const std::string& file_path)
 {
     return remove(file_path.c_str()) == 0;
+}
+
+bool LocalFileSystem::Rename(const std::string& from, const std::string& to) {
+    return rename(from.c_str(), to.c_str()) == 0;
 }
 
 bool LocalFileSystem::GetTimes(const std::string& file_path, FileTimes* times) {

@@ -5,6 +5,7 @@
 #include "toft/base/scoped_ptr.h"
 #include "toft/storage/file/file.h"
 #include "toft/storage/file/local_file.h"
+
 #include "thirdparty/gtest/gtest.h"
 
 namespace toft {
@@ -111,7 +112,6 @@ TEST_F(FileTest, ReadLines) {
     EXPECT_EQ("helloworld2", lines[1]);
     EXPECT_EQ("helloworld3", lines[2]);
     EXPECT_EQ("", lines[3]);
-
 }
 
 TEST_F(FileTest, Exists) {
@@ -125,6 +125,14 @@ TEST_F(FileTest, Delete) {
     }
     EXPECT_TRUE(File::Delete("file.dat"));
     EXPECT_FALSE(File::Delete("no-file.dat"));
+}
+
+TEST_F(FileTest, Rename) {
+    {
+        scoped_ptr<File> fp(File::Open("file.dat", "w"));
+    }
+    EXPECT_TRUE(File::Rename("file.dat", "file1.dat"));
+    EXPECT_FALSE(File::Rename("file.dat", "file1.dat"));
 }
 
 TEST_F(FileTest, GetTimes) {

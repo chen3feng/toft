@@ -4,6 +4,9 @@
 // Author: CHEN Feng <chen3feng@gmail.com>
 
 #include "toft/storage/file/file.h"
+
+#include <errno.h>
+
 #include "toft/base/scoped_ptr.h"
 
 namespace toft {
@@ -73,15 +76,25 @@ bool File::Exists(const std::string& file_path)
     return fs->Exists(file_path);
 }
 
-bool File::GetTimes(const std::string& file_path, FileTimes* times) {
-    FileSystem* fs = GetFileSystemByPath(file_path);
-    return fs->GetTimes(file_path, times);
-}
-
 bool File::Delete(const std::string& file_path)
 {
     FileSystem* fs = GetFileSystemByPath(file_path);
     return fs->Delete(file_path);
+}
+
+bool File::Rename(const std::string& from, const std::string& to) {
+    FileSystem* from_fs = GetFileSystemByPath(from);
+    FileSystem* to_fs = GetFileSystemByPath(to);
+    if (from_fs != to_fs) {
+        errno = EXDEV;
+        return false;
+    }
+    return from_fs->Rename(from, to);
+}
+
+bool File::GetTimes(const std::string& file_path, FileTimes* times) {
+    FileSystem* fs = GetFileSystemByPath(file_path);
+    return fs->GetTimes(file_path, times);
 }
 
 bool File::ReadAll(const std::string& file_path, std::string* buffer,

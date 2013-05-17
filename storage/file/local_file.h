@@ -8,6 +8,7 @@
 #pragma once
 
 #include <stdio.h>
+#include <string>
 #include "toft/storage/file/file.h"
 
 namespace toft {
@@ -17,6 +18,7 @@ public:
     virtual File* Open(const std::string& file_path, const char* mode);
     virtual bool Exists(const std::string& file_path);
     virtual bool Delete(const std::string& file_path);
+    virtual bool Rename(const std::string& from, const std::string& to);
     virtual bool GetTimes(const std::string& file_path, FileTimes* times);
 };
 
