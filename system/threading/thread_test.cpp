@@ -17,11 +17,19 @@ static void ThreadCallback(int* p)
     ++*p;
 }
 
-TEST(Thread, Test)
+TEST(Thread, Construct)
 {
     int n = 0;
     Thread thread(std::bind(ThreadCallback, &n));
-    thread.Start();
+    thread.Join();
+    EXPECT_EQ(1, n);
+}
+
+TEST(Thread, Start)
+{
+    int n = 0;
+    Thread thread;
+    thread.Start(std::bind(ThreadCallback, &n));
     thread.Join();
     EXPECT_EQ(1, n);
 }
@@ -32,14 +40,14 @@ static void DoNothing()
 
 TEST(Thread, Restart)
 {
-    Thread thread(DoNothing);
+    Thread thread;
     for (int i = 0; i < 10; ++i)
     {
-        thread.Start();
+        thread.Start(DoNothing);
         int tid1 = thread.GetId();
         thread.Join();
 
-        thread.Start();
+        thread.Start(DoNothing);
         int tid2 = thread.GetId();
         EXPECT_NE(tid1, tid2);
         thread.Join();
@@ -48,16 +56,10 @@ TEST(Thread, Restart)
 
 TEST(Thread, Reinitialize)
 {
-    Thread thread(DoNothing);
-    thread.Start();
+    Thread thread;
+    thread.Start(DoNothing);
     thread.Join();
-    thread.Start();
-    thread.Join();
-
-    thread.Initialize(DoNothing);
-    thread.Start();
-    thread.Join();
-    thread.Start();
+    thread.Start(DoNothing);
     thread.Join();
 }
 
@@ -66,8 +68,7 @@ TEST(Thread, DuplicatedStartDeathTest)
     testing::FLAGS_gtest_death_test_style = "threadsafe";
     {
         Thread thread(DoNothing);
-        thread.Start();
-        EXPECT_DEATH(thread.Start(), "Invalid argument");
+        EXPECT_DEATH(thread.Start(DoNothing), "Invalid argument");
     }
 }
 
@@ -82,7 +83,6 @@ TEST(Thread, IsAlive)
 {
     bool stop = false;
     Thread thread(std::bind(IsAliveTestThread, &stop));
-    thread.Start();
     for (int i = 0; i < 1000; ++i)
     {
         if (!thread.IsAlive())
@@ -98,7 +98,6 @@ TEST(Thread, Detach)
     for (int i = 0; i < 100; ++i)
     {
         Thread thread(std::bind(ThisThread::Sleep, 1));
-        thread.Start();
         thread.Detach();
         ThisThread::Sleep(1);
     }
