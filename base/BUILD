@@ -21,6 +21,14 @@ cc_library(
     srcs = 'closure.cpp',
 )
 
+cc_library(
+    name = 'benchmark_main',
+    srcs = 'benchmark_main.cpp',
+    deps = ['//thirdparty/gflags:gflags',
+            '//thirdparty/re2/util:benchmark',
+            ]
+)
+
 cc_test(name = 'array_size_test', srcs = 'array_size_test.cpp')
 cc_test(name = 'closure_test', srcs = 'closure_test.cpp', deps = ':closure')
 cc_test(name = 'functional_test', srcs = 'functional_test.cpp')
