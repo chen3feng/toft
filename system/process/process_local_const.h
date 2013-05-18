@@ -3,17 +3,17 @@
 //
 // Author: CHEN Feng <chen3feng@gmail.com>
 
-#ifndef TOFT_SYSTEM_PROCESS_LOCAL_CONST_H
-#define TOFT_SYSTEM_PROCESS_LOCAL_CONST_H
+#ifndef TOFT_SYSTEM_PROCESS_PROCESS_LOCAL_CONST_H
+#define TOFT_SYSTEM_PROCESS_PROCESS_LOCAL_CONST_H
 #pragma once
 
 #include <unistd.h>
-#include "toft/base/ensure_linking_with.h"
+#include "toft/base/linking_assert.h"
 #include "toft/system/memory/barrier.h"
 
 namespace toft {
 
-TOFT_DECLARE_ENSURE_LINKING_WITH(ProcessLocalConst);
+TOFT_DECLARE_LINKING_ASSERT(ProcessLocalConst);
 
 // Fork aware process local storage.
 // Exampls:
@@ -28,7 +28,7 @@ TOFT_DECLARE_ENSURE_LINKING_WITH(ProcessLocalConst);
 // But if the process forked, update it again.
 //
 template <typename T>
-class ProcessLocalConst : private TOFT_ENSURE_LINKING_WITH(ProcessLocalConst) {
+class ProcessLocalConst : private TOFT_LINKING_ASSERT_BASE(ProcessLocalConst) {
     typedef T (*GetFunction)();
 public:
     explicit ProcessLocalConst(GetFunction get) :
@@ -59,4 +59,4 @@ private:
 
 } // namespace toft
 
-#endif // TOFT_SYSTEM_PROCESS_LOCAL_CONST_H
+#endif // TOFT_SYSTEM_PROCESS_PROCESS_LOCAL_CONST_H

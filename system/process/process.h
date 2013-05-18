@@ -1,13 +1,14 @@
 // Copyright (c) 2010, The Toft Authors.
 // All rights reserved.
+//
 // Author: Chen Feng <chen3feng@gmail.com>
 
-#ifndef TOFT_SYSTEM_PROCESS_H
-#define TOFT_SYSTEM_PROCESS_H
+#ifndef TOFT_SYSTEM_PROCESS_PROCESS_H
+#define TOFT_SYSTEM_PROCESS_PROCESS_H
 
 #include <stdint.h>
-#include <unistd.h>
 #include <time.h>
+#include <unistd.h>
 #include <map>
 #include <string>
 #include <vector>
@@ -56,7 +57,7 @@ public:
                 const ProcessCreateOptions& options = ProcessCreateOptions());
 
     // Get the process id of this Process object
-    pid_t GetId() const;
+    pid_t Id() const;
 
     // Returns true if the m_pid is not equal to 0, otherwise returns false
     bool IsValid() const;
@@ -111,5 +112,5 @@ private:
 
 } // namespace toft
 
-#endif // TOFT_SYSTEM_PROCESS_H
+#endif // TOFT_SYSTEM_PROCESS_PROCESS_H
 

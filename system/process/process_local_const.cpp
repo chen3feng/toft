@@ -9,7 +9,7 @@
 
 namespace toft {
 
-TOFT_DEFINE_ENSURE_LINKING_WITH(ProcessLocalConst);
+TOFT_DEFINE_LINKING_ASSERT(ProcessLocalConst);
 
 } // namespace toft
 

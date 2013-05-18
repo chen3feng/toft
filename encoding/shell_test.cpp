@@ -5,6 +5,7 @@
 // Created: 2013-03-30
 
 #include "toft/encoding/shell.h"
+
 #include "thirdparty/gtest/gtest.h"
 
 namespace toft {

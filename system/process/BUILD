@@ -27,4 +27,10 @@ cc_test(
     ]
 )
 
-
+cc_test(
+    name = 'this_process_test',
+    srcs = 'this_process_test.cpp',
+    deps = [
+        ':process'
+    ]
+)

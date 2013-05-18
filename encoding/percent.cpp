@@ -144,7 +144,7 @@ bool PercentEncoding::DecodeAppend(const StringPiece& input, std::string* output
                 return false;
             }
 
-            if (not Ascii::IsHexDigit(input[i+1]) || not Ascii::IsHexDigit(input[i+2]))
+            if (!Ascii::IsHexDigit(input[i+1]) || !Ascii::IsHexDigit(input[i+2]))
                 return false;
 
             ch = (HexValue(input[i+1]) << 4);
@@ -178,7 +178,7 @@ bool PercentEncoding::Decode(std::string *str)
                 return false;
             }
 
-            if (not Ascii::IsHexDigit(s[i+1]) || not Ascii::IsHexDigit(s[i+2]))
+            if (!Ascii::IsHexDigit(s[i+1]) || !Ascii::IsHexDigit(s[i+2]))
                 return false;
 
             ch = (HexValue(s[i+1]) << 4);

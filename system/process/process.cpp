@@ -92,7 +92,7 @@ Process::~Process()
     }
 }
 
-pid_t Process::GetId() const
+pid_t Process::Id() const
 {
     return m_pid;
 }
@@ -102,32 +102,48 @@ bool Process::IsValid() const
     return m_pid > 0;
 }
 
-bool Process::Create(const std::string& cmdline, const ProcessCreateOptions& options)
+static void StringVectorToCStringVector(
+    const std::vector<std::string>& vs,
+    std::vector<const char*>* vcs)
 {
-    std::vector<std::string> args;
-    if (!toft::SplitCommandLine(cmdline, &args))
-        return false;
-    return Create(args, options);
-}
-
-static void StringVectorToCStringVector(const std::vector<std::string>& vs,
-                                        std::vector<const char*>* vcs)
-{
-    // No not clear befor filling.
     for (size_t i = 0; i < vs.size(); ++i) {
         vcs->push_back(const_cast<char*>(vs[i].c_str()));
     }
     vcs->push_back(NULL);
 }
 
-bool Process::Create(const std::vector<std::string>& args, const ProcessCreateOptions& options)
+bool Process::Create(const std::string& cmdline, const ProcessCreateOptions& options)
 {
     std::vector<const char*> cargs;
+    std::vector<std::string> args;
     if (options.m_shell) {
         cargs.push_back("/bin/sh");
         cargs.push_back("-c");
+        cargs.push_back(cmdline.c_str());
+        cargs.push_back(NULL);
+    } else {
+        if (!SplitCommandLine(cmdline, &args)) {
+            LOG(ERROR) << "Can't Parse command: " << cmdline;
+            return false;
+        }
+        StringVectorToCStringVector(args, &cargs);
     }
-    StringVectorToCStringVector(args, &cargs);
+    return Create(&cargs[0], options);
+}
+
+bool Process::Create(const std::vector<std::string>& args, const ProcessCreateOptions& options)
+{
+    std::vector<const char*> cargs;
+    std::string command = JoinCommandLine(args);
+    if (options.m_shell) {
+        cargs.push_back("/bin/sh");
+        cargs.push_back("-c");
+        command = JoinCommandLine(args);
+        cargs.push_back(command.c_str());
+        cargs.push_back(NULL);
+    } else {
+        StringVectorToCStringVector(args, &cargs);
+    }
     return Create(&cargs[0], options);
 }
 
@@ -247,7 +263,7 @@ bool Process::Create(const char* const* args, const ProcessCreateOptions& option
     SetCloexec(pipe_write_fd);
 
     pid_t pid = fork();
-    CHECK(pid >= 0) << "Fork child process " << args[0] << " error";
+    CHECK_GE(pid, 0) << "Fork child process " << args[0] << " error";
     if (pid == 0) {
         close(pipe_read_fd);
         DoExec(args, options, pipe_write_fd);

@@ -1,3 +1,12 @@
+// Copyright (c) 2013, The Toft Authors.
+// All rights reserved.
+//
+// Author: Chen Feng <chen3feng@gmail.com>
+
+#include "toft/system/process/this_process.h"
+#include "toft/base/string/algorithm.h"
+#include "toft/system/threading/this_thread.h"
+
 #include "thirdparty/gtest/gtest.h"
 
 namespace toft {
@@ -14,7 +23,7 @@ TEST(ThisProcess, BinaryName)
 
 TEST(ThisProcess, BinaryDirectory)
 {
-    EXPECT_TRUE(StringEndsWith(ThisProcess::BinaryDirectory(), "/"));
+    EXPECT_TRUE(StringEndsWith(ThisProcess::BinaryDirectory(), "/process"));
 }
 
 TEST(ThisProcess, StartTime)

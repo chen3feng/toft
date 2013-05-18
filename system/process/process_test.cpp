@@ -43,7 +43,7 @@ TEST_F(ProcessTest, CreateAndTerminate)
     Process process;
     std::string exe_args = "--test_mode=false --loop_count=6";
     ASSERT_TRUE(process.Create(m_exe_path + " " + m_exe_args));
-    EXPECT_GT(process.GetId(), 0);
+    EXPECT_GT(process.Id(), 0);
     EXPECT_TRUE(process.IsValid());
     EXPECT_TRUE(process.Terminate());
     EXPECT_FALSE(process.IsValid());
@@ -53,7 +53,7 @@ TEST_F(ProcessTest, CreateInvalid)
 {
     Process process;
     EXPECT_FALSE(process.Create("./non-existed"));
-    EXPECT_EQ(0, process.GetId());
+    EXPECT_EQ(0, process.Id());
     EXPECT_FALSE(process.IsValid());
 }
 
@@ -63,11 +63,21 @@ TEST_F(ProcessTest, CreateWithShell)
     options.EnableShell();
     Process process;
     ASSERT_TRUE(process.Create("pwd", options));
-    EXPECT_GT(process.GetId(), 0);
+    EXPECT_GT(process.Id(), 0);
     EXPECT_TRUE(process.IsValid());
     ASSERT_TRUE(process.WaitForExit());
     EXPECT_FALSE(process.IsValid());
     EXPECT_EQ(0, process.ExitCode());
+}
+
+TEST_F(ProcessTest, CreateWithShellExit)
+{
+    ProcessCreateOptions options;
+    options.EnableShell();
+    Process process;
+    ASSERT_TRUE(process.Create("exit 1", options));
+    ASSERT_TRUE(process.WaitForExit());
+    EXPECT_EQ(1, process.ExitCode());
 }
 
 TEST_F(ProcessTest, WaitForExit)

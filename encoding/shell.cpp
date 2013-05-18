@@ -350,5 +350,3 @@ std::string JoinCommandLine(const std::vector<std::string>& args)
 }
 
 } // namespace toft
-
-

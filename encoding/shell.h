@@ -20,7 +20,7 @@ bool ShellIsQuoteNeed(const std::string& str);
 // Quote a string as shell way.
 std::string ShellQuote(const std::string& str, char quote_char = '"');
 
-// Quote a string as shell way if needed, otherwisd keep unchanged.
+// Quote a string as shell way if needed, otherwise keep unchanged.
 std::string ShellQuoteIfNeed(const std::string& str, char quote_char = '"');
 
 // Unquote a shell as shell way.
@@ -39,6 +39,6 @@ bool SplitCommandLine(const std::string& command,
 // Join command line segments into string.
 std::string JoinCommandLine(const std::vector<std::string>& args);
 
-} // namespace shell
+} // namespace toft
 
 #endif // TOFT_ENCODING_SHELL_H
