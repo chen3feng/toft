@@ -29,8 +29,9 @@ static void SuperFastHash(int n) {
         toft::SuperFastHash(test_str);
     }
 }
-BENCHMARK(Fingerprint)->ThreadRange(1, NumCPUs());
-BENCHMARK(Fingerprint32)->ThreadRange(1, NumCPUs());
-BENCHMARK(JenkinsOneAtATimeHash)->ThreadRange(1, NumCPUs());
-BENCHMARK(SuperFastHash)->ThreadRange(1, NumCPUs());
+
+TOFT_BENCHMARK(Fingerprint)->ThreadRange(1, NumCPUs());
+TOFT_BENCHMARK(Fingerprint32)->ThreadRange(1, NumCPUs());
+TOFT_BENCHMARK(JenkinsOneAtATimeHash)->ThreadRange(1, NumCPUs());
+TOFT_BENCHMARK(SuperFastHash)->ThreadRange(1, NumCPUs());
 

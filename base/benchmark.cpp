@@ -36,8 +36,8 @@ void Benchmark::Register() {
 }
 
 static int64_t processed_bytes;
-static int64_t used_time_ms;
-static int64_t begin_time_ms;
+static int64_t used_time_ns;
+static int64_t begin_time_ns;
 static int64_t processed_items;
 
 void SetBenchmarkBytesProcessed(int64_t bytes_processed) {
@@ -45,14 +45,14 @@ void SetBenchmarkBytesProcessed(int64_t bytes_processed) {
 }
 
 void StopBenchmarkTiming() {
-    if (begin_time_ms != 0)
-        used_time_ms += RealtimeClock.MicroSeconds() - begin_time_ms;
-    begin_time_ms = 0;
+    if (begin_time_ns != 0)
+        used_time_ns += RealtimeClock.MicroSeconds() * 1000 - begin_time_ns;
+    begin_time_ns = 0;
 }
 
 void StartBenchmarkTiming() {
-    if (begin_time_ms == 0)
-        begin_time_ms = RealtimeClock.MicroSeconds();
+    if (begin_time_ns == 0)
+        begin_time_ns = RealtimeClock.MicroSeconds() * 1000;
 }
 
 void SetBenchmarkItemsProcessed(int n) {
@@ -66,8 +66,8 @@ void BenchmarkMemoryUsage() {
 static void runN(Benchmark *b, int n, int siz) {
     processed_bytes = 0;
     processed_items = 0;
-    used_time_ms = 0;
-    begin_time_ms = RealtimeClock.MicroSeconds();
+    used_time_ns = 0;
+    begin_time_ns = RealtimeClock.MicroSeconds() * 1000;
     if (b->fn) {
         b->fn(n);
     } else if (b->fnr) {
@@ -76,8 +76,8 @@ static void runN(Benchmark *b, int n, int siz) {
         fprintf(stderr, "%s: missing function\n", b->name);
         exit(2);
     }
-    if (begin_time_ms != 0) {
-        used_time_ms += RealtimeClock.MicroSeconds() - begin_time_ms;
+    if (begin_time_ns != 0) {
+        used_time_ns += RealtimeClock.MicroSeconds() * 1000 - begin_time_ns;
     }
 }
 
@@ -107,13 +107,13 @@ void RunBench(Benchmark* b, int nthread, int siz) {
     // run once in case it's expensive
     n = 1;
     runN(b, n, siz);
-    while (used_time_ms < static_cast<int>(1e9) &&
+    while (used_time_ns < static_cast<int>(1e9) &&
            n < static_cast<int>(1e9)) {
         last = n;
-        if (used_time_ms / n == 0) {
+        if (used_time_ns / n == 0) {
             n = 1e9;
         } else {
-            n = 1e9 / (used_time_ms / n);
+            n = 1e9 / (used_time_ns / n);
         }
         n = std::max(last + 1, std::min(n + n / 2, 100 * last));
         n = round(n);
@@ -124,10 +124,10 @@ void RunBench(Benchmark* b, int nthread, int siz) {
     char suf[100];
     mb[0] = '\0';
     suf[0] = '\0';
-    if (used_time_ms > 0 && processed_bytes > 0) {
+    if (used_time_ns > 0 && processed_bytes > 0) {
         snprintf(mb, sizeof mb, "\t%7.2f MB/s",
                  (static_cast<double>(processed_bytes) / 1e6) /
-                 (static_cast<double>(used_time_ms) / 1e9));
+                 (static_cast<double>(used_time_ns) / 1e9));
     }
     if (b->fnr || b->lo != b->hi) {
         if (siz >= (1 << 20)) {
@@ -139,11 +139,11 @@ void RunBench(Benchmark* b, int nthread, int siz) {
         }
     }
 
-    printf("%s%s%s%s\t%s%8lld\t%s%10lld used_time_ms/op%s%s%s\n",
+    printf("%s%s%s%s\t%s%8lld\t%s%10lld ns/op%s%s%s\n",
            kColorCyan, b->name,
            kColorPurple, suf,
            kColorBlue, (long long) n,  // NOLINT
-           kColorYellow, (long long) used_time_ms / n,  // NOLINT
+           kColorYellow, (long long) used_time_ns / n,  // NOLINT
            kColorGreen, mb,
            kColorEnd);
     fflush(stdout);
