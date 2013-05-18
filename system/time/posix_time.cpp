@@ -6,7 +6,6 @@
 #include "toft/system/time/posix_time.h"
 
 #include <time.h>
-#include <sys/time.h>
 
 namespace toft {
 
