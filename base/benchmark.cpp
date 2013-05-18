@@ -1,10 +1,13 @@
 // Copyright (c) 2013, The Toft Authors. All rights reserved.
 // Author: Ye Shunping <yeshunping@gmail.com>
 
+#include <stdio.h>
+
 #include <algorithm>
 
 #include "toft/base/benchmark.h"
-#include "toft/system/time/posix_time.h"
+#include "toft/system/time/clock.h"
+
 #include "thirdparty/glog/logging.h"
 
 namespace {
@@ -32,28 +35,28 @@ void Benchmark::Register() {
     nbenchmarks++;
 }
 
-static int64_t bytes;
-static int64_t ns;
-static int64_t t0;
-static int64_t items;
+static int64_t processed_bytes;
+static int64_t used_time_ms;
+static int64_t begin_time_ms;
+static int64_t processed_items;
 
-void SetBenchmarkBytesProcessed(int64_t x) {
-    bytes = x;
+void SetBenchmarkBytesProcessed(int64_t bytes_processed) {
+    processed_bytes = bytes_processed;
 }
 
 void StopBenchmarkTiming() {
-    if (t0 != 0)
-        ns += GetTimeInNs() - t0;
-    t0 = 0;
+    if (begin_time_ms != 0)
+        used_time_ms += RealtimeClock.MicroSeconds() - begin_time_ms;
+    begin_time_ms = 0;
 }
 
 void StartBenchmarkTiming() {
-    if (t0 == 0)
-        t0 = GetTimeInNs();
+    if (begin_time_ms == 0)
+        begin_time_ms = RealtimeClock.MicroSeconds();
 }
 
 void SetBenchmarkItemsProcessed(int n) {
-    items = n;
+    processed_items = n;
 }
 
 void BenchmarkMemoryUsage() {
@@ -61,10 +64,10 @@ void BenchmarkMemoryUsage() {
 }
 
 static void runN(Benchmark *b, int n, int siz) {
-    bytes = 0;
-    items = 0;
-    ns = 0;
-    t0 = GetTimeInNs();
+    processed_bytes = 0;
+    processed_items = 0;
+    used_time_ms = 0;
+    begin_time_ms = RealtimeClock.MicroSeconds();
     if (b->fn) {
         b->fn(n);
     } else if (b->fnr) {
@@ -73,8 +76,8 @@ static void runN(Benchmark *b, int n, int siz) {
         fprintf(stderr, "%s: missing function\n", b->name);
         exit(2);
     }
-    if (t0 != 0) {
-        ns += GetTimeInNs() - t0;
+    if (begin_time_ms != 0) {
+        used_time_ms += RealtimeClock.MicroSeconds() - begin_time_ms;
     }
 }
 
@@ -104,12 +107,13 @@ void RunBench(Benchmark* b, int nthread, int siz) {
     // run once in case it's expensive
     n = 1;
     runN(b, n, siz);
-    while (ns < (int) 1e9 && n < (int) 1e9) {
+    while (used_time_ms < static_cast<int>(1e9) &&
+           n < static_cast<int>(1e9)) {
         last = n;
-        if (ns / n == 0) {
+        if (used_time_ms / n == 0) {
             n = 1e9;
         } else {
-            n = 1e9 / (ns / n);
+            n = 1e9 / (used_time_ms / n);
         }
         n = std::max(last + 1, std::min(n + n / 2, 100 * last));
         n = round(n);
@@ -120,8 +124,11 @@ void RunBench(Benchmark* b, int nthread, int siz) {
     char suf[100];
     mb[0] = '\0';
     suf[0] = '\0';
-    if (ns > 0 && bytes > 0)
-        snprintf(mb, sizeof mb, "\t%7.2f MB/s", ((double) bytes / 1e6) / ((double) ns / 1e9));
+    if (used_time_ms > 0 && processed_bytes > 0) {
+        snprintf(mb, sizeof mb, "\t%7.2f MB/s",
+                 (static_cast<double>(processed_bytes) / 1e6) /
+                 (static_cast<double>(used_time_ms) / 1e9));
+    }
     if (b->fnr || b->lo != b->hi) {
         if (siz >= (1 << 20)) {
             snprintf(suf, sizeof suf, "/%dM", siz / (1 << 20));
@@ -132,13 +139,13 @@ void RunBench(Benchmark* b, int nthread, int siz) {
         }
     }
 
-    printf("%s%s%s%s\t%s%8lld\t%s%10lld ns/op%s%s%s\n",
+    printf("%s%s%s%s\t%s%8lld\t%s%10lld used_time_ms/op%s%s%s\n",
            kColorCyan, b->name,
            kColorPurple, suf,
-           kColorBlue, (long long) n,
-           kColorYellow, (long long) ns / n,
+           kColorBlue, (long long) n,  // NOLINT
+           kColorYellow, (long long) used_time_ms / n,  // NOLINT
            kColorGreen, mb,
            kColorEnd);
     fflush(stdout);
 }
-}
+}  // namespace toft
