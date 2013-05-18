@@ -16,12 +16,12 @@ struct Benchmark {
     int threadhi;
 
     void Register();
-    Benchmark(const char* name, void (*f)(int)) {
+    Benchmark(const char* name, void (*f)(int)) {  // NOLINT
         Clear(name);
         fn = f;
         Register();
     }
-    Benchmark(const char* name, void (*f)(int, int), int l, int h) {
+    Benchmark(const char* name, void (*f)(int, int), int l, int h) {  // NOLINT
         Clear(name);
         fnr = f;
         lo = l;
@@ -45,11 +45,11 @@ struct Benchmark {
 };
 
 
-void SetBenchmarkBytesProcessed(long long);
+void SetBenchmarkBytesProcessed(int64_t bytes_processed);
 void StopBenchmarkTiming();
 void StartBenchmarkTiming();
 void BenchmarkMemoryUsage();
-void SetBenchmarkItemsProcessed(int);
+void SetBenchmarkItemsProcessed(int n);
 
 void RunBench(toft::Benchmark* b, int nthread, int siz);
 
@@ -60,10 +60,10 @@ extern toft::Benchmark* benchmarks[10000];
 //  It's implemented in file: thirdparty/gperftools-2.0/src/base/sysinfo.cc
 extern int NumCPUs();
 
-#define BENCHMARK(f) \
+#define TOFT_BENCHMARK(f) \
     ::toft::Benchmark* _benchmark_##f = (new ::toft::Benchmark(#f, f))
 
-#define BENCHMARK_RANGE(f, lo, hi) \
+#define TOFT_BENCHMARK_RANGE(f, lo, hi) \
     ::toft::Benchmark* _benchmark_##f = \
     (new ::toft::Benchmark(#f, f, lo, hi))
 
