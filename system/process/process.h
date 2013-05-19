@@ -113,4 +113,3 @@ private:
 } // namespace toft
 
 #endif // TOFT_SYSTEM_PROCESS_PROCESS_H
-

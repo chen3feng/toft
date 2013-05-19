@@ -112,15 +112,21 @@ static void StringVectorToCStringVector(
     vcs->push_back(NULL);
 }
 
+static void SetArgWithShell(const std::string& cmdline,
+                            std::vector<const char*>* cargs)
+{
+    cargs->push_back("/bin/sh");
+    cargs->push_back("-c");
+    cargs->push_back(cmdline.c_str());
+    cargs->push_back(NULL);
+}
+
 bool Process::Create(const std::string& cmdline, const ProcessCreateOptions& options)
 {
     std::vector<const char*> cargs;
     std::vector<std::string> args;
     if (options.m_shell) {
-        cargs.push_back("/bin/sh");
-        cargs.push_back("-c");
-        cargs.push_back(cmdline.c_str());
-        cargs.push_back(NULL);
+        SetArgWithShell(cmdline, &cargs);
     } else {
         if (!SplitCommandLine(cmdline, &args)) {
             LOG(ERROR) << "Can't Parse command: " << cmdline;
@@ -134,13 +140,10 @@ bool Process::Create(const std::string& cmdline, const ProcessCreateOptions& opt
 bool Process::Create(const std::vector<std::string>& args, const ProcessCreateOptions& options)
 {
     std::vector<const char*> cargs;
-    std::string command = JoinCommandLine(args);
+    std::string command;
     if (options.m_shell) {
-        cargs.push_back("/bin/sh");
-        cargs.push_back("-c");
         command = JoinCommandLine(args);
-        cargs.push_back(command.c_str());
-        cargs.push_back(NULL);
+        SetArgWithShell(command, &cargs);
     } else {
         StringVectorToCStringVector(args, &cargs);
     }
