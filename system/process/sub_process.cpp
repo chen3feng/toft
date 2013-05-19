@@ -3,7 +3,7 @@
 //
 // Author: CHEN Feng <chen3feng@gmail.com>
 
-#include "toft/system/process/process.h"
+#include "toft/system/process/sub_process.h"
 
 #include <errno.h>
 #include <fcntl.h>
@@ -24,7 +24,7 @@
 
 namespace toft {
 
-ProcessCreateOptions::ProcessCreateOptions() :
+SubProcess::CreateOptions::CreateOptions() :
     m_replace_envs(false),
     m_stdin_fd(-1),
     m_stdout_fd(-1),
@@ -34,70 +34,70 @@ ProcessCreateOptions::ProcessCreateOptions() :
 {
 }
 
-void ProcessCreateOptions::ClearEnvironments()
+void SubProcess::CreateOptions::ClearEnvironments()
 {
     m_envs.clear();
     m_replace_envs = true;
 }
 
-void ProcessCreateOptions::SetEnvironments(const std::map<std::string, std::string>& envs)
+void SubProcess::CreateOptions::SetEnvironments(const std::map<std::string, std::string>& envs)
 {
     m_envs = envs;
     m_replace_envs = true;
 }
 
-void ProcessCreateOptions::AddEnvironment(const char* name, const char* value)
+void SubProcess::CreateOptions::AddEnvironment(const char* name, const char* value)
 {
     m_envs[name] = value;
 }
 
-void ProcessCreateOptions::RedirectStdInput(int fd)
+void SubProcess::CreateOptions::RedirectStdInput(int fd)
 {
     m_stdin_fd = fd;
 }
 
-void ProcessCreateOptions::RedirectStdOutput(int fd)
+void SubProcess::CreateOptions::RedirectStdOutput(int fd)
 {
     m_stdout_fd = fd;
 }
 
-void ProcessCreateOptions::RedirectStdError(int fd)
+void SubProcess::CreateOptions::RedirectStdError(int fd)
 {
     m_stderr_fd = fd;
 }
 
-void ProcessCreateOptions::EnableShell()
+void SubProcess::CreateOptions::EnableShell()
 {
     m_shell = true;
 }
 
-void ProcessCreateOptions::SetWorkDirectory(const std::string& cwd)
+void SubProcess::CreateOptions::SetWorkDirectory(const std::string& cwd)
 {
     m_cwd = cwd;
 }
 
-void ProcessCreateOptions::CloseFds()
+void SubProcess::CreateOptions::CloseFds()
 {
     m_close_fds = true;
 }
 
-Process::Process() : m_pid(0), m_exit_code(0)
+SubProcess::SubProcess() : m_pid(0), m_exit_code(0)
 {
 }
 
-Process::~Process()
+SubProcess::~SubProcess()
 {
     if (IsValid()) {
         WaitForExit();
     }
 }
 
-pid_t Process::Id() const
+pid_t SubProcess::Id() const
 {
     return m_pid;
 }
 
-bool Process::IsValid() const
+bool SubProcess::IsValid() const
 {
     return m_pid > 0;
 }
@@ -121,7 +121,7 @@ static void SetArgWithShell(const std::string& cmdline,
     cargs->push_back(NULL);
 }
 
-bool Process::Create(const std::string& cmdline, const ProcessCreateOptions& options)
+bool SubProcess::Create(const std::string& cmdline, const CreateOptions& options)
 {
     std::vector<const char*> cargs;
     std::vector<std::string> args;
@@ -137,7 +137,8 @@ bool Process::Create(const std::string& cmdline, const ProcessCreateOptions& opt
     return Create(&cargs[0], options);
 }
 
-bool Process::Create(const std::vector<std::string>& args, const ProcessCreateOptions& options)
+bool SubProcess::Create(const std::vector<std::string>& args,
+                     const CreateOptions& options)
 {
     std::vector<const char*> cargs;
     std::string command;
@@ -197,8 +198,8 @@ static bool SetCloexec(int fd)
     return fcntl(fd, F_SETFD, flags) >= 0;
 }
 
-void Process::DoExec(const char* const* args,
-                     const ProcessCreateOptions& options,
+void SubProcess::DoExec(const char* const* args,
+                     const CreateOptions& options,
                      int pipe_write_fd)
 {
     // Child process
@@ -251,7 +252,7 @@ void Process::DoExec(const char* const* args,
     _Exit(127);
 }
 
-bool Process::Create(const char* const* args, const ProcessCreateOptions& options)
+bool SubProcess::Create(const char* const* args, const CreateOptions& options)
 {
     CHECK_LE(m_pid, 0) << "Already running or not waited";
 
@@ -292,7 +293,7 @@ bool Process::Create(const char* const* args, const ProcessCreateOptions& option
     return true;
 }
 
-bool Process::Terminate()
+bool SubProcess::Terminate()
 {
     CHECK_GT(m_pid, 1) << "Invalid pid";
 
@@ -314,20 +315,20 @@ bool Process::Terminate()
     return WaitForExit();
 }
 
-bool Process::SendSignal(int signal)
+bool SubProcess::SendSignal(int signal)
 {
     CHECK_GT(m_pid, 1) << "Invalid pid";
     return kill(m_pid, signal) == 0;
 }
 
-bool Process::IsAlive() const
+bool SubProcess::IsAlive() const
 {
     if (m_pid <= 0)
         return false;
     return kill(m_pid, 0) == 0;
 }
 
-bool Process::WaitForExit()
+bool SubProcess::WaitForExit()
 {
     if (m_pid < 0)
         return true;
@@ -340,7 +341,7 @@ bool Process::WaitForExit()
     return UpdateExitStatus(status);
 }
 
-bool Process::TimedWaitForExit(int64_t timeout_milliseconds)
+bool SubProcess::TimedWaitForExit(int64_t timeout_milliseconds)
 {
     if (m_pid < 0)
         return true;
@@ -368,7 +369,7 @@ bool Process::TimedWaitForExit(int64_t timeout_milliseconds)
     }
 }
 
-bool Process::UpdateExitStatus(int status)
+bool SubProcess::UpdateExitStatus(int status)
 {
     if (WIFSIGNALED(status)) {
         m_pid = -m_pid;
@@ -385,7 +386,7 @@ bool Process::UpdateExitStatus(int status)
     return false;
 }
 
-int Process::ExitCode() const
+int SubProcess::ExitCode() const
 {
     CHECK_LT(m_pid, 0);
     return m_exit_code;
