@@ -6,6 +6,11 @@ cc_library(
     ]
 )
 
+cc_test(
+    name = 'barrier_test',
+    srcs = 'barrier_test.cpp',
+    deps = ':memory'
+)
 
 cc_test(
     name = 'unaligned_test',
