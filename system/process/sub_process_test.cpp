@@ -6,7 +6,7 @@
 // Created: 10/27/11
 // Description:
 
-#include "toft/system/process/process.h"
+#include "toft/system/process/sub_process.h"
 
 #include "toft/base/string/algorithm.h"
 #include "toft/system/process/this_process.h"
@@ -21,7 +21,7 @@ DEFINE_int32(loop_count, 1, "run loop count");
 
 namespace toft {
 
-class ProcessTest : public testing::Test
+class SubProcessTest : public testing::Test
 {
 protected:
     virtual void SetUp()
@@ -38,9 +38,9 @@ protected:
     std::string m_exe_args;
 };
 
-TEST_F(ProcessTest, CreateAndTerminate)
+TEST_F(SubProcessTest, CreateAndTerminate)
 {
-    Process process;
+    SubProcess process;
     std::string exe_args = "--test_mode=false --loop_count=6";
     ASSERT_TRUE(process.Create(m_exe_path + " " + m_exe_args));
     EXPECT_GT(process.Id(), 0);
@@ -49,19 +49,19 @@ TEST_F(ProcessTest, CreateAndTerminate)
     EXPECT_FALSE(process.IsValid());
 }
 
-TEST_F(ProcessTest, CreateInvalid)
+TEST_F(SubProcessTest, CreateInvalid)
 {
-    Process process;
+    SubProcess process;
     EXPECT_FALSE(process.Create("./non-existed"));
     EXPECT_EQ(0, process.Id());
     EXPECT_FALSE(process.IsValid());
 }
 
-TEST_F(ProcessTest, CreateWithShell)
+TEST_F(SubProcessTest, CreateWithShell)
 {
-    ProcessCreateOptions options;
+    SubProcess::CreateOptions options;
     options.EnableShell();
-    Process process;
+    SubProcess process;
     ASSERT_TRUE(process.Create("pwd", options));
     EXPECT_GT(process.Id(), 0);
     EXPECT_TRUE(process.IsValid());
@@ -70,37 +70,37 @@ TEST_F(ProcessTest, CreateWithShell)
     EXPECT_EQ(0, process.ExitCode());
 }
 
-TEST_F(ProcessTest, CreateWithShellExit)
+TEST_F(SubProcessTest, CreateWithShellExit)
 {
-    ProcessCreateOptions options;
+    SubProcess::CreateOptions options;
     options.EnableShell();
-    Process process;
+    SubProcess process;
     ASSERT_TRUE(process.Create("exit 1", options));
     ASSERT_TRUE(process.WaitForExit());
     EXPECT_EQ(1, process.ExitCode());
 }
 
-TEST_F(ProcessTest, WaitForExit)
+TEST_F(SubProcessTest, WaitForExit)
 {
-    Process process;
+    SubProcess process;
     ASSERT_TRUE(process.Create(m_exe_path + " " + m_exe_args));
     EXPECT_TRUE(process.WaitForExit());
     EXPECT_EQ(0, process.ExitCode());
     EXPECT_FALSE(process.IsValid());
 }
 
-TEST_F(ProcessTest, TimedWaitForExit)
+TEST_F(SubProcessTest, TimedWaitForExit)
 {
-    Process process;
+    SubProcess process;
     ASSERT_TRUE(process.Create(m_exe_path + " " + m_exe_args));
     ASSERT_TRUE(process.TimedWaitForExit(6000));
     EXPECT_EQ(0, process.ExitCode());
     EXPECT_FALSE(process.IsValid());
 }
 
-TEST_F(ProcessTest, TimedWaitForExitTimeout)
+TEST_F(SubProcessTest, TimedWaitForExitTimeout)
 {
-    Process process;
+    SubProcess process;
     ASSERT_TRUE(process.Create(m_exe_path + " " + m_exe_args));
     EXPECT_FALSE(process.TimedWaitForExit(100));
     EXPECT_TRUE(process.IsValid());

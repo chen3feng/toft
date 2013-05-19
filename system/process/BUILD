@@ -1,8 +1,8 @@
 cc_library(
     name = 'process',
     srcs = [
-        'process.cpp',
         'process_local_const.cpp',
+        'sub_process.cpp',
         'this_process.cpp',
     ],
     deps = [
@@ -20,8 +20,8 @@ cc_test(
 )
 
 cc_test(
-    name = 'process_test',
-    srcs = 'process_test.cpp',
+    name = 'sub_process_test',
+    srcs = 'sub_process_test.cpp',
     deps = [
         ':process'
     ]
