@@ -16,47 +16,46 @@
 
 namespace toft {
 
-class Process;
-
-class ProcessCreateOptions {
-    friend class Process;
-public:
-    ProcessCreateOptions();
-    void ClearEnvironments();
-    void SetEnvironments(const std::map<std::string, std::string>& env);
-    void AddEnvironment(const char* name, const char* value);
-    void RedirectStdInput(int fd);
-    void RedirectStdOutput(int fd);
-    void RedirectStdError(int fd);
-    void EnableShell();
-    void SetWorkDirectory(const std::string& cwd);
-    void CloseFds();
-private:
-    std::map<std::string, std::string> m_envs;
-    bool m_replace_envs;
-    int m_stdin_fd;
-    int m_stdout_fd;
-    int m_stderr_fd;
-    bool m_shell;
-    std::string m_cwd;
-    bool m_close_fds;
-};
-
-class Process
+class SubProcess
 {
-    TOFT_DECLARE_UNCOPYABLE(Process);
+    TOFT_DECLARE_UNCOPYABLE(SubProcess);
+
 public:
-    Process();
-    ~Process();
+    class CreateOptions {
+        friend class SubProcess;
+    public:
+        CreateOptions();
+        void ClearEnvironments();
+        void SetEnvironments(const std::map<std::string, std::string>& env);
+        void AddEnvironment(const char* name, const char* value);
+        void RedirectStdInput(int fd);
+        void RedirectStdOutput(int fd);
+        void RedirectStdError(int fd);
+        void EnableShell();
+        void SetWorkDirectory(const std::string& cwd);
+        void CloseFds();
+    private:
+        std::map<std::string, std::string> m_envs;
+        bool m_replace_envs;
+        int m_stdin_fd;
+        int m_stdout_fd;
+        int m_stderr_fd;
+        bool m_shell;
+        std::string m_cwd;
+        bool m_close_fds;
+    };
+
+    SubProcess();
+    ~SubProcess();
 
     bool Create(const std::string& cmdline,
-                const ProcessCreateOptions& options = ProcessCreateOptions());
+                const CreateOptions& options = CreateOptions());
     bool Create(const std::vector<std::string>& cmdline,
-                const ProcessCreateOptions& options = ProcessCreateOptions());
+                const CreateOptions& options = CreateOptions());
     bool Create(const char* const* cmdline,
-                const ProcessCreateOptions& options = ProcessCreateOptions());
+                const CreateOptions& options = CreateOptions());
 
-    // Get the process id of this Process object
+    // Get the process id of this SubProcess object
     pid_t Id() const;
 
     // Returns true if the m_pid is not equal to 0, otherwise returns false
@@ -97,7 +96,7 @@ public:
 #endif
 private:
     static void DoExec(const char* const* args,
-                       const ProcessCreateOptions& options,
+                       const CreateOptions& options,
                        int pipe_write_fd);
     bool UpdateExitStatus(int status);
 
