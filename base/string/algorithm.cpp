@@ -389,7 +389,7 @@ void SplitLines(
     std::string token;
     while ((pos = full.find('\n', prev_pos)) != std::string::npos)
     {
-        token.assign(full.data() + prev_pos, pos - prev_pos);
+        token.assign(full.data() + prev_pos, pos - prev_pos + 1);
         if (!keep_line_endling)
             RemoveLineEnding(&token);
         result->push_back(token);

@@ -22,7 +22,7 @@ public:
     {
         for (;;)
         {
-            Mutex::Locker locker(mutex);
+            Mutex::Locker locker(&mutex);
             if (++n >= kCount)
                 return;
         }

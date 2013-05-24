@@ -24,7 +24,7 @@ AutoResetEvent::~AutoResetEvent()
 
 void AutoResetEvent::Wait()
 {
-    MutexLocker locker(m_mutex);
+    MutexLocker locker(&m_mutex);
     while (!m_signaled)
         m_cond.Wait();
     m_signaled = false;
@@ -32,7 +32,7 @@ void AutoResetEvent::Wait()
 
 bool AutoResetEvent::TimedWait(int64_t timeout)
 {
-    MutexLocker locker(m_mutex);
+    MutexLocker locker(&m_mutex);
     if (!m_signaled)
         m_cond.TimedWait(timeout);
 
@@ -50,14 +50,14 @@ bool AutoResetEvent::TryWait()
 
 void AutoResetEvent::Set()
 {
-    MutexLocker locker(m_mutex);
+    MutexLocker locker(&m_mutex);
     m_signaled = true;
     m_cond.Signal();
 }
 
 void AutoResetEvent::Reset()
 {
-    MutexLocker locker(m_mutex);
+    MutexLocker locker(&m_mutex);
     m_signaled = false;
 }
 
@@ -77,14 +77,14 @@ ManualResetEvent::~ManualResetEvent()
 
 void ManualResetEvent::Wait()
 {
-    MutexLocker locker(m_mutex);
+    MutexLocker locker(&m_mutex);
     while (!m_signaled)
         m_cond.Wait();
 }
 
 bool ManualResetEvent::TimedWait(int64_t timeout)
 {
-    MutexLocker locker(m_mutex);
+    MutexLocker locker(&m_mutex);
     if (!m_signaled)
         m_cond.TimedWait(timeout);
     return m_signaled;
@@ -97,14 +97,14 @@ bool ManualResetEvent::TryWait()
 
 void ManualResetEvent::Set()
 {
-    MutexLocker locker(m_mutex);
+    MutexLocker locker(&m_mutex);
     m_signaled = true;
     m_cond.Broadcast();
 }
 
 void ManualResetEvent::Reset()
 {
-    MutexLocker locker(m_mutex);
+    MutexLocker locker(&m_mutex);
     m_signaled = false;
 }
 
