@@ -17,12 +17,6 @@ template <typename LockType>
 class ScopedLocker : private Uncopyable
 {
 public:
-    explicit ScopedLocker(LockType& lock)
-        : m_lock(&lock)
-    {
-        m_lock->Lock();
-    }
-
     explicit ScopedLocker(LockType* lock)
         : m_lock(lock)
     {
@@ -40,12 +34,6 @@ template <typename LockType>
 class ScopedTryLocker : private Uncopyable
 {
 public:
-    explicit ScopedTryLocker(LockType& lock)
-        : m_lock(&lock)
-    {
-        m_locked = m_lock->TryLock();
-    }
-
     explicit ScopedTryLocker(LockType* lock)
         : m_lock(lock)
     {
@@ -69,12 +57,6 @@ template <typename LockType>
 class ScopedReaderLocker : private Uncopyable
 {
 public:
-    explicit ScopedReaderLocker(LockType& lock)
-        : m_lock(&lock)
-    {
-        m_lock->ReaderLock();
-    }
-
     explicit ScopedReaderLocker(LockType* lock)
         : m_lock(lock)
     {
@@ -92,12 +74,6 @@ template <typename LockType>
 class ScopedTryReaderLocker : private Uncopyable
 {
 public:
-    explicit ScopedTryReaderLocker(LockType& lock)
-        : m_lock(&lock)
-    {
-        m_locked = m_lock->TryReaderLock();
-    }
-
     explicit ScopedTryReaderLocker(LockType* lock)
         : m_lock(lock)
     {
@@ -121,10 +97,6 @@ template <typename LockType>
 class ScopedWriterLocker : private Uncopyable
 {
 public:
-    explicit ScopedWriterLocker(LockType& lock) : m_lock(lock)
-    {
-        m_lock.WriterLock();
-    }
     explicit ScopedWriterLocker(LockType* lock) : m_lock(*lock)
     {
         m_lock.WriterLock();
@@ -141,12 +113,6 @@ template <typename LockType>
 class ScopedTryWriterLocker : private Uncopyable
 {
 public:
-    explicit ScopedTryWriterLocker(LockType& lock)
-        : m_lock(&lock)
-    {
-        m_locked = m_lock->TryWriterLock();
-    }
-
     explicit ScopedTryWriterLocker(LockType* lock)
         : m_lock(lock)
     {

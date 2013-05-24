@@ -18,7 +18,7 @@ TEST(Mutex, Locker)
 {
     Mutex mutex;
     {
-        MutexLocker locker(mutex);
+        MutexLocker locker(&mutex);
         mutex.AssertLocked();
     }
 }
@@ -67,7 +67,7 @@ TEST(Mutex, LockerWithException)
     Mutex mutex;
     try
     {
-        MutexLocker locker(mutex);
+        MutexLocker locker(&mutex);
         mutex.AssertLocked();
         throw 0;
     }
