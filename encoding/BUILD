@@ -3,6 +3,7 @@ cc_library(
     srcs = [
         'ascii.cpp',
         'percent.cpp',
+        'shell.cpp',
     ],
     deps = [
         '//toft/base/string:string',
@@ -18,6 +19,39 @@ cc_test(
 cc_test(
     name = 'percent_test',
     srcs = 'percent_test.cpp',
+    deps = ':encoding'
+)
+
+proto_library(
+    name = 'unittest_proto',
+    srcs = 'unittest.proto',
+)
+
+cc_library(
+    name = 'proto_json_format',
+    srcs = 'proto_json_format.cpp',
+    deps = ['//thirdparty/glog:glog',
+            '//thirdparty/jsoncpp:jsoncpp',
+            '//thirdparty/protobuf:protobuf',
+           ],
+)
+
+cc_test(
+    name = 'proto_json_format_unittest',
+    srcs = 'proto_json_format_unittest.cpp',
+    deps = [':proto_json_format',
+            ':unittest_proto',
+            '//toft/storage/file:file',
+           ],
+    testdata = ['debug_string.txt',
+                'json_fast_string.txt',
+                'json_styled_string.txt',
+               ]
+)
+
+cc_test(
+    name = 'shell_test',
+    srcs = 'shell_test.cpp',
     deps = ':encoding'
 )
 
