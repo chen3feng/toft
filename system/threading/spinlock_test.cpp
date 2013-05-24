@@ -18,7 +18,7 @@ TEST(MutexTest, Mutex)
     Mutex lock;
     for (int i = 0; i < kLoopCount; ++i)
     {
-        Mutex::Locker locker(lock);
+        Mutex::Locker locker(&lock);
     }
 }
 
@@ -45,7 +45,7 @@ TEST(SpinLockTest, SpinLock)
     SpinLock lock;
     for (int i = 0; i < kLoopCount; ++i)
     {
-        SpinLock::Locker locker(lock);
+        SpinLock::Locker locker(&lock);
     }
 }
 
