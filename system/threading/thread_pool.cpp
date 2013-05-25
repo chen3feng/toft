@@ -56,7 +56,7 @@ void ThreadPool::Terminate(bool is_wait) {
     ReleaseAllCompleteTasks();
     ReleaseAllPendingTasks();
 
-    MutexLocker locker(m_mutex_thread);
+    MutexLocker locker(&m_mutex_thread);
     while (!m_idle_threads.empty()) {
         ThreadNode* thread_node = &m_idle_threads.front();
         m_idle_threads.pop_front();
@@ -142,7 +142,7 @@ void ThreadPool::ThreadRunner() {
 void ThreadPool::ThreadRuntine(ThreadNode* thread_node) {
     ThreadRunner();
 
-    MutexLocker locker(m_mutex_thread);
+    MutexLocker locker(&m_mutex_thread);
     m_working_threads.erase(thread_node);
     m_idle_threads.push_back(thread_node);
     m_cur_busy_thread_num--;
@@ -154,7 +154,7 @@ void ThreadPool::ThreadRuntine(ThreadNode* thread_node) {
 }
 
 void ThreadPool::AddPendingTask(TaskNode* task_node, bool is_priority) {
-    MutexLocker locker(m_mutex_task);
+    MutexLocker locker(&m_mutex_task);
     if (is_priority) {
         m_pending_tasks.push_front(task_node);
     } else {
@@ -164,12 +164,12 @@ void ThreadPool::AddPendingTask(TaskNode* task_node, bool is_priority) {
 }
 
 void ThreadPool::AddCompleteTask(TaskNode* task_node) {
-    MutexLocker locker(m_mutex_task);
+    MutexLocker locker(&m_mutex_task);
     m_completed_tasks.push_back(task_node);
 }
 
 void ThreadPool::ReleaseAllCompleteTasks() {
-    MutexLocker locker(m_mutex_task);
+    MutexLocker locker(&m_mutex_task);
     while (!m_completed_tasks.empty()) {
         TaskNode* task_node = &m_completed_tasks.front();
         m_completed_tasks.pop_front();
@@ -178,7 +178,7 @@ void ThreadPool::ReleaseAllCompleteTasks() {
 }
 
 void ThreadPool::ReleaseAllPendingTasks() {
-    MutexLocker locker(m_mutex_task);
+    MutexLocker locker(&m_mutex_task);
     while (!m_pending_tasks.empty()) {
         TaskNode* task_node = &m_pending_tasks.front();
         m_pending_tasks.pop_front();
@@ -190,7 +190,7 @@ void ThreadPool::ReleaseAllPendingTasks() {
 
 ThreadPool::TaskNode* ThreadPool::PickPendingTask() {
     TaskNode* task_node = NULL;
-    MutexLocker locker(m_mutex_task);
+    MutexLocker locker(&m_mutex_task);
     if (!m_pending_tasks.empty()) {
         task_node = &m_pending_tasks.front();
         m_pending_tasks.pop_front();
@@ -203,7 +203,7 @@ ThreadPool::TaskNode* ThreadPool::PickPendingTask() {
 ThreadPool::TaskNode* ThreadPool::PickCompleteTask(bool is_new) {
     TaskNode* task_node = NULL;
     {
-        MutexLocker locker(m_mutex_task);
+        MutexLocker locker(&m_mutex_task);
         if (!m_completed_tasks.empty()) {
             task_node = &m_completed_tasks.front();
             m_completed_tasks.pop_front();
@@ -218,7 +218,7 @@ ThreadPool::TaskNode* ThreadPool::PickCompleteTask(bool is_new) {
 
 void ThreadPool::AddThreadNodeToList() {
     ThreadNode* thread_node = NULL;
-    MutexLocker locker(m_mutex_thread);
+    MutexLocker locker(&m_mutex_thread);
 
     if (!m_idle_threads.empty()) {
         thread_node = &m_idle_threads.front();
