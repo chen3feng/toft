@@ -8,8 +8,9 @@
 #pragma once
 
 #include <stdint.h>
-#include "toft/base/functional.h"
 #include "thirdparty/libev/ev++.h"
+#include "toft/base/functional.h"
+#include "toft/base/uncopyable.h"
 
 namespace toft {
 
@@ -37,6 +38,7 @@ class EventWatcherBase;
 
 // An EventDispatcher object represent an event dispatcher.
 class EventDispatcher {
+    TOFT_DECLARE_UNCOPYABLE(EventDispatcher);
     // Allow EventWatcherBase access m_loop
     template <typename CppWatcherType, typename CWatcherType>
     friend class EventWatcherBase;
@@ -55,6 +57,7 @@ private:
 // CWatcherType is the c ev_* struct in libev.
 template <typename CppWatcherType, typename CWatcherType>
 class EventWatcherBase : private CWatcherType {
+    TOFT_DECLARE_UNCOPYABLE(EventWatcherBase);
 protected:
     typedef std::function<void(int event_mask)> CallbackType;
     EventWatcherBase(EventDispatcher* dispatcher, const CallbackType& callback)
@@ -62,12 +65,14 @@ protected:
         ev_init(this, Thunk);
     }
     ~EventWatcherBase() { static_cast<CppWatcherType*>(this)->Stop(); }
+
 public:
     bool IsActive() const { return ev_is_active(this) != 0; }
     bool IsPending() const { return ev_is_pending(this) != 0; }
     EventDispatcher* Dispatcher() const {
         return m_dispatcher;
     }
+
 protected:
     struct ev_loop* loop() {
         return m_dispatcher->m_loop;
@@ -78,20 +83,23 @@ protected:
     const CWatcherType* c_watcher() const {
         return this;
     }
+
 private:
+    // Forward C callback to C++ callback.
     static void Thunk(struct ev_loop* loop, CWatcherType* w, int event_mask) {
         static_cast<EventWatcherBase*>(w)->m_callback(event_mask);
     }
+
 protected:
     EventDispatcher* m_dispatcher;
-    std::function<void(int event_mask)> m_callback;
+    CallbackType m_callback;
 };
 
 // Watch realtime clock timeout event.
 class TimerEventWatcher : public EventWatcherBase<TimerEventWatcher, ev_timer> {
 public:
     TimerEventWatcher(EventDispatcher* dispatcher,
-                      const std::function<void(int)>& callback,
+                      const CallbackType& callback,
                       int64_t after_ms, int64_t repeat_ms = 0)
         : EventWatcherBase(dispatcher, callback) {
         ev_timer_set(c_watcher(), after_ms / 1000.0, repeat_ms / 1000.0);
@@ -109,7 +117,7 @@ public:
 class SignalEventWatcher : public EventWatcherBase<SignalEventWatcher, ev_signal> {
 public:
     SignalEventWatcher(EventDispatcher* dispatcher,
-                       const std::function<void(int)>& callback,
+                       const CallbackType& callback,
                        int signo)
         : EventWatcherBase(dispatcher, callback) {
         ev_signal_set(c_watcher(), signo);
@@ -127,7 +135,7 @@ public:
 class IoEventWatcher : public EventWatcherBase<IoEventWatcher, ev_io> {
 public:
     IoEventWatcher(EventDispatcher* dispatcher,
-                   const std::function<void(int)>& callback,
+                   const CallbackType& callback,
                    int fd, int event_mask)
         : EventWatcherBase(dispatcher, callback) {
         ev_io_set(c_watcher(), fd, event_mask);
