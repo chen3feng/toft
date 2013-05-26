@@ -28,18 +28,35 @@ cc_library(
 cc_library(
     name = 'http_server',
     srcs = [
+        'http_connection.cpp',
         'http_handler.cpp',
         'http_server.cpp',
     ],
     deps = [
-        ':http_types'
-    ]
+        ':http_types',
+        '//toft/system/event_dispatcher:event_dispatcher',
+        '//toft/system/net:net',
+        '//thirdparty/gflags:gflags',
+        '//thirdparty/glog:glog',
+    ],
+)
+
+cc_binary(
+    name = 'example_http_server',
+    srcs = 'example_http_server.cpp',
+    deps = ':http_server'
 )
 
 cc_test(
     name = 'http_client_test',
     srcs = 'http_client_test.cpp',
     deps = ':http_client'
+)
+
+cc_test(
+    name = 'http_server_test',
+    srcs = 'http_server_test.cpp',
+    deps = ':http_server'
 )
 
 cc_test(

@@ -134,8 +134,10 @@ public:
 // Watch fd io readable/writeable event.
 class IoEventWatcher : public EventWatcherBase<IoEventWatcher, ev_io> {
 public:
-    IoEventWatcher(EventDispatcher* dispatcher,
-                   const CallbackType& callback,
+    IoEventWatcher(EventDispatcher* dispatcher, const CallbackType& callback)
+        : EventWatcherBase(dispatcher, callback) {
+    }
+    IoEventWatcher(EventDispatcher* dispatcher, const CallbackType& callback,
                    int fd, int event_mask)
         : EventWatcherBase(dispatcher, callback) {
         ev_io_set(c_watcher(), fd, event_mask);
@@ -146,6 +148,10 @@ public:
 
     void Stop() {
         ev_io_stop(loop(), c_watcher());
+    }
+
+    void Set(int fd, int events) {
+        ev_io_set(c_watcher(), c_watcher()->fd, events);
     }
 
     void Set(int events) {
