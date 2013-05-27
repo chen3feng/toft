@@ -55,11 +55,13 @@ FileSystem* File::GetFileSystemByPath(const std::string& file_path)
 {
     // "/mfs/abc" -> "mfs"
     if (file_path[0] == '/') {
-        size_t next_slash = file_path.find(1, '/');
-        std::string prefix = file_path.substr(1, next_slash);
-        FileSystem* fs = TOFT_GET_FILE_SYSTEM(prefix);
-        if (fs != NULL)
-            return fs;
+        size_t next_slash = file_path.find('/', 1);
+        if (next_slash != std::string::npos) {
+            std::string prefix = file_path.substr(1, next_slash - 1);
+            FileSystem* fs = TOFT_GET_FILE_SYSTEM(prefix);
+            if (fs != NULL)
+                return fs;
+        }
     }
     return TOFT_GET_FILE_SYSTEM("local");
 }
