@@ -33,37 +33,41 @@ void HttpConnection::OnIoEvents(int events) {
     }
     if (events & EventMask_Read) {
         LOG(INFO) << "Read";
-        OnReadable();
+        if (!OnReadable())
+            return;
     }
     if (events & EventMask_Write) {
         LOG(INFO) << "Write";
-        OnWriteable();
+        if (!OnWriteable())
+            return;
     }
+
     int new_events = EventMask_Read;
     if (!m_send_queue.empty())
         new_events |= EventMask_Write;
     m_watcher.Set(new_events);
 }
 
-void HttpConnection::OnReadable() {
+bool HttpConnection::OnReadable() {
     size_t kBufferSize = 65536;
     m_receive_buffer.resize(m_received_size + kBufferSize);
     size_t received_size;
-    if (m_socket.Receive(&m_receive_buffer[m_received_size], kBufferSize,
-                         &received_size)) {
-        m_received_size += received_size;
-    } else {
+    char* buf = &m_receive_buffer[m_received_size];
+    if (!m_socket.Receive(buf, kBufferSize, &received_size)) {
         OnClosed();
+        return false;
     }
+    m_received_size += received_size;
+    return true;
 }
 
-void HttpConnection::OnWriteable() {
+bool HttpConnection::OnWriteable() {
     m_watcher.Stop();
+    return true;
 }
 
 void HttpConnection::OnClosed() {
-    int events = m_send_queue.empty() ? EventMask_None : EventMask_Write;
-    m_watcher.Set(events);
+    m_watcher.Stop();
 }
 
 } // namespace toft

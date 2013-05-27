@@ -27,9 +27,9 @@ public:
 private:
     void OnIoEvents(int events);
     void OnError();
-    void OnReadable();
+    bool OnReadable();
+    bool OnWriteable();
     void OnClosed();
-    void OnWriteable();
 
 private:
     StreamSocket m_socket;
