@@ -19,3 +19,21 @@ cc_test(
     deps = ':file',
     testdata = 'testdata'
 )
+
+cc_library(
+    name = 'mock_file',
+    srcs = [
+        'mock_file.cpp',
+    ],
+    deps = [
+        ':file',
+        '//thirdparty/gmock:gmock',
+    ],
+    link_all_symbols=True
+)
+
+cc_test(
+    name = 'mock_file_test',
+    srcs = 'mock_file_test.cpp',
+    deps = ':mock_file'
+)
