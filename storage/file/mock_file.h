@@ -132,7 +132,7 @@ ACTION_TEMPLATE(FillArgBuffer,
     memcpy(::std::tr1::get<k>(args), data, length);
 }
 
-} // namespace common
+} // namespace toft
 
 // Similar to EXPECT_CALL, but the first param file must be a mock file object.
 #define TOFT_FILE_EXPECT_CALL(file, call) \
