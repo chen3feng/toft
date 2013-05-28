@@ -156,6 +156,8 @@ public:
 // file_system class singleton.
 TOFT_CLASS_REGISTRY_DEFINE_SINGLETON(file_system, FileSystem);
 
+} // namespace toft
+
 // Register used defined file_system
 // prefix is the prefix of path between the first and second '/'.
 // the class_name should be a subclass of FileSystem
@@ -172,7 +174,5 @@ TOFT_CLASS_REGISTRY_DEFINE_SINGLETON(file_system, FileSystem);
 
 // Get file systems name by index
 #define TOFT_FILE_SYSTEM_NAME(i) TOFT_CLASS_REGISTRY_CLASS_NAME(file_system, i)
-
-} // namespace toft
 
 #endif // TOFT_STORAGE_FILE_FILE_H
