@@ -39,7 +39,7 @@ struct FileEntry {
     std::string name; // Without dir.
 };
 
-// To iterate file entries in a a dir
+// To iterate file entries in a dir.
 class FileIterator {
 protected:
     FileIterator() {}
