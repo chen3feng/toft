@@ -9,6 +9,8 @@
 
 #include <stdint.h>
 #include <time.h>
+#include <string>
+#include <vector>
 #include "toft/base/class_registry.h"
 #include "toft/base/uncopyable.h"
 
@@ -22,15 +24,44 @@ struct FileTimes {
     time_t change_time;
 };
 
+// File type flags
+enum FileType {
+    FileType_None = 0,      // Nothing
+    FileType_Regular = 1,   // Regular file
+    FileType_Directory = 2, // Directory
+    FileType_Link = 4,      // Symbolic Link
+    FileType_All = FileType_Regular | FileType_Directory | FileType_Link,
+};
+
+// File iteration entry.
+struct FileEntry {
+    int type; // FileType enum combination.
+    std::string name; // Without dir.
+};
+
+// To iterate file entries in a dir.
+class FileIterator {
+protected:
+    FileIterator() {}
+public:
+    virtual ~FileIterator() {}
+
+    // Return true if next file entry exist and obtained.
+    // Return false means iteration is complete.
+    virtual bool GetNext(FileEntry* entry) = 0;
+};
+
 // A abstruct object.
 //
 // All errors are reported by errno.
 class File {
     TOFT_DECLARE_UNCOPYABLE(File);
+
 protected:
     // You can't construct a File object, you must carete it by the static Open
     // method.
     File();
+
 public:
     virtual ~File();
 
@@ -43,6 +74,8 @@ public:
     // Return the number of bytes read.
     // Return -1 if error occurs.
     virtual int64_t Write(const void* buffer, int64_t size) = 0;
+
+    // Write of all user-space buffered data to file system.
     virtual bool Flush() = 0;
 
     // Close a file object. After closed, all other operations are invalid.
@@ -71,6 +104,9 @@ public:
     // Delete file
     static bool Delete(const std::string& file_path);
 
+    // Rename file
+    static bool Rename(const std::string& from, const std::string& to);
+
     // Get times attributes of path
     static bool GetTimes(const std::string& file_path, FileTimes* times);
 
@@ -82,6 +118,12 @@ public:
     // to fit into memory.
     static bool ReadLines(const std::string& file_path,
                           std::vector<std::string>* lines);
+
+    // Get a iterator to iterate the entries of the dir.
+    static FileIterator* Iterate(const std::string& dir,
+                                 const std::string& pattern = "*",
+                                 int include_type = FileType_All,
+                                 int exclude_type = FileType_None);
 
 private:
     static FileSystem* GetFileSystemByPath(const std::string& file_path);
@@ -98,16 +140,23 @@ public:
     virtual File* Open(const std::string& file_path, const char* mode) = 0;
     virtual bool Exists(const std::string& file_path) = 0;
     virtual bool Delete(const std::string& file_path) = 0;
+    virtual bool Rename(const std::string& from, const std::string& to) = 0;
     virtual bool GetTimes(const std::string& file_path, FileTimes* times) = 0;
     virtual bool ReadAll(const std::string& file_path, std::string* buffer,
                          size_t max_size);
     virtual bool ReadLines(const std::string& file_path,
                            std::vector<std::string>* lines);
+    virtual FileIterator* Iterate(const std::string& dir,
+                                  const std::string& pattern,
+                                  int include_types,
+                                  int exclude_types) = 0;
 };
 
 // Defile the file_system class registry, user can register their own
 // file_system class singleton.
 TOFT_CLASS_REGISTRY_DEFINE_SINGLETON(file_system, FileSystem);
+
+} // namespace toft
 
 // Register used defined file_system
 // prefix is the prefix of path between the first and second '/'.
@@ -125,7 +174,5 @@ TOFT_CLASS_REGISTRY_DEFINE_SINGLETON(file_system, FileSystem);
 
 // Get file systems name by index
 #define TOFT_FILE_SYSTEM_NAME(i) TOFT_CLASS_REGISTRY_CLASS_NAME(file_system, i)
-
-} // namespace toft
 
 #endif // TOFT_STORAGE_FILE_FILE_H

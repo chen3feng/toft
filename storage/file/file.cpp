@@ -4,6 +4,9 @@
 // Author: CHEN Feng <chen3feng@gmail.com>
 
 #include "toft/storage/file/file.h"
+
+#include <errno.h>
+
 #include "toft/base/scoped_ptr.h"
 
 namespace toft {
@@ -52,11 +55,13 @@ FileSystem* File::GetFileSystemByPath(const std::string& file_path)
 {
     // "/mfs/abc" -> "mfs"
     if (file_path[0] == '/') {
-        size_t next_slash = file_path.find(1, '/');
-        std::string prefix = file_path.substr(1, next_slash);
-        FileSystem* fs = TOFT_GET_FILE_SYSTEM(prefix);
-        if (fs != NULL)
-            return fs;
+        size_t next_slash = file_path.find('/', 1);
+        if (next_slash != std::string::npos) {
+            std::string prefix = file_path.substr(1, next_slash - 1);
+            FileSystem* fs = TOFT_GET_FILE_SYSTEM(prefix);
+            if (fs != NULL)
+                return fs;
+        }
     }
     return TOFT_GET_FILE_SYSTEM("local");
 }
@@ -73,15 +78,25 @@ bool File::Exists(const std::string& file_path)
     return fs->Exists(file_path);
 }
 
-bool File::GetTimes(const std::string& file_path, FileTimes* times) {
-    FileSystem* fs = GetFileSystemByPath(file_path);
-    return fs->GetTimes(file_path, times);
-}
-
 bool File::Delete(const std::string& file_path)
 {
     FileSystem* fs = GetFileSystemByPath(file_path);
     return fs->Delete(file_path);
+}
+
+bool File::Rename(const std::string& from, const std::string& to) {
+    FileSystem* from_fs = GetFileSystemByPath(from);
+    FileSystem* to_fs = GetFileSystemByPath(to);
+    if (from_fs != to_fs) {
+        errno = EXDEV;
+        return false;
+    }
+    return from_fs->Rename(from, to);
+}
+
+bool File::GetTimes(const std::string& file_path, FileTimes* times) {
+    FileSystem* fs = GetFileSystemByPath(file_path);
+    return fs->GetTimes(file_path, times);
 }
 
 bool File::ReadAll(const std::string& file_path, std::string* buffer,
@@ -95,6 +110,12 @@ bool File::ReadLines(const std::string& file_path, std::vector<std::string>* lin
 {
     FileSystem* fs = GetFileSystemByPath(file_path);
     return fs->ReadLines(file_path, lines);
+}
+
+FileIterator* File::Iterate(const std::string& dir, const std::string& pattern,
+                            int include_types, int exclude_types) {
+    FileSystem* fs = GetFileSystemByPath(dir);
+    return fs->Iterate(dir, pattern, include_types, exclude_types);
 }
 
 } // namespace toft

@@ -11,15 +11,14 @@
 
 namespace toft {
 
-// 专为 ASCII 特定的函数，如果涉及到 locale，请使用标准 C 的 ctype.h
-// 里定义的函数。
+// Used for ASCII encoding only.
+// If you want to process locale ralated text, please using <ctype.h>
 struct Ascii
 {
 private:
     Ascii();
     ~Ascii();
 private:
-    /// 字符类型的掩码
     enum CharTypeMask
     {
         kUpper = 1 << 0,
@@ -34,7 +33,6 @@ private:
         kGraph = 1 << 9,
     };
 public:
-    /** 判断是不是有效的 ASCII 码 */
     static bool IsValid(char c)
     {
         return (c & 0x80) == 0;
@@ -50,61 +48,51 @@ public:
         return CharIncludeAnyTypeMask(c, kUpper);
     }
 
-    /** 判断是否为字母 */
     static bool IsAlpha(char c)
     {
         return CharIncludeAnyTypeMask(c, kUpper | kLower);
     }
 
-    /** 判断是否为数字 */
     static bool IsDigit(char c)
     {
         return CharIncludeAnyTypeMask(c, kDigit);
     }
 
-    /** 判断是否为英文或数字  */
     static bool IsAlphaNumber(char c)
     {
         return CharIncludeAnyTypeMask(c, kUpper | kLower | kDigit);
     }
 
-    /** 判断是否为空白字符。空格,'\t', ' ' 算作空白字符*/
     static bool IsBlank(char c)
     {
         return CharIncludeAnyTypeMask(c, kBlank);
     }
 
-    /** 判断是否为间隔字符。*/
     static inline bool IsSpace(char c)
     {
         return CharIncludeAnyTypeMask(c, kSpace);
     }
 
-    /** 判断是否为控制字符。*/
     static bool IsControl(char c)
     {
         return CharIncludeAnyTypeMask(c, kControl);
     }
 
-    /** 判断是否为标点符号字符。*/
     static inline bool IsPunct(char c)
     {
         return CharIncludeAnyTypeMask(c, kPunct);
     }
 
-    /** 判断是否为十六进制数字字符。*/
     static inline bool IsHexDigit(char c)
     {
         return CharIncludeAnyTypeMask(c, kHexDigit);
     }
 
-    /** 判断是否为可见字符。*/
     static inline bool IsGraph(char c)
     {
         return CharIncludeAnyTypeMask(c, kGraph);
     }
 
-    /** 判断是否为可打印字符。*/
     static inline bool IsPrint(char c)
     {
         return CharIncludeAnyTypeMask(c, kPrint);

@@ -18,7 +18,7 @@ TEST(MutexTest, Mutex)
     Mutex lock;
     for (int i = 0; i < kLoopCount; ++i)
     {
-        Mutex::Locker locker(lock);
+        Mutex::Locker locker(&lock);
     }
 }
 
@@ -37,7 +37,6 @@ TEST(MutexTest, ThreadMutex)
     int n = 0;
     Mutex lock;
     ThreadGroup thread_group(std::bind(TestThread, &n, &lock), 4);
-    thread_group.Start();
     thread_group.Join();
 }
 
@@ -46,7 +45,7 @@ TEST(SpinLockTest, SpinLock)
     SpinLock lock;
     for (int i = 0; i < kLoopCount; ++i)
     {
-        SpinLock::Locker locker(lock);
+        SpinLock::Locker locker(&lock);
     }
 }
 
