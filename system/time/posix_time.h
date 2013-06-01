@@ -6,7 +6,9 @@
 #ifndef TOFT_SYSTEM_TIME_POSIX_TIME_H
 #define TOFT_SYSTEM_TIME_POSIX_TIME_H
 
+#include <stdio.h>
 #include <stdint.h>
+#include <sys/time.h>
 
 struct timespec;
 

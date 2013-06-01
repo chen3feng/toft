@@ -23,6 +23,23 @@ cc_library(
     srcs = 'closure.cpp',
 )
 
+cc_library(
+    name = 'benchmark',
+    srcs = 'benchmark.cpp',
+    deps = ['//toft/system/time:time',
+            '//thirdparty/glog:glog',
+            '//thirdparty/perftools:tcmalloc_and_profiler',
+            ]
+)
+
+cc_library(
+    name = 'benchmark_main',
+    srcs = 'benchmark_main.cpp',
+    deps = [':benchmark',
+            '//thirdparty/gflags:gflags',
+            ]
+)
+
 cc_test(name = 'array_size_test', srcs = 'array_size_test.cpp')
 cc_test(name = 'byte_order_test', srcs = 'byte_order_test.cpp')
 cc_test(name = 'closure_test', srcs = 'closure_test.cpp', deps = ':closure')
