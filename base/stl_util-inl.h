@@ -5,8 +5,8 @@
 // STL utility functions.  Usually, these replace built-in, but slow(!),
 // STL functions with more efficient versions.
 
-#ifndef UTIL_GTL_STL_UTIL_INL_H_
-#define UTIL_GTL_STL_UTIL_INL_H_
+#ifndef TOFT_BASE_STL_UTIL_INL_H_
+#define TOFT_BASE_STL_UTIL_INL_H_
 
 #include <string.h>  // for memcpy
 #include <functional>
@@ -15,7 +15,7 @@
 #include <vector>
 #include <cassert>
 
-namespace gtl {
+namespace toft {
 // Clear internal memory of an STL object.
 // STL clear()/reserve(0) does not always free internal memory allocated
 // This function uses swap/destructor to ensure the internal memory is freed.
@@ -448,6 +448,6 @@ template <typename Collection, typename Key>
 bool ContainsKey(const Collection& collection, const Key& key) {
   return collection.find(key) != collection.end();
 }
-}
+}  // namespace toft
 
-#endif  // UTIL_GTL_STL_UTIL_INL_H_
+#endif  // TOFT_BASE_STL_UTIL_INL_H_
