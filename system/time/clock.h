@@ -1,3 +1,8 @@
+// Copyright (c) 2013, The Toft Authors.
+// All rights reserved.
+//
+// Author: CHEN Feng <chen3feng@gmail.com>
+
 #ifndef TOFT_SYSTEM_TIME_CLOCK_H
 #define TOFT_SYSTEM_TIME_CLOCK_H
 #pragma once

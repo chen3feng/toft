@@ -4,6 +4,7 @@ cc_library(
     name = 'time',
     srcs = [
         'clock.cpp',
+        'date.cpp',
         'posix_time.cpp'
     ],
     deps = '#rt'
@@ -13,6 +14,12 @@ cc_library(
 cc_test(
     name = 'clock_test',
     srcs = ['clock_test.cpp'],
+    deps = [':time']
+)
+
+cc_test(
+    name = 'date_test',
+    srcs = ['date_test.cpp'],
     deps = [':time']
 )
 
