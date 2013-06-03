@@ -85,7 +85,7 @@ void BloomFilter::Initialize(size_t element_count, double false_positive_prob)
     double num_hashes = -log(false_positive_prob) / log(2.0);
     size_t num_hash_functions = (size_t) ceil(num_hashes + 0.001);
     uint64_t num_bits =
-        (uint64_t)(element_count * num_hash_functions / log(2.0));
+        static_cast<uint64_t>(element_count * num_hash_functions / log(2.0));
 
     // round up
     uint64_t num_bytes = (num_bits + CHAR_BIT - 1) / CHAR_BIT;
@@ -144,7 +144,7 @@ void BloomFilter::UncheckedInitialize(
 {
     m_num_hash_functions = num_hashes;
     m_bitmap = reinterpret_cast<uint8_t*>(bitmap);
-    uint64_t num_bits = (uint64_t) bitmap_byte_size * CHAR_BIT;
+    uint64_t num_bits = static_cast<uint64_t>(bitmap_byte_size) * CHAR_BIT;
     m_num_bits = num_bits;
     if (!m_divisor.SetValue(m_num_bits))
         abort();
@@ -174,7 +174,7 @@ void BloomFilter::Destroy()
 
 void BloomFilter::CheckBitmapSize(size_t byte_size)
 {
-    uint64_t num_bits = (uint64_t) byte_size * CHAR_BIT;
+    uint64_t num_bits = static_cast<uint64_t>(byte_size) * CHAR_BIT;
     if (num_bits >= UINT32_MAX)
     {
         throw std::runtime_error(StringPrint(
@@ -287,15 +287,14 @@ void PartialBloomFilter::Initialize(size_t element_count, double false_positive_
     double num_hashes = -log(m_false_positive_prob) / log(2);
     m_num_hash_functions = (size_t)(num_hashes + 0.5);
     uint64_t total_bits =
-        (uint64_t)(m_element_count * num_hashes / log(2));
+        static_cast<uint64_t>(m_element_count * num_hashes / log(2));
     if (total_bits == 0)
     {
         throw std::runtime_error(StringPrint("Num elements=%u false_positive_prob=%g",
                                              element_count,
                                              false_positive_prob));
     }
-    uint64_t single_bits =
-        (uint64_t)(total_bits / num_hashes);
+    uint64_t single_bits = static_cast<uint64_t>(total_bits / num_hashes);
 
     if (single_bits >= UINT32_MAX)
     {
