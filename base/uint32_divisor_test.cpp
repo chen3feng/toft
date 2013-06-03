@@ -3,8 +3,8 @@
 //
 // Author: CHEN Feng <chen3feng@gmail.com>
 
-#include <limits.h>
 #include "toft/base/uint32_divisor.h"
+#include <limits.h>
 #include "thirdparty/gtest/gtest.h"
 
 namespace toft {
