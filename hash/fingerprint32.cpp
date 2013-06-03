@@ -27,7 +27,10 @@
 // (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-#include "toft/hash/hash.h"
+// GLOBAL_NOLINT(readability/casting)
+// GLOBAL_NOLINT(whitespace/newline)
+
+#include "toft/hash/fingerprint.h"
 
 #include <string.h>
 #include <string>
@@ -39,15 +42,15 @@ static const uint32_t kFingerPrint32Seed = 0xfd12deff;
 
 namespace toft {
 #define mix(a, b, c) { \
-  a -= b; a -= c; a ^= (c >> 13);\
-  b -= c; b -= a; b ^= (a << 8);\
-  c -= a; c -= b; c ^= (b >> 13);\
-  a -= b; a -= c; a ^= (c >> 12);\
-  b -= c; b -= a; b ^= (a << 16);\
-  c -= a; c -= b; c ^= (b >> 5);\
-  a -= b; a -= c; a ^= (c >> 3);\
-  b -= c; b -= a; b ^= (a << 10);\
-  c -= a; c -= b; c ^= (b >> 15);\
+    a -= b; a -= c; a ^= (c >> 13);\
+    b -= c; b -= a; b ^= (a << 8);\
+    c -= a; c -= b; c ^= (b >> 13);\
+    a -= b; a -= c; a ^= (c >> 12);\
+    b -= c; b -= a; b ^= (a << 16);\
+    c -= a; c -= b; c ^= (b >> 5);\
+    a -= b; a -= c; a ^= (c >> 3);\
+    b -= c; b -= a; b ^= (a << 10);\
+    c -= a; c -= b; c ^= (b >> 15);\
 }
 
 uint32_t Fingerprint32(const std::string &key) {
@@ -114,4 +117,4 @@ uint32_t Fingerprint32WithSeed(const char *str, uint32_t seed) {
     return Fingerprint32WithSeed(str, strlen(str), seed);
 }
 
-}  // namespace base
+}  // namespace toft
