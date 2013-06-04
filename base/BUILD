@@ -41,6 +41,12 @@ cc_library(
 )
 
 cc_library(
+    name = 'int128',
+    srcs = 'int128.cpp',
+    deps = '//thirdparty/glog:glog',
+)
+
+cc_library(
     name = 'uint32_divisor',
     srcs = 'uint32_divisor.cpp'
 )
@@ -61,6 +67,7 @@ cc_test(name = 'shared_ptr_test', srcs = 'shared_ptr_test.cpp')
 cc_test(name = 'singleton_test', srcs = 'singleton_test.cpp')
 cc_test(name = 'static_assert_test', srcs = 'static_assert_test.cpp')
 cc_test(name = 'static_resource_test', srcs = 'static_resource_test.cpp')
+cc_test(name = 'stl_util_test', srcs = 'stl_util_test.cpp')
 cc_test(name = 'unique_ptr_test', srcs = 'unique_ptr_test.cpp')
 cc_test(name = 'unordered_test', srcs = 'unordered_test.cpp')
 
