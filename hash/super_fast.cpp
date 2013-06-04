@@ -1,16 +1,19 @@
+// Copyright (c) 2013, The Toft Authors. All rights reserved.
+
 // From http://www.azillionmonkeys.com/qed/hash.html
 
-#include "toft/hash/super_fast_hash.h"
+#include "toft/hash/super_fast.h"
 
 namespace toft {
 
 #undef get16bits
-#if (defined(__GNUC__) && defined(__i386__)) || defined(__WATCOMC__) \
-    || defined(_MSC_VER) || defined (__BORLANDC__) || defined (__TURBOC__)
+#if (defined(__GNUC__) && defined(__i386__)) || defined(__WATCOMC__) || \
+    defined(_MSC_VER) || defined(__BORLANDC__) || defined(__TURBOC__)
 #define get16bits(d) (*((const uint16_t *) (d)))
 #endif
 
 #if !defined (get16bits)
+// NOLINT(readability/casting)
 #define get16bits(d) ((((uint32_t)(((const uint8_t *)(d))[1])) << 8)\
                          +(uint32_t)(((const uint8_t *)(d))[0]) )
 #endif
@@ -30,7 +33,7 @@ uint32_t SuperFastHash(const char * data, int len) {
         hash += get16bits(data);
         tmp = (get16bits(data + 2) << 11) ^ hash;
         hash = (hash << 16) ^ tmp;
-        data += 2 * sizeof(uint16_t);
+        data += 2 * sizeof(uint16_t); // NOLINT(runtime/sizeof)
         hash += hash >> 11;
     }
 
@@ -42,6 +45,7 @@ uint32_t SuperFastHash(const char * data, int len) {
 
         // Treat the final character as signed. This ensures all platforms behave
         // consistently with the original x86 code.
+        // NOLINT(runtime/sizeof)
         hash ^= static_cast<signed char>(data[sizeof(uint16_t)]) << 18;
         hash += hash >> 11;
         break;
