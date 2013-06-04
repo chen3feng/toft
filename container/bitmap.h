@@ -27,27 +27,27 @@ class BitmapBase
 {
 protected:
     typedef size_t WordType;
-    static const size_t BitsPerWord = sizeof(WordType) * CHAR_BIT;
+    static const size_t kBitsPerWord = sizeof(WordType) * CHAR_BIT;
     static const WordType kAllSetMask = ~WordType(0);
 
     static size_t WordSizeOfBits(uint64_t num_bits)
     {
-        return (num_bits + BitsPerWord - 1) / BitsPerWord;
+        return (num_bits + kBitsPerWord - 1) / kBitsPerWord;
     }
 
     template <uint64_t num_bits>
     struct StaticWordSizeOfBits
     {
-        static const size_t Value = (num_bits + BitsPerWord - 1) / BitsPerWord;
+        static const size_t Value = (num_bits + kBitsPerWord - 1) / kBitsPerWord;
     };
 
     static size_t WordIndexOfBit(size_t index)
     {
-        return index / BitsPerWord;
+        return index / kBitsPerWord;
     }
     static WordType ShiftOfBit(size_t index)
     {
-        return index % BitsPerWord;
+        return index % kBitsPerWord;
     }
     static WordType MaskOfBit(size_t index)
     {
@@ -55,18 +55,18 @@ protected:
     }
     static WordType FirstWordMask(uint64_t start)
     {
-        return ~0ULL << (start % BitsPerWord);
+        return ~0ULL << (start % kBitsPerWord);
     }
 
     static WordType LastWordMask(uint64_t end)
     {
-        return end % BitsPerWord ? (1ULL << (end % BitsPerWord)) - 1 : ~0ULL;
+        return end % kBitsPerWord ? (1ULL << (end % kBitsPerWord)) - 1 : ~0ULL;
     }
 
     static void MaskOffTailBits(WordType* words, uint64_t size)
     {
         size_t word_size = WordIndexOfBit(size);
-        size_t tail_bits = size % BitsPerWord;
+        size_t tail_bits = size % kBitsPerWord;
         if (tail_bits > 0)
             words[word_size] &= ~(kAllSetMask << tail_bits);
     }
@@ -136,77 +136,77 @@ protected:
     static void DoAppendToString(const WordType* words, uint64_t num_bits, std::string* out);
 };
 
-/// this class provide basic bitmap access interfaces
+/// This class provide basic bitmap access interfaces
 template <typename CocreteType, typename IndexType>
 class BasicBitmap : public BitmapBase
 {
     typedef BasicBitmap<CocreteType, IndexType> ThisType;
 public:
-    /// total bit count
+    /// Total bit count
     IndexType Size() const
     {
         return static_cast<const CocreteType*>(this)->DoGetSize();
     }
 
-    /// return memory size in bytes, include padding bits
+    /// Return memory size in bytes, include padding bits
     size_t ByteSize() const
     {
         return WordSize() * sizeof(WordType);
     }
 
-    /// get a bit at specified index
+    /// Get a bit at specified index
     bool GetAt(IndexType index) const
     {
         assert(index < Size());
         return DoGetAt(Words(), index);
     }
 
-    /// set a bit at specified index
+    /// Set a bit at specified index
     void SetAt(IndexType index)
     {
         assert(index < Size());
         DoSetAt(Words(), index);
     }
 
-    /// clear a bit at specified index to zero
+    /// Clear a bit at specified index to zero
     void ClearAt(IndexType index)
     {
         assert(index < Size());
         DoClearAt(Words(), index);
     }
 
-    /// clear a bit at specified index to given value
+    /// Clear a bit at specified index to given value
     void SetAt(IndexType index, bool value)
     {
         assert(index < Size());
         DoSetAt(Words(), index, value);
     }
 
-    /// fill all bits of the bitmap
+    /// Fill all bits of the bitmap
     void SetAll()
     {
         DoSetAll(Words(), Size());
     }
 
-    /// clear all bits of the bitmap
+    /// Clear all bits of the bitmap
     void ClearAll()
     {
         memset(Words(), 0, ByteSize());
     }
 
-    /// are all bits set in the bitmap?
+    /// Are all bits set in the bitmap?
     bool AllAreSet() const
     {
         return DoAllAreSet(Words(), Size());
     }
 
-    /// are all bits clear in the bitmap?
+    /// Are all bits clear in the bitmap?
     bool AllAreClear() const
     {
         return DoAllAreClear(Words(), Size());
     }
 
-    /// are all bits clear in the bitmap?
+    /// Are all bits clear in the range of bitmap?
     bool AllAreClearInRange(IndexType start, IndexType end) const
     {
         assert(start <= Size());
@@ -214,42 +214,42 @@ public:
         return DoAllAreClearInRange(Words(), start, end);
     }
 
-    /// left shift all bits, fill 0 to the hollow
+    /// Left shift all bits, fill 0 to the hollow
     void LeftShift(size_t shift)
     {
         if (shift != 0)
             DoLeftShift(Words(), Size(), shift);
     }
 
-    /// right shift all bits, fill 0 to the hollow
+    /// Right shift all bits, fill 0 to the hollow
     void RightShift(size_t shift)
     {
         if (shift != 0)
             DoRightShift(Words(), WordSize(), shift);
     }
 
-    /// bitwise And with another bitmap, the two bitmap must be same size
+    /// Bitwise And with another bitmap, the two bitmap must be same size
     void AndWith(const ThisType& rhs)
     {
         assert(rhs.Size() == Size());
         DoAndWith(Words(), rhs.Words(), WordSize());
     }
 
-    /// bitwise Or with another bitmap, the two bitmap must be same size
+    /// Bitwise Or with another bitmap, the two bitmap must be same size
     void OrWith(const ThisType& rhs)
     {
         assert(rhs.Size() == Size());
         DoOrWith(Words(), rhs.Words(), WordSize());
     }
 
-    /// bitwise Xor with another bitmap, the two bitmap must be same size
+    /// Bitwise Xor with another bitmap, the two bitmap must be same size
     void XorWith(const ThisType& rhs)
     {
         assert(rhs.Size() == Size());
         DoXorWith(Words(), rhs.Words(), WordSize());
     }
 
-    /// return whether this bitmap is subset of another bitmap
+    /// Return whether this bitmap is subset of another bitmap
     bool IsSubsetOf(const ThisType& rhs) const
     {
         if (rhs.Size() != Size())
@@ -257,25 +257,25 @@ public:
         return DoIsSubsetOf(Words(), rhs.Words(), Size());
     }
 
-    /// return first bit position which is set to 1
+    /// Return first bit position which is set to 1
     bool FindFirst(size_t* result)
     {
         return DoFindFirst(Words(), WordSize(), result);
     }
 
-    /// return next bit position which is set to 1 from prev position
+    /// Return next bit position which is set to 1 from prev position
     bool FindNext(size_t prev, size_t* result)
     {
         return DoFindNext(Words(), WordSize(), prev, result);
     }
 
-    /// append the bitmap as a 01 string to a string
+    /// Append the bitmap as a 01 string to a string
     void AppendToString(std::string* out) const
     {
         DoAppendToString(Words(), Size(), out);
     }
 
-    /// convert this bitmap to a 01 string
+    /// Convert this bitmap to a 01 string
     std::string ToString() const
     {
         std::string result;
@@ -316,7 +316,7 @@ private:
     }
 };
 
-// using size_t as default bitmap index type
+// Using size_t as default bitmap index type
 template <bool Use64BitIndex>
 struct SelectLargeIndexType
 {
@@ -337,7 +337,7 @@ struct SelectIndexTypeBySize
     typedef typename SelectLargeIndexType<UseLargeIndexType>::Type Type;
 };
 
-/// dynamic bitmap
+/// Dynamic bitmap
 template <typename IndexType>
 class BasicDynamicBitmap :
     public BasicBitmap<BasicDynamicBitmap<IndexType>, IndexType>
@@ -390,7 +390,7 @@ private:
     IndexType m_size;
 };
 
-} // end namespace details
+} // namespace details
 
 template <uint64_t Size, typename IndexType = typename details::SelectIndexTypeBySize<Size>::Type >
 class FixedBitmap : public details::BasicBitmap<FixedBitmap<Size, IndexType>, IndexType>

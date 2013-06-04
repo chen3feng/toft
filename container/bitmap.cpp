@@ -37,8 +37,8 @@ void BitmapBase::DoSetAll(WordType* words, uint64_t size)
 
 bool BitmapBase::DoAllAreSet(const WordType* words, uint64_t num_bits)
 {
-    const size_t last_word_index = num_bits / BitsPerWord;
-    const size_t tail_bits = num_bits % BitsPerWord;
+    const size_t last_word_index = num_bits / kBitsPerWord;
+    const size_t tail_bits = num_bits % kBitsPerWord;
 
     for (size_t i = 0; i < last_word_index; ++i)
     {
@@ -59,8 +59,8 @@ bool BitmapBase::DoAllAreSet(const WordType* words, uint64_t num_bits)
 
 bool BitmapBase::DoAllAreClear(const WordType* words, uint64_t num_bits)
 {
-    const size_t last_word_index = num_bits / BitsPerWord;
-    const size_t tail_bits = num_bits % BitsPerWord;
+    const size_t last_word_index = num_bits / kBitsPerWord;
+    const size_t tail_bits = num_bits % kBitsPerWord;
 
     for (size_t i = 0; i < last_word_index; ++i)
     {
@@ -80,11 +80,11 @@ bool BitmapBase::DoAllAreClear(const WordType* words, uint64_t num_bits)
 
 bool BitmapBase::DoAllAreClearInRange(const WordType* words, size_t start, size_t end)
 {
-    size_t start_word_index = start / BitsPerWord;
-    size_t start_tail_bits = start % BitsPerWord;
+    size_t start_word_index = start / kBitsPerWord;
+    size_t start_tail_bits = start % kBitsPerWord;
 
-    size_t end_word_index = end / BitsPerWord;
-    size_t end_tail_bits = end % BitsPerWord;
+    size_t end_word_index = end / kBitsPerWord;
+    size_t end_tail_bits = end % kBitsPerWord;
 
     // span different words
     if (start_word_index != end_word_index)
@@ -117,7 +117,7 @@ bool BitmapBase::DoAllAreClearInRange(const WordType* words, size_t start, size_
     else // in same words
     {
         WordType word = words[start_word_index];
-        return ((word >> start_tail_bits) << (BitsPerWord - end_tail_bits + start_tail_bits)) == 0;
+        return ((word >> start_tail_bits) << (kBitsPerWord - end_tail_bits + start_tail_bits)) == 0;
     }
 
     return true;
@@ -128,8 +128,8 @@ bool BitmapBase::DoIsSubsetOf(
     const WordType* fullset_words,
     uint64_t num_bits)
 {
-    const size_t last_word_index = num_bits / BitsPerWord;
-    const size_t tail_bits = num_bits % BitsPerWord;
+    const size_t last_word_index = num_bits / kBitsPerWord;
+    const size_t tail_bits = num_bits % kBitsPerWord;
 
     for (size_t i = 0; i < last_word_index; ++i)
     {
@@ -151,8 +151,8 @@ bool BitmapBase::DoIsSubsetOf(
 
 void BitmapBase::DoLeftShift(WordType* words, uint64_t num_bits, size_t shift)
 {
-    const size_t last_word_index = shift / BitsPerWord;
-    const size_t tail_bits = shift % BitsPerWord;
+    const size_t last_word_index = shift / kBitsPerWord;
+    const size_t tail_bits = shift % kBitsPerWord;
     const size_t word_size = WordSizeOfBits(num_bits);
 
     if (tail_bits == 0)
@@ -162,7 +162,7 @@ void BitmapBase::DoLeftShift(WordType* words, uint64_t num_bits, size_t shift)
     }
     else
     {
-        const size_t sub_offset = BitsPerWord - tail_bits;
+        const size_t sub_offset = kBitsPerWord - tail_bits;
         for (size_t n = word_size - 1; n > last_word_index; --n)
             words[n] = ((words[n - last_word_index] << tail_bits)
                         | (words[n - last_word_index - 1] >> sub_offset));
@@ -175,8 +175,8 @@ void BitmapBase::DoLeftShift(WordType* words, uint64_t num_bits, size_t shift)
 
 void BitmapBase::DoRightShift(WordType* words, uint64_t word_size, size_t shift)
 {
-    const size_t last_word_index = shift / BitsPerWord;
-    const size_t tail_bits = shift % BitsPerWord;
+    const size_t last_word_index = shift / kBitsPerWord;
+    const size_t tail_bits = shift % kBitsPerWord;
     const size_t limit = word_size - last_word_index - 1;
 
     if (tail_bits == 0)
@@ -186,7 +186,7 @@ void BitmapBase::DoRightShift(WordType* words, uint64_t word_size, size_t shift)
     }
     else
     {
-        const size_t sub_offset = BitsPerWord - tail_bits;
+        const size_t sub_offset = kBitsPerWord - tail_bits;
         for (size_t n = 0; n < limit; ++n)
             words[n] = ((words[n + last_word_index] >> tail_bits)
                         | (words[n + last_word_index + 1] << sub_offset));
@@ -203,7 +203,7 @@ bool BitmapBase::DoFindFirst(WordType* words, size_t word_size, size_t* result)
         WordType thisword = words[i];
         if (thisword != static_cast<WordType>(0))
         {
-            *result = (i * BitsPerWord
+            *result = (i * kBitsPerWord
                     + __builtin_ctzl(thisword));
             return true;
         }
@@ -217,7 +217,7 @@ bool BitmapBase::DoFindNext(WordType* words, size_t word_size, size_t prev, size
     ++prev;
 
     // check out of bounds
-    if (prev >= word_size * BitsPerWord)
+    if (prev >= word_size * kBitsPerWord)
         return false;
 
     // search first word
@@ -229,7 +229,7 @@ bool BitmapBase::DoFindNext(WordType* words, size_t word_size, size_t prev, size
 
     if (thisword != static_cast<WordType>(0))
     {
-        *result = (i * BitsPerWord
+        *result = (i * kBitsPerWord
                 + __builtin_ctzl(thisword));
         return true;
     }
@@ -241,7 +241,7 @@ bool BitmapBase::DoFindNext(WordType* words, size_t word_size, size_t prev, size
         thisword = words[i];
         if (thisword != static_cast<WordType>(0))
         {
-            *result = (i * BitsPerWord
+            *result = (i * kBitsPerWord
                     + __builtin_ctzl(thisword));
             return true;
         }
