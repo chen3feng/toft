@@ -10,6 +10,18 @@ cc_library(
     ]
 )
 
+cc_library(
+    name = 'varint',
+    srcs = 'varint.cpp',
+    deps = [],
+)
+
+cc_test(
+    name = 'varint_test',
+    srcs = 'varint_test.cpp',
+    deps = [':varint'],
+)
+
 cc_test(
     name = 'ascii_test',
     srcs = 'ascii_test.cpp',
