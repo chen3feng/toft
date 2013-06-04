@@ -5,8 +5,8 @@
 // STL utility functions.  Usually, these replace built-in, but slow(!),
 // STL functions with more efficient versions.
 
-#ifndef TOFT_BASE_STL_UTIL_INL_H_
-#define TOFT_BASE_STL_UTIL_INL_H_
+#ifndef TOFT_BASE_STL_UTIL_H_
+#define TOFT_BASE_STL_UTIL_H_
 
 #include <string.h>  // for memcpy
 #include <functional>
@@ -19,7 +19,7 @@ namespace toft {
 // Clear internal memory of an STL object.
 // STL clear()/reserve(0) does not always free internal memory allocated
 // This function uses swap/destructor to ensure the internal memory is freed.
-template<class T> void STLClearObject(T* obj) {
+template<class T> void ClearObject(T* obj) {
   T tmp;
   tmp.swap(*obj);
   obj->reserve(0);  // this is because sometimes "T tmp" allocates objects with
@@ -29,9 +29,9 @@ template<class T> void STLClearObject(T* obj) {
 
 // Reduce memory usage on behalf of object if it is using more than
 // "bytes" bytes of space.  By default, we clear objects over 1MB.
-template <class T> inline void STLClearIfBig(T* obj, size_t limit = 1<<20) {
+template <class T> inline void ClearIfBig(T* obj, size_t limit = 1<<20) {
   if (obj->capacity() >= limit) {
-    STLClearObject(obj);
+    ClearObject(obj);
   } else {
     obj->clear();
   }
@@ -40,14 +40,14 @@ template <class T> inline void STLClearIfBig(T* obj, size_t limit = 1<<20) {
 // Reserve space for STL object.
 // STL's reserve() will always copy.
 // This function avoid the copy if we already have capacity
-template<class T> void STLReserveIfNeeded(T* obj, int new_size) {
+template<class T> void ReserveIfNeeded(T* obj, int new_size) {
   if (obj->capacity() < new_size)   // increase capacity
     obj->reserve(new_size);
   else if (obj->size() > new_size)  // reduce size
     obj->resize(new_size);
 }
 
-// STLDeleteContainerPointers()
+// DeleteContainerPointers()
 //  For a range within a container of pointers, calls delete
 //  (non-array version) on these pointers.
 // NOTE: for these three functions, we could just implement a DeleteObject
@@ -58,7 +58,7 @@ template<class T> void STLReserveIfNeeded(T* obj, int new_size) {
 // advanced, which could result in the hash function trying to deference a
 // stale pointer.
 template <class ForwardIterator>
-void STLDeleteContainerPointers(ForwardIterator begin, ForwardIterator end) {
+void DeleteContainerPointers(ForwardIterator begin, ForwardIterator end) {
   while (begin != end) {
     ForwardIterator temp = begin;
     ++begin;
@@ -66,16 +66,16 @@ void STLDeleteContainerPointers(ForwardIterator begin, ForwardIterator end) {
   }
 }
 
-// STLDeleteContainerPairPointers()
+// DeleteContainerPairPointers()
 //  For a range within a container of pairs, calls delete
 //  (non-array version) on BOTH items in the pairs.
-// NOTE: Like STLDeleteContainerPointers, it is important that this deletes
+// NOTE: Like DeleteContainerPointers, it is important that this deletes
 // behind the iterator because if both the key and value are deleted, the
 // container may call the hash function on the iterator when it is advanced,
 // which could result in the hash function trying to dereference a stale
 // pointer.
 template <class ForwardIterator>
-void STLDeleteContainerPairPointers(ForwardIterator begin,
+void DeleteContainerPairPointers(ForwardIterator begin,
                                     ForwardIterator end) {
   while (begin != end) {
     ForwardIterator temp = begin;
@@ -85,12 +85,12 @@ void STLDeleteContainerPairPointers(ForwardIterator begin,
   }
 }
 
-// STLDeleteContainerPairFirstPointers()
+// DeleteContainerPairFirstPointers()
 //  For a range within a container of pairs, calls delete (non-array version)
 //  on the FIRST item in the pairs.
-// NOTE: Like STLDeleteContainerPointers, deleting behind the iterator.
+// NOTE: Like DeleteContainerPointers, deleting behind the iterator.
 template <class ForwardIterator>
-void STLDeleteContainerPairFirstPointers(ForwardIterator begin,
+void DeleteContainerPairFirstPointers(ForwardIterator begin,
                                          ForwardIterator end) {
   while (begin != end) {
     ForwardIterator temp = begin;
@@ -99,11 +99,11 @@ void STLDeleteContainerPairFirstPointers(ForwardIterator begin,
   }
 }
 
-// STLDeleteContainerPairSecondPointers()
+// DeleteContainerPairSecondPointers()
 //  For a range within a container of pairs, calls delete
 //  (non-array version) on the SECOND item in the pairs.
 template <class ForwardIterator>
-void STLDeleteContainerPairSecondPointers(ForwardIterator begin,
+void DeleteContainerPairSecondPointers(ForwardIterator begin,
                                           ForwardIterator end) {
   while (begin != end) {
     delete begin->second;
@@ -112,7 +112,7 @@ void STLDeleteContainerPairSecondPointers(ForwardIterator begin,
 }
 
 template<typename T>
-inline void STLAssignToVector(std::vector<T>* vec,
+inline void AssignToVector(std::vector<T>* vec,
                               const T* ptr,
                               size_t n) {
   vec->resize(n);
@@ -125,16 +125,16 @@ inline void STLAssignToVector(std::vector<T>* vec,
 // about 250 cycles per assignment to about 140 cycles.
 //
 // Usage:
-//      STLAssignToVectorChar(&vec, ptr, size);
-//      STLAssignToString(&str, ptr, size);
+//      AssignToVectorChar(&vec, ptr, size);
+//      AssignToString(&str, ptr, size);
 
-inline void STLAssignToVectorChar(std::vector<char>* vec,
+inline void AssignToVectorChar(std::vector<char>* vec,
                                   const char* ptr,
                                   size_t n) {
-  STLAssignToVector(vec, ptr, n);
+  AssignToVector(vec, ptr, n);
 }
 
-inline void STLAssignToString(std::string* str, const char* ptr, size_t n) {
+inline void AssignToString(std::string* str, const char* ptr, size_t n) {
   str->resize(n);
   memcpy(&*str->begin(), ptr, n);
 }
@@ -215,29 +215,29 @@ inline bool HashMapEquality(const HashMap& map_a, const HashMap& map_b) {
 // The following functions are useful for cleaning up STL containers
 // whose elements point to allocated memory.
 
-// STLDeleteElements() deletes all the elements in an STL container and clears
+// DeleteElements() deletes all the elements in an STL container and clears
 // the container.  This function is suitable for use with a vector, set,
 // hash_set, or any other STL container which defines sensible begin(), end(),
 // and clear() methods.
 //
 // If container is NULL, this function is a no-op.
 //
-// As an alternative to calling STLDeleteElements() directly, consider
-// STLElementDeleter (defined below), which ensures that your container's
-// elements are deleted when the STLElementDeleter goes out of scope.
+// As an alternative to calling DeleteElements() directly, consider
+// ElementDeleter (defined below), which ensures that your container's
+// elements are deleted when the ElementDeleter goes out of scope.
 template <class T>
-void STLDeleteElements(T *container) {
+void DeleteElements(T *container) {
   if (!container) return;
-  STLDeleteContainerPointers(container->begin(), container->end());
+  DeleteContainerPointers(container->begin(), container->end());
   container->clear();
 }
 
-// Given an STL container consisting of (key, value) pairs, STLDeleteValues
+// Given an STL container consisting of (key, value) pairs, DeleteValues
 // deletes all the "value" components and clears the container.  Does nothing
 // in the case it's given a NULL pointer.
 
 template <class T>
-void STLDeleteValues(T *v) {
+void DeleteValues(T *v) {
   if (!v) return;
   for (typename T::iterator i = v->begin(); i != v->end(); ++i) {
     delete i->second;
@@ -252,7 +252,7 @@ void STLDeleteValues(T *v) {
 // statements.  Example:
 //
 // vector<MyProto *> tmp_proto;
-// STLElementDeleter<vector<MyProto *> > d(&tmp_proto);
+// ElementDeleter<vector<MyProto *> > d(&tmp_proto);
 // if (...) return false;
 // ...
 // return success;
@@ -260,10 +260,10 @@ void STLDeleteValues(T *v) {
 // Given a pointer to an STL container this class will delete all the element
 // pointers when it goes out of scope.
 
-template<class STLContainer> class STLElementDeleter {
+template<class STLContainer> class ElementDeleter {
  public:
-  STLElementDeleter<STLContainer>(STLContainer *ptr) : container_ptr_(ptr) {}
-  ~STLElementDeleter<STLContainer>() { STLDeleteElements(container_ptr_); }
+  ElementDeleter<STLContainer>(STLContainer *ptr) : container_ptr_(ptr) {}
+  ~ElementDeleter<STLContainer>() { DeleteElements(container_ptr_); }
  private:
   STLContainer *container_ptr_;
 };
@@ -271,32 +271,32 @@ template<class STLContainer> class STLElementDeleter {
 // Given a pointer to an STL container this class will delete all the value
 // pointers when it goes out of scope.
 
-template<class STLContainer> class STLValueDeleter {
+template<class STLContainer> class ValueDeleter {
  public:
-  STLValueDeleter<STLContainer>(STLContainer *ptr) : container_ptr_(ptr) {}
-  ~STLValueDeleter<STLContainer>() { STLDeleteValues(container_ptr_); }
+  ValueDeleter<STLContainer>(STLContainer *ptr) : container_ptr_(ptr) {}
+  ~ValueDeleter<STLContainer>() { DeleteValues(container_ptr_); }
  private:
   STLContainer *container_ptr_;
 };
 
 
-// Forward declare some callback classes in callback.h for STLBinaryFunction
+// Forward declare some callback classes in callback.h for BinaryFunction
 template <class R, class T1, class T2>
 class ResultCallback2;
 
-// STLBinaryFunction is a wrapper for the ResultCallback2 class in callback.h
+// BinaryFunction is a wrapper for the ResultCallback2 class in callback.h
 // It provides an operator () method instead of a Run method, so it may be
 // passed to STL functions in <algorithm>.
 //
 // The client should create callback with NewPermanentCallback, and should
-// delete callback after it is done using the STLBinaryFunction.
+// delete callback after it is done using the BinaryFunction.
 
 template <class Result, class Arg1, class Arg2>
-class STLBinaryFunction : public std::binary_function<Arg1, Arg2, Result> {
+class BinaryFunction : public std::binary_function<Arg1, Arg2, Result> {
  public:
   typedef ResultCallback2<Result, Arg1, Arg2> Callback;
 
-  STLBinaryFunction(Callback* callback)
+  BinaryFunction(Callback* callback)
     : callback_(callback) {
     assert(callback_);
   }
@@ -309,7 +309,7 @@ class STLBinaryFunction : public std::binary_function<Arg1, Arg2, Result> {
   Callback* callback_;
 };
 
-// STLBinaryPredicate is a specialized version of STLBinaryFunction, where the
+// BinaryPredicate is a specialized version of BinaryFunction, where the
 // return type is bool and both arguments have type Arg.  It can be used
 // wherever STL requires a StrictWeakOrdering, such as in sort() or
 // lower_bound().
@@ -317,11 +317,11 @@ class STLBinaryFunction : public std::binary_function<Arg1, Arg2, Result> {
 // templated typedefs are not supported, so instead we use inheritance.
 
 template <class Arg>
-class STLBinaryPredicate : public STLBinaryFunction<bool, Arg, Arg> {
+class BinaryPredicate : public BinaryFunction<bool, Arg, Arg> {
  public:
-  typedef typename STLBinaryPredicate<Arg>::Callback Callback;
-  STLBinaryPredicate(Callback* callback)
-    : STLBinaryFunction<bool, Arg, Arg>(callback) {
+  typedef typename BinaryPredicate<Arg>::Callback Callback;
+  BinaryPredicate(Callback* callback)
+    : BinaryFunction<bool, Arg, Arg>(callback) {
   }
 };
 
@@ -450,4 +450,4 @@ bool ContainsKey(const Collection& collection, const Key& key) {
 }
 }  // namespace toft
 
-#endif  // TOFT_BASE_STL_UTIL_INL_H_
+#endif  // TOFT_BASE_STL_UTIL_H_
