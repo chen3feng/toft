@@ -1,8 +1,8 @@
 // Copyright (c) 2013, The Toft Authors. All rights reserved.
 // Author: Ye Shunping <yeshunping@gmail.com>
 
-#ifndef TOFT_HASH_JENKINS_HASH_H_
-#define TOFT_HASH_JENKINS_HASH_H_
+#ifndef TOFT_HASH_JENKINS_H_
+#define TOFT_HASH_JENKINS_H_
 
 #include <stdint.h>
 
@@ -22,4 +22,4 @@ uint32_t JenkinsOneAtATimeHash(const char *key, size_t len);
 
 }  // namespace toft
 
-#endif  // TOFT_HASH_JENKINS_HASH_H_
+#endif  // TOFT_HASH_JENKINS_H_

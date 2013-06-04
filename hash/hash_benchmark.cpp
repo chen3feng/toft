@@ -8,7 +8,7 @@ const std::string test_str = "qwertyuiopasdfghjklmnbvcz";
 
 static void Fingerprint(int n) {
     for (int i = 0; i < n; i++) {
-        toft::Fingerprint(test_str);
+        toft::Fingerprint64(test_str);
     }
 }
 
