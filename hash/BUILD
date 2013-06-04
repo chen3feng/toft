@@ -1,10 +1,18 @@
 cc_library(
     name = 'hash',
-    deps = [':jenkins',
-            ':murmur',
-            ':fingerprint',
-            ':super_fast',
-            ],
+    deps = [
+        ':city',
+        ':jenkins',
+        ':murmur',
+        ':fingerprint',
+        ':super_fast',
+    ],
+)
+
+cc_library(
+    name = 'city',
+    srcs = 'city.cpp',
+    deps = '//thirdparty/cityhash:cityhash',
 )
 
 cc_library(
