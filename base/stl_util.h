@@ -8,43 +8,44 @@
 #ifndef TOFT_BASE_STL_UTIL_H_
 #define TOFT_BASE_STL_UTIL_H_
 
+#include <stddef.h>  // for NULL
 #include <string.h>  // for memcpy
-#include <functional>
 #include <set>
 #include <string>
+#include <utility>
 #include <vector>
-#include <cassert>
 
 namespace toft {
+
 // Clear internal memory of an STL object.
 // STL clear()/reserve(0) does not always free internal memory allocated
 // This function uses swap/destructor to ensure the internal memory is freed.
 template<class T> void ClearObject(T* obj) {
-  T tmp;
-  tmp.swap(*obj);
-  obj->reserve(0);  // this is because sometimes "T tmp" allocates objects with
-                    // memory (arena implementation?).  use reserve()
-                    // to clear() even if it doesn't always work
+    T tmp;
+    tmp.swap(*obj);
+    obj->reserve(0);  // this is because sometimes "T tmp" allocates objects with
+    // memory (arena implementation?).  use reserve()
+    // to clear() even if it doesn't always work
 }
 
 // Reduce memory usage on behalf of object if it is using more than
 // "bytes" bytes of space.  By default, we clear objects over 1MB.
 template <class T> inline void ClearIfBig(T* obj, size_t limit = 1<<20) {
-  if (obj->capacity() >= limit) {
-    ClearObject(obj);
-  } else {
-    obj->clear();
-  }
+    if (obj->capacity() >= limit) {
+        ClearObject(obj);
+    } else {
+        obj->clear();
+    }
 }
 
 // Reserve space for STL object.
 // STL's reserve() will always copy.
 // This function avoid the copy if we already have capacity
 template<class T> void ReserveIfNeeded(T* obj, int new_size) {
-  if (obj->capacity() < new_size)   // increase capacity
-    obj->reserve(new_size);
-  else if (obj->size() > new_size)  // reduce size
-    obj->resize(new_size);
+    if (obj->capacity() < new_size)   // increase capacity
+        obj->reserve(new_size);
+    else if (obj->size() > new_size)  // reduce size
+        obj->resize(new_size);
 }
 
 // DeleteContainerPointers()
@@ -59,11 +60,11 @@ template<class T> void ReserveIfNeeded(T* obj, int new_size) {
 // stale pointer.
 template <class ForwardIterator>
 void DeleteContainerPointers(ForwardIterator begin, ForwardIterator end) {
-  while (begin != end) {
-    ForwardIterator temp = begin;
-    ++begin;
-    delete *temp;
-  }
+    while (begin != end) {
+        ForwardIterator temp = begin;
+        ++begin;
+        delete *temp;
+    }
 }
 
 // DeleteContainerPairPointers()
@@ -76,13 +77,13 @@ void DeleteContainerPointers(ForwardIterator begin, ForwardIterator end) {
 // pointer.
 template <class ForwardIterator>
 void DeleteContainerPairPointers(ForwardIterator begin,
-                                    ForwardIterator end) {
-  while (begin != end) {
-    ForwardIterator temp = begin;
-    ++begin;
-    delete temp->first;
-    delete temp->second;
-  }
+                                 ForwardIterator end) {
+    while (begin != end) {
+        ForwardIterator temp = begin;
+        ++begin;
+        delete temp->first;
+        delete temp->second;
+    }
 }
 
 // DeleteContainerPairFirstPointers()
@@ -91,12 +92,12 @@ void DeleteContainerPairPointers(ForwardIterator begin,
 // NOTE: Like DeleteContainerPointers, deleting behind the iterator.
 template <class ForwardIterator>
 void DeleteContainerPairFirstPointers(ForwardIterator begin,
-                                         ForwardIterator end) {
-  while (begin != end) {
-    ForwardIterator temp = begin;
-    ++begin;
-    delete temp->first;
-  }
+                                      ForwardIterator end) {
+    while (begin != end) {
+        ForwardIterator temp = begin;
+        ++begin;
+        delete temp->first;
+    }
 }
 
 // DeleteContainerPairSecondPointers()
@@ -104,39 +105,23 @@ void DeleteContainerPairFirstPointers(ForwardIterator begin,
 //  (non-array version) on the SECOND item in the pairs.
 template <class ForwardIterator>
 void DeleteContainerPairSecondPointers(ForwardIterator begin,
-                                          ForwardIterator end) {
-  while (begin != end) {
-    delete begin->second;
-    ++begin;
-  }
+                                       ForwardIterator end) {
+    while (begin != end) {
+        delete begin->second;
+        ++begin;
+    }
 }
 
-template<typename T>
-inline void AssignToVector(std::vector<T>* vec,
-                              const T* ptr,
-                              size_t n) {
-  vec->resize(n);
-  memcpy(&vec->front(), ptr, n*sizeof(T));
+// Append elements to the end of vector.
+
+template<typename T, typename A, typename I>
+void AppendToVector(std::vector<T, A>* v, I first, I last) {
+    v->insert(v.end(), first, last);
 }
 
-/***** Hack to allow faster assignment to a vector *****/
-
-// This routine speeds up an assignment of 32 bytes to a vector from
-// about 250 cycles per assignment to about 140 cycles.
-//
-// Usage:
-//      AssignToVectorChar(&vec, ptr, size);
-//      AssignToString(&str, ptr, size);
-
-inline void AssignToVectorChar(std::vector<char>* vec,
-                                  const char* ptr,
-                                  size_t n) {
-  AssignToVector(vec, ptr, n);
-}
-
-inline void AssignToString(std::string* str, const char* ptr, size_t n) {
-  str->resize(n);
-  memcpy(&*str->begin(), ptr, n);
+template<typename T, typename A>
+void AppendToVector(std::vector<T, A>* v, const T* buf, size_t size) {
+    v->insert(v.end(), buf, buf + size);
 }
 
 // To treat a possibly-empty vector as an array, use these functions.
@@ -149,20 +134,20 @@ inline void AssignToString(std::string* str, const char* ptr, size_t n) {
 // change this as well.
 
 template<typename T>
-inline T* vector_as_array(std::vector<T>* v) {
+inline T* VectorAsArray(std::vector<T>* v) {
 # ifdef NDEBUG
-  return &*v->begin();
+    return &*v->begin();
 # else
-  return v->empty() ? NULL : &*v->begin();
+    return v->empty() ? NULL : &*v->begin();
 # endif
 }
 
 template<typename T>
-inline const T* vector_as_array(const std::vector<T>* v) {
+inline const T* VectorAsArray(const std::vector<T>* v) {
 # ifdef NDEBUG
-  return &*v->begin();
+    return &*v->begin();
 # else
-  return v->empty() ? NULL : &*v->begin();
+    return v->empty() ? NULL : &*v->begin();
 # endif
 }
 
@@ -170,7 +155,7 @@ inline const T* vector_as_array(const std::vector<T>* v) {
 // which may not be null-terminated. Writing through this pointer will
 // modify the string.
 //
-// string_as_array(&str)[i] is valid for 0 <= i < str.size() until the
+// StringAsArray(&str)[i] is valid for 0 <= i < str.size() until the
 // next call to a string method that invalidates iterators.
 //
 // As of 2006-04, there is no standard-blessed way of getting a
@@ -178,9 +163,9 @@ inline const T* vector_as_array(const std::vector<T>* v) {
 // (http://www.open-std.org/JTC1/SC22/WG21/docs/lwg-active.html#530)
 // proposes this as the method. According to Matt Austern, this should
 // already work on all current implementations.
-inline char* string_as_array(std::string* str) {
-  // DO NOT USE const_cast<char*>(str->data())! See the unittest for why.
-  return str->empty() ? NULL : &*str->begin();
+inline char* StringAsArray(std::string* str) {
+    // DO NOT USE const_cast<char*>(str->data())! See the unittest for why.
+    return str->empty() ? NULL : &*str->begin();
 }
 
 // These are methods that test two hash maps/sets for equality.  These exist
@@ -191,25 +176,25 @@ inline char* string_as_array(std::string* str) {
 
 template <class HashSet>
 inline bool HashSetEquality(const HashSet& set_a, const HashSet& set_b) {
-  if (set_a.size() != set_b.size()) return false;
-  for (typename HashSet::const_iterator i = set_a.begin();
-       i != set_a.end(); ++i) {
-    if (set_b.find(*i) == set_b.end())
-      return false;
-  }
-  return true;
+    if (set_a.size() != set_b.size()) return false;
+    for (typename HashSet::const_iterator i = set_a.begin();
+         i != set_a.end(); ++i) {
+        if (set_b.find(*i) == set_b.end())
+            return false;
+    }
+    return true;
 }
 
 template <class HashMap>
 inline bool HashMapEquality(const HashMap& map_a, const HashMap& map_b) {
-  if (map_a.size() != map_b.size()) return false;
-  for (typename HashMap::const_iterator i = map_a.begin();
-       i != map_a.end(); ++i) {
-    typename HashMap::const_iterator j = map_b.find(i->first);
-    if (j == map_b.end()) return false;
-    if (i->second != j->second) return false;
-  }
-  return true;
+    if (map_a.size() != map_b.size()) return false;
+    for (typename HashMap::const_iterator i = map_a.begin();
+         i != map_a.end(); ++i) {
+        typename HashMap::const_iterator j = map_b.find(i->first);
+        if (j == map_b.end()) return false;
+        if (i->second != j->second) return false;
+    }
+    return true;
 }
 
 // The following functions are useful for cleaning up STL containers
@@ -227,24 +212,22 @@ inline bool HashMapEquality(const HashMap& map_a, const HashMap& map_b) {
 // elements are deleted when the ElementDeleter goes out of scope.
 template <class T>
 void DeleteElements(T *container) {
-  if (!container) return;
-  DeleteContainerPointers(container->begin(), container->end());
-  container->clear();
+    if (!container) return;
+    DeleteContainerPointers(container->begin(), container->end());
+    container->clear();
 }
 
 // Given an STL container consisting of (key, value) pairs, DeleteValues
 // deletes all the "value" components and clears the container.  Does nothing
 // in the case it's given a NULL pointer.
-
 template <class T>
 void DeleteValues(T *v) {
-  if (!v) return;
-  for (typename T::iterator i = v->begin(); i != v->end(); ++i) {
-    delete i->second;
-  }
-  v->clear();
+    if (!v) return;
+    for (typename T::iterator i = v->begin(); i != v->end(); ++i) {
+        delete i->second;
+    }
+    v->clear();
 }
-
 
 // The following classes provide a convenient way to delete all elements or
 // values from STL containers when they goes out of scope.  This greatly
@@ -260,194 +243,156 @@ void DeleteValues(T *v) {
 // Given a pointer to an STL container this class will delete all the element
 // pointers when it goes out of scope.
 
-template<class STLContainer> class ElementDeleter {
- public:
-  ElementDeleter<STLContainer>(STLContainer *ptr) : container_ptr_(ptr) {}
-  ~ElementDeleter<STLContainer>() { DeleteElements(container_ptr_); }
- private:
-  STLContainer *container_ptr_;
+template<class Container> class ElementDeleter {
+public:
+    ElementDeleter<Container>(Container *ptr) : container_ptr_(ptr) {}
+    ~ElementDeleter<Container>() { DeleteElements(container_ptr_); }
+private:
+    Container *container_ptr_;
 };
 
 // Given a pointer to an STL container this class will delete all the value
 // pointers when it goes out of scope.
-
-template<class STLContainer> class ValueDeleter {
- public:
-  ValueDeleter<STLContainer>(STLContainer *ptr) : container_ptr_(ptr) {}
-  ~ValueDeleter<STLContainer>() { DeleteValues(container_ptr_); }
- private:
-  STLContainer *container_ptr_;
+template<class Container> class ValueDeleter {
+public:
+    ValueDeleter<Container>(Container *ptr) : container_ptr_(ptr) {}
+    ~ValueDeleter<Container>() { DeleteValues(container_ptr_); }
+private:
+    Container *container_ptr_;
 };
-
-
-// Forward declare some callback classes in callback.h for BinaryFunction
-template <class R, class T1, class T2>
-class ResultCallback2;
-
-// BinaryFunction is a wrapper for the ResultCallback2 class in callback.h
-// It provides an operator () method instead of a Run method, so it may be
-// passed to STL functions in <algorithm>.
-//
-// The client should create callback with NewPermanentCallback, and should
-// delete callback after it is done using the BinaryFunction.
-
-template <class Result, class Arg1, class Arg2>
-class BinaryFunction : public std::binary_function<Arg1, Arg2, Result> {
- public:
-  typedef ResultCallback2<Result, Arg1, Arg2> Callback;
-
-  BinaryFunction(Callback* callback)
-    : callback_(callback) {
-    assert(callback_);
-  }
-
-  Result operator() (Arg1 arg1, Arg2 arg2) {
-    return callback_->Run(arg1, arg2);
-  }
-
- private:
-  Callback* callback_;
-};
-
-// BinaryPredicate is a specialized version of BinaryFunction, where the
-// return type is bool and both arguments have type Arg.  It can be used
-// wherever STL requires a StrictWeakOrdering, such as in sort() or
-// lower_bound().
-//
-// templated typedefs are not supported, so instead we use inheritance.
-
-template <class Arg>
-class BinaryPredicate : public BinaryFunction<bool, Arg, Arg> {
- public:
-  typedef typename BinaryPredicate<Arg>::Callback Callback;
-  BinaryPredicate(Callback* callback)
-    : BinaryFunction<bool, Arg, Arg>(callback) {
-  }
-};
-
-// Functors that compose arbitrary unary and binary functions with a
-// function that "projects" one of the members of a pair.
-// Specifically, if p1 and p2, respectively, are the functions that
-// map a pair to its first and second, respectively, members, the
-// table below summarizes the functions that can be constructed:
-//
-// * UnaryOperate1st<pair>(f) returns the function x -> f(p1(x))
-// * UnaryOperate2nd<pair>(f) returns the function x -> f(p2(x))
-// * BinaryOperate1st<pair>(f) returns the function (x,y) -> f(p1(x),p1(y))
-// * BinaryOperate2nd<pair>(f) returns the function (x,y) -> f(p2(x),p2(y))
-//
-// A typical usage for these functions would be when iterating over
-// the contents of an STL map. For other sample usage, see the unittest.
-
-template<typename Pair, typename UnaryOp>
-class UnaryOperateOnFirst
-    : public std::unary_function<Pair, typename UnaryOp::result_type> {
- public:
-  UnaryOperateOnFirst() {
-  }
-
-  UnaryOperateOnFirst(const UnaryOp& f) : f_(f) {
-  }
-
-  typename UnaryOp::result_type operator()(const Pair& p) const {
-    return f_(p.first);
-  }
-
- private:
-  UnaryOp f_;
-};
-
-template<typename Pair, typename UnaryOp>
-UnaryOperateOnFirst<Pair, UnaryOp> UnaryOperate1st(const UnaryOp& f) {
-  return UnaryOperateOnFirst<Pair, UnaryOp>(f);
-}
-
-template<typename Pair, typename UnaryOp>
-class UnaryOperateOnSecond
-    : public std::unary_function<Pair, typename UnaryOp::result_type> {
- public:
-  UnaryOperateOnSecond() {
-  }
-
-  UnaryOperateOnSecond(const UnaryOp& f) : f_(f) {
-  }
-
-  typename UnaryOp::result_type operator()(const Pair& p) const {
-    return f_(p.second);
-  }
-
- private:
-  UnaryOp f_;
-};
-
-template<typename Pair, typename UnaryOp>
-UnaryOperateOnSecond<Pair, UnaryOp> UnaryOperate2nd(const UnaryOp& f) {
-  return UnaryOperateOnSecond<Pair, UnaryOp>(f);
-}
-
-template<typename Pair, typename BinaryOp>
-class BinaryOperateOnFirst
-    : public std::binary_function<Pair, Pair, typename BinaryOp::result_type> {
- public:
-  BinaryOperateOnFirst() {
-  }
-
-  BinaryOperateOnFirst(const BinaryOp& f) : f_(f) {
-  }
-
-  typename BinaryOp::result_type operator()(const Pair& p1,
-                                            const Pair& p2) const {
-    return f_(p1.first, p2.first);
-  }
-
- private:
-  BinaryOp f_;
-};
-
-template<typename Pair, typename BinaryOp>
-BinaryOperateOnFirst<Pair, BinaryOp> BinaryOperate1st(const BinaryOp& f) {
-  return BinaryOperateOnFirst<Pair, BinaryOp>(f);
-}
-
-template<typename Pair, typename BinaryOp>
-class BinaryOperateOnSecond
-    : public std::binary_function<Pair, Pair, typename BinaryOp::result_type> {
- public:
-  BinaryOperateOnSecond() {
-  }
-
-  BinaryOperateOnSecond(const BinaryOp& f) : f_(f) {
-  }
-
-  typename BinaryOp::result_type operator()(const Pair& p1,
-                                            const Pair& p2) const {
-    return f_(p1.second, p2.second);
-  }
-
- private:
-  BinaryOp f_;
-};
-
-template<typename Pair, typename BinaryOp>
-BinaryOperateOnSecond<Pair, BinaryOp> BinaryOperate2nd(const BinaryOp& f) {
-  return BinaryOperateOnSecond<Pair, BinaryOp>(f);
-}
 
 // Translates a set into a vector.
 template<typename T>
-std::vector<T> SetToVector(const std::set<T>& values) {
-  std::vector<T> result;
-  result.reserve(values.size());
-  result.insert(result.begin(), values.begin(), values.end());
-  return result;
+void SetToVector(const std::set<T>& values, std::vector<T>* result) {
+    result->reserve(values.size());
+    result->assign(values.begin(), values.end());
 }
 
 // Test to see if a set, map, hash_set or hash_map contains a particular key.
 // Returns true if the key is in the collection.
-template <typename Collection, typename Key>
-bool ContainsKey(const Collection& collection, const Key& key) {
-  return collection.find(key) != collection.end();
+// Check if the key is in the container.
+template<typename T>
+bool HasKey(const T& container, const typename T::key_type& k) {
+    return container.find(k) != container.end();
 }
+
+// Find a value by a key.
+// Return default_value if key is not found.
+template<typename T>
+const typename T::mapped_type& FindOrDefault(
+        const T& container, const typename T::key_type& k,
+        const typename T::mapped_type& default_value) {
+    typename T::const_iterator it = container.find(k);
+    if (it == container.end())
+        return default_value;
+    return it->second;
+}
+
+// Find a pointer to the value of a key.
+// Return NULL if key is not found.
+template<typename T>
+typename T::mapped_type* FindOrNull(
+        T& container, const typename T::key_type& k) {
+    typename T::iterator it = container.find(k);
+    if (it == container.end())
+        return NULL;
+    return &it->second;
+}
+
+// Same as the above FindOrNull, works for const container.
+template<typename T>
+const typename T::mapped_type* FindOrNull(
+        const T& container, const typename T::key_type& k) {
+    typename T::const_iterator it = container.find(k);
+    if (it == container.end())
+        return NULL;
+    return &it->second;
+}
+
+// In cases that the value in the container is a pointer type, find the pointer
+// value of a key.
+// Return NULL if key is not found.
+template<typename T>
+typename T::mapped_type FindPtrOrNull(
+        T& container, const typename T::key_type& k) {
+    typename T::iterator it = container.find(k);
+    if (it == container.end())
+        return NULL;
+    return it->second;
+}
+
+// Same as the above FindPtrOrNull, works for const container.
+template<typename T>
+const typename T::mapped_type FindPtrOrNull(
+        const T& container, const typename T::key_type& k) {
+    typename T::const_iterator it = container.find(k);
+    if (it == container.end())
+        return NULL;
+    return it->second;
+}
+
+// Finds the value associated with the given key and copies it to *value.
+// Returns false if the key was not found, true otherwise.
+template <class Collection, class Key, class Value>
+bool FindAndCopyTo(const Collection& collection,
+                   const Key& key,
+                   Value* const value) {
+    typename Collection::const_iterator it = collection.find(key);
+    if (it == collection.end()) {
+        return false;
+    }
+    *value = it->second;
+    return true;
+}
+
+// Returns true iff the given collection contains the given key-value pair.
+template <class Collection, class Key, class Value>
+bool ContainsKeyValuePair(const Collection& collection,
+                          const Key& key,
+                          const Value& value) {
+    typedef typename Collection::const_iterator const_iterator;
+    std::pair<const_iterator, const_iterator> range = collection.equal_range(key);
+    for (const_iterator it = range.first; it != range.second; ++it) {
+        if (it->second == value) {
+            return true;
+        }
+    }
+    return false;
+}
+
+// Insert a key value pair into the container, return true if this is a new key
+// return false otherwise.
+template<typename T>
+bool InsertIfNotPresent(
+        T* container,
+        const typename T::key_type& k,
+        const typename T::mapped_type& v) {
+    return container->insert(std::make_pair(k, v)).second;
+}
+
+// Insert a key value pair into the container, replace the existing value for
+// the key if exists.
+// Return true if this is a new key, return false otherwise.
+// If false returned and old is not NULL, *old contains original value for the
+// key.
+template<typename T>
+bool InsertOrReplace(
+        T* container,
+        const typename T::key_type& k,
+        const typename T::mapped_type& v,
+        typename T::mapped_type* old = NULL) {
+    std::pair<typename T::iterator, bool> ret =
+        container->insert(std::make_pair(k, v));
+    if (ret.second) {
+        return true;
+    } else {
+        if (old)
+            *old = ret.first->second;
+        ret.first->second = v;
+        return false;
+    }
+}
+
 }  // namespace toft
 
 #endif  // TOFT_BASE_STL_UTIL_H_
