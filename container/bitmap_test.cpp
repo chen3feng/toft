@@ -125,16 +125,16 @@ TEST(Bitmap, BitwiseOperation)
     DynamicBitmap bm("110101");
     DynamicBitmap bm2("101011");
     bm.AndWith(bm2);
-    EXPECT_EQ(std::string("100001"), bm.ToString());
+    EXPECT_EQ("100001", bm.ToString());
     bm.OrWith(bm2);
-    EXPECT_EQ(std::string("101011"), bm.ToString());
+    EXPECT_EQ("101011", bm.ToString());
     bm.XorWith(bm2);
-    EXPECT_EQ(std::string("000000"), bm.ToString());
+    EXPECT_EQ("000000", bm.ToString());
 }
 
 TEST(Bitmap, FindFirstAndNext)
 {
-    // all positions are set to 0
+    // All positions are set to 0
     DynamicBitmap bm(100);
     size_t result = 0;
     EXPECT_FALSE(bm.FindFirst(&result));
@@ -145,10 +145,10 @@ TEST(Bitmap, FindFirstAndNext)
     bm.SetAt(50);
     EXPECT_TRUE(bm.FindNext(20u, &result));
     EXPECT_EQ(50U, result);
-    // can't find another position set to 1
+    // Can't find another position set to 1
     EXPECT_FALSE(bm.FindNext(50u, &result));
 
-    // prev position out of bounds
+    // Prev position out of bounds
     EXPECT_FALSE(bm.FindNext(100u, &result));
 }
 
