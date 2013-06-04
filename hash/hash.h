@@ -4,6 +4,7 @@
 #ifndef TOFT_HASH_HASH_H_
 #define TOFT_HASH_HASH_H_
 
+#include "toft/hash/city.h"
 #include "toft/hash/fingerprint.h"
 #include "toft/hash/jenkins.h"
 #include "toft/hash/murmur.h"

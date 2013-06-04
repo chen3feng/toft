@@ -41,6 +41,12 @@ cc_library(
 )
 
 cc_library(
+    name = 'int128',
+    srcs = 'int128.cpp',
+    deps = '//thirdparty/glog:glog',
+)
+
+cc_library(
     name = 'uint32_divisor',
     srcs = 'uint32_divisor.cpp'
 )
