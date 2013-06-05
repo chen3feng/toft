@@ -6,8 +6,8 @@
 
 #include "toft/net/uri/uri.h"
 
-#include <string.h>
 #include <stddef.h>
+#include <string.h>
 #include <string>
 
 #undef __DEPRECATED // disable deprecated warning
@@ -933,8 +933,8 @@ void URI::Swap(URI* other)
 
 bool URI::Normalize()
 {
-    StringLower(m_scheme);
-    StringLower(m_authority.m_host);
+    StringLower(&m_scheme);
+    StringLower(&m_authority.m_host);
     return true;
 }
 

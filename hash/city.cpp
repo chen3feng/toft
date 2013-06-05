@@ -25,7 +25,7 @@ uint64_t CityHash64WithSeed(const void *buf, size_t len, uint64_t seed) {
 }
 
 uint64_t CityHash64WithSeeds(const void *buf, size_t len,
-                           uint64_t seed0, uint64_t seed1) {
+                             uint64_t seed0, uint64_t seed1) {
     return ::CityHash64WithSeeds(static_cast<const char*>(buf), len, seed0, seed1);
 }
 

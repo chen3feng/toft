@@ -122,15 +122,15 @@ int SocketAddressInet4::Compare(const SocketAddressInet4& rhs) const
     return GetPort() - rhs.GetPort();
 }
 
-void SocketAddressInet4::DoToString(std::string& str) const
+void SocketAddressInet4::DoToString(std::string* str) const
 {
     char text[INET_ADDRSTRLEN + sizeof(":65536")];
     const unsigned char* p = reinterpret_cast<const unsigned char*>(&m_address.sin_addr);
-    int length = sprintf(
-        text, "%u.%u.%u.%u:%d",
+    int length = snprintf(
+        text, sizeof(text), "%u.%u.%u.%u:%d",
         p[0], p[1], p[2], p[3], ntohs(m_address.sin_port)
     );
-    str.assign(text, length);
+    str->assign(text, length);
 }
 
 /////////////////////////////////////////////////////////////////////////////
@@ -152,9 +152,9 @@ SocketAddressInet6::SocketAddressInet6(const std::string& src)
     }
 }
 
-void SocketAddressInet6::DoToString(std::string& str) const
+void SocketAddressInet6::DoToString(std::string* str) const
 {
-    str.clear();
+    str->clear();
 }
 
 bool SocketAddressInet6::DoParse(const char* str)
@@ -249,7 +249,7 @@ SocketAddressInet& SocketAddressInet::operator=(const SocketAddress& src)
     return *this;
 }
 
-void SocketAddressInet::DoToString(std::string& str) const
+void SocketAddressInet::DoToString(std::string* str) const
 {
     char buf[128];
     int length = 0;
@@ -260,8 +260,8 @@ void SocketAddressInet::DoToString(std::string& str) const
         {
             const unsigned char* p =
                 reinterpret_cast<const unsigned char*>(&m_address.v4.sin_addr);
-            length = sprintf(
-                buf,
+            length = snprintf(
+                buf, sizeof(buf),
                 "%d.%d.%d.%d:%d", p[0], p[1], p[2], p[3],
                 ntohs(m_address.v4.sin_port)
             );
@@ -275,7 +275,7 @@ void SocketAddressInet::DoToString(std::string& str) const
         // return empty string if not a valid IP4/6 socket address
         break;
     }
-    str.assign(buf, length);
+    str->assign(buf, length);
 }
 
 bool SocketAddressInet::DoParse(const char* str)
@@ -319,7 +319,7 @@ bool SocketAddressInet::DoCopyFrom(const SocketAddress& rhs)
     }
 }
 
-unsigned short SocketAddressInet::GetPort() const
+uint16_t SocketAddressInet::GetPort() const
 {
     switch (m_address.common.sa_family) {
     case AF_INET:
@@ -370,14 +370,14 @@ bool SocketAddressUnix::DoParse(const char* name)
 // for store any type socket address
 SocketAddressStorage::~SocketAddressStorage() {}
 
-void SocketAddressStorage::DoToString(std::string& str) const
+void SocketAddressStorage::DoToString(std::string* str) const
 {
-    str.clear();
+    str->clear();
     switch (m_address.ss_family)
     {
     case AF_UNIX:
 #ifdef __unix__
-        str = reinterpret_cast<const sockaddr_un&>(m_address).sun_path;
+        *str = reinterpret_cast<const sockaddr_un&>(m_address).sun_path;
 #endif
         break;
     case AF_INET:
@@ -386,12 +386,12 @@ void SocketAddressStorage::DoToString(std::string& str) const
             char buffer[64];
             const unsigned char* p =
                 reinterpret_cast<const unsigned char*>(&saddrin->sin_addr);
-            int length = sprintf(
-                buffer,
+            int length = snprintf(
+                buffer, sizeof(buffer),
                 "%d.%d.%d.%d:%d", p[0], p[1], p[2], p[3],
                 ntohs(saddrin->sin_port)
             );
-            str.assign(buffer, length);
+            str->assign(buffer, length);
         }
         break;
 #ifdef AF_INET6

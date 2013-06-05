@@ -1,8 +1,8 @@
 // Copyright (c) 2011, The Toft Authors. All rights reserved.
 // Author: CHEN Feng <chen3feng@gmail.com>
 
-#ifndef TOFT_SYSTEM_NET_POSIX_OSSOCKET_H
-#define TOFT_SYSTEM_NET_POSIX_OSSOCKET_H
+#ifndef TOFT_SYSTEM_NET_OS_SOCKET_H
+#define TOFT_SYSTEM_NET_OS_SOCKET_H
 
 #include <errno.h>
 
@@ -109,4 +109,4 @@ inline int Socket_PollWriteable(SOCKET fd, struct timeval* tv)
 
 #define SOCKET_ERROR_CODE(e) e
 
-#endif // TOFT_SYSTEM_NET_POSIX_OSSOCKET_H
+#endif // TOFT_SYSTEM_NET_OS_SOCKET_H
