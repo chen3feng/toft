@@ -5,8 +5,8 @@
 //  NOTE: Port code from from :
 //  http://src.chromium.org/viewvc/chrome/trunk/src/base/hash.h
 
-#ifndef TOFT_HASH_SUPER_FAST_HASH_H_
-#define TOFT_HASH_SUPER_FAST_HASH_H_
+#ifndef TOFT_HASH_SUPER_FAST_H_
+#define TOFT_HASH_SUPER_FAST_H_
 
 #include <stdint.h>
 
@@ -26,4 +26,4 @@ inline uint32_t SuperFastHash(const std::string& key) {
 }
 }  // namespace toft
 
-#endif  // TOFT_HASH_SUPER_FAST_HASH_H_
+#endif  // TOFT_HASH_SUPER_FAST_H_

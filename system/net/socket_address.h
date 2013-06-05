@@ -45,7 +45,7 @@ public:
     virtual void Clear() = 0;
 
     /// Convert to string
-    void ToString(std::string& str) const;
+    void ToString(std::string* str) const;
     std::string ToString() const;
 
     bool Parse(const char* str);
@@ -57,7 +57,7 @@ public:
 private:
     virtual bool DoParse(const char* str) = 0;
     virtual const sockaddr* DoGetAddress() const = 0;
-    virtual void DoToString(std::string& str) const = 0;
+    virtual void DoToString(std::string* str) const = 0;
     virtual bool DoCopyFrom(const SocketAddress& rhs) = 0;
 };
 
@@ -73,7 +73,7 @@ inline const sockaddr* SocketAddress::Address() const
 }
 
 /// Convert to string
-inline void SocketAddress::ToString(std::string& str) const
+inline void SocketAddress::ToString(std::string* str) const
 {
     return DoToString(str);
 }
@@ -81,7 +81,7 @@ inline void SocketAddress::ToString(std::string& str) const
 inline std::string SocketAddress::ToString() const
 {
     std::string str;
-    DoToString(str);
+    DoToString(&str);
     return str;
 }
 
@@ -201,13 +201,13 @@ public:
     const IpAddress GetIP() const;
     void SetIP(const IpAddress& address);
 
-    unsigned short GetPort() const;
+    uint16_t GetPort() const;
     void SetPort(uint16_t port);
 
     int Compare(const SocketAddressInet4& rhs) const;
 
 private:
-    void DoToString(std::string& str) const;
+    void DoToString(std::string* str) const;
     virtual bool DoParse(const char* src)
     {
         return Assign(src);
@@ -260,7 +260,7 @@ inline const IpAddress SocketAddressInet4::GetIP() const
     return IpAddress(m_address.sin_addr);
 }
 
-inline unsigned short SocketAddressInet4::GetPort() const
+inline uint16_t SocketAddressInet4::GetPort() const
 {
     return ntohs(m_address.sin_port);
 }
@@ -311,7 +311,7 @@ public:
 
 private:
     // TODO(simonwang): should add support later
-    virtual void DoToString(std::string& str) const;
+    virtual void DoToString(std::string* str) const;
     virtual bool DoParse(const char* str);
 };
 #endif
@@ -340,11 +340,11 @@ public:
     virtual void Clear() { memset(&m_address, 0, sizeof(m_address)); }
     virtual socklen_t Capacity() const { return sizeof(m_address); }
     SocketAddressInet& operator=(const SocketAddress& src);
-    unsigned short GetPort() const;
+    uint16_t GetPort() const;
 
 private:
     virtual const sockaddr* DoGetAddress() const;
-    virtual void DoToString(std::string& str) const;
+    virtual void DoToString(std::string* str) const;
     virtual bool DoParse(const char* str);
     virtual bool DoCopyFrom(const SocketAddress& rhs);
 
@@ -381,7 +381,7 @@ public:
     virtual socklen_t Length() const;
 
 private:
-    virtual void DoToString(std::string& str) const;
+    virtual void DoToString(std::string* str) const;
     virtual bool DoParse(const char* name);
 };
 
@@ -390,9 +390,9 @@ inline socklen_t SocketAddressUnix::Length() const
     return offsetof(struct sockaddr_un, sun_path) + strlen(m_address.sun_path);
 }
 
-inline void SocketAddressUnix::DoToString(std::string& str) const
+inline void SocketAddressUnix::DoToString(std::string* str) const
 {
-    str.assign(m_address.sun_path);
+    str->assign(m_address.sun_path);
 }
 
 typedef SocketAddressUnix SocketAddressLocal;
@@ -414,7 +414,7 @@ public:
 
 private:
     virtual const sockaddr* DoGetAddress() const;
-    virtual void DoToString(std::string& str) const;
+    virtual void DoToString(std::string* str) const;
     virtual bool DoParse(const char* str);
     virtual bool DoCopyFrom(const SocketAddress& rhs);
 

@@ -3,6 +3,8 @@
 //
 // Author: CHEN Feng <chen3feng@gmail.com>
 
+// GLOBAL_NOLINT(readability/casting)
+
 #ifndef TOFT_BASE_STRING_COMPARE_H
 #define TOFT_BASE_STRING_COMPARE_H
 #pragma once
@@ -129,8 +131,8 @@ inline bool memeql_16(const char* p1, const char* p2)
 // An optimized fast memory compare function, should be inlined
 inline bool memeql(const void* a1, const void* a2, size_t size)
 {
-    using namespace internals;
 #if TOFT_ALIGNMENT_INSENSITIVE_PLATFORM
+    using namespace internals; // NOLINT(build/namespaces)
     // optimize for alignment insensitive architectures
     const char* p1 = (const char*)a1;
     const char* p2 = (const char*)a2;

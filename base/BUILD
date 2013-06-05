@@ -29,7 +29,7 @@ cc_library(
     deps = ['//toft/system/time:time',
             '//thirdparty/glog:glog',
             '//thirdparty/perftools:tcmalloc_and_profiler',
-            ]
+           ]
 )
 
 cc_library(
@@ -37,7 +37,24 @@ cc_library(
     srcs = 'benchmark_main.cpp',
     deps = [':benchmark',
             '//thirdparty/gflags:gflags',
-            ]
+           ]
+)
+
+cc_library(
+    name = 'int128',
+    srcs = 'int128.cpp',
+    deps = '//thirdparty/glog:glog',
+)
+
+cc_library(
+    name = 'uint32_divisor',
+    srcs = 'uint32_divisor.cpp'
+)
+
+cc_test(
+    name = 'uint32_divisor_test',
+    srcs = 'uint32_divisor_test.cpp',
+    deps = ':uint32_divisor'
 )
 
 cc_test(name = 'array_size_test', srcs = 'array_size_test.cpp')
@@ -50,6 +67,7 @@ cc_test(name = 'shared_ptr_test', srcs = 'shared_ptr_test.cpp')
 cc_test(name = 'singleton_test', srcs = 'singleton_test.cpp')
 cc_test(name = 'static_assert_test', srcs = 'static_assert_test.cpp')
 cc_test(name = 'static_resource_test', srcs = 'static_resource_test.cpp')
+cc_test(name = 'stl_util_test', srcs = 'stl_util_test.cpp')
 cc_test(name = 'unique_ptr_test', srcs = 'unique_ptr_test.cpp')
 cc_test(name = 'unordered_test', srcs = 'unordered_test.cpp')
 

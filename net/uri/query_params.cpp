@@ -29,7 +29,7 @@ bool QueryParams::Parse(const std::string& params)
         {
             m_params.back().name.assign(splited[i], 0, pos);
             m_params.back().value.assign(splited[i], pos + 1, std::string::npos);
-            if (not PercentEncoding::Decode(&m_params.back().value))
+            if (!PercentEncoding::Decode(&m_params.back().value))
                 return false;
         }
         else
@@ -52,7 +52,7 @@ void QueryParams::AppendToString(std::string* target) const
 {
     for (size_t i = 0; i < m_params.size(); ++i)
     {
-        if (not m_params[i].name.empty())
+        if (!m_params[i].name.empty())
         {
             const QueryParam& param = m_params[i];
             target->append(param.name);

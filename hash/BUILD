@@ -1,37 +1,61 @@
 cc_library(
     name = 'hash',
-    deps = [':jenkins_hash',
-            ':murmur_hash',
-            ':fingerprint32',
-            ':super_fast_hash',
-            ],
+    deps = [
+        ':city',
+        ':jenkins',
+        ':murmur',
+        ':fingerprint',
+        ':super_fast',
+    ],
 )
 
 cc_library(
-    name = 'jenkins_hash',
-    srcs = 'jenkins_hash.cpp',
+    name = 'city',
+    srcs = 'city.cpp',
+    deps = [
+        '//toft/base:int128',
+        '//thirdparty/cityhash:cityhash',
+    ]
 )
 
 cc_library(
-    name = 'fingerprint32',
-    srcs = 'fingerprint32.cpp',
+    name = 'jenkins',
+    srcs = 'jenkins.cpp',
 )
 
 cc_library(
-    name = 'super_fast_hash',
-    srcs = 'super_fast_hash.cpp',
+    name = 'fingerprint',
+    srcs = [
+        'fingerprint32.cpp',
+        'fingerprint64.cpp',
+    ],
+    deps = [
+        ':murmur',
+        '//thirdparty/stringencoders:stringencoders'
+    ],
+)
+
+cc_library(
+    name = 'super_fast',
+    srcs = 'super_fast.cpp',
 )
 
 
 cc_library(
-    name = 'murmur_hash',
-    srcs = 'murmur_hash.cpp',
-    deps = ['//thirdparty/stringencoders:stringencoders'],
+    name = 'murmur',
+    srcs = [
+        'murmur/MurmurHash2_64.cpp',
+        'murmur/MurmurHash2A.cpp',
+        'murmur/MurmurHash2.cpp',
+        'murmur/MurmurHash3.cpp',
+        'murmur/MurmurHashAligned2.cpp',
+        'murmur/MurmurHashNeutral2.cpp',
+    ],
 )
 
 cc_test(
-    name = 'hash_unittest',
-    srcs = 'hash_unittest.cpp',
+    name = 'hash_test',
+    srcs = 'hash_test.cpp',
     deps = [':hash'],
 )
 

@@ -138,7 +138,7 @@ bool SubProcess::Create(const std::string& cmdline, const CreateOptions& options
 }
 
 bool SubProcess::Create(const std::vector<std::string>& args,
-                     const CreateOptions& options)
+                        const CreateOptions& options)
 {
     std::vector<const char*> cargs;
     std::string command;
@@ -199,8 +199,8 @@ static bool SetCloexec(int fd)
 }
 
 void SubProcess::DoExec(const char* const* args,
-                     const CreateOptions& options,
-                     int pipe_write_fd)
+                        const CreateOptions& options,
+                        int pipe_write_fd)
 {
     // Child process
     std::map<std::string, std::string> envs;
