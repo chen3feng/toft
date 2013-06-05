@@ -17,10 +17,10 @@ public:
     UInt128();  // Sets to 0, but don't trust on this behavior.
     UInt128(uint64_t top, uint64_t bottom);
 #ifndef SWIG
-    UInt128(int bottom);
-    UInt128(uint32_t bottom);   // Top 96 bits = 0
+    UInt128(int bottom); // NOLINT(runtime/explicit)
+    UInt128(uint32_t bottom);   // Top 96 bits = 0 NOLINT(runtime/explicit)
 #endif
-    UInt128(uint64_t bottom);   // hi_ = 0
+    UInt128(uint64_t bottom);   // hi_ = 0, NOLINT(runtime/explicit)
     UInt128(const UInt128 &val);
 
     void Initialize(uint64_t top, uint64_t bottom);
@@ -68,10 +68,10 @@ private:
     uint64_t        hi_;
 
     // Not implemented, just declared for catching automatic type conversions.
-    UInt128(uint8_t);
-    UInt128(uint16_t);
-    UInt128(float v);
-    UInt128(double v);
+    UInt128(uint8_t v);  // NOLINT(runtime/explicit)
+    UInt128(uint16_t v); // NOLINT(runtime/explicit)
+    UInt128(float v);    // NOLINT(runtime/explicit)
+    UInt128(double v);   // NOLINT(runtime/explicit)
 };
 
 extern const UInt128 kUInt128Max;

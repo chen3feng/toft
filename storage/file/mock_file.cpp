@@ -120,7 +120,7 @@ bool MockFileSystem::ReadAll(const std::string& file_path, std::string* buffer,
 }
 
 bool MockFileSystem::ReadLines(const std::string& file_path,
-               std::vector<std::string>* lines) {
+                               std::vector<std::string>* lines) {
     CHECK_FILE_SYSTEM_MOCK();
     return s_mock->ReadLines(file_path, lines);
 }

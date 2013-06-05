@@ -7,6 +7,7 @@
 #define TOFT_SYSTEM_MEMORY_UNALIGNED_MSC_H
 
 #include "toft/system/memory/unaligned/check_direct_include.h"
+
 #include "toft/base/type_cast.h"
 
 #if defined(_M_MRX000) || defined(_M_ALPHA) || defined(_M_PPC) || defined(_M_IA64) || defined(_M_AMD64)

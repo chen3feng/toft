@@ -27,15 +27,27 @@ public:
 
 public: // Attributes
     bool HasUserInfo() const { return m_has_user_info; }
-    const std::string& UserInfo() const { assert(m_has_user_info); return m_user_info; }
-    void SetUserInfo(const std::string& value) { m_user_info = value; m_has_user_info = true; }
-    void SetUserInfo(const char* value) { m_user_info = value; m_has_user_info = true; }
+    const std::string& UserInfo() const {
+        assert(m_has_user_info);
+        return m_user_info;
+    }
+    void SetUserInfo(const std::string& value) {
+        m_user_info = value;
+        m_has_user_info = true;
+    }
+    void SetUserInfo(const char* value) {
+        m_user_info = value;
+        m_has_user_info = true;
+    }
     void SetUserInfo(const char* value, size_t length)
     {
         m_user_info.assign(value, length);
         m_has_user_info = true;
     }
-    void ClearUserInfo() { m_user_info.clear(); m_has_user_info = false; }
+    void ClearUserInfo() {
+        m_user_info.clear();
+        m_has_user_info = false;
+    }
 
     const std::string& Host() const { return m_host; }
     void SetHost(const std::string& value) { m_host = value; }
@@ -46,15 +58,27 @@ public: // Attributes
     }
 
     bool HasPort() const { return m_has_port; }
-    const std::string& Port() const { assert(m_has_port); return m_port; }
-    void SetPort(const std::string& value) { m_port = value; m_has_port = true; }
-    void SetPort(const char* value) { m_port = value; m_has_port = true; }
+    const std::string& Port() const {
+        assert(m_has_port);
+        return m_port;
+    }
+    void SetPort(const std::string& value) {
+        m_port = value;
+        m_has_port = true;
+    }
+    void SetPort(const char* value) {
+        m_port = value;
+        m_has_port = true;
+    }
     void SetPort(const char* value, size_t length)
     {
         m_port.assign(value, length);
         m_has_port = true;
     }
-    void ClearPort() { m_port.clear(); m_has_port = false; }
+    void ClearPort() {
+        m_port.clear();
+        m_has_port = false;
+    }
 
     void Clear()
     {
@@ -92,14 +116,29 @@ public: // Attributes
 
     // Authority
     bool HasAuthority() const { return m_has_authority; }
-    UriAuthority& Authority() { assert(m_has_authority); return m_authority; }
-    const UriAuthority& Authority() const { assert(m_has_authority); return m_authority; }
-    void SetAuthority(const UriAuthority& value) { m_has_authority = true; m_authority = value; }
-    void ClearAuthority() { m_authority.Clear(); m_has_authority = false; }
+    UriAuthority& Authority() {
+        assert(m_has_authority);
+        return m_authority;
+    }
+    const UriAuthority& Authority() const {
+        assert(m_has_authority);
+        return m_authority;
+    }
+    void SetAuthority(const UriAuthority& value) {
+        m_has_authority = true;
+        m_authority = value;
+    }
+    void ClearAuthority() {
+        m_authority.Clear();
+        m_has_authority = false;
+    }
 
     // UserInfo
     bool HasUserInfo() const { return m_has_authority && m_authority.HasUserInfo(); }
-    const std::string& UserInfo() const { assert(m_has_authority); return Authority().UserInfo(); }
+    const std::string& UserInfo() const {
+        assert(m_has_authority);
+        return Authority().UserInfo();
+    }
     void SetUserInfo(const std::string& value)
     {
         m_has_authority = true;
@@ -115,11 +154,17 @@ public: // Attributes
         m_has_authority = true;
         m_authority.SetUserInfo(value, length);
     }
-    void ClearUserInfo() { assert(m_has_authority); m_authority.ClearUserInfo(); }
+    void ClearUserInfo() {
+        assert(m_has_authority);
+        m_authority.ClearUserInfo();
+    }
 
     // Host
     bool HasHost() const { return m_has_authority; }
-    const std::string& Host() const { assert(m_has_authority); return m_authority.Host(); }
+    const std::string& Host() const {
+        assert(m_has_authority);
+        return m_authority.Host();
+    }
     void SetHost(const std::string& value)
     {
         m_has_authority = true;
@@ -133,7 +178,10 @@ public: // Attributes
 
     // Port
     bool HasPort() const { return m_has_authority && m_authority.HasPort(); }
-    const std::string& Port() const { assert(m_has_authority); return m_authority.Port(); }
+    const std::string& Port() const {
+        assert(m_has_authority);
+        return m_authority.Port();
+    }
     void SetPort(const std::string& value)
     {
         m_has_authority = true;
@@ -144,7 +192,10 @@ public: // Attributes
         m_has_authority = true;
         m_authority.SetPort(value, length);
     }
-    void ClearPort() { assert(m_has_authority); m_authority.ClearPort(); }
+    void ClearPort() {
+        assert(m_has_authority);
+        m_authority.ClearPort();
+    }
 
     // Path
     const std::string& Path() const { return m_path; }
@@ -173,21 +224,33 @@ public: // Attributes
         m_query.assign(value, length);
         m_has_query = true;
     }
-    void ClearQuery() { m_query.clear(); m_has_query = false; }
+    void ClearQuery() {
+        m_query.clear();
+        m_has_query = false;
+    }
 
     std::string PathAndQuery() const { return HasQuery() ? Path() + "?" + Query() : Path(); }
 
     // Fragment
     bool HasFragment() const { return m_has_fragment; }
     const std::string& Fragment() const { return m_fragment; }
-    void SetFragment(const std::string& value) { m_fragment = value; m_has_fragment = true; }
-    void SetFragment(const char* value) { m_fragment = value; m_has_fragment = true; }
+    void SetFragment(const std::string& value) {
+        m_fragment = value;
+        m_has_fragment = true;
+    }
+    void SetFragment(const char* value) {
+        m_fragment = value;
+        m_has_fragment = true;
+    }
     void SetFragment(const char* value, size_t length)
     {
         m_fragment.assign(value, length);
         m_has_fragment = true;
     }
-    void ClearFragment() { m_fragment.clear(); m_has_fragment = false; }
+    void ClearFragment() {
+        m_fragment.clear();
+        m_has_fragment = false;
+    }
 
 public: // operations
     std::string& ToString(std::string* result) const;
@@ -235,10 +298,10 @@ public: // operations
     static bool Decode(const StringPiece& src, std::string* result);
 
 private:
-    void StringLower(std::string& str)
+    static void StringLower(std::string* str)
     {
-        for (size_t i = 0; i < str.length(); ++i)
-            str[i] = tolower(str[i]);
+        for (size_t i = 0; i < str->length(); ++i)
+            (*str)[i] = tolower((*str)[i]);
     }
 private:
     bool m_has_authority;

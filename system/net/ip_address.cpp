@@ -37,8 +37,8 @@ bool IpAddress::Assign(const char* src)
 void IpAddress::ToString(std::string* str) const
 {
     char text[INET_ADDRSTRLEN];
-    int length = sprintf(text, "%u.%u.%u.%u",
-                         m_bytes[0], m_bytes[1], m_bytes[2], m_bytes[3]);
+    int length = snprintf(text, sizeof(text), "%u.%u.%u.%u",
+                          m_bytes[0], m_bytes[1], m_bytes[2], m_bytes[3]);
     str->assign(text, length);
 }
 

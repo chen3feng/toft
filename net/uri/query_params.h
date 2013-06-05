@@ -6,8 +6,8 @@
 /// @date  03/30/2011 05:23:27 PM
 /// @author CHEN Feng <chen3feng@gmail.com>
 
-#ifndef TOFT_NET_URI_CGI_PARAMS_H
-#define TOFT_NET_URI_CGI_PARAMS_H
+#ifndef TOFT_NET_URI_QUERY_PARAMS_H
+#define TOFT_NET_URI_QUERY_PARAMS_H
 
 #include <stdint.h>
 #include <string>
@@ -64,5 +64,5 @@ private:
 
 } // namespace toft
 
-#endif // TOFT_NET_URI_CGI_PARAMS_H
+#endif // TOFT_NET_URI_QUERY_PARAMS_H
 

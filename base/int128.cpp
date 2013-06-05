@@ -52,7 +52,7 @@ UInt128 UInt128::operator>>(int amount) const {
 }
 
 std::ostream& operator<<(std::ostream& o, const UInt128& b) {
-  return (o << b.hi_ << "::" << b.lo_);
+    return (o << b.hi_ << "::" << b.lo_);
 }
 
 } // namespace toft
