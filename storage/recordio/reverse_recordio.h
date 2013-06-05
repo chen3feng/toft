@@ -3,8 +3,8 @@
 //
 // Description:
 
-#ifndef TOFT_STORAGE_RECORDIO_REVERSE_RECORD_IO_H
-#define TOFT_STORAGE_RECORDIO_REVERSE_RECORD_IO_H
+#ifndef TOFT_STORAGE_RECORDIO_REVERSE_RECORDIO_H
+#define TOFT_STORAGE_RECORDIO_REVERSE_RECORDIO_H
 
 #include <string>
 
@@ -17,7 +17,7 @@ namespace toft {
 
 class ReverseRecordWriter {
 public:
-    ReverseRecordWriter(File *file);
+    explicit ReverseRecordWriter(File *file);
     ~ReverseRecordWriter();
 
     bool WriteMessage(const ::google::protobuf::Message& message);
@@ -34,7 +34,7 @@ private:
 
 class ReverseRecordReader {
 public:
-    ReverseRecordReader(File *file);
+    explicit ReverseRecordReader(File *file);
     ~ReverseRecordReader();
 
     bool Reset();
@@ -62,4 +62,4 @@ private:
 
 } // namespace toft
 
-#endif // TOFT_STORAGE_RECORDIO_REVERSE_RECORD_IO_H
+#endif // TOFT_STORAGE_RECORDIO_REVERSE_RECORDIO_H

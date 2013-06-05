@@ -8,9 +8,14 @@
 #pragma once
 
 #include <string.h>
-#include "toft/base/uncopyable.h"
+#include <map>
+#include <string>
+#include <vector>
+
 #include "toft/base/shared_ptr.h"
+#include "toft/base/uncopyable.h"
 #include "toft/storage/file/file.h"
+
 #include "thirdparty/gmock/gmock.h"
 
 namespace toft {

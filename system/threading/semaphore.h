@@ -6,11 +6,11 @@
 #ifndef TOFT_SYSTEM_THREADING_SEMAPHORE_H
 #define TOFT_SYSTEM_THREADING_SEMAPHORE_H
 
-#include <stdlib.h>
-#include <string>
 #include <errno.h>
 #include <semaphore.h>
+#include <stdlib.h>
 #include <sys/types.h>
+#include <string>
 
 #include "toft/base/uncopyable.h"
 #include "toft/system/check_error.h"

@@ -3,8 +3,8 @@
 //
 // Author: CHEN Feng <chen3feng@gmail.com>
 
-#ifndef COMMON_NET_MIME_MIME_HPP
-#define COMMON_NET_MIME_MIME_HPP
+#ifndef TOFT_NET_MIME_MIME_H
+#define TOFT_NET_MIME_MIME_H
 #pragma once
 
 #include <map>
@@ -73,6 +73,6 @@ private:
     std::string m_subtype;
 };
 
-} // end namespace net
+} // namespace toft
 
-#endif // COMMON_NET_MIME_MIME_HPP
+#endif // TOFT_NET_MIME_MIME_H

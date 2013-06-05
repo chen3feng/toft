@@ -12,7 +12,10 @@ cc_library(
 cc_library(
     name = 'city',
     srcs = 'city.cpp',
-    deps = '//thirdparty/cityhash:cityhash',
+    deps = [
+        '//toft/base:int128',
+        '//thirdparty/cityhash:cityhash',
+    ]
 )
 
 cc_library(

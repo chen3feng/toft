@@ -3,8 +3,8 @@
 //
 // Description:
 
-#ifndef TOFT_STORAGE_RECORDIO_RECORD_IO_H
-#define TOFT_STORAGE_RECORDIO_RECORD_IO_H
+#ifndef TOFT_STORAGE_RECORDIO_RECORDIO_H
+#define TOFT_STORAGE_RECORDIO_RECORDIO_H
 
 #include <string>
 
@@ -17,7 +17,7 @@ namespace toft {
 
 class RecordWriter {
 public:
-    RecordWriter(File *file);
+    explicit RecordWriter(File *file);
     ~RecordWriter();
 
     bool WriteMessage(const ::google::protobuf::Message& message);
@@ -34,7 +34,7 @@ private:
 
 class RecordReader {
 public:
-    RecordReader(File *file);
+    explicit RecordReader(File *file);
     ~RecordReader();
 
     bool Reset();
@@ -63,4 +63,4 @@ private:
 
 } // namespace toft
 
-#endif // TOFT_STORAGE_RECORDIO_RECORD_IO_H
+#endif // TOFT_STORAGE_RECORDIO_RECORDIO_H
