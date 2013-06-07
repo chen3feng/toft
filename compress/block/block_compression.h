@@ -8,13 +8,16 @@
 
 #include <string>
 
-#include "toft/base/uncopyable.h"
 #include "toft/base/class_registry.h"
 #include "toft/base/string/string_piece.h"
+#include "toft/base/uncopyable.h"
 
 namespace toft {
 
 class BlockCompression {
+private:
+    TOFT_DECLARE_UNCOPYABLE(BlockCompression);
+
 public:
     BlockCompression();
     virtual ~BlockCompression();
@@ -28,17 +31,15 @@ public:
 private:
     virtual bool DoCompress(const char* str, size_t length, std::string* out) = 0;
     virtual bool DoUncompress(const char* str, size_t length, std::string* out) = 0;
-
-TOFT_DECLARE_UNCOPYABLE(BlockCompression);
 };
 
 TOFT_CLASS_REGISTRY_DEFINE(block_compression_registry, BlockCompression);
 
-#define TOFT_REGISTER_BLOCK_COMPRESSION(class_name) \
+#define TOFT_REGISTER_BLOCK_COMPRESSION(class_name, algorithm_name) \
     TOFT_CLASS_REGISTRY_REGISTER_CLASS( \
         toft::block_compression_registry, \
         toft::BlockCompression, \
-        #class_name, \
+        algorithm_name, \
         class_name)
 
 #define CREATE_BLOCK_COMPRESSION(name) \

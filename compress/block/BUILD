@@ -24,7 +24,7 @@ cc_library(
 )
 
 cc_library(
-    name='block_compression',
+    name='block',
     deps=[
         ':_block_compression',
         ':snappy',
@@ -37,6 +37,6 @@ cc_test(
         'block_compression_test.cpp',
     ],
     deps=[
-        ':block_compression',
+        ':block',
     ],
 )

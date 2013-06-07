@@ -21,5 +21,5 @@ bool SnappyCompression::DoUncompress(const char* str, size_t length, std::string
     return snappy::Uncompress(str, length, out);
 }
 
-TOFT_REGISTER_BLOCK_COMPRESSION(SnappyCompression);
-}
+TOFT_REGISTER_BLOCK_COMPRESSION(SnappyCompression, "snappy");
+}  // namespace toft

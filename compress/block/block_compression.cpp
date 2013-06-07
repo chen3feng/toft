@@ -25,4 +25,4 @@ bool BlockCompression::Uncompress(const char* str, size_t length, std::string* o
 bool BlockCompression::Uncompress(StringPiece sp, std::string* out) {
     return DoUncompress(sp.data(), sp.size(), out);
 }
-}
+}  // namespace toft
