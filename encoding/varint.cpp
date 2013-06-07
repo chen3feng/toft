@@ -10,7 +10,7 @@
 
 namespace toft {
 
-char* Varint::EncodeVarint32(char* dst, uint32_t v) {
+char* Varint::Encode32(char* dst, uint32_t v) {
     // Operate on characters as unsigneds
     unsigned char* ptr = reinterpret_cast<unsigned char*>(dst);
     static const int B = 128;
@@ -38,13 +38,13 @@ char* Varint::EncodeVarint32(char* dst, uint32_t v) {
     return reinterpret_cast<char*>(ptr);
 }
 
-void Varint::PutVarint32(std::string* dst, uint32_t v) {
+void Varint::Put32(std::string* dst, uint32_t v) {
     char buf[5];
-    char* ptr = EncodeVarint32(buf, v);
+    char* ptr = Encode32(buf, v);
     dst->append(buf, ptr - buf);
 }
 
-char* Varint::EncodeVarint64(char* dst, uint64_t v) {
+char* Varint::Encode64(char* dst, uint64_t v) {
     static const int B = 128;
     unsigned char* ptr = reinterpret_cast<unsigned char*>(dst);
     while (v >= static_cast<uint64_t>(B)) {
@@ -55,18 +55,18 @@ char* Varint::EncodeVarint64(char* dst, uint64_t v) {
     return reinterpret_cast<char*>(ptr);
 }
 
-void Varint::PutVarint64(std::string* dst, uint64_t v) {
+void Varint::Put64(std::string* dst, uint64_t v) {
     char buf[10];
-    char* ptr = EncodeVarint64(buf, v);
+    char* ptr = Encode64(buf, v);
     dst->append(buf, ptr - buf);
 }
 
 void Varint::PutLengthPrefixedStringPiece(std::string* dst, const StringPiece& value) {
-    PutVarint32(dst, value.size());
+    Put32(dst, value.size());
     dst->append(value.data(), value.size());
 }
 
-int Varint::VarintLength(uint64_t v) {
+int Varint::Length(uint64_t v) {
     int len = 1;
     while (v >= 128) {
         v >>= 7;
@@ -75,7 +75,7 @@ int Varint::VarintLength(uint64_t v) {
     return len;
 }
 
-const char* Varint::GetVarint32PtrFallback(const char* p, const char* limit, uint32_t* value) {
+const char* Varint::Get32PtrFallback(const char* p, const char* limit, uint32_t* value) {
     uint32_t result = 0;
     for (uint32_t shift = 0; shift <= 28 && p < limit; shift += 7) {
         uint32_t byte = *(reinterpret_cast<const unsigned char*>(p));
@@ -92,10 +92,10 @@ const char* Varint::GetVarint32PtrFallback(const char* p, const char* limit, uin
     return NULL;
 }
 
-bool Varint::GetVarint32(StringPiece* input, uint32_t* value) {
+bool Varint::Get32(StringPiece* input, uint32_t* value) {
     const char* p = input->data();
     const char* limit = p + input->size();
-    const char* q = GetVarint32Ptr(p, limit, value);
+    const char* q = Get32Ptr(p, limit, value);
     if (q == NULL) {
         return false;
     } else {
@@ -104,7 +104,7 @@ bool Varint::GetVarint32(StringPiece* input, uint32_t* value) {
     }
 }
 
-const char* Varint::GetVarint64Ptr(const char* p, const char* limit, uint64_t* value) {
+const char* Varint::Get64Ptr(const char* p, const char* limit, uint64_t* value) {
     uint64_t result = 0;
     for (uint32_t shift = 0; shift <= 63 && p < limit; shift += 7) {
         uint64_t byte = *(reinterpret_cast<const unsigned char*>(p));
@@ -121,10 +121,10 @@ const char* Varint::GetVarint64Ptr(const char* p, const char* limit, uint64_t* v
     return NULL;
 }
 
-bool Varint::GetVarint64(StringPiece* input, uint64_t* value) {
+bool Varint::Get64(StringPiece* input, uint64_t* value) {
     const char* p = input->data();
     const char* limit = p + input->size();
-    const char* q = GetVarint64Ptr(p, limit, value);
+    const char* q = Get64Ptr(p, limit, value);
     if (q == NULL) {
         return false;
     } else {
@@ -137,7 +137,7 @@ const char* Varint::GetLengthPrefixedStringPiece(const char* p,
                                                  const char* limit,
                                                  StringPiece* result) {
     uint32_t len;
-    p = GetVarint32Ptr(p, limit, &len);
+    p = Get32Ptr(p, limit, &len);
     if (p == NULL)
         return NULL;
     if (p + len > limit)
@@ -148,7 +148,7 @@ const char* Varint::GetLengthPrefixedStringPiece(const char* p,
 
 bool Varint::GetLengthPrefixedStringPiece(StringPiece* input, StringPiece* result) {
     uint32_t len;
-    if (GetVarint32(input, &len) && input->size() >= len) {
+    if (Get32(input, &len) && input->size() >= len) {
         *result = StringPiece(input->data(), len);
         input->remove_prefix(len);
         return true;
@@ -157,7 +157,7 @@ bool Varint::GetLengthPrefixedStringPiece(StringPiece* input, StringPiece* resul
     }
 }
 
-const char* Varint::GetVarint32Ptr(const char* p, const char* limit, uint32_t* value) {
+const char* Varint::Get32Ptr(const char* p, const char* limit, uint32_t* value) {
     if (p < limit) {
         uint32_t result = *(reinterpret_cast<const unsigned char*>(p));
         if ((result & 128) == 0) {
@@ -165,6 +165,6 @@ const char* Varint::GetVarint32Ptr(const char* p, const char* limit, uint32_t* v
             return p + 1;
         }
     }
-    return GetVarint32PtrFallback(p, limit, value);
+    return Get32PtrFallback(p, limit, value);
 }
 }  // namespace toft
