@@ -16,7 +16,7 @@ static const std::string& test_str = "asdgfsdglzzzzzzzzzzzzzzzzzzzzzzzzzzzzz";
 static const std::string& test_empty_str = "";
 
 void TestCompression(const std::string& name, const std::string& test_str) {
-    BlockCompression* compression = CREATE_BLOCK_COMPRESSION(name);
+    BlockCompression* compression = TOFT_CREATE_BLOCK_COMPRESSION(name);
     EXPECT_TRUE(compression != NULL);
     std::string compressed_data;
     bool ret = compression->Compress(test_str.data(),
