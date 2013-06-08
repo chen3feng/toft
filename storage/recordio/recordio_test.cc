@@ -66,7 +66,7 @@ protected:
 
 TEST_F(RecordIOTest, TestNextMessageSequnce) {
     // write record
-    scoped_ptr<File> file(File::Open("./test.dat","a"));
+    scoped_ptr<File> file(File::Open("./test.dat", "a"));
     m_writer.reset(new RecordWriter(file.get()));
 
     std::string r1_str = r1.SerializeAsString();
@@ -105,7 +105,7 @@ TEST_F(RecordIOTest, TestNextMessageSequnce) {
 
 TEST_F(RecordIOTest, StringPiece) {
     // write record
-    scoped_ptr<File> file(File::Open("./test_stringpiece.dat","a"));
+    scoped_ptr<File> file(File::Open("./test_stringpiece.dat", "a"));
     m_writer.reset(new RecordWriter(file.get()));
 
     StringPiece sp1("string_piece_1");

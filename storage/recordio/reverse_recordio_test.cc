@@ -155,7 +155,7 @@ TEST_F(ReverseRecordIOTest, TestNextMessage) {
 
 TEST_F(ReverseRecordIOTest, StringPiece) {
     // write record
-    scoped_ptr<File> file(File::Open("./test_stringpiece.dat","a"));
+    scoped_ptr<File> file(File::Open("./test_stringpiece.dat", "a"));
     m_writer.reset(new ReverseRecordWriter(file.get()));
 
     StringPiece sp1("string_piece_1");
