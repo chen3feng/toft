@@ -13,7 +13,6 @@
 namespace toft {
 
 class SnappyCompression : public BlockCompression {
-private:
     TOFT_DECLARE_UNCOPYABLE(SnappyCompression);
 
 public:

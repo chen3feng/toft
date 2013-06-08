@@ -15,7 +15,6 @@
 namespace toft {
 
 class BlockCompression {
-private:
     TOFT_DECLARE_UNCOPYABLE(BlockCompression);
 
 public:
