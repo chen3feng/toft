@@ -1,6 +1,10 @@
 cc_library(
     name = 'binary_version',
-    srcs = 'binary_version.cpp'
+    srcs = [
+        'binary_version.cpp',
+        'setup_binary_version.cpp',
+    ],
+    deps = '//thirdparty/gflags:gflags',
 )
 
 cc_test(
