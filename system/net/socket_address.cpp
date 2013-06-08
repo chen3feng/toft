@@ -86,7 +86,7 @@ bool SocketAddressInet4::Assign(const char* str)
 {
     unsigned int b1, b2, b3, b4;
     int port;
-    char dummy; // catch extra character
+    char dummy; // Catch extra character
     int count = sscanf(str, "%u.%u.%u.%u:%d%c", &b1, &b2, &b3, &b4, &port, &dummy);
     if (count == 5 &&
         b1 <= UCHAR_MAX && b2 <= UCHAR_MAX && b3 <= UCHAR_MAX && b4 <= UCHAR_MAX &&
@@ -272,7 +272,7 @@ void SocketAddressInet::DoToString(std::string* str) const
         break;
 #endif
     default:
-        // return empty string if not a valid IP4/6 socket address
+        // Return empty string if not a valid IP4/6 socket address
         break;
     }
     str->assign(buf, length);
@@ -282,7 +282,7 @@ bool SocketAddressInet::DoParse(const char* str)
 {
     unsigned int b1, b2, b3, b4;
     int port;
-    char dummy; // catch extra character
+    char dummy; // Catch extra character
     int count = sscanf(str, "%u.%u.%u.%u:%d%c", &b1, &b2, &b3, &b4, &port, &dummy);
     if (count == 5 &&
         b1 <= UCHAR_MAX && b2 <= UCHAR_MAX && b3 <= UCHAR_MAX && b4 <= UCHAR_MAX &&
