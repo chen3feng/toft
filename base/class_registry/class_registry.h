@@ -1,8 +1,8 @@
 // Copyright 2010, The TOFT Authors.
 // Author: CHEN Feng <chen3feng@gmail.com>
 
-#ifndef TOFT_BASE_TOFT_CLASS_REGISTRY_CLASS_REGISTRY_H
-#define TOFT_BASE_TOFT_CLASS_REGISTRY_CLASS_REGISTRY_H
+#ifndef TOFT_BASE_CLASS_REGISTRY_CLASS_REGISTRY_H
+#define TOFT_BASE_CLASS_REGISTRY_CLASS_REGISTRY_H
 
 #include <assert.h>
 #include <stdio.h>
@@ -193,4 +193,4 @@ typename RegistryTag::BaseClass* ClassRegistry_GetSingleton() {
 #define TOFT_CLASS_REGISTRY_CLASS_NAME(registry_name, i) \
     ::toft::ClassRegistryInstance<registry_name##RegistryTag>().ClassName(i)
 
-#endif // TOFT_BASE_TOFT_CLASS_REGISTRY_CLASS_REGISTRY_H
+#endif // TOFT_BASE_CLASS_REGISTRY_CLASS_REGISTRY_H
