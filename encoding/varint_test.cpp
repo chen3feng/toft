@@ -22,10 +22,10 @@ TEST(VarintTest, Varint32) {
         uint32_t expected = (i / 32) << (i % 32);
         uint32_t actual;
         const char* start = p;
-        p = Varint::Get32Ptr(p, limit, &actual);
+        p = Varint::Encode32(p, limit, &actual);
         ASSERT_TRUE(p != NULL);
         ASSERT_EQ(expected, actual);
-        ASSERT_EQ(Varint::Length(actual), p - start);
+        ASSERT_EQ(Varint::EncodedLength(actual), p - start);
     }
     ASSERT_EQ(p, s.data() + s.size());
 }
@@ -57,10 +57,10 @@ TEST(VarintTest, Varint64) {
         ASSERT_TRUE(p < limit);
         uint64_t actual;
         const char* start = p;
-        p = Varint::Get64Ptr(p, limit, &actual);
+        p = Varint::Encode64(p, limit, &actual);
         ASSERT_TRUE(p != NULL);
         ASSERT_EQ(values[i], actual);
-        ASSERT_EQ(Varint::Length(actual), p - start);
+        ASSERT_EQ(Varint::EncodedLength(actual), p - start);
     }
     ASSERT_EQ(p, limit);
 }
@@ -68,7 +68,7 @@ TEST(VarintTest, Varint64) {
 TEST(VarintTest, Varint32Overflow) {
     uint32_t result;
     std::string input("\x81\x82\x83\x84\x85\x11");
-    ASSERT_TRUE(Varint::Get32Ptr(input.data(), input.data() + input.size(), &result) == NULL);
+    ASSERT_TRUE(Varint::Encode32(input.data(), input.data() + input.size(), &result) == NULL);
 }
 
 TEST(VarintTest, Varint32Truncation) {
@@ -77,16 +77,16 @@ TEST(VarintTest, Varint32Truncation) {
     Varint::Put32(&s, large_value);
     uint32_t result;
     for (size_t len = 0; len < s.size() - 1; len++) {
-        ASSERT_TRUE(Varint::Get32Ptr(s.data(), s.data() + len, &result) == NULL);
+        ASSERT_TRUE(Varint::Encode32(s.data(), s.data() + len, &result) == NULL);
     }
-    ASSERT_TRUE(Varint::Get32Ptr(s.data(), s.data() + s.size(), &result) != NULL);
+    ASSERT_TRUE(Varint::Encode32(s.data(), s.data() + s.size(), &result) != NULL);
     ASSERT_EQ(large_value, result);
 }
 
 TEST(VarintTest, Varint64Overflow) {
     uint64_t result;
     std::string input("\x81\x82\x83\x84\x85\x81\x82\x83\x84\x85\x11");
-    ASSERT_TRUE(Varint::Get64Ptr(input.data(), input.data() + input.size(), &result) == NULL);
+    ASSERT_TRUE(Varint::Encode64(input.data(), input.data() + input.size(), &result) == NULL);
 }
 
 TEST(VarintTest, Varint64Truncation) {
@@ -95,9 +95,9 @@ TEST(VarintTest, Varint64Truncation) {
     Varint::Put64(&s, large_value);
     uint64_t result;
     for (size_t len = 0; len < s.size() - 1; len++) {
-        ASSERT_TRUE(Varint::Get64Ptr(s.data(), s.data() + len, &result) == NULL);
+        ASSERT_TRUE(Varint::Encode64(s.data(), s.data() + len, &result) == NULL);
     }
-    ASSERT_TRUE(Varint::Get64Ptr(s.data(), s.data() + s.size(), &result) != NULL);
+    ASSERT_TRUE(Varint::Encode64(s.data(), s.data() + s.size(), &result) != NULL);
     ASSERT_EQ(large_value, result);
 }
 

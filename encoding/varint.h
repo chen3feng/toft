@@ -35,21 +35,34 @@ public:
     // in *v and return a pointer just past the parsed value, or return
     // NULL on error.  These routines only look at bytes in the range
     // [p..limit-1]
-    static const char* Get32Ptr(const char* p, const char* limit, uint32_t* v);
-    static const char* Get64Ptr(const char* p, const char* limit, uint64_t* v);
+    static const char* Encode32(const char* p, const char* limit, uint32_t* v);
+    static const char* Encode64(const char* p, const char* limit, uint64_t* v);
 
-    // Returns the length of the varint32 or varint64 encoding of "v"
-    static int Length(uint64_t v);
+    // Returns the EncodedLength of the varint32 or varint64 encoding of "v"
+    static int EncodedLength(uint64_t v);
 
     // Lower-level versions of Put... that write directly into a character buffer
     // and return a pointer just past the last byte written.
     // REQUIRES: dst has enough space for the value being written
-    static char* Encode32(char* dst, uint32_t value);
-    static char* Encode64(char* dst, uint64_t value);
+    static char* UnsafeEncode32(char* dst, uint32_t value);
+    static char* UncheckedEncode64(char* dst, uint64_t value);
 
-    // Internal routine for use by fallback path of Get32Ptr
+private:
+    // Internal routine for use by fallback path of Encode32
     static const char* Get32PtrFallback(const char* p, const char* limit, uint32_t* value);
 };
+
+
+inline const char* Varint::Encode32(const char* p, const char* limit, uint32_t* value) {
+    if (p < limit) {
+        uint32_t result = *(reinterpret_cast<const unsigned char*>(p));
+        if ((result & 128) == 0) {
+            *value = result;
+            return p + 1;
+        }
+    }
+    return Varint::Get32PtrFallback(p, limit, value);
+}
 }  // namespace toft
 
 #endif  // TOFT_ENCODING_VARINT_H

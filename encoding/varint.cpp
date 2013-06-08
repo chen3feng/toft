@@ -8,31 +8,34 @@
 #include <assert.h>
 #include <string.h>
 
+namespace {
+static const int kIncompleteMask = 128;
+}
+
 namespace toft {
 
-char* Varint::Encode32(char* dst, uint32_t v) {
+char* Varint::UnsafeEncode32(char* dst, uint32_t v) {
     // Operate on characters as unsigneds
     unsigned char* ptr = reinterpret_cast<unsigned char*>(dst);
-    static const int B = 128;
     if (v < (1 << 7)) {
         *(ptr++) = v;
     } else if (v < (1 << 14)) {
-        *(ptr++) = v | B;
+        *(ptr++) = v | kIncompleteMask;
         *(ptr++) = v >> 7;
     } else if (v < (1 << 21)) {
-        *(ptr++) = v | B;
-        *(ptr++) = (v >> 7) | B;
+        *(ptr++) = v | kIncompleteMask;
+        *(ptr++) = (v >> 7) | kIncompleteMask;
         *(ptr++) = v >> 14;
     } else if (v < (1 << 28)) {
-        *(ptr++) = v | B;
-        *(ptr++) = (v >> 7) | B;
-        *(ptr++) = (v >> 14) | B;
+        *(ptr++) = v | kIncompleteMask;
+        *(ptr++) = (v >> 7) | kIncompleteMask;
+        *(ptr++) = (v >> 14) | kIncompleteMask;
         *(ptr++) = v >> 21;
     } else {
-        *(ptr++) = v | B;
-        *(ptr++) = (v >> 7) | B;
-        *(ptr++) = (v >> 14) | B;
-        *(ptr++) = (v >> 21) | B;
+        *(ptr++) = v | kIncompleteMask;
+        *(ptr++) = (v >> 7) | kIncompleteMask;
+        *(ptr++) = (v >> 14) | kIncompleteMask;
+        *(ptr++) = (v >> 21) | kIncompleteMask;
         *(ptr++) = v >> 28;
     }
     return reinterpret_cast<char*>(ptr);
@@ -40,15 +43,14 @@ char* Varint::Encode32(char* dst, uint32_t v) {
 
 void Varint::Put32(std::string* dst, uint32_t v) {
     char buf[5];
-    char* ptr = Encode32(buf, v);
+    char* ptr = UnsafeEncode32(buf, v);
     dst->append(buf, ptr - buf);
 }
 
-char* Varint::Encode64(char* dst, uint64_t v) {
-    static const int B = 128;
+char* Varint::UncheckedEncode64(char* dst, uint64_t v) {
     unsigned char* ptr = reinterpret_cast<unsigned char*>(dst);
-    while (v >= static_cast<uint64_t>(B)) {
-        *(ptr++) = (v & (B - 1)) | B;
+    while (v >= static_cast<uint64_t>(kIncompleteMask)) {
+        *(ptr++) = (v & (kIncompleteMask - 1)) | kIncompleteMask;
         v >>= 7;
     }
     *(ptr++) = static_cast<unsigned char>(v);
@@ -57,7 +59,7 @@ char* Varint::Encode64(char* dst, uint64_t v) {
 
 void Varint::Put64(std::string* dst, uint64_t v) {
     char buf[10];
-    char* ptr = Encode64(buf, v);
+    char* ptr = UncheckedEncode64(buf, v);
     dst->append(buf, ptr - buf);
 }
 
@@ -66,9 +68,9 @@ void Varint::PutLengthPrefixedStringPiece(std::string* dst, const StringPiece& v
     dst->append(value.data(), value.size());
 }
 
-int Varint::Length(uint64_t v) {
+int Varint::EncodedLength(uint64_t v) {
     int len = 1;
-    while (v >= 128) {
+    while (v >= static_cast<uint64_t>(kIncompleteMask)) {
         v >>= 7;
         len++;
     }
@@ -80,7 +82,7 @@ const char* Varint::Get32PtrFallback(const char* p, const char* limit, uint32_t*
     for (uint32_t shift = 0; shift <= 28 && p < limit; shift += 7) {
         uint32_t byte = *(reinterpret_cast<const unsigned char*>(p));
         p++;
-        if (byte & 128) {
+        if (byte & kIncompleteMask) {
             // More bytes are present
             result |= ((byte & 127) << shift);
         } else {
@@ -95,7 +97,7 @@ const char* Varint::Get32PtrFallback(const char* p, const char* limit, uint32_t*
 bool Varint::Get32(StringPiece* input, uint32_t* value) {
     const char* p = input->data();
     const char* limit = p + input->size();
-    const char* q = Get32Ptr(p, limit, value);
+    const char* q = Encode32(p, limit, value);
     if (q == NULL) {
         return false;
     } else {
@@ -104,12 +106,12 @@ bool Varint::Get32(StringPiece* input, uint32_t* value) {
     }
 }
 
-const char* Varint::Get64Ptr(const char* p, const char* limit, uint64_t* value) {
+const char* Varint::Encode64(const char* p, const char* limit, uint64_t* value) {
     uint64_t result = 0;
     for (uint32_t shift = 0; shift <= 63 && p < limit; shift += 7) {
         uint64_t byte = *(reinterpret_cast<const unsigned char*>(p));
         p++;
-        if (byte & 128) {
+        if (byte & kIncompleteMask) {
             // More bytes are present
             result |= ((byte & 127) << shift);
         } else {
@@ -124,7 +126,7 @@ const char* Varint::Get64Ptr(const char* p, const char* limit, uint64_t* value) 
 bool Varint::Get64(StringPiece* input, uint64_t* value) {
     const char* p = input->data();
     const char* limit = p + input->size();
-    const char* q = Get64Ptr(p, limit, value);
+    const char* q = Encode64(p, limit, value);
     if (q == NULL) {
         return false;
     } else {
@@ -137,7 +139,7 @@ const char* Varint::GetLengthPrefixedStringPiece(const char* p,
                                                  const char* limit,
                                                  StringPiece* result) {
     uint32_t len;
-    p = Get32Ptr(p, limit, &len);
+    p = Encode32(p, limit, &len);
     if (p == NULL)
         return NULL;
     if (p + len > limit)
@@ -155,16 +157,5 @@ bool Varint::GetLengthPrefixedStringPiece(StringPiece* input, StringPiece* resul
     } else {
         return false;
     }
-}
-
-const char* Varint::Get32Ptr(const char* p, const char* limit, uint32_t* value) {
-    if (p < limit) {
-        uint32_t result = *(reinterpret_cast<const unsigned char*>(p));
-        if ((result & 128) == 0) {
-            *value = result;
-            return p + 1;
-        }
-    }
-    return Get32PtrFallback(p, limit, value);
 }
 }  // namespace toft
