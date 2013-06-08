@@ -22,7 +22,7 @@ TEST(VarintTest, Varint32) {
         uint32_t expected = (i / 32) << (i % 32);
         uint32_t actual;
         const char* start = p;
-        p = Varint::Encode32(p, limit, &actual);
+        p = Varint::Decode32(p, limit, &actual);
         ASSERT_TRUE(p != NULL);
         ASSERT_EQ(expected, actual);
         ASSERT_EQ(Varint::EncodedLength(actual), p - start);
@@ -57,7 +57,7 @@ TEST(VarintTest, Varint64) {
         ASSERT_TRUE(p < limit);
         uint64_t actual;
         const char* start = p;
-        p = Varint::Encode64(p, limit, &actual);
+        p = Varint::Decode64(p, limit, &actual);
         ASSERT_TRUE(p != NULL);
         ASSERT_EQ(values[i], actual);
         ASSERT_EQ(Varint::EncodedLength(actual), p - start);
@@ -68,7 +68,7 @@ TEST(VarintTest, Varint64) {
 TEST(VarintTest, Varint32Overflow) {
     uint32_t result;
     std::string input("\x81\x82\x83\x84\x85\x11");
-    ASSERT_TRUE(Varint::Encode32(input.data(), input.data() + input.size(), &result) == NULL);
+    ASSERT_TRUE(Varint::Decode32(input.data(), input.data() + input.size(), &result) == NULL);
 }
 
 TEST(VarintTest, Varint32Truncation) {
@@ -77,16 +77,16 @@ TEST(VarintTest, Varint32Truncation) {
     Varint::Put32(&s, large_value);
     uint32_t result;
     for (size_t len = 0; len < s.size() - 1; len++) {
-        ASSERT_TRUE(Varint::Encode32(s.data(), s.data() + len, &result) == NULL);
+        ASSERT_TRUE(Varint::Decode32(s.data(), s.data() + len, &result) == NULL);
     }
-    ASSERT_TRUE(Varint::Encode32(s.data(), s.data() + s.size(), &result) != NULL);
+    ASSERT_TRUE(Varint::Decode32(s.data(), s.data() + s.size(), &result) != NULL);
     ASSERT_EQ(large_value, result);
 }
 
 TEST(VarintTest, Varint64Overflow) {
     uint64_t result;
     std::string input("\x81\x82\x83\x84\x85\x81\x82\x83\x84\x85\x11");
-    ASSERT_TRUE(Varint::Encode64(input.data(), input.data() + input.size(), &result) == NULL);
+    ASSERT_TRUE(Varint::Decode64(input.data(), input.data() + input.size(), &result) == NULL);
 }
 
 TEST(VarintTest, Varint64Truncation) {
@@ -95,9 +95,9 @@ TEST(VarintTest, Varint64Truncation) {
     Varint::Put64(&s, large_value);
     uint64_t result;
     for (size_t len = 0; len < s.size() - 1; len++) {
-        ASSERT_TRUE(Varint::Encode64(s.data(), s.data() + len, &result) == NULL);
+        ASSERT_TRUE(Varint::Decode64(s.data(), s.data() + len, &result) == NULL);
     }
-    ASSERT_TRUE(Varint::Encode64(s.data(), s.data() + s.size(), &result) != NULL);
+    ASSERT_TRUE(Varint::Decode64(s.data(), s.data() + s.size(), &result) != NULL);
     ASSERT_EQ(large_value, result);
 }
 
@@ -119,6 +119,18 @@ TEST(VarintTest, Strings) {
     ASSERT_TRUE(Varint::GetLengthPrefixedStringPiece(&input, &v));
     ASSERT_EQ(std::string(200, 'x'), v.as_string());
     ASSERT_EQ("", input.as_string());
+}
+
+TEST(VarintTest, Encode32) {
+    char buf[1];
+    EXPECT_EQ(buf + 1, Varint::Encode32(buf, buf + 1, 1));
+    EXPECT_EQ(NULL, Varint::Encode32(buf, buf + 1, 1000));
+}
+
+TEST(VarintTest, Encode64) {
+    char buf[1];
+    EXPECT_EQ(buf + 1, Varint::Encode64(buf, buf + 1, 1));
+    EXPECT_EQ(NULL, Varint::Encode64(buf, buf + 1, 1000));
 }
 
 }  // namespace toft

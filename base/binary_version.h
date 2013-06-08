@@ -20,4 +20,14 @@ extern const char kHostName[];
 extern const char kCompiler[];
 }
 }
+
+namespace toft {
+
+// Set version information to gflags, which make --version print usable
+// text.
+void SetupBinaryVersion();
+
+} // namespace toft
+
+
 #endif // TOFT_BASE_BINARY_VERSION_H

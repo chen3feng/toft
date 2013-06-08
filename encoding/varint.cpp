@@ -47,7 +47,7 @@ void Varint::Put32(std::string* dst, uint32_t v) {
     dst->append(buf, ptr - buf);
 }
 
-char* Varint::UncheckedEncode64(char* dst, uint64_t v) {
+char* Varint::UnsafeEncode64(char* dst, uint64_t v) {
     unsigned char* ptr = reinterpret_cast<unsigned char*>(dst);
     while (v >= static_cast<uint64_t>(kIncompleteMask)) {
         *(ptr++) = (v & (kIncompleteMask - 1)) | kIncompleteMask;
@@ -59,8 +59,20 @@ char* Varint::UncheckedEncode64(char* dst, uint64_t v) {
 
 void Varint::Put64(std::string* dst, uint64_t v) {
     char buf[10];
-    char* ptr = UncheckedEncode64(buf, v);
+    char* ptr = UnsafeEncode64(buf, v);
     dst->append(buf, ptr - buf);
+}
+
+char* Varint::Encode32(char* p, char* limit, uint32_t v) {
+    if (EncodedLength(v) > limit - p)
+        return NULL;
+    return UnsafeEncode32(p, v);
+}
+
+char* Varint::Encode64(char* p, char* limit, uint64_t v) {
+    if (EncodedLength(v) > limit - p)
+        return NULL;
+    return UnsafeEncode64(p, v);
 }
 
 void Varint::PutLengthPrefixedStringPiece(std::string* dst, const StringPiece& value) {
@@ -77,7 +89,7 @@ int Varint::EncodedLength(uint64_t v) {
     return len;
 }
 
-const char* Varint::Get32PtrFallback(const char* p, const char* limit, uint32_t* value) {
+const char* Varint::Decode32Fallback(const char* p, const char* limit, uint32_t* value) {
     uint32_t result = 0;
     for (uint32_t shift = 0; shift <= 28 && p < limit; shift += 7) {
         uint32_t byte = *(reinterpret_cast<const unsigned char*>(p));
@@ -97,7 +109,7 @@ const char* Varint::Get32PtrFallback(const char* p, const char* limit, uint32_t*
 bool Varint::Get32(StringPiece* input, uint32_t* value) {
     const char* p = input->data();
     const char* limit = p + input->size();
-    const char* q = Encode32(p, limit, value);
+    const char* q = Decode32(p, limit, value);
     if (q == NULL) {
         return false;
     } else {
@@ -106,7 +118,7 @@ bool Varint::Get32(StringPiece* input, uint32_t* value) {
     }
 }
 
-const char* Varint::Encode64(const char* p, const char* limit, uint64_t* value) {
+const char* Varint::Decode64(const char* p, const char* limit, uint64_t* value) {
     uint64_t result = 0;
     for (uint32_t shift = 0; shift <= 63 && p < limit; shift += 7) {
         uint64_t byte = *(reinterpret_cast<const unsigned char*>(p));
@@ -126,7 +138,7 @@ const char* Varint::Encode64(const char* p, const char* limit, uint64_t* value) 
 bool Varint::Get64(StringPiece* input, uint64_t* value) {
     const char* p = input->data();
     const char* limit = p + input->size();
-    const char* q = Encode64(p, limit, value);
+    const char* q = Decode64(p, limit, value);
     if (q == NULL) {
         return false;
     } else {
@@ -139,7 +151,7 @@ const char* Varint::GetLengthPrefixedStringPiece(const char* p,
                                                  const char* limit,
                                                  StringPiece* result) {
     uint32_t len;
-    p = Encode32(p, limit, &len);
+    p = Decode32(p, limit, &len);
     if (p == NULL)
         return NULL;
     if (p + len > limit)
