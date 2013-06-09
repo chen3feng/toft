@@ -4,6 +4,7 @@
 // Author: CHEN Feng <chen3feng@gmail.com>
 
 #include "toft/encoding/base64.h"
+
 #include "thirdparty/stringencoders/modp_b64.h"
 #include "thirdparty/stringencoders/modp_b64r.h"
 #include "thirdparty/stringencoders/modp_b64w.h"

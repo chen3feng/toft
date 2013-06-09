@@ -2,31 +2,25 @@
 // All rights reserved.
 //
 // Author: CHEN Feng <chen3feng@gmail.com>
+// Created: Jan 12, 2011
 
 #ifndef TOFT_ENCODING_HEX_H
 #define TOFT_ENCODING_HEX_H
 
-/// @file
-/// @author Chen Feng <chen3feng@gmail.com>
-/// @date Jan 12, 2011
-
+#include <stddef.h>
 #include <iterator>
 #include <string>
 
 namespace toft {
 
+// TODO(chen3feng): Add Decode functions.
 struct Hex {
 private:
     Hex();
     ~Hex();
 
 public:
-    /// @brief execute hex encoding
-    /// @tparam ForwardIterator forward iterator
-    /// @tparam OutputIterator output iterator
-    /// @param first start of encoding range
-    /// @param last end of encoding range
-    /// @param uppercase whether yield upper case result
+    // Encode [first, last) sequence to output iterator.
     template <typename ForwardIterator, typename OutputIterator>
     static void Encode(
         ForwardIterator first,
@@ -44,13 +38,8 @@ public:
         }
     }
 
-    /// @brief hex encoding, append result to string
-    /// @tparam Container any STL compatible container that support push_back
-    /// @param data data to be encoded
-    /// @param size data size
-    /// @param output buffer to output
-    /// @param uppercase whether yield upper case result
-    /// @return *output as Container&
+    // Encode to STL-like containers has push_back such as vector/string
+    // without clear.
     template <typename Container>
     static Container& EncodeAppend(
         const void* data, size_t size,
@@ -62,13 +51,8 @@ public:
         return *output;
     }
 
-    /// @brief hex encoding, output result to string(overwrite)
-    /// @tparam Container any STL compatible container that support push_back
-    /// @param data data to be encoded
-    /// @param size data size
-    /// @param output buffer to output
-    /// @param uppercase whether yield upper case result
-    /// @return *output as Container&
+    // Encode to STL-like containers has push_back such as vector/string.
+    // Replace previous content.
     template <typename Container>
     static Container& EncodeTo(
         const void* data, size_t size,
@@ -79,24 +63,14 @@ public:
         return EncodeAppend(data, size, output, uppercase);
     }
 
-    /// @brief hex encoding to buffer
-    /// @param data data to be encoded
-    /// @param size data size
-    /// @param output output buffer
-    /// @param uppercase whether yield upper case result
-    /// @return output buffer
-    /// @note output buffer size must be large enough, at lease 2 * size + 1
-
+    // Write to C style char buffer with terminal '\0'.
+    // Caller ensure output is large enough.
     static char* EncodeToBuffer(
         const void* data, size_t size,
         char* output,
         bool uppercase = false);
 
-    /// @brief hex encoding, and return result as string
-    /// @param data data to be encoded
-    /// @param size data size
-    /// @param uppercase whether yield upper case result
-    /// @return encoded result as string
+    // Encode As a C++ string.
     static std::string EncodeAsString(
         const void* data, size_t size,
         bool uppercase = false);

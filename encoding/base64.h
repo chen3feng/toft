@@ -34,5 +34,5 @@ public:
 
 } // namespace toft
 
-#endif //  COMMON_ENCODING_BASE64_H
+#endif // TOFT_ENCODING_BASE64_H
 
