@@ -51,8 +51,8 @@ public:
         return *output;
     }
 
-    // Encode to STL-like containers has push_back such as vector/string.
-    // Replace previous content.
+    // Encode to STL-like containers with push_back method, such as vector/string.
+    // Previous content will be replaced.
     template <typename Container>
     static Container& EncodeTo(
         const void* data, size_t size,
@@ -64,7 +64,7 @@ public:
     }
 
     // Write to C style char buffer with terminal '\0'.
-    // Caller ensure output is large enough.
+    // Caller should ensure output is large enough.
     static char* EncodeToBuffer(
         const void* data, size_t size,
         char* output,
