@@ -3,7 +3,8 @@ cc_library(
     srcs = 'md5.cpp',
     deps = [
         '//toft/base:int128',
-        '//toft/base/string:string'
+        '//toft/base/string:string',
+        '//toft/encoding:encoding',
     ],
 )
 

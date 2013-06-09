@@ -7,6 +7,7 @@
 
 #include "toft/base/string/number.h"
 #include "toft/crypto/hash/md5.h"
+#include "toft/encoding/hex.h"
 
 //  GLOBAL_NOLINT(readability/casting)
 
@@ -31,7 +32,7 @@ static void byteReverse(unsigned char *buf, unsigned longs) {
 
 //  This is the central step in the MD5 algorithm.
 #define MD5STEP(f, w, x, y, z, data, s) \
-        ( w += f(x, y, z) + data,  w = w<<s | w>>(32-s),  w += x )
+        (w += f(x, y, z) + data,  w = w << s | w >> (32 - s),  w += x)
 
 //  The core of the MD5 algorithm, this alters an existing MD5 hash to
 //  reflect the addition of 16 longwords of new data.  MD5Update blocks
@@ -184,10 +185,9 @@ void MD5::Update(StringPiece sp) {
 }
 
 std::string MD5::HexFinal() {
-    UInt128 result = Final();
-    // FIXME(yeshunping) : Replace with hex encoding
-    return UInt64ToHexString(UInt128High64(result))
-                    + UInt64ToHexString(UInt128Low64(result));
+    char digest[16];
+    Final(&digest);
+    return Hex::EncodeAsString(digest, 16);
 }
 
 //  Final wrapup - pad to 64-byte boundary with the bit pattern
@@ -256,4 +256,5 @@ std::string MD5::HexDigest(StringPiece sp) {
     md5.Update(sp);
     return md5.HexFinal();
 }
+
 }  // namespace toft
