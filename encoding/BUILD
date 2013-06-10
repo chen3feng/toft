@@ -2,12 +2,27 @@ cc_library(
     name = 'encoding',
     srcs = [
         'ascii.cpp',
+        'base64.cpp',
+        'hex.cpp',
         'percent.cpp',
         'shell.cpp',
     ],
     deps = [
         '//toft/base/string:string',
+        '//thirdparty/stringencoders:stringencoders'
     ]
+)
+
+cc_library(
+    name = 'varint',
+    srcs = 'varint.cpp',
+    deps = [],
+)
+
+cc_test(
+    name = 'varint_test',
+    srcs = 'varint_test.cpp',
+    deps = [':varint'],
 )
 
 cc_test(
@@ -54,4 +69,17 @@ cc_test(
     srcs = 'shell_test.cpp',
     deps = ':encoding'
 )
+
+cc_test(
+    name = 'hex_test',
+    srcs = 'hex_test.cpp',
+    deps = ':encoding',
+)
+
+cc_test(
+    name = 'base64_test',
+    srcs = 'base64_test.cpp',
+    deps = ':encoding'
+)
+
 
