@@ -5,6 +5,8 @@
 #ifndef TOFT_BASE_BENCHMARK_H_
 #define TOFT_BASE_BENCHMARK_H_
 
+#include <stdint.h>
+
 namespace toft {
 struct Benchmark {
     const char* name;
