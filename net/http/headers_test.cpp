@@ -1,8 +1,9 @@
 // Copyright 2011, The Toft Authors.
 // Xiaokang Liu <liuxk02@gmail.com>
 
-#include "toft/net/http/http_headers.h"
-#include "toft/net/http/http_message.h"
+#include "toft/net/http/headers.h"
+#include "toft/net/http/message.h"
+
 #include "thirdparty/gtest/gtest.h"
 
 namespace toft {

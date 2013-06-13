@@ -5,13 +5,13 @@
 // Created: 03/05/12
 // Description: HttpResponse class declaration
 
-#ifndef TOFT_NET_HTTP_HTTP_RESPONSE_H
-#define TOFT_NET_HTTP_HTTP_RESPONSE_H
+#ifndef TOFT_NET_HTTP_RESPONSE_H
+#define TOFT_NET_HTTP_RESPONSE_H
 #pragma once
 
-#include "toft/net/http/http_message.h"
 #include <algorithm>
 #include <string>
+#include "toft/net/http/message.h"
 
 namespace toft {
 
@@ -116,4 +116,4 @@ inline void swap(toft::HttpResponse& lhs, toft::HttpResponse& rhs) {
 
 } // namespace std
 
-#endif // TOFT_NET_HTTP_HTTP_RESPONSE_H
+#endif // TOFT_NET_HTTP_RESPONSE_H

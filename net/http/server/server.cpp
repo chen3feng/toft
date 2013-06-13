@@ -3,9 +3,9 @@
 //
 // Author: CHEN Feng <chen3feng@gmail.com>
 
-#include "toft/net/http/http_server.h"
+#include "toft/net/http/server/server.h"
 #include <set>
-#include "toft/net/http/http_connection.h"
+#include "toft/net/http/server/connection.h"
 #include "toft/system/event_dispatcher/event_dispatcher.h"
 #include "toft/system/net/socket.h"
 

@@ -3,7 +3,7 @@
 //
 // Author: CHEN Feng <chen3feng@gmail.com>
 
-#include "toft/net/http/http_connection.h"
+#include "toft/net/http/server/connection.h"
 #include "thirdparty/glog/logging.h"
 
 namespace toft {

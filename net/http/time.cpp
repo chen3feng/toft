@@ -1,7 +1,7 @@
 // Copyright 2011, The Toft Authors.
 // Author: Yongsong Liu <lyscsu@gmail.com>
 
-#include "toft/net/http/http_time.h"
+#include "toft/net/http/time.h"
 
 #include <locale.h>
 #include <string.h>

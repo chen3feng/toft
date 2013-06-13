@@ -3,12 +3,12 @@
 //
 // Author: CHEN Feng <chen3feng@gmail.com>
 
-#ifndef TOFT_NET_HTTP_HTTP_HANDLER_H
-#define TOFT_NET_HTTP_HTTP_HANDLER_H
+#ifndef TOFT_NET_HTTP_SERVER_HANDLER_H
+#define TOFT_NET_HTTP_SERVER_HANDLER_H
 #pragma once
 
-#include "toft/net/http/http_request.h"
-#include "toft/net/http/http_response.h"
+#include "toft/net/http/request.h"
+#include "toft/net/http/response.h"
 
 namespace toft {
 
@@ -33,4 +33,4 @@ private:
 
 } // namespace toft
 
-#endif // TOFT_NET_HTTP_HTTP_HANDLER_H
+#endif // TOFT_NET_HTTP_SERVER_HANDLER_H

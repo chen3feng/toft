@@ -2,7 +2,7 @@
 // Author: Hangjun Ye <yehangjun@gmail.com>
 // Xiaokang Liu <liuxk02@gmail.com>
 
-#include "toft/net/http/http_message.h"
+#include "toft/net/http/message.h"
 
 #include "toft/base/string/algorithm.h"
 #include "toft/base/string/concat.h"

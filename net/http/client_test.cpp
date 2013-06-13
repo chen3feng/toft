@@ -5,7 +5,7 @@
 // Created: 11/05/11
 // Description:
 
-#include "toft/net/http/http_client.h"
+#include "toft/net/http/client.h"
 #include <iostream>
 #include "thirdparty/gtest/gtest.h"
 

@@ -5,12 +5,12 @@
 // Created: 01/12/12
 // Description: HttpHeaders class
 
-#include "toft/net/http/http_headers.h"
+#include "toft/net/http/headers.h"
 
 #include <utility>
 #include "toft/base/string/algorithm.h"
 #include "toft/base/string/concat.h"
-#include "toft/net/http/http_message.h"
+#include "toft/net/http/message.h"
 
 #include "thirdparty/glog/logging.h"
 

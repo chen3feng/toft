@@ -3,8 +3,8 @@
 //
 // Author: CHEN Feng <chen3feng@gmail.com>
 
-#ifndef TOFT_NET_HTTP_HTTP_CONNECTION_H
-#define TOFT_NET_HTTP_HTTP_CONNECTION_H
+#ifndef TOFT_NET_HTTP_SERVER_CONNECTION_H
+#define TOFT_NET_HTTP_SERVER_CONNECTION_H
 #pragma once
 
 #include <list>
@@ -42,4 +42,4 @@ private:
 
 } // namespace toft
 
-#endif // TOFT_NET_HTTP_HTTP_CONNECTION_H
+#endif // TOFT_NET_HTTP_SERVER_CONNECTION_H

@@ -5,7 +5,7 @@
 // Created: 03/05/12
 // Description: HttpRequest implementation
 
-#include "toft/net/http/http_request.h"
+#include "toft/net/http/request.h"
 #include "toft/base/string/algorithm.h"
 #include "toft/base/string/concat.h"
 

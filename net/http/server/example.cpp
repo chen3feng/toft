@@ -3,7 +3,7 @@
 //
 // Author: CHEN Feng <chen3feng@gmail.com>
 
-#include "toft/net/http/http_server.h"
+#include "toft/net/http/server/server.h"
 
 #include "thirdparty/gflags/gflags.h"
 #include "thirdparty/glog/logging.h"

@@ -3,8 +3,8 @@
 //
 // Author: CHEN Feng <chen3feng@gmail.com>
 
-#ifndef TOFT_NET_HTTP_HTTP_SERVER_H
-#define TOFT_NET_HTTP_HTTP_SERVER_H
+#ifndef TOFT_NET_HTTP_SERVER_SERVER_H
+#define TOFT_NET_HTTP_SERVER_SERVER_H
 #pragma once
 
 #include <map>
@@ -36,4 +36,4 @@ private:
 
 } // namespace toft
 
-#endif // TOFT_NET_HTTP_HTTP_SERVER_H
+#endif // TOFT_NET_HTTP_SERVER_SERVER_H

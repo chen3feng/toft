@@ -5,7 +5,7 @@
 // Created: 03/05/12
 // Description:
 
-#include "toft/net/http/http_request.h"
+#include "toft/net/http/request.h"
 #include "thirdparty/gtest/gtest.h"
 
 namespace toft {

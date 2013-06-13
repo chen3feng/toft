@@ -2,15 +2,15 @@
 // Author: Hangjun Ye <yehangjun@gmail.com>
 // Xiaokang Liu <liuxk02@gmail.com>
 
-#ifndef TOFT_NET_HTTP_HTTP_MESSAGE_H
-#define TOFT_NET_HTTP_HTTP_MESSAGE_H
+#ifndef TOFT_NET_HTTP_MESSAGE_H
+#define TOFT_NET_HTTP_MESSAGE_H
 
 #include <map>
 #include <string>
 #include <vector>
 #include "toft/base/string/string_piece.h"
-#include "toft/net/http/http_headers.h"
-#include "toft/net/http/http_version.h"
+#include "toft/net/http/headers.h"
+#include "toft/net/http/version.h"
 
 namespace toft {
 
@@ -140,4 +140,4 @@ private:
 
 } // namespace toft
 
-#endif // TOFT_NET_HTTP_HTTP_MESSAGE_H
+#endif // TOFT_NET_HTTP_MESSAGE_H
