@@ -5,7 +5,6 @@
 
 #include <string>
 
-#include "toft/base/string/number.h"
 #include "toft/crypto/hash/md5.h"
 #include "toft/encoding/hex.h"
 
