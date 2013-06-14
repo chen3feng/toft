@@ -30,6 +30,9 @@ DataBlock::DataBlock(CompressType codec)
     case CompressType_kSnappy:
         compression_ = TOFT_CREATE_BLOCK_COMPRESSION("snappy");
         break;
+    case CompressType_kLzo:
+        compression_ = TOFT_CREATE_BLOCK_COMPRESSION("snappy");
+        break;
     case CompressType_kUnCompress:
         break;
     default:

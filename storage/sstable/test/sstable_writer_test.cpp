@@ -200,6 +200,24 @@ TEST(SingleSSTableWriter, BuildSnappySingleFileInMem) {
     TestSSTableWriter(&builder, path, kTestNum, kMaxLength, SSTableReader::IN_MEMORY);
 }
 
+TEST(SingleSSTableWriter, BuildLzoSingleFileOnDisk) {
+    SSTableWriteOption option;
+    std::string path = "/tmp/test_single_lzo_disk.sstable";
+    option.set_path(path);
+    option.set_compress_type(CompressType_kLzo);
+    SingleSSTableWriter builder(option);
+    TestSSTableWriter(&builder, path, kTestNum, kMaxLength, SSTableReader::ON_DISK);
+}
+
+TEST(SingleSSTableWriter, BuildLzoSingleFileInMem) {
+    SSTableWriteOption option;
+    std::string path = "/tmp/test_single_lzo_mem.sstable";
+    option.set_path(path);
+    option.set_compress_type(CompressType_kLzo);
+    SingleSSTableWriter builder(option);
+    TestSSTableWriter(&builder, path, kTestNum, kMaxLength, SSTableReader::IN_MEMORY);
+}
+
 TEST(UnsortedSSTableWriter, BuildLargeUnsortedFileOnDisk) {
     SSTableWriteOption option;
     std::string path = "/tmp/test_unsorted_large_disk.sstable";
@@ -234,31 +252,12 @@ TEST(UnsortedSSTableWriter, BuildSnappyUnsortedFileInMem) {
     TestSSTableWriter(&builder, path, kTestNum, kMaxLength, SSTableReader::IN_MEMORY);
 }
 
-TEST(SingleSSTableWriter, BuildLzoSingleFileOnDisk) {
-    SSTableWriteOption option;
-    std::string path = "/tmp/test_single_lzo_disk.sstable";
-    option.set_path(path);
-    option.set_compress_type(CompressType_kSnappy);
-    SingleSSTableWriter builder(option);
-    TestSSTableWriterSeek(&builder, path, kTestNum, kMaxLength, SSTableReader::ON_DISK);
-}
-
-TEST(SingleSSTableWriter, BuildLzoSingleFileInMem) {
-    SSTableWriteOption option;
-    std::string path = "/tmp/test_single_lzo_mem.sstable";
-    option.set_path(path);
-    option.set_block_size(13 * 1024 * 1024);
-    option.set_compress_type(CompressType_kSnappy);
-    SingleSSTableWriter builder(option);
-    TestSSTableWriterSeek(&builder, path, kTestNum, kMaxLength, SSTableReader::IN_MEMORY);
-}
-
 TEST(UnsortedSSTableWriter, BuildLzoUnsortedFileOnDisk) {
     SSTableWriteOption option;
     std::string path = "/tmp/test_unsorted_lzo_disk.sstable";
     option.set_path(path);
     option.set_block_size(64 * 1024 * 1024);
-    option.set_compress_type(CompressType_kSnappy);
+    option.set_compress_type(CompressType_kLzo);
     UnsortedSSTableWriter builder(option);
     TestSSTableWriter(&builder, path, kTestNum, kMaxLength, SSTableReader::ON_DISK);
 }
@@ -268,7 +267,7 @@ TEST(UnsortedSSTableWriter, BuildLzoUnsortedFileInMem) {
     std::string path = "/tmp/test_unsorted_lzo_mem.sstable";
     option.set_path(path);
     option.set_block_size(64 * 1024 * 1024);
-    option.set_compress_type(CompressType_kSnappy);
+    option.set_compress_type(CompressType_kLzo);
     UnsortedSSTableWriter builder(option);
     TestSSTableWriter(&builder, path, kTestNum, kMaxLength, SSTableReader::IN_MEMORY);
 }
@@ -285,7 +284,7 @@ TEST(CompositedSSTableWriter, BuildLzoSingleFile) {
     SSTableWriteOption option;
     std::string path = "/tmp/test_c_single_lzo_disk.sstable";
     option.set_path(path);
-    option.set_compress_type(CompressType_kSnappy);
+    option.set_compress_type(CompressType_kLzo);
     CompositedSSTableWriter builder(option, 512 * 1024 * 1024);
     TestSSTableWriter(&builder, path, kTestNum, kMaxLength, SSTableReader::ON_DISK);
 }

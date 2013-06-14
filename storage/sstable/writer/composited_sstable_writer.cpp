@@ -17,7 +17,7 @@
 DEFINE_string(tmp_dir_and_prefix, "/tmp/tmp_sstable",
               "dir and prefix for the CompositedSSTableWriter's "
               "middle temp sstables");
-DEFINE_string(codec, "lzo", "codec used, may be zlib, none, lzo");
+DEFINE_string(compress_type, "snappy", "compress_type used, should be snappy | none | lzo");
 
 namespace toft {
 
@@ -103,13 +103,14 @@ void CompositedSSTableWriter::DeleteTmpFiles() {
 }
 
 void CompositedSSTableWriter::GetNewWriter() {
-    std::string codec_str = FLAGS_codec;
-    CompressType codec = CompressType_kUnCompress;
+    CompressType compress_type = CompressType_kUnCompress;
     // TODO(yeshunping) : support more algorithms
-    if (codec_str == "snappy") {
-        codec = CompressType_kSnappy;
-    } else if (codec_str == "none") {
-        codec = CompressType_kUnCompress;
+    if (FLAGS_compress_type == "snappy") {
+        compress_type = CompressType_kSnappy;
+    } else if (FLAGS_compress_type == "lzo") {
+        compress_type = CompressType_kLzo;
+    } else if (FLAGS_compress_type == "none") {
+        compress_type = CompressType_kUnCompress;
     }
 
     std::string path_suffix = option_.path();
@@ -118,7 +119,7 @@ void CompositedSSTableWriter::GetNewWriter() {
     std::string path = base + NumberToString(RealtimeClock.MicroSeconds());
     paths_.push_back(path);
     SSTableWriteOption option;
-    option.set_compress_type(codec);
+    option.set_compress_type(compress_type);
     option.set_path(path);
     builder_.reset(new SingleSSTableWriter(option));
 }
