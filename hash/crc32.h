@@ -3,8 +3,8 @@
 //
 // Author: Ye Shunping <yeshunping@gmail.com>
 
-#ifndef TOFT_CRYPTO_HASH_CRC32_H
-#define TOFT_CRYPTO_HASH_CRC32_H
+#ifndef TOFT_HASH_CRC32_H
+#define TOFT_HASH_CRC32_H
 
 #include <stdint.h>
 #include <string>
@@ -43,4 +43,4 @@ private:
 };
 
 }  // namespace toft
-#endif  // TOFT_CRYPTO_HASH_CRC32_H
+#endif  // TOFT_HASH_CRC32_H

@@ -2,7 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file. See the AUTHORS file for names of contributors.
 
-#include "toft/base/skiplist.h"
+#include "toft/container/skiplist.h"
 
 #include <set>
 
@@ -267,7 +267,7 @@ public:
                 // Note that generation 0 is never inserted, so it is ok if
                 // <*,0,*> is missing.
                 ASSERT_TRUE((gen(pos) == static_cast<uint64_t>(0)) ||
-                                (gen(pos) > static_cast<uint64_t>(initial_state.Get(key(pos))))
+                            (gen(pos) > static_cast<uint64_t>(initial_state.Get(key(pos))))
                 ) << "key: " << key(pos)
                 << "; gen: " << gen(pos)
                 << "; initgen: "
@@ -314,83 +314,97 @@ TEST(SkipTest, ConcurrentWithoutThreads) {
 // TODO(yeshunping) : Consider fake some code for
 //  Env::Default()->Schedule(ConcurrentReader, &state);
 //  for below test cases
-
 /*
- class TestState {
- public:
- ConcurrentTest t_;
- int seed_;
- AtomicPointer quit_flag_;
+class TestState {
+public:
+    ConcurrentTest t_;
+    int seed_;
+    AtomicPointer quit_flag_;
 
- enum ReaderState {
- STARTING,
- RUNNING,
- DONE
- };
+    enum ReaderState {
+        STARTING,
+        RUNNING,
+        DONE
+    };
 
- explicit TestState(int s)
- : seed_(s),
- quit_flag_(NULL),
- state_(STARTING),
- state_cv_(&mu_) {}
+    explicit TestState(int s)
+                    : seed_(s),
+                      quit_flag_(NULL),
+                      state_(STARTING),
+                      state_cv_(&mu_) {
+    }
 
- void Wait(ReaderState s) {
- mu_.Lock();
- while (state_ != s) {
- state_cv_.Wait();
- }
- mu_.Unlock();
- }
+    void Wait(ReaderState s) {
+        mu_.Lock();
+        while (state_ != s) {
+            state_cv_.Wait();
+        }
+        mu_.Unlock();
+    }
 
- void Change(ReaderState s) {
- mu_.Lock();
- state_ = s;
- state_cv_.Signal();
- mu_.Unlock();
- }
+    void Change(ReaderState s) {
+        mu_.Lock();
+        state_ = s;
+        state_cv_.Signal();
+        mu_.Unlock();
+    }
 
  private:
- Mutex mu_;
- ReaderState state_;
- ConditionVariable state_cv_;
- };
+    Mutex mu_;
+    ReaderState state_;
+    ConditionVariable state_cv_;
+};
 
- static void ConcurrentReader(void* arg) {
- TestState* state = reinterpret_cast<TestState*>(arg);
- Random rnd(state->seed_);
- int64_t reads = 0;
- state->Change(TestState::RUNNING);
- while (!state->quit_flag_.Acquire_Load()) {
- state->t_.ReadStep(&rnd);
- ++reads;
- }
- state->Change(TestState::DONE);
- }
+static void ConcurrentReader(void* arg) {
+    TestState* state = reinterpret_cast<TestState*>(arg);
+    Random rnd(state->seed_);
+    int64_t reads = 0;
+    state->Change(TestState::RUNNING);
+    while (!state->quit_flag_.Acquire_Load()) {
+        state->t_.ReadStep(&rnd);
+        ++reads;
+    }
+    state->Change(TestState::DONE);
+}
 
- static void RunConcurrent(int run) {
- const int seed = RandomSeed() + (run * 100);
- Random rnd(seed);
- const int N = 1000;
- const int kSize = 1000;
- for (int i = 0; i < N; i++) {
- if ((i % 100) == 0) {
- fprintf(stderr, "Run %d of %d\n", i, N);
- }
- TestState state(seed + 1);
- Env::Default()->Schedule(ConcurrentReader, &state);
- state.Wait(TestState::RUNNING);
- for (int i = 0; i < kSize; i++) {
- state.t_.WriteStep(&rnd);
- }
- state.quit_flag_.Release_Store(&state);  // Any non-NULL arg will do
- state.Wait(TestState::DONE);
- }
- }
+static void RunConcurrent(int run) {
+    const int seed = RandomSeed() + (run * 100);
+    Random rnd(seed);
+    const int N = 1000;
+    const int kSize = 1000;
+    for (int i = 0; i < N; i++) {
+        if ((i % 100) == 0) {
+            fprintf(stderr, "Run %d of %d\n", i, N);
+        }
+        TestState state(seed + 1);
+        Env::Default()->Schedule(ConcurrentReader, &state);
+        state.Wait(TestState::RUNNING);
+        for (int i = 0; i < kSize; i++) {
+            state.t_.WriteStep(&rnd);
+        }
+        state.quit_flag_.Release_Store(&state);  // Any non-NULL arg will do
+        state.Wait(TestState::DONE);
+    }
+}
 
- TEST(SkipTest, Concurrent1) { RunConcurrent(1); }
- TEST(SkipTest, Concurrent2) { RunConcurrent(2); }
- TEST(SkipTest, Concurrent3) { RunConcurrent(3); }
- TEST(SkipTest, Concurrent4) { RunConcurrent(4); }
- TEST(SkipTest, Concurrent5) { RunConcurrent(5); }
- */
+TEST(SkipTest, Concurrent1) {
+    RunConcurrent(1);
+}
+
+TEST(SkipTest, Concurrent2) {
+    RunConcurrent(2);
+}
+
+TEST(SkipTest, Concurrent3) {
+    RunConcurrent(3);
+}
+
+TEST(SkipTest, Concurrent4) {
+    RunConcurrent(4);
+}
+
+TEST(SkipTest, Concurrent5) {
+    RunConcurrent(5);
+}
+*/
 }  // namespace toft

@@ -27,17 +27,3 @@ cc_test(
         '//toft/encoding:encoding',
     ],
 )
-
-cc_library(
-    name = 'crc32',
-    srcs = 'crc32.cpp',
-)
-
-cc_test(
-    name = 'crc32_test',
-    srcs = 'crc32_test.cpp',
-    deps = [
-        ':crc32',
-        '//toft/encoding:encoding',
-    ],
-)

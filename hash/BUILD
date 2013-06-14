@@ -2,6 +2,7 @@ cc_library(
     name = 'hash',
     deps = [
         ':city',
+        ':crc32',
         ':jenkins',
         ':murmur',
         ':fingerprint',
@@ -57,6 +58,22 @@ cc_test(
     name = 'hash_test',
     srcs = 'hash_test.cpp',
     deps = [':hash'],
+)
+
+cc_library(
+    name = 'crc32',
+    srcs = 'crc32.cpp',
+    deps = [
+        '//toft/encoding:encoding',
+    ],
+)
+
+cc_test(
+    name = 'crc32_test',
+    srcs = 'crc32_test.cpp',
+    deps = [
+        ':crc32',
+    ],
 )
 
 cc_benchmark(
