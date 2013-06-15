@@ -7,12 +7,13 @@
 #include <stdlib.h>
 #include <limits>
 
-#include "thirdparty/glog/logging.h"
-#include "thirdparty/google/protobuf/text_format.h"
-#include "thirdparty/gtest/gtest.h"
-#include "thirdparty/jsoncpp/json.h"
+#include "toft/encoding/proto_util.h"
 #include "toft/encoding/unittest.pb.h"
 #include "toft/storage/file/file.h"
+
+#include "thirdparty/glog/logging.h"
+#include "thirdparty/gtest/gtest.h"
+#include "thirdparty/jsoncpp/json.h"
 
 namespace toft {
 
@@ -54,7 +55,7 @@ void TestJsonString(const std::string& json_file) {
         std::string content;
         std::string path = "debug_string.txt";
         toft::File::ReadAll(path, &content);
-        google::protobuf::TextFormat::ParseFromString(content, &expected_pb);
+        ProtoUtil::ParseFromASCIIString(content, &expected_pb);
     }
     EXPECT_EQ(pb.SerializeAsString(), expected_pb.SerializeAsString());
 }

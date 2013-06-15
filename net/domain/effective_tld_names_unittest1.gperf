@@ -1,0 +1,27 @@
+%{
+// Copyright (c) 2012 The Chromium Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+// Test file used by registry_controlled_domain_unittest.
+// We edit this file manually, then run
+// gperf -a -L "C++" -C -c -o -t -k '*' -NFindDomain -ZPerfect_Hash_Test1 -D effective_tld_names_unittest1.gperf >  effective_tld_names_unittest1.cc
+// to generate the perfect hashmap.
+%}
+struct DomainRule {
+  const char *name;
+  int type;  // 1: exception, 2: wildcard
+  bool is_private;
+};
+%%
+jp, 0, false
+ac.jp, 0, false
+bar.jp, 2, false
+baz.bar.jp, 2, false
+pref.bar.jp, 1, false
+bar.baz.com, 0, false
+c, 2, false
+b.c, 1, false
+no, 0, false
+priv.no, 0, true
+private, 0, true
+%%
