@@ -7,8 +7,8 @@
 #define TOFT_SYSTEM_THREADING_EVENT_H
 
 #include <stdint.h>
-#include "toft/base/uncopyable.h"
 
+#include "toft/base/uncopyable.h"
 #include "toft/system/threading/condition_variable.h"
 #include "toft/system/threading/mutex.h"
 

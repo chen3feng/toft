@@ -12,6 +12,7 @@
 #include <stddef.h>
 #include <stdint.h>
 #include <string>
+
 #include "toft/base/static_assert.h"
 #include "toft/base/string/string_piece.h"
 #include "toft/system/memory/unaligned.h"
@@ -285,12 +286,12 @@ inline int CompareMemory(const void *b1, const void *b2, size_t len)
     return CompareMemory(b1, b2, len, &prefix_length);
 }
 
-/// @brief  ÇóÁ½¸ö´®µÄ×î´ó¹«¹²Ç°×º´®
-/// @param  lhs     lhsµÄbuffer
-/// @param  lhs_len lhsµÄ³¤¶È
-/// @param  rhs     rhsµÄbuffer
-/// @param  rhs_len rhsµÄ³¤¶È
-/// @return ×î´ó¹«¹²Ç°×º´®µÄ³¤¶È
+/// @brief  ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ó¹«¹ï¿½Ç°×ºï¿½ï¿½
+/// @param  lhs     lhsï¿½ï¿½buffer
+/// @param  lhs_len lhsï¿½Ä³ï¿½ï¿½ï¿½
+/// @param  rhs     rhsï¿½ï¿½buffer
+/// @param  rhs_len rhsï¿½Ä³ï¿½ï¿½ï¿½
+/// @return ï¿½ï¿½ó¹«¹ï¿½Ç°×ºï¿½ï¿½ï¿½Ä³ï¿½ï¿½ï¿½
 inline size_t GetCommonPrefixLength(
     const void* lhs, size_t lhs_len,
     const void* rhs, size_t rhs_len
@@ -308,16 +309,16 @@ inline size_t GetCommonPrefixLength(const std::string& lhs, const std::string& r
             rhs.c_str(), rhs.length());
 }
 
-/// @brief  °´×Ö½Ú´óÐ¡±È½Ï×Ö·û´®lhs ºÍ rhs
-/// @param  lhs     lhsµÄbuffer
-/// @param  lhs_len lhsµÄ³¤¶È
-/// @param  rhs     rhsµÄbuffer
-/// @param  rhs_len rhsµÄ³¤¶È
-/// @param  inclusive ·µ»ØÁ½¸ö×Ö·û´®ÊÇ·ñ´æÔÚ°üº¬¹ØÏµ
+/// @brief  ï¿½ï¿½ï¿½Ö½Ú´ï¿½Ð¡ï¿½È½ï¿½ï¿½Ö·ï¿½lhs ï¿½ï¿½ rhs
+/// @param  lhs     lhsï¿½ï¿½buffer
+/// @param  lhs_len lhsï¿½Ä³ï¿½ï¿½ï¿½
+/// @param  rhs     rhsï¿½ï¿½buffer
+/// @param  rhs_len rhsï¿½Ä³ï¿½ï¿½ï¿½
+/// @param  inclusive ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ö·ï¿½ï¿½Ç·ï¿½ï¿½ï¿½Ú°ï¿½ï¿½Ïµ
 /// @retval <0 lhs < rhs
 /// @retval 0  lhs = rhs;
 /// @retval >0 lhs > rhs
-/// @note ÐèÒª inline
+/// @note ï¿½ï¿½Òª inline
 inline int CompareByteString(const void* lhs, size_t lhs_len,
         const void* rhs, size_t rhs_len, bool* inclusive,
         size_t* common_prefix_len = NULL)
@@ -331,7 +332,7 @@ inline int CompareByteString(const void* lhs, size_t lhs_len,
     while (pos < end_pos)
     {
         if (GetUnaligned<size_t>(p1 + pos) == GetUnaligned<size_t>(p2 + pos))
-            pos += sizeof(size_t); // °´»úÆ÷×Ö³¤ÌÞ³ý¹«¹²Ç°×º´®
+            pos += sizeof(size_t); // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ö³ï¿½ï¿½Þ³ï¿½Ç°×ºï¿½ï¿½
         else
             break;
     }
@@ -359,11 +360,11 @@ inline int CompareByteString(const void* lhs, size_t lhs_len,
     }
 }
 
-/// @brief  °´×Ö½Ú´óÐ¡±È½Ï×Ö·û´®lhs ºÍ rhs
-/// @param  lhs     lhsµÄbuffer
-/// @param  lhs_len lhsµÄ³¤¶È
-/// @param  rhs     rhsµÄbuffer
-/// @param  rhs_len rhsµÄ³¤¶È
+/// @brief  ï¿½ï¿½ï¿½Ö½Ú´ï¿½Ð¡ï¿½È½ï¿½ï¿½Ö·ï¿½lhs ï¿½ï¿½ rhs
+/// @param  lhs     lhsï¿½ï¿½buffer
+/// @param  lhs_len lhsï¿½Ä³ï¿½ï¿½ï¿½
+/// @param  rhs     rhsï¿½ï¿½buffer
+/// @param  rhs_len rhsï¿½Ä³ï¿½ï¿½ï¿½
 /// @retval <0 lhs < rhs
 /// @retval 0  lhs = rhs;
 /// @retval >0 lhs > rhs

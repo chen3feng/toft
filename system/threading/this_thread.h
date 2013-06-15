@@ -10,6 +10,7 @@
 #pragma once
 
 #include <stdint.h>
+
 #include "toft/system/threading/thread_types.h"
 
 namespace toft {

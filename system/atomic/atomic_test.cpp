@@ -7,8 +7,10 @@
 // GLOBAL_NOLINT(runtime/int)
 
 #include "toft/system/atomic/atomic.h"
+
 #include <stdint.h>
 #include <stdio.h>
+
 #include "thirdparty/gtest/gtest.h"
 
 namespace toft {
@@ -157,10 +159,7 @@ TEST(Atomic, Global64)
     EXPECT_EQ(1LL, AtomicIncrement(&g_n));
 }
 
-#if defined _WIN32
-#include <common/base/common_windows.h>
-#define time_stamp (long long)GetTickCount
-#elif __unix__
+#if defined __unix__
 #include <pthread.h>
 #include <sys/time.h>
 inline long long time_stamp()

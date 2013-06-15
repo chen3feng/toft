@@ -34,7 +34,7 @@ public:
 
 // Default_delete, specify for array, using delete[]
 template <typename T>
-struct default_delete<T []>
+struct default_delete<T[]>
 {
     void operator()(T* p)
     {

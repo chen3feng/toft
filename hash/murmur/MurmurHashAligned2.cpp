@@ -1,3 +1,4 @@
+//  GLOBLA_NOLINT(legal/copyright)
 //-----------------------------------------------------------------------------
 // MurmurHashAligned2, by Austin Appleby
 
@@ -8,7 +9,7 @@
 
 #include "toft/hash/murmur.h"
 
-#define MIX(h,k,m) { k *= m; k ^= k >> r; k *= m; h *= m; h ^= k; }
+#define MIX(h,k,m) { k *= m; k ^= k >> r; k *= m; h *= m; h ^= k; }  // NOLINT
 
 namespace toft {
 

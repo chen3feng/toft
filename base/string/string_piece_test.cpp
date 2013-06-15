@@ -2,6 +2,7 @@
 // GLOBAL_NOLINT(whitespace/operators)
 
 #include "toft/base/string/string_piece.h"
+
 #include "thirdparty/gtest/gtest.h"
 
 namespace toft {

@@ -9,6 +9,7 @@
 #pragma once
 
 #include <string>
+
 #include "toft/base/string/format/scan_arg.h"
 
 namespace toft {

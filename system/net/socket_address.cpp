@@ -7,6 +7,8 @@
 
 #include "toft/system/net/socket_address.h"
 
+// GLOBAL_NOLINT(runtime/printf)
+
 namespace toft {
 
 /// Abstract sockaddr

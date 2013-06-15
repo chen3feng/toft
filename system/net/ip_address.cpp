@@ -25,7 +25,7 @@ bool IpAddress::Assign(const char* src)
 {
     unsigned int b1, b2, b3, b4;
     char dummy; // Catch extra character
-    int count = sscanf(src, "%u.%u.%u.%u%c", &b1, &b2, &b3, &b4, &dummy);
+    int count = sscanf(src, "%u.%u.%u.%u%c", &b1, &b2, &b3, &b4, &dummy);  // NOLINT(runtime/printf)
     if (count == 4 && b1 <= UCHAR_MAX && b2 <= UCHAR_MAX && b3 <= UCHAR_MAX && b4 <= UCHAR_MAX)
     {
         Assign((unsigned char)b1, (unsigned char)b2, (unsigned char)b3, (unsigned char)b4);

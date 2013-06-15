@@ -6,6 +6,7 @@
 // Description: test for TOFT_STATIC_ASSERT
 
 #include "toft/base/static_assert.h"
+
 #include "thirdparty/gtest/gtest.h"
 
 namespace toft {
