@@ -6,6 +6,7 @@
 // Description: Thread implementation
 
 #include "toft/system/threading/thread.h"
+
 #include "toft/system/check_error.h"
 #include "toft/system/threading/base_thread.h"
 

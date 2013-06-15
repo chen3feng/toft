@@ -4,11 +4,13 @@
 // Created:  03/31/2011
 
 #include "toft/base/string/number.h"
+
 #include <inttypes.h>
 #include <limits.h>
 #include <math.h>
 #include <stdio.h>
 #include <algorithm>
+
 #include "thirdparty/gtest/gtest.h"
 
 namespace toft {

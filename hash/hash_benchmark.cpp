@@ -60,6 +60,12 @@ static void MurmurHash64B(int n) {
     }
 }
 
+static void CRC32(int n) {
+    for (int i = 0; i < n; i++) {
+        toft::CRC32(test_str);
+    }
+}
+
 TOFT_BENCHMARK(CityHash32)->ThreadRange(1, NumCPUs());
 TOFT_BENCHMARK(CityHash64)->ThreadRange(1, NumCPUs());
 TOFT_BENCHMARK(CityHash128)->ThreadRange(1, NumCPUs());
@@ -69,4 +75,5 @@ TOFT_BENCHMARK(JenkinsOneAtATimeHash)->ThreadRange(1, NumCPUs());
 TOFT_BENCHMARK(SuperFastHash)->ThreadRange(1, NumCPUs());
 TOFT_BENCHMARK(MurmurHash64A)->ThreadRange(1, NumCPUs());
 TOFT_BENCHMARK(MurmurHash64B)->ThreadRange(1, NumCPUs());
+TOFT_BENCHMARK(CRC32)->ThreadRange(1, NumCPUs());
 

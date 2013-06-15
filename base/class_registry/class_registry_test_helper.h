@@ -12,6 +12,7 @@
 #define TOFT_BASE_CLASS_REGISTRY_CLASS_REGISTRY_TEST_HELPER_H
 
 #include <string>
+
 #include "toft/base/class_registry/class_registry.h"
 
 class Mapper {

@@ -9,6 +9,7 @@
 #define TOFT_BASE_SINGLETON_H
 
 #include <stddef.h>
+
 #include "toft/base/uncopyable.h"
 
 namespace toft {

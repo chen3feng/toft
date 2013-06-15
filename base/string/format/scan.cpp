@@ -9,6 +9,7 @@
 // Created: 2013-02-06
 
 #include "toft/base/string/format/scan.h"
+
 #include "toft/base/string/format/vscan.h"
 
 namespace toft {

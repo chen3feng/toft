@@ -3,7 +3,7 @@
 //
 // Author: Ye Shunping <yeshunping@gmail.com>
 
-#include "toft/crypto/hash/crc32.h"
+#include "toft/hash/crc32.h"
 
 #include "thirdparty/gtest/gtest.h"
 

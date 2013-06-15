@@ -41,3 +41,17 @@ cc_test(
     ]
 )
 
+cc_test(
+    name = 'skiplist_test',
+    srcs = 'skiplist_test.cpp',
+    deps = [
+        '//toft/base:arena',
+        '//toft/hash:hash',
+        '//toft/base:random',
+    ]
+)
+
+cc_test(
+    name = 'mru_cache_test',
+    srcs = 'mru_cache_test.cpp',
+)

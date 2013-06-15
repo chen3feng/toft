@@ -1,3 +1,4 @@
+//  GLOBLA_NOLINT(legal/copyright)
 //-----------------------------------------------------------------------------
 // MurmurHashNeutral2, by Austin Appleby
 

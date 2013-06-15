@@ -3,7 +3,7 @@
 //
 // Author: Ye Shunping <yeshunping@gmail.com>
 
-#include "toft/crypto/hash/crc32.h"
+#include "toft/hash/crc32.h"
 
 #include "toft/base/array_size.h"
 #include "toft/encoding/hex.h"
@@ -47,7 +47,7 @@ void CRC32::Update(StringPiece sp) {
     uint32_t c = result_ ^ 0xFFFFFFFF;
     const uint8_t* u = reinterpret_cast<const uint8_t*>(sp.data());
     for (size_t i = 0; i < sp.size(); ++i) {
-      c = crc32_table_[(c ^ u[i]) & 0xFF] ^ (c >> 8);
+        c = crc32_table_[(c ^ u[i]) & 0xFF] ^ (c >> 8);
     }
     result_ = c ^ 0xFFFFFFFF;
 }

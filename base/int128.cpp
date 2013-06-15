@@ -5,8 +5,10 @@
 #define __STDC_CONSTANT_MACROS
 
 #include "toft/base/int128.h"
+
 #include <inttypes.h>
 #include <iostream>
+
 #include "thirdparty/glog/logging.h"
 
 namespace toft {

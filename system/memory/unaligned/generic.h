@@ -9,6 +9,7 @@
 // generic solution, using memcpy
 
 #include <string.h>
+
 #include "toft/base/type_cast.h"
 #include "toft/system/memory/unaligned/check_direct_include.h"
 

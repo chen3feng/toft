@@ -30,11 +30,12 @@
 // GLOBAL_NOLINT(readability/casting)
 // GLOBAL_NOLINT(whitespace/newline)
 
-#include "toft/hash/fingerprint.h"
-
 #include <string.h>
+
 #include <string>
+
 #include "toft/base/string/algorithm.h"
+#include "toft/hash/fingerprint.h"
 
 namespace {
 static const uint32_t kFingerPrint32Seed = 0xfd12deff;

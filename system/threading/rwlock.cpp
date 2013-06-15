@@ -4,13 +4,14 @@
 // Author: CHEN Feng <chen3feng@gmail.com>
 
 #include "toft/system/threading/rwlock.h"
+
 #include <string.h>
 
 namespace toft {
 
 RwLock::RwLock()
 {
-    // note: default rwlock is prefer reader
+    // Note: default rwlock is prefer reader
     TOFT_CHECK_PTHREAD_ERROR(pthread_rwlock_init(&m_lock, NULL));
 }
 
