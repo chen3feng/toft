@@ -18,11 +18,10 @@ struct ProtoUtil {
     TOFT_DECLARE_STATIC_CLASS(ProtoUtil);
 
 public:
-static bool ParseFromASCIIString(const std::string& debug_str,
-                                 google::protobuf::Message* out) {
-  google::protobuf::TextFormat::Parser parser;
-  return parser.ParseFromString(debug_str, out);
-}
+    static bool ParseFromASCIIString(const std::string& debug_str, google::protobuf::Message* out) {
+        google::protobuf::TextFormat::Parser parser;
+        return parser.ParseFromString(debug_str, out);
+    }
 };
 
 }  // namespace toft
