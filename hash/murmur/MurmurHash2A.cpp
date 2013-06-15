@@ -1,3 +1,4 @@
+//  GLOBLA_NOLINT(legal/copyright)
 //-----------------------------------------------------------------------------
 // MurmurHash2A, by Austin Appleby
 
@@ -12,7 +13,7 @@
 
 #include "toft/hash/murmur.h"
 
-#define mmix(h,k) { k *= m; k ^= k >> r; k *= m; h *= m; h ^= k; }
+#define mmix(h, k) { k *= m; k ^= k >> r; k *= m; h *= m; h ^= k; }  // NOLINT(whitespace/newline)
 
 namespace toft {
 
@@ -28,7 +29,7 @@ uint32_t MurmurHash2A(const void * key, size_t len, uint32_t seed)
 
     while (len >= 4)
     {
-        uint32_t k = *(uint32_t*)data;
+        uint32_t k = *(uint32_t*)data;  // NOLINT
 
         mmix(h, k);
 

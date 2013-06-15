@@ -5,6 +5,7 @@
 #define TOFT_SYSTEM_THREADING_BASE_THREAD_H
 
 #include <string>
+
 #include "toft/system/threading/this_thread.h"
 #include "toft/system/threading/thread_types.h"
 

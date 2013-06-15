@@ -111,12 +111,12 @@ TEST(SocketAddress, CopyFrom)
     EXPECT_EQ(address1.ToString(), address2.ToString());
     address1 = address3;
     EXPECT_EQ(address1.ToString(), address3.ToString());
-    EXPECT_ANY_THROW({ address1 = address5; });
+    EXPECT_ANY_THROW({ address1 = address5; });  // NOLINT(whitespace/newline)
     address3 = address4;
     EXPECT_EQ(address3.ToString(), address4.ToString());
     address3 = address2;
     EXPECT_EQ(address3.ToString(), address2.ToString());
-    EXPECT_ANY_THROW({ address3 = address5; });
+    EXPECT_ANY_THROW({ address3 = address5; });  // NOLINT(whitespace/newline)
 }
 
 TEST(SocketAddress, InetBadAddress)

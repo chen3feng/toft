@@ -5,8 +5,12 @@
 
 #include "toft/compress/block/block_compression.h"
 
+namespace {
+const size_t kMaxUnCompressedSize = 20 * 1024 * 1024;  // 20M
+}
+
 namespace toft {
-BlockCompression::BlockCompression() {}
+BlockCompression::BlockCompression() : max_unCompressed_size_(kMaxUnCompressedSize) {}
 
 BlockCompression::~BlockCompression() {}
 

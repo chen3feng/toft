@@ -29,7 +29,7 @@ namespace toft {
  * If two examples of this operation race, one can appear to succeed
  * but actually fail.  You must protect multiple accesses with a lock.
  */
-static bool x86_test_and_set_bit(int nr, volatile unsigned long * addr)
+static bool x86_test_and_set_bit(int nr, volatile uint32_t * addr)
 {
     bool oldbit;
 
@@ -227,7 +227,7 @@ bool BloomFilter::InsertUnique(const void *key, size_t len)
 #if defined __i386__ || defined __x86_64__
         exist_count += x86_test_and_set_bit(
             bit_index,
-            reinterpret_cast<unsigned long*>(m_bitmap)
+            reinterpret_cast<uint32_t*>(m_bitmap)
         );
 #else
         uint8_t mask = (1 << (bit_index % CHAR_BIT));

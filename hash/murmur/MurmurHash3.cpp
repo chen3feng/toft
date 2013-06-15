@@ -1,6 +1,9 @@
-#include "toft/hash/murmur.h"
+//  GLOBLA_NOLINT(legal/copyright)
+//  GLOBAL_NOLINT(readability/casting)
 
 #include <stdlib.h>    // for _rotl
+
+#include "toft/hash/murmur.h"
 
 namespace toft {
 

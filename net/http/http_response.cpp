@@ -6,6 +6,7 @@
 // Description: HttpResponse class implementation
 
 #include "toft/net/http/http_response.h"
+
 #include "toft/base/string/algorithm.h"
 #include "toft/base/string/concat.h"
 #include "toft/base/string/number.h"
@@ -40,7 +41,7 @@ static const struct {
     { 404, "Not Found", "Nothing matches the given URI" },
     { 405, "Method Not Allowed", "Specified method is invalid for this resource." },
     { 406, "Not Acceptable", "URI not available in preferred format." },
-    { 407, "Proxy Authentication Required", "You must authenticate with this proxy before proceeding." },
+    { 407, "Proxy Authentication Required", "You must authenticate with this proxy before proceeding." },  // NOLINT
     { 408, "Request Timeout", "Request timed out; try again later." },
     { 409, "Conflict", "Request conflict." },
     { 410, "Gone", "URI no longer exists and has been permanently removed." },

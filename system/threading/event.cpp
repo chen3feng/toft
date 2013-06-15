@@ -3,7 +3,9 @@
 // Created: 2010-06-18
 
 #include "toft/system/threading/event.h"
+
 #include <stdlib.h>
+
 #include "toft/system/check_error.h"
 
 namespace toft {

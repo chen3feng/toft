@@ -5,6 +5,7 @@
 // Created: 2013-02-28
 
 #include "toft/base/type_traits.h"
+
 #include "thirdparty/gtest/gtest.h"
 
 TEST(TypeTraits, IsVoid)

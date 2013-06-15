@@ -6,10 +6,12 @@
 // Description:
 
 #include "toft/system/net/domain_resolver.h"
+
 #ifndef _WIN32
 #include <netdb.h>
 #endif
 #include <algorithm>
+
 #include "toft/system/net/os_socket.h"
 
 #ifdef _WIN32

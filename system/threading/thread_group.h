@@ -8,6 +8,7 @@
 #pragma once
 
 #include <vector>
+
 #include "toft/base/functional.h"
 #include "toft/base/uncopyable.h"
 #include "toft/system/threading/thread.h"

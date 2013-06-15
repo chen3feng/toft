@@ -4,6 +4,7 @@
 // Author: CHEN Feng <chen3feng@gmail.com>
 
 #include "toft/base/array_size.h"
+
 #include "thirdparty/gtest/gtest.h"
 
 namespace toft {

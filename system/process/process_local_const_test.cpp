@@ -5,6 +5,7 @@
 // Created: 2013-04-02
 
 #include "toft/system/process/process_local_const.h"
+
 #include "thirdparty/gtest/gtest.h"
 
 namespace toft {

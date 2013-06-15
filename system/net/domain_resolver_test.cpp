@@ -6,6 +6,7 @@
 // Description:
 
 #include "toft/system/net/domain_resolver.h"
+
 #include "thirdparty/gtest/gtest.h"
 
 namespace toft {

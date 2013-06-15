@@ -6,6 +6,7 @@
 // Description: string concat
 
 #include "toft/base/string/concat.h"
+
 #include "toft/base/string/number.h"
 
 // GLOBAL_NOLINT(runtime/int)
