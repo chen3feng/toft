@@ -38,4 +38,9 @@ TEST(CompressionTest, SnappyCompression) {
     TestCompression("snappy", test_str);
     TestCompression("snappy", test_empty_str);
 }
+
+TEST(CompressionTest, LzoCompression) {
+    TestCompression("lzo", test_str);
+    TestCompression("lzo", test_empty_str);
+}
 }  // namespace toft
