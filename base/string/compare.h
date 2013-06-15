@@ -286,12 +286,6 @@ inline int CompareMemory(const void *b1, const void *b2, size_t len)
     return CompareMemory(b1, b2, len, &prefix_length);
 }
 
-/// @brief  ������������󹫹�ǰ׺��
-/// @param  lhs     lhs��buffer
-/// @param  lhs_len lhs�ĳ���
-/// @param  rhs     rhs��buffer
-/// @param  rhs_len rhs�ĳ���
-/// @return ��󹫹�ǰ׺���ĳ���
 inline size_t GetCommonPrefixLength(
     const void* lhs, size_t lhs_len,
     const void* rhs, size_t rhs_len
@@ -309,16 +303,6 @@ inline size_t GetCommonPrefixLength(const std::string& lhs, const std::string& r
             rhs.c_str(), rhs.length());
 }
 
-/// @brief  ���ֽڴ�С�Ƚ��ַ�lhs �� rhs
-/// @param  lhs     lhs��buffer
-/// @param  lhs_len lhs�ĳ���
-/// @param  rhs     rhs��buffer
-/// @param  rhs_len rhs�ĳ���
-/// @param  inclusive ���������ַ��Ƿ���ڰ��ϵ
-/// @retval <0 lhs < rhs
-/// @retval 0  lhs = rhs;
-/// @retval >0 lhs > rhs
-/// @note ��Ҫ inline
 inline int CompareByteString(const void* lhs, size_t lhs_len,
         const void* rhs, size_t rhs_len, bool* inclusive,
         size_t* common_prefix_len = NULL)
@@ -332,7 +316,7 @@ inline int CompareByteString(const void* lhs, size_t lhs_len,
     while (pos < end_pos)
     {
         if (GetUnaligned<size_t>(p1 + pos) == GetUnaligned<size_t>(p2 + pos))
-            pos += sizeof(size_t); // �������ֳ��޳�ǰ׺��
+            pos += sizeof(size_t);
         else
             break;
     }
@@ -360,14 +344,6 @@ inline int CompareByteString(const void* lhs, size_t lhs_len,
     }
 }
 
-/// @brief  ���ֽڴ�С�Ƚ��ַ�lhs �� rhs
-/// @param  lhs     lhs��buffer
-/// @param  lhs_len lhs�ĳ���
-/// @param  rhs     rhs��buffer
-/// @param  rhs_len rhs�ĳ���
-/// @retval <0 lhs < rhs
-/// @retval 0  lhs = rhs;
-/// @retval >0 lhs > rhs
 inline int CompareByteString(
     const void* lhs, size_t lhs_len,
     const void* rhs, size_t rhs_len

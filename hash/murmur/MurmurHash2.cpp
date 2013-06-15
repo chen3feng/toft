@@ -35,7 +35,7 @@ uint32_t MurmurHash2(const void * key, size_t len, uint32_t seed)
 
     while (len >= 4)
     {
-        uint32_t k = *reinterpret_cast<uint32_t*>(data);
+        uint32_t k = *(uint32_t*)data;  // NOLINT
 
         k *= m;
         k ^= k >> r;

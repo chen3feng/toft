@@ -156,7 +156,7 @@ protected:
     {
         Type m_address;
         sockaddr m_generic_address;
-#ifdef _WIN32 // sockaddr_storage �Ķ���������ͷ�ļ���˳��ȡ�����ֵ
+#ifdef _WIN32
         unsigned __int64 align;
 #endif
     };
@@ -324,8 +324,6 @@ public:
     explicit SocketAddressInet(const char* src);
     explicit SocketAddressInet(const std::string& src);
 
-    /// @param ip �����ֽ���
-    /// @param port �����ֽ���
     SocketAddressInet(unsigned int ip, unsigned short port);
     SocketAddressInet(
         unsigned char b1,
