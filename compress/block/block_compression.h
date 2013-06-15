@@ -26,6 +26,12 @@ public:
     bool Uncompress(const char* str, size_t length, std::string* out);
     bool Uncompress(StringPiece sp, std::string* out);
     virtual std::string GetName() = 0;
+    void SetMaxUnCompressedSize(size_t s) {
+        max_unCompressed_size_ = s;
+    }
+
+protected:
+    size_t max_unCompressed_size_;
 
 private:
     virtual bool DoCompress(const char* str, size_t length, std::string* out) = 0;
