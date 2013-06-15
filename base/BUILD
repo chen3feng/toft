@@ -55,10 +55,29 @@ cc_library(
     srcs = 'uint32_divisor.cpp'
 )
 
+cc_library(
+    name = 'random',
+    srcs = 'random.cpp',
+)
+
+cc_library(
+    name = 'arena',
+    srcs = 'arena.cpp',
+)
+
 cc_test(
     name = 'uint32_divisor_test',
     srcs = 'uint32_divisor_test.cpp',
     deps = ':uint32_divisor'
+)
+
+cc_test(
+    name = 'arena_test',
+    srcs = 'arena_test.cpp',
+    deps = [
+        ':arena',
+        ':random',
+    ]
 )
 
 cc_test(name = 'array_size_test', srcs = 'array_size_test.cpp')

@@ -6,6 +6,7 @@
 // Description:
 
 #include "toft/system/net/ip_address.h"
+
 #include "thirdparty/gtest/gtest.h"
 
 namespace toft {

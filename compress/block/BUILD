@@ -24,9 +24,20 @@ cc_library(
 )
 
 cc_library(
-    name='block',
+    name='lzo',
+    srcs=['lzo.cpp', ],
     deps=[
         ':_block_compression',
+        '//toft/base:class_registry',
+        '//thirdparty/lzo:lzo',
+    ],
+    link_all_symbols=True,
+)
+
+cc_library(
+    name='block',
+    deps=[
+        ':lzo',
         ':snappy',
     ],
 )

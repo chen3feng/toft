@@ -6,6 +6,7 @@
 #include "toft/base/byte_order.h"
 
 #include <stdint.h>
+
 #include "thirdparty/gtest/gtest.h"
 
 namespace toft {

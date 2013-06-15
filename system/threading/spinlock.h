@@ -10,6 +10,7 @@
 #include <stdlib.h>
 
 #include <pthread.h>
+
 #include "toft/base/uncopyable.h"
 #include "toft/system/threading/scoped_locker.h"
 

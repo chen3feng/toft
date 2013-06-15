@@ -5,10 +5,11 @@
 
 #include "toft/system/threading/thread_pool.h"
 
-#include "thirdparty/glog/logging.h"
-#include "thirdparty/gtest/gtest.h"
 #include "toft/base/closure.h"
 #include "toft/base/functional.h"
+
+#include "thirdparty/glog/logging.h"
+#include "thirdparty/gtest/gtest.h"
 
 namespace toft {
 

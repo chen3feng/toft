@@ -6,6 +6,7 @@
 // Description: test binary version
 
 #include "toft/base/binary_version.h"
+
 #include "thirdparty/gtest/gtest.h"
 
 TEST(BinaryVersion, Test)

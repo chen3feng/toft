@@ -9,7 +9,6 @@
 # include <assert.h>
 # include <typeinfo>
 
-// 取自 glog
 // Author: kenton@google.com (Kenton Varda) and others
 //
 // Contains basic types and utilities used by the rest of the library.
@@ -35,16 +34,13 @@
 
 namespace toft {
 
-/// 执行正确的类型转换的同时，不压制编译器的警告。
+
 template<typename To, typename From>
 inline To implicit_cast(From const &f) {
     return f;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-// 以下取自 boost/cast.hpp
-
-/// 执行多态类型转换，如果转换失败，throw 异常。
 template <class Target, class Source>
 inline Target polymorphic_cast(Source* x)
 {
@@ -56,7 +52,6 @@ inline Target polymorphic_cast(Source* x)
     return tmp;
 }
 
-/// 多态向下转型，debug 模式（未定义 NDEBUG）进行检查，否则等效于 static_cast
 template <class Target, class Source>
 inline Target polymorphic_downcast(Source* x)
 {

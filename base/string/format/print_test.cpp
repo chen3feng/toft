@@ -8,6 +8,7 @@
 // GLOBAL_NOLINT(runtime/int)
 
 #include "toft/base/string/format/print.h"
+
 #include "thirdparty/gtest/gtest.h"
 
 namespace toft {

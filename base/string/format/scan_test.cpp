@@ -5,8 +5,10 @@
 // Created: 2013-02-06
 
 #include "toft/base/string/format/scan.h"
+
 #include <math.h>
 #include <stdint.h>
+
 #include "thirdparty/gtest/gtest.h"
 
 namespace toft {

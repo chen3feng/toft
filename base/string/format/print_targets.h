@@ -9,6 +9,7 @@
 #pragma once
 
 #include <string>
+
 #include "toft/base/string/format/print_target.h"
 
 namespace toft {
