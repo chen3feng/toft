@@ -13,6 +13,7 @@
 namespace toft {
 class File;
 
+namespace hfile {
 class Block {
     TOFT_DECLARE_UNCOPYABLE(Block);
 
@@ -29,5 +30,8 @@ public:
     }
     virtual bool DecodeFromString(const std::string &str) = 0;
 };
+
+}  // namespace hfile
 }  // namespace toft
+
 #endif  // TOFT_STORAGE_SSTABLE_HFILE_BLOCK_H

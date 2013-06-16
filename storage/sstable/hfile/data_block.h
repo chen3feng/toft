@@ -18,6 +18,8 @@
 namespace toft {
 class BlockCompression;
 
+namespace hfile {
+
 class DataBlock : public Block {
     TOFT_DECLARE_UNCOPYABLE(DataBlock);
 
@@ -68,5 +70,7 @@ private:
     mutable int64_t compressed_size_;
 };
 
+}  // namespace hfile
 }  // namespace toft
+
 #endif  // TOFT_STORAGE_SSTABLE_HFILE_DATA_BLOCK_H

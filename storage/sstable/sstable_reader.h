@@ -19,11 +19,12 @@
 // GLOBAL_NOLINT(readability/casting)
 
 namespace toft {
-
+namespace hfile {
 class DataBlock;
 class DataIndex;
 class FileTrailer;
 class FileInfo;
+} // namespace hfile
 
 class File;
 

@@ -15,8 +15,9 @@
 #include "toft/storage/sstable/sstable_reader.h"
 
 namespace toft {
-
+namespace hfile {
 class DataBlock;
+} // namespace hfile
 
 typedef std::vector<std::pair<std::string, std::vector<std::string> > > DataVector;
 
@@ -32,7 +33,7 @@ public:
 private:
     friend class InMemoryIterator;
 
-    toft::scoped_ptr<DataBlock> cached_block_;
+    toft::scoped_ptr<hfile::DataBlock> cached_block_;
     //  Replace with hash_map
     std::map<std::string, DataVector::iterator> index_;
     DataVector data_;

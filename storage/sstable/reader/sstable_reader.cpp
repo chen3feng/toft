@@ -58,8 +58,8 @@ bool SSTableReader::GetMetaData(const std::string &path,
         return false;
     }
 
-    FileInfo file_info;
-    FileTrailer file_trailer;
+    hfile::FileInfo file_info;
+    hfile::FileTrailer file_trailer;
     if (!Impl::LoadFileInfo(file.get(), NULL, &file_info, &file_trailer))
         return false;
 
@@ -75,7 +75,7 @@ bool SSTableReader::GetEntryCount(const std::string &path, int *count) {
         return false;
     }
 
-    FileTrailer file_trailer;
+    hfile::FileTrailer file_trailer;
     if (!Impl::LoadFileInfo(file.get(), NULL, NULL, &file_trailer))
         return false;
 
@@ -89,7 +89,7 @@ const std::string SSTableReader::GetMetaData(const std::string &key) const {
 }
 
 void SSTableReader::IterateMetaData(
-                toft::Closure<bool(const std::string &, const std::string &)> *callback) const {
+        toft::Closure<bool(const std::string&, const std::string&)> *callback) const {
     impl_->IterMetaData(callback);
 }
 

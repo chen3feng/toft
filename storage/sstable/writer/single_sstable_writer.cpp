@@ -22,8 +22,8 @@ SingleSSTableWriter::SingleSSTableWriter(const SSTableWriteOption &option)
                   value_length_(0),
                   file_info_offset_(0),
                   flushed_(false) {
-    block_.reset(new DataBlock(static_cast<CompressType>(option.compress_type())));
-    index_.reset(new DataIndex);
+    block_.reset(new hfile::DataBlock(static_cast<CompressType>(option.compress_type())));
+    index_.reset(new hfile::DataIndex);
     CHECK(!option_.path().empty());
 }
 
@@ -54,8 +54,8 @@ bool SingleSSTableWriter::Flush() {
     }
     stable_sort(data_index_.begin(), data_index_.end(), CompairString);
 
-    FileTrailer trailer;
-    FileInfo fileInfo;
+    hfile::FileTrailer trailer;
+    hfile::FileInfo fileInfo;
     std::map<std::string, std::string>::iterator it_fi_meta = file_info_meta_.begin();
     std::vector<std::deque<std::pair<std::string, std::string> >::iterator>::iterator it_d_index =
                     data_index_.begin();

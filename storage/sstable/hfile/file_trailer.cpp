@@ -15,6 +15,7 @@ static const std::string kTrailerBlockMagic = "TRABLK\34\36";
 }
 
 namespace toft {
+namespace hfile {
 
 FileTrailer::FileTrailer()
                 : file_info_offset_(-1),
@@ -75,4 +76,6 @@ bool FileTrailer::DecodeFromString(const std::string &str) {
              << ", data index count: " << data_index_count_;
     return true;
 }
+
+}  // namespace hfile
 }  // namespace toft

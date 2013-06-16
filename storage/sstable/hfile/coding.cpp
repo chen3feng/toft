@@ -10,6 +10,7 @@
 #include "thirdparty/glog/logging.h"
 
 namespace toft {
+namespace hfile {
 
 void EncodeFixed32(char* buf, uint32_t value) {
     if (ByteOrder::IsBigEndian()) {
@@ -73,4 +74,5 @@ int32_t ReadVint(const char **buffer, const char* limit) {
     }
 }
 
+}  // namespace hfile
 }  // namespace toft

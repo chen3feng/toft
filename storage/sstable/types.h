@@ -21,7 +21,7 @@ enum CompressType {
     CompressType_kLzo = 0,
     CompressType_kZlib = 1,
     CompressType_kUnCompress = 2,
-    //  do NOT change above enum value, it's used in hfile of java version
+    // Do NOT change above enum value, it's used in hfile of java version
     CompressType_kSnappy = 3,
     CompressType_kUnKnown
 };

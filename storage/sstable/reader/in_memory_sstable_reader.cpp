@@ -18,7 +18,7 @@ SSTableReader::Iterator *InMemorySSTableReader::Seek(const std::string &key) {
 }
 
 void InMemorySSTableReader::Init() {
-    cached_block_.reset(new DataBlock(impl_->file_trailer_->compress_type()));
+    cached_block_.reset(new hfile::DataBlock(impl_->file_trailer_->compress_type()));
     std::vector<std::string> values;
     std::string ori_key = "";
     for (int block_id = 0; block_id < impl_->file_trailer_->data_index_count(); block_id++) {

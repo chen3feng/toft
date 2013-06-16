@@ -10,6 +10,7 @@
 #include "thirdparty/glog/logging.h"
 
 namespace toft {
+namespace hfile {
 
 Block::~Block() {}
 
@@ -24,4 +25,5 @@ bool Block::WriteToFile(File *fb) {
     return true;
 }
 
+}  // namespace hfile
 }  // namespace toft

@@ -14,6 +14,7 @@
 #include "thirdparty/glog/logging.h"
 
 namespace toft {
+namespace hfile {
 
 class DataIndex : public Block {
     TOFT_DECLARE_UNCOPYABLE(DataIndex);
@@ -63,6 +64,7 @@ private:
     int64_t last_offset_;
 };
 
+}  // namespace hfile
 }  // namespace toft
 
 #endif  // TOFT_STORAGE_SSTABLE_HFILE_DATA_INDEX_H

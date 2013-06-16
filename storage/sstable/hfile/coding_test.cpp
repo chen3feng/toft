@@ -8,6 +8,7 @@
 #include "thirdparty/gtest/gtest.h"
 
 namespace toft {
+namespace hfile {
 
 TEST(Coding, Fixed32) {
     std::string s;
@@ -73,4 +74,5 @@ TEST(Coding, EncodingOutput) {
     ASSERT_EQ(0x08, static_cast<int>(dst[7]));
 }
 
+}  // namespace hfile
 }  // namespace toft

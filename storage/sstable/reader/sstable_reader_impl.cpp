@@ -20,11 +20,11 @@ namespace toft {
 
 // SSTableReader internal implementation.
 bool SSTableReader::Impl::LoadFileInfo(File *file_base,
-                                       DataIndex *data_index,
-                                       FileInfo *file_info,
-                                       FileTrailer *file_trailer) {
+                                       hfile::DataIndex *data_index,
+                                       hfile::FileInfo *file_info,
+                                       hfile::FileTrailer *file_trailer) {
     // Load file trailer
-    const int tailer_size = FileTrailer::TrailerSize();
+    const int tailer_size = hfile::FileTrailer::TrailerSize();
     bool s = file_base->Seek(-tailer_size, SEEK_END);
 
     int64_t current_pos = file_base->Tell();
@@ -129,9 +129,9 @@ const std::string SSTableReader::Impl::FindValue(
 
 SSTableReader::Impl::Impl()
                 : buffer_size_(0) {
-    data_index_.reset(new DataIndex);
-    file_trailer_.reset(new FileTrailer);
-    file_info_.reset(new FileInfo);
+    data_index_.reset(new hfile::DataIndex);
+    file_trailer_.reset(new hfile::FileTrailer);
+    file_info_.reset(new hfile::FileInfo);
 }
 
 SSTableReader::Impl::~Impl() {}
@@ -170,7 +170,7 @@ void SSTableReader::Impl::IterMetaData(
     }
 }
 
-bool SSTableReader::Impl::LoadDataBlock(int block_id, DataBlock *block) {
+bool SSTableReader::Impl::LoadDataBlock(int block_id, hfile::DataBlock *block) {
     CHECK(block_id >= 0 && block_id < data_index_->GetBlockSize())
                     << "invalid block_id: " << block_id;
 

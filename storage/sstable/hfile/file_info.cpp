@@ -9,6 +9,7 @@
 #include "toft/storage/sstable/hfile/coding.h"
 
 namespace toft {
+namespace hfile {
 
 const std::string FileInfo::RESERVED_PREFIX = "hfile.";
 const std::string FileInfo::AVG_KEY_LEN =  FileInfo::RESERVED_PREFIX
@@ -96,4 +97,6 @@ void FileInfo::AddItem(const std::string &key, const std::string &value) {
     buffer_ += value;
     ++item_num_;
 }
+
+}  // namespace hfile
 }  // namespace toft

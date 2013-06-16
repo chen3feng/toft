@@ -40,8 +40,8 @@ private:
     std::map<std::string, std::string> file_info_meta_;
 
     toft::scoped_ptr<File> file_base_;
-    toft::scoped_ptr<DataBlock> block_;
-    toft::scoped_ptr<DataIndex> index_;
+    toft::scoped_ptr<hfile::DataBlock> block_;
+    toft::scoped_ptr<hfile::DataIndex> index_;
     std::string first_key_;
     int entry_count_;
     int64_t total_bytes_;

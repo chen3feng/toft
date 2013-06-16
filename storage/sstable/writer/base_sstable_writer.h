@@ -12,9 +12,11 @@
 #include "toft/storage/sstable/types.h"
 
 namespace toft {
+namespace hfile {
 class ShardingPolicy;
 class DataBlock;
 class DataIndex;
+} // namespace hfile
 
 class SSTableWriter {
     TOFT_DECLARE_UNCOPYABLE(SSTableWriter);

@@ -19,6 +19,7 @@
 #include "toft/base/string/string_piece.h"
 
 namespace toft {
+namespace hfile {
 
 void PutFixed32(std::string* dst, uint32_t value);
 void PutFixed64(std::string* dst, uint64_t value);
@@ -57,6 +58,7 @@ inline uint64_t DecodeFixed64(const char* ptr) {
     }
 }
 
+}  // namespace hfile
 }  // namespace toft
 
 #endif  // TOFT_STORAGE_SSTABLE_HFILE_CODING_H

@@ -11,21 +11,11 @@
 // This implementation is based on the sample implementation in RFC 1952.
 
 namespace {
-// CRC32 polynomial, in reversed form.
-// See RFC 1952, or http://en.wikipedia.org/wiki/Cyclic_redundancy_check
-static const uint32_t kCrc32Polynomial = 0xEDB88320;
-}
-
-namespace toft {
-CRC32::CRC32() {
-    InitCrc32Table();
-}
-
-CRC32::~CRC32() {}
-
-void CRC32::InitCrc32Table() {
-    Init();
-    //  Init crc32_table_
+static const uint32_t* InitCrc32Table() {
+    // CRC32 polynomial, in reversed form.
+    static const uint32_t kCrc32Polynomial = 0xEDB88320;
+    // See RFC 1952, or http://en.wikipedia.org/wiki/Cyclic_redundancy_check
+    static uint32_t crc32_table_[256];
     for (uint32_t i = 0; i < TOFT_ARRAY_SIZE(crc32_table_); ++i) {
         uint32_t c = i;
         for (size_t j = 0; j < 8; ++j) {
@@ -37,7 +27,23 @@ void CRC32::InitCrc32Table() {
         }
         crc32_table_[i] = c;
     }
+    return crc32_table_;
 }
+
+static const uint32_t* Crc32Table() {
+    const uint32_t* table = InitCrc32Table();
+    return table;
+}
+
+} // namespace
+
+namespace toft {
+
+CRC32::CRC32() {
+    Init();
+}
+
+CRC32::~CRC32() {}
 
 void CRC32::Init() {
     result_ = 0U;
@@ -46,21 +52,22 @@ void CRC32::Init() {
 void CRC32::Update(StringPiece sp) {
     uint32_t c = result_ ^ 0xFFFFFFFF;
     const uint8_t* u = reinterpret_cast<const uint8_t*>(sp.data());
+    const uint32_t* table = Crc32Table();
     for (size_t i = 0; i < sp.size(); ++i) {
-      c = crc32_table_[(c ^ u[i]) & 0xFF] ^ (c >> 8);
+        c = table[(c ^ u[i]) & 0xFF] ^ (c >> 8);
     }
     result_ = c ^ 0xFFFFFFFF;
 }
 
-uint32_t CRC32::Final() {
+uint32_t CRC32::Final() const {
     return result_;
 }
 
-void CRC32::Final(void* data) {
+void CRC32::Final(void* data) const {
     memcpy(data, &result_, 4);
 }
 
-std::string CRC32::HexFinal() {
+std::string CRC32::HexFinal() const {
     uint8_t digest[4];
     Final(&digest);
     return Hex::EncodeAsString(digest, 4);

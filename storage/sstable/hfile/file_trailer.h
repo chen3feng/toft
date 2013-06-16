@@ -14,6 +14,7 @@
 #include "toft/storage/sstable/types.h"
 
 namespace toft {
+namespace hfile {
 
 // A fixed trailer which contains offsets to other variable parts of the file.
 // It contains basic metadata on this file too.
@@ -88,5 +89,7 @@ private:
     int32_t version_;
 };
 
+}  // namespace hfile
 }  // namespace toft
+
 #endif  // TOFT_STORAGE_SSTABLE_HFILE_FILE_TRAILER_H

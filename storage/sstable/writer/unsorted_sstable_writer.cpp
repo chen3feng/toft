@@ -23,8 +23,8 @@ UnsortedSSTableWriter::UnsortedSSTableWriter(const SSTableWriteOption &option)
                   key_length_(0),
                   value_length_(0),
                   file_info_offset_(0) {
-    block_.reset(new DataBlock(static_cast<CompressType>(option.compress_type())));
-    index_.reset(new DataIndex);
+    block_.reset(new hfile::DataBlock(static_cast<CompressType>(option.compress_type())));
+    index_.reset(new hfile::DataIndex);
     CHECK(!option_.path().empty());
     std::string path = GetTempSSTablePath(option_.path());
     file_base_.reset(File::Open(path, "w"));
@@ -72,7 +72,7 @@ bool UnsortedSSTableWriter::Flush() {
     if (!WriteBlockAndUpdateIndex())
         return false;
 
-    FileInfo fileInfo;
+    hfile::FileInfo fileInfo;
     std::map<std::string, std::string>::iterator it_fi_meta = file_info_meta_.begin();
     // Add file info meta
     for (; it_fi_meta != file_info_meta_.end(); ++it_fi_meta) {
@@ -97,7 +97,7 @@ bool UnsortedSSTableWriter::Flush() {
         return false;
     }
 
-    FileTrailer trailer;
+    hfile::FileTrailer trailer;
     trailer.set_file_info_offset(file_info_offset_);
     trailer.set_data_index_offset(index_offset_);
     trailer.set_data_index_count(index_count_);

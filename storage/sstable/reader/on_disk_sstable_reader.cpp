@@ -15,23 +15,23 @@ DEFINE_int32(on_disk_sstable_block_cache, 128,
 namespace toft {
 
 OnDiskSSTableReader::OnDiskSSTableReader()
-                : block_cache_(new ThreadSafeLRUCache<int, DataBlock>(
+                : block_cache_(new ThreadSafeLruCache<int, hfile::DataBlock>(
                                 FLAGS_on_disk_sstable_block_cache)) {
 }
 
 OnDiskSSTableReader::~OnDiskSSTableReader() {
 }
 
-std::shared_ptr<DataBlock> OnDiskSSTableReader::LoadDataBlock(int block_id) {
-    std::shared_ptr<DataBlock> block;
+std::shared_ptr<hfile::DataBlock> OnDiskSSTableReader::LoadDataBlock(int block_id) {
+    std::shared_ptr<hfile::DataBlock> block;
     block_cache_->Get(block_id, &block);
     if (!block.get()) {
         // not in cache,
-        DataBlock *new_block = new DataBlock(impl_->file_trailer_->compress_type());
+        hfile::DataBlock *new_block = new hfile::DataBlock(impl_->file_trailer_->compress_type());
         if (!impl_->LoadDataBlock(block_id, new_block)) {
             delete new_block;
             LOG(ERROR)<< "fail to load data block!";
-            return std::shared_ptr<DataBlock>();
+            return std::shared_ptr<hfile::DataBlock>();
         }
         block.reset(new_block);
         block_cache_->Put(block_id, block);

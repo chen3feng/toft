@@ -19,6 +19,7 @@ static const std::string kDataBlockMagic = "DATABLK\42";
 }
 
 namespace toft {
+namespace hfile {
 
 DataBlock::~DataBlock() {
 }
@@ -106,4 +107,5 @@ void DataBlock::AddItem(const std::string &key, const std::string &value) {
     buffer_ += value;
 }
 
+}  // namespace hfile
 }  // namespace toft

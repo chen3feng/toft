@@ -5,13 +5,13 @@
 
 #include "toft/cache/lru_cache.h"
 
-#include "thirdparty/gtest/gtest.h"
 #include "thirdparty/glog/logging.h"
+#include "thirdparty/gtest/gtest.h"
 
 namespace toft {
 
-TEST(LRUCacheTest, Normal) {
-    LRUCache<int, int> cache(5);
+TEST(LruCacheTest, Normal) {
+    LruCache<int, int> cache(5);
     cache.Put(2, new int(2));
     std::shared_ptr<int> ptr(new int(1));
     cache.Put(1, ptr);
@@ -25,8 +25,8 @@ TEST(LRUCacheTest, Normal) {
     EXPECT_EQ(NULL, cache.Get(4).get());
 }
 
-TEST(LRUCacheTest, SameKey) {
-    LRUCache<int, int> cache(4);
+TEST(LruCacheTest, SameKey) {
+    LruCache<int, int> cache(4);
     cache.Put(1, new int(1));
     cache.Put(1, new int(2));
     cache.Put(3, new int(3));
@@ -35,8 +35,8 @@ TEST(LRUCacheTest, SameKey) {
     EXPECT_EQ(2, *cache.Get(1).get());
 }
 
-TEST(LRUCacheTest, Overflow) {
-    LRUCache<int, int> cache(3);
+TEST(LruCacheTest, Overflow) {
+    LruCache<int, int> cache(3);
     cache.Put(1, new int(1));
     cache.Put(2, new int(2));
     cache.Put(2, new int(1));

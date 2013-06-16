@@ -15,6 +15,7 @@
 #include "toft/storage/sstable/hfile/block.h"
 
 namespace toft {
+namespace hfile {
 
 class FileInfo : public Block {
     TOFT_DECLARE_UNCOPYABLE(FileInfo);
@@ -82,5 +83,7 @@ private:
     std::string buffer_;
 };
 
+}  // namespace hfile
 }  // namespace toft
+
 #endif  // TOFT_STORAGE_SSTABLE_HFILE_FILE_INFO_H

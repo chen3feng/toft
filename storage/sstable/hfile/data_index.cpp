@@ -11,6 +11,7 @@
 #include "toft/storage/sstable/hfile/coding.h"
 
 namespace toft {
+namespace hfile {
 
 static const std::string kIndexBlockMagic = "IDXBLK\41\43";
 
@@ -84,4 +85,5 @@ int DataIndex::FindMinimalBlock(const std::string &key) const {
     }
 }
 
+}  // namespace hfile
 }  // namespace toft

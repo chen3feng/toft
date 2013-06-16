@@ -18,44 +18,44 @@ namespace toft {
 
 // This is a thread safe LRU cache.
 template<typename TypeKey, typename TypeValue>
-class ThreadSafeLRUCache {
-    TOFT_DECLARE_UNCOPYABLE(ThreadSafeLRUCache);
+class ThreadSafeLruCache {
+    TOFT_DECLARE_UNCOPYABLE(ThreadSafeLruCache);
 
 public:
-    explicit ThreadSafeLRUCache(uint32_t max_size);
+    explicit ThreadSafeLruCache(size_t max_size);
 
-    ~ThreadSafeLRUCache();
+    ~ThreadSafeLruCache();
 
     bool Get(const TypeKey &key, std::shared_ptr<TypeValue> *value);
 
     void Put(const TypeKey &key, TypeValue *value);
     void Put(const TypeKey &key, std::shared_ptr<TypeValue> value);
 
-    uint32_t Size() const {
+    size_t Size() const {
         return cache_->Size();
     }
 
     void Clear();
 
 private:
-    toft::scoped_ptr<LRUCache<TypeKey, TypeValue> > cache_;
+    toft::scoped_ptr<LruCache<TypeKey, TypeValue> > cache_;
     toft::Mutex mu_;
 };
 
 template<typename TypeKey, typename TypeValue>
-ThreadSafeLRUCache<TypeKey, TypeValue>::ThreadSafeLRUCache(uint32_t max_size) {
+ThreadSafeLruCache<TypeKey, TypeValue>::ThreadSafeLruCache(size_t max_size) {
     toft::MutexLocker lock(&mu_);
-    cache_.reset(new LRUCache<TypeKey, TypeValue>(max_size));
+    cache_.reset(new LruCache<TypeKey, TypeValue>(max_size));
 }
 
 template<typename TypeKey, typename TypeValue>
-ThreadSafeLRUCache<TypeKey, TypeValue>::~ThreadSafeLRUCache() {
+ThreadSafeLruCache<TypeKey, TypeValue>::~ThreadSafeLruCache() {
     toft::MutexLocker lock(&mu_);
     cache_->Clear();
 }
 
 template<typename TypeKey, typename TypeValue>
-bool ThreadSafeLRUCache<TypeKey, TypeValue>::Get(const TypeKey &key,
+bool ThreadSafeLruCache<TypeKey, TypeValue>::Get(const TypeKey &key,
                                                  std::shared_ptr<TypeValue> *value) {
     toft::MutexLocker lock(&mu_);
     *value = cache_->Get(key);
@@ -63,20 +63,20 @@ bool ThreadSafeLRUCache<TypeKey, TypeValue>::Get(const TypeKey &key,
 }
 
 template<typename TypeKey, typename TypeValue>
-void ThreadSafeLRUCache<TypeKey, TypeValue>::Put(const TypeKey &key, TypeValue *value) {
+void ThreadSafeLruCache<TypeKey, TypeValue>::Put(const TypeKey &key, TypeValue *value) {
     toft::MutexLocker lock(&mu_);
     cache_->Put(key, value);
 }
 
 template<typename TypeKey, typename TypeValue>
-void ThreadSafeLRUCache<TypeKey, TypeValue>::Put(const TypeKey &key,
+void ThreadSafeLruCache<TypeKey, TypeValue>::Put(const TypeKey &key,
                                                  std::shared_ptr<TypeValue> value) {
     toft::MutexLocker lock(&mu_);
     cache_->Put(key, value);
 }
 
 template<typename TypeKey, typename TypeValue>
-void ThreadSafeLRUCache<TypeKey, TypeValue>::Clear() {
+void ThreadSafeLruCache<TypeKey, TypeValue>::Clear() {
     toft::MutexLocker lock(&mu_);
     cache_->Clear();
 }

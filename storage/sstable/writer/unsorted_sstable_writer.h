@@ -34,8 +34,8 @@ private:
 
     toft::scoped_ptr<File> file_base_;
     bool failed_;
-    toft::scoped_ptr<DataBlock> block_;
-    toft::scoped_ptr<DataIndex> index_;
+    toft::scoped_ptr<hfile::DataBlock> block_;
+    toft::scoped_ptr<hfile::DataIndex> index_;
     std::map<std::string, std::string> file_info_meta_;
     std::string first_key_;
     bool is_first_key_;

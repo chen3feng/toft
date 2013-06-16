@@ -26,7 +26,7 @@ public:
 
     virtual Iterator *Seek(const std::string &key);
 
-    std::shared_ptr<DataBlock> LoadDataBlock(int block_id);
+    std::shared_ptr<hfile::DataBlock> LoadDataBlock(int block_id);
 
     int GetBlockSize() const {
         return impl_->data_index_->GetBlockSize();
@@ -38,7 +38,7 @@ public:
     }
 
 private:
-    toft::scoped_ptr<ThreadSafeLRUCache<int, DataBlock> > block_cache_;
+    toft::scoped_ptr<ThreadSafeLruCache<int, hfile::DataBlock> > block_cache_;
 };
 
 class OnDiskIterator : public SSTableReader::Iterator {
@@ -60,7 +60,7 @@ private:
     void LoadItem();
 
     OnDiskSSTableReader *sstable_;
-    std::shared_ptr<DataBlock> cached_block_;
+    std::shared_ptr<hfile::DataBlock> cached_block_;
     int block_idx_;  // index of the current block
     int data_idx_;   // index of the current item in the block
 

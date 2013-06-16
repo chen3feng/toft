@@ -21,13 +21,13 @@ namespace toft {
 
 //  It is not thread safe.
 template<typename TypeKey, typename TypeValue>
-class LRUCache {
-    TOFT_DECLARE_UNCOPYABLE(LRUCache);
+class LruCache {
+    TOFT_DECLARE_UNCOPYABLE(LruCache);
 
 public:
-    explicit LRUCache(uint32_t max_size);
+    explicit LruCache(size_t max_size);
 
-    ~LRUCache();
+    ~LruCache();
 
     // Gets the value from the cache and also update the cache.
     // return NULL if no value found.
@@ -62,20 +62,20 @@ private:
 
     List value_list_;
     Map index_;
-    uint32_t max_size_;
+    size_t max_size_;
 };
 template<typename TypeKey, typename TypeValue>
-LRUCache<TypeKey, TypeValue>::LRUCache(uint32_t max_size)
+LruCache<TypeKey, TypeValue>::LruCache(size_t max_size)
                 : max_size_(max_size) {
 }
 
 template<typename TypeKey, typename TypeValue>
-LRUCache<TypeKey, TypeValue>::~LRUCache() {
+LruCache<TypeKey, TypeValue>::~LruCache() {
     Clear();
 }
 
 template<typename TypeKey, typename TypeValue>
-std::shared_ptr<TypeValue> LRUCache<TypeKey, TypeValue>::Get(const TypeKey &key) {
+std::shared_ptr<TypeValue> LruCache<TypeKey, TypeValue>::Get(const TypeKey &key) {
     typename Map::iterator iter = index_.find(key);
     if (iter != index_.end()) {
         value_list_.splice(value_list_.begin(), value_list_, iter->second);
@@ -89,12 +89,12 @@ std::shared_ptr<TypeValue> LRUCache<TypeKey, TypeValue>::Get(const TypeKey &key)
 }
 
 template<typename TypeKey, typename TypeValue>
-void LRUCache<TypeKey, TypeValue>::Put(const TypeKey &key, TypeValue *value) {
+void LruCache<TypeKey, TypeValue>::Put(const TypeKey &key, TypeValue *value) {
     Put(key, std::shared_ptr<TypeValue>(value));
 }
 
 template<typename TypeKey, typename TypeValue>
-void LRUCache<TypeKey, TypeValue>::Put(const TypeKey &key, std::shared_ptr<TypeValue> value) {
+void LruCache<TypeKey, TypeValue>::Put(const TypeKey &key, std::shared_ptr<TypeValue> value) {
     {
         // Remove if exists
         typename Map::iterator iter = index_.find(key);
@@ -122,7 +122,7 @@ void LRUCache<TypeKey, TypeValue>::Put(const TypeKey &key, std::shared_ptr<TypeV
 }
 
 template<typename TypeKey, typename TypeValue>
-void LRUCache<TypeKey, TypeValue>::Clear() {
+void LruCache<TypeKey, TypeValue>::Clear() {
     value_list_.clear();
     index_.clear();
 }
