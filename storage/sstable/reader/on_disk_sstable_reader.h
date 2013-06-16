@@ -10,7 +10,7 @@
 
 #include "toft/base/scoped_ptr.h"
 #include "toft/base/shared_ptr.h"
-#include "toft/cache/threadsafe_lru_cache.h"
+#include "toft/container/lru_cache.h"
 #include "toft/storage/sstable/reader/sstable_reader_impl.h"
 #include "toft/storage/sstable/sstable.h"
 
@@ -38,7 +38,7 @@ public:
     }
 
 private:
-    toft::scoped_ptr<ThreadSafeLruCache<int, hfile::DataBlock> > block_cache_;
+    toft::scoped_ptr<LruCache<int, std::shared_ptr<hfile::DataBlock> > > block_cache_;
 };
 
 class OnDiskIterator : public SSTableReader::Iterator {

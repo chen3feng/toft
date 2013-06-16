@@ -22,6 +22,7 @@ class DataBlock;
 typedef std::vector<std::pair<std::string, std::vector<std::string> > > DataVector;
 
 class InMemorySSTableReader : public SSTableReader {
+    TOFT_DECLARE_UNCOPYABLE(InMemorySSTableReader);
 public:
     InMemorySSTableReader();
     ~InMemorySSTableReader();
@@ -37,8 +38,6 @@ private:
     //  Replace with hash_map
     std::map<std::string, DataVector::iterator> index_;
     DataVector data_;
-
-TOFT_DECLARE_UNCOPYABLE(InMemorySSTableReader);
 };
 
 class InMemoryIterator : public SSTableReader::Iterator {
