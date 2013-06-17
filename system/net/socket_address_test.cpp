@@ -12,16 +12,29 @@
 
 namespace toft {
 
-TEST(SocketAddress, Parse)
+template <typename T>
+static void ParseSocketAddressInetTest()
 {
-    SocketAddressInet4 address;
+    T address;
     EXPECT_TRUE(address.Parse("0.0.0.0:0"));
     EXPECT_TRUE(address.Parse("1.2.3.4:65535"));
+    EXPECT_TRUE(address.Parse("77.220.81.0017:65535"));
+    EXPECT_EQ("77.220.81.15:65535", address.ToString());
     EXPECT_FALSE(address.Parse("1020.2.3.4:1"));
     EXPECT_FALSE(address.Parse("1.2345.3.4:1"));
     EXPECT_FALSE(address.Parse("1.2345.3.4:65537"));
     EXPECT_FALSE(address.Parse("hello.25.3.4:65537"));
     EXPECT_FALSE(address.Parse("hello.25.3.4:world"));
+}
+
+TEST(SocketAddressInet4, Parse)
+{
+    ParseSocketAddressInetTest<SocketAddressInet4>();
+}
+
+TEST(SocketAddressInet, Parse)
+{
+    ParseSocketAddressInetTest<SocketAddressInet4>();
 }
 
 TEST(SocketAddress, Inet4)

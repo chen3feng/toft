@@ -33,18 +33,23 @@ public:
     // return NULL if no value found.
     bool Get(const KeyType &key, ValueType* value);
 
+    // Get the value from the cache if exist, return default_value otherwise.
     ValueType GetOrDefault(const KeyType &key,
                            const ValueType& default_value = ValueType());
 
     // Saves value in cache.
     // If the key already exists, the new value will replace the old one.
-    // The cache will own the value and delete it when finish jobs.
     void Put(const KeyType &key, const ValueType& value);
 
     // Remove by key
     bool Remove(const KeyType &key) {
         typename LockType::Locker locker(&m_mutex);
         return InternalRemove(key);
+    }
+
+    bool HasKey(const KeyType& key) const {
+        typename LockType::Locker locker(&m_mutex);
+        return index_.find(key) != index_.end();
     }
 
     // Clear all values
@@ -55,7 +60,7 @@ public:
         return value_list_.size();
     }
 
-    size_t Capacity() {
+    size_t Capacity() const {
         typename LockType::Locker locker(&m_mutex);
         return capacity_;
     }
@@ -76,11 +81,12 @@ private:
 private:
     typedef std::list<std::pair<KeyType, ValueType> > List;
     typedef std::map<KeyType, typename List::iterator> Map;
-    LockType m_mutex;
+    mutable LockType m_mutex;
     List value_list_;
     Map index_;
     size_t capacity_;
 };
+
 template<typename KeyType, typename ValueType, typename LockType>
 LruCache<KeyType, ValueType, LockType>::LruCache(size_t capacity)
                 : capacity_(capacity) {

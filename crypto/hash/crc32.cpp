@@ -15,8 +15,8 @@ static const uint32_t* InitCrc32Table() {
     // CRC32 polynomial, in reversed form.
     static const uint32_t kCrc32Polynomial = 0xEDB88320;
     // See RFC 1952, or http://en.wikipedia.org/wiki/Cyclic_redundancy_check
-    static uint32_t crc32_table_[256];
-    for (uint32_t i = 0; i < TOFT_ARRAY_SIZE(crc32_table_); ++i) {
+    static uint32_t crc32_table[256];
+    for (uint32_t i = 0; i < TOFT_ARRAY_SIZE(crc32_table); ++i) {
         uint32_t c = i;
         for (size_t j = 0; j < 8; ++j) {
             if (c & 1) {
@@ -25,9 +25,9 @@ static const uint32_t* InitCrc32Table() {
                 c >>= 1;
             }
         }
-        crc32_table_[i] = c;
+        crc32_table[i] = c;
     }
-    return crc32_table_;
+    return crc32_table;
 }
 
 static const uint32_t* Crc32Table() {

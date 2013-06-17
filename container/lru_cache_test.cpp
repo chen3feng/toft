@@ -25,8 +25,7 @@ TEST(LruCacheTest, Normal) {
     EXPECT_EQ(1, cache.GetOrDefault(1));
     EXPECT_EQ(2, cache.GetOrDefault(2));
     EXPECT_EQ(3, cache.GetOrDefault(3));
-    int n;
-    EXPECT_FALSE(cache.Get(4, &n));
+    EXPECT_FALSE(cache.HasKey(4));
 }
 
 TEST(LruCacheTest, SameKey) {
@@ -37,6 +36,45 @@ TEST(LruCacheTest, SameKey) {
     EXPECT_EQ(2, cache.GetOrDefault(1));
     EXPECT_EQ(3, cache.GetOrDefault(3));
     EXPECT_EQ(2, cache.GetOrDefault(1));
+}
+
+TEST(LruCacheTest, Size) {
+    LruCache<int, int> cache(2);
+    EXPECT_EQ(0U, cache.Size());
+    EXPECT_EQ(2U, cache.Capacity());
+    EXPECT_TRUE(cache.IsEmpty());
+    EXPECT_FALSE(cache.IsFull());
+
+    cache.Put(1, 1);
+    EXPECT_EQ(1U, cache.Size());
+    EXPECT_FALSE(cache.IsEmpty());
+    EXPECT_FALSE(cache.IsFull());
+
+    cache.Put(2, 2);
+    EXPECT_EQ(2U, cache.Size());
+    EXPECT_FALSE(cache.IsEmpty());
+    EXPECT_TRUE(cache.IsFull());
+
+    cache.Put(3, 3);
+    EXPECT_EQ(2U, cache.Size());
+    EXPECT_FALSE(cache.IsEmpty());
+    EXPECT_TRUE(cache.IsFull());
+}
+
+TEST(LruCacheTest, HasKey) {
+    LruCache<int, int> cache(2);
+    cache.Put(1, 1);
+    EXPECT_TRUE(cache.HasKey(1));
+    EXPECT_FALSE(cache.HasKey(2));
+}
+
+TEST(LruCacheTest, Remove) {
+    LruCache<int, int> cache(2);
+    cache.Put(1, 1);
+    EXPECT_TRUE(cache.Remove(1));
+    EXPECT_EQ(0U, cache.Size());
+    EXPECT_TRUE(cache.IsEmpty());
+    EXPECT_FALSE(cache.Remove(2));
 }
 
 TEST(LruCacheTest, Overflow) {
