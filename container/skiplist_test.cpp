@@ -120,8 +120,9 @@ TEST(SkipTest, InsertAndLookup) {
         iter.SeekToLast();
 
         // Compare against model iterator
-        for (std::set<Key>::reverse_iterator model_iter = keys.rbegin(); model_iter != keys.rend();
-                        ++model_iter) {
+        for (std::set<Key>::reverse_iterator model_iter = keys.rbegin();
+             model_iter != keys.rend();
+             ++model_iter) {
             ASSERT_TRUE(iter.Valid());
             ASSERT_EQ(*model_iter, iter.key());
             iter.Prev();
@@ -328,11 +329,10 @@ public:
     };
 
     explicit TestState(int s)
-                    : seed_(s),
-                      quit_flag_(NULL),
-                      state_(STARTING),
-                      state_cv_(&mu_) {
-    }
+        : seed_(s),
+          quit_flag_(NULL),
+          state_(STARTING),
+          state_cv_(&mu_) {}
 
     void Wait(ReaderState s) {
         mu_.Lock();
@@ -349,7 +349,7 @@ public:
         mu_.Unlock();
     }
 
- private:
+private:
     Mutex mu_;
     ReaderState state_;
     ConditionVariable state_cv_;
@@ -407,4 +407,5 @@ TEST(SkipTest, Concurrent5) {
     RunConcurrent(5);
 }
 */
+
 }  // namespace toft

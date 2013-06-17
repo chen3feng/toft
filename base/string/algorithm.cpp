@@ -68,6 +68,16 @@ std::string ReplaceAll(const StringPiece& s, const StringPiece& oldsub,
 }
 
 // Replace all the chars in "from" to "to" in a string
+void ReplaceAll(std::string* s, const StringPiece& from, const StringPiece& to)
+{
+    size_t pos = 0;
+    while ((pos = s->find(from.data(), pos, from.size())) != std::string::npos)
+    {
+        s->replace(pos, from.size(), to.data(), to.size());
+        pos += to.size();
+    }
+}
+
 size_t ReplaceAllChars(std::string* s, const StringPiece& from, char to)
 {
     size_t num_replaced = 0;

@@ -41,13 +41,22 @@ cc_test(
     ]
 )
 
-
 cc_test(
     name = 'skiplist_test',
     srcs = 'skiplist_test.cpp',
     deps = [
         '//toft/base:arena',
-        '//toft/hash:hash',
         '//toft/base:random',
+        '//toft/hash:hash',
     ]
 )
+
+cc_test(
+    name = 'lru_cache_test',
+    srcs = ['lru_cache_test.cpp'],
+    deps = [
+        '//toft/system/threading:threading',
+        '//toft/system/time:time',
+    ],
+)
+

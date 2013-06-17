@@ -122,10 +122,20 @@ bool DomainResolver::Query(
     HostEntry* host_entry,
     int* error_code)
 {
-    struct hostent* he = gethostbyname(hostname.c_str());
+    struct hostent* he = NULL;
+    int error = 0;
+#ifdef _GNU_SOURCE
+    char buf[4096];
+    struct hostent he_buf;
+    gethostbyname_r(hostname.c_str(), &he_buf, buf, sizeof(buf), &he, &error);
+#else
+    he = gethostbyname(hostname.c_str());
+    if (!he)
+        error = h_errno;
+#endif
     if (!he)
     {
-        SetErrorCode(error_code, h_errno);
+        SetErrorCode(error_code, error);
         return false;
     }
     host_entry->Initialize(he);

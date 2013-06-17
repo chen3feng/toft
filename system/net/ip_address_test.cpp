@@ -26,6 +26,8 @@ TEST(IpAddress, Parse)
     EXPECT_FALSE(address.Assign("-1.2.3.4"));
     EXPECT_FALSE(address.Assign("1.2.3.4x"));
     EXPECT_FALSE(address.Assign("1.256.3.4"));
+    EXPECT_TRUE(address.Assign("77.220.81.0017"));
+    EXPECT_EQ("77.220.81.15", address.ToString());
 }
 
 TEST(IpAddress, Bytes)

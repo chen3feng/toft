@@ -15,8 +15,6 @@
 namespace toft {
 
 class CRC32 {
-    TOFT_DECLARE_UNCOPYABLE(CRC32);
-
 public:
     CRC32();
     ~CRC32();
@@ -25,22 +23,20 @@ public:
     //  for many times, you SHOULD call Init before computing sha1 of new data.
     void Init();
     void Update(StringPiece sp);
-    uint32_t Final();
-    // Finalizes the MD5 operation and fills the buffer with the digest.
+    uint32_t Final() const;
+    // Finalizes the CRC operation and fills the buffer with the digest.
     //  Data is uint32_t_t
-    void Final(void* digest);
+    void Final(void* digest) const;
     //  Hex encoding for result
-    std::string HexFinal();
+    std::string HexFinal() const;
 
     static uint32_t Digest(StringPiece sp);
     static std::string HexDigest(StringPiece sp);
 
 private:
-    void InitCrc32Table();
-
     uint32_t result_;
-    uint32_t crc32_table_[256];
 };
 
 }  // namespace toft
+
 #endif  // TOFT_HASH_CRC32_H

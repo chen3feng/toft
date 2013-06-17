@@ -43,11 +43,9 @@ private:
     void* rep_;
 
 public:
-    AtomicPointer()
-                    : rep_(NULL) {
+    AtomicPointer() : rep_(NULL) {
     }
-    explicit AtomicPointer(void* p)
-                    : rep_(p) {
+    explicit AtomicPointer(void* p) : rep_(p) {
     }
 
     inline void* NoBarrier_Load() const {
@@ -408,12 +406,9 @@ void SkipList<Key, Comparator>::Insert(const Key& key) {
 template<typename Key, class Comparator>
 bool SkipList<Key, Comparator>::Contains(const Key& key) const {
     Node* x = FindGreaterOrEqual(key, NULL);
-    if (x != NULL && Equal(key, x->key)) {
-        return true;
-    } else {
-        return false;
-    }
+    return x != NULL && Equal(key, x->key);
 }
 
 }  // namespace toft
+
 #endif  // TOFT_CONTAINER_SKIPLIST_H
