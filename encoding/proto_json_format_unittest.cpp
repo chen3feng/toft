@@ -52,10 +52,8 @@ void TestJsonString(const std::string& json_file) {
 
     toft::Person expected_pb;
     {
-        std::string content;
         std::string path = "debug_string.txt";
-        toft::File::ReadAll(path, &content);
-        ProtoUtil::ParseFromASCIIString(content, &expected_pb);
+        LoadMessageFromTextFile(path, &expected_pb);
     }
     EXPECT_EQ(pb.SerializeAsString(), expected_pb.SerializeAsString());
 }

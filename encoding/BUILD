@@ -46,8 +46,19 @@ cc_library(
     name = 'proto_json_format',
     srcs = 'proto_json_format.cpp',
     deps = [
+        '//toft/base/string:string',
         '//thirdparty/glog:glog',
         '//thirdparty/jsoncpp:jsoncpp',
+        '//thirdparty/protobuf:protobuf',
+    ]
+)
+
+cc_library(
+    name = 'proto_util',
+    srcs = 'proto_util.cpp',
+    deps = [
+        '//toft/storage/file:file',
+        '//thirdparty/glog:glog',
         '//thirdparty/protobuf:protobuf',
     ]
 )
@@ -57,6 +68,7 @@ cc_test(
     srcs = 'proto_json_format_unittest.cpp',
     deps = [
         ':proto_json_format',
+        ':proto_util',
         ':unittest_proto',
         '//toft/storage/file:file',
     ],

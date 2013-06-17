@@ -10,19 +10,15 @@
 
 #include "toft/base/static_class.h"
 
-#include "thirdparty/protobuf/text_format.h"
+namespace google {
+namespace protobuf {
+class Message;
+}
+}
 
 namespace toft {
 
-struct ProtoUtil {
-    TOFT_DECLARE_STATIC_CLASS(ProtoUtil);
-
-public:
-    static bool ParseFromASCIIString(const std::string& debug_str, google::protobuf::Message* out) {
-        google::protobuf::TextFormat::Parser parser;
-        return parser.ParseFromString(debug_str, out);
-    }
-};
+bool LoadMessageFromTextFile(const std::string& filename, google::protobuf::Message* out);
 
 }  // namespace toft
 #endif  // TOFT_ENCODING_PROTO_UTIL_H_
