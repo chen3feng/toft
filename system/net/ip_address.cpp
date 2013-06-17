@@ -23,15 +23,22 @@ IpAddress::IpAddress(const std::string& src)
 
 bool IpAddress::Assign(const char* src)
 {
-    unsigned int b1, b2, b3, b4;
-    char dummy; // Catch extra character
-    int count = sscanf(src, "%u.%u.%u.%u%c", &b1, &b2, &b3, &b4, &dummy);
-    if (count == 4 && b1 <= UCHAR_MAX && b2 <= UCHAR_MAX && b3 <= UCHAR_MAX && b4 <= UCHAR_MAX)
+    int bytes[4];
+    char dummy; // catch extra character
+    int count = sscanf(src, "%i.%i.%i.%i%c",
+                       &bytes[0], &bytes[1], &bytes[2], &bytes[3], &dummy);
+    if (count != 4)
+        return false;
+
+    for (int i = 0; i < 4; ++i)
     {
-        Assign((unsigned char)b1, (unsigned char)b2, (unsigned char)b3, (unsigned char)b4);
-        return true;
+        if (bytes[i] < 0 || bytes[i] > UCHAR_MAX)
+            return false;
     }
-    return false;
+
+    Assign((unsigned char)bytes[0], (unsigned char)bytes[1],
+           (unsigned char)bytes[2], (unsigned char)bytes[3]);
+    return true;
 }
 
 void IpAddress::ToString(std::string* str) const

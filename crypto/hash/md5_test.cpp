@@ -14,7 +14,7 @@ TEST(MD5Test, UseClass) {
     MD5 md5;
     md5.Update(test_str);
     UInt128 ret = md5.Final();
-    UInt128 expect_value(18279382751233366757L, 7523094284164231279L);
+    UInt128 expect_value(18279382751233366757UL, 7523094284164231279UL);
     EXPECT_EQ(ret, expect_value);
 
     EXPECT_EQ(MD5::Digest(test_str), expect_value);

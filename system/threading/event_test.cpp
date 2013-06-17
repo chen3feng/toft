@@ -3,6 +3,7 @@
 // Created: 2010-06-18
 
 #include "toft/system/threading/event.h"
+
 #include "thirdparty/glog/logging.h"
 #include "thirdparty/gtest/gtest.h"
 

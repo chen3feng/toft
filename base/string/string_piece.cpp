@@ -31,9 +31,11 @@
 //
 
 #include "toft/base/string/string_piece.h"
+
 #include <limits.h>
 #include <string.h>
 #include <algorithm>
+
 #include "toft/base/string/compare.h"
 
 namespace toft {

@@ -5,6 +5,7 @@
 // Created: 04/15/2011
 
 #include "toft/base/shared_ptr.h"
+
 #include "thirdparty/gtest/gtest.h"
 
 TEST(SharedPtr, Test)

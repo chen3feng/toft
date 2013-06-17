@@ -7,7 +7,24 @@
 
 #include "toft/system/net/socket_address.h"
 
+// GLOBAL_NOLINT(runtime/printf)
+
 namespace toft {
+
+static bool ParseSocketAddress4(const char* str, int bytes[4], int* port)
+{
+    char dummy; // catch extra character
+    int count = sscanf(str, "%i.%i.%i.%i:%d%c",
+                       &bytes[0], &bytes[1], &bytes[2], &bytes[3], port, &dummy);
+    if (count != 5)
+        return false;
+    for (int i = 0; i < 4; ++i)
+    {
+        if (bytes[i] < 0 || bytes[i] > UCHAR_MAX)
+            return false;
+    }
+    return true;
+}
 
 /// Abstract sockaddr
 
@@ -84,24 +101,17 @@ bool SocketAddressInet4::Assign(
 
 bool SocketAddressInet4::Assign(const char* str)
 {
-    unsigned int b1, b2, b3, b4;
+    int bytes[4];
     int port;
-    char dummy; // Catch extra character
-    int count = sscanf(str, "%u.%u.%u.%u:%d%c", &b1, &b2, &b3, &b4, &port, &dummy);
-    if (count == 5 &&
-        b1 <= UCHAR_MAX && b2 <= UCHAR_MAX && b3 <= UCHAR_MAX && b4 <= UCHAR_MAX &&
-        port >= 0 && port <= USHRT_MAX
-    )
-    {
-        return Assign(
-            (unsigned char)b1,
-            (unsigned char)b2,
-            (unsigned char)b3,
-            (unsigned char)b4,
-            port
-        );
-    }
-    return false;
+    if (!ParseSocketAddress4(str, bytes, &port))
+        return false;
+    return Assign(
+        (unsigned char)bytes[0],
+        (unsigned char)bytes[1],
+        (unsigned char)bytes[2],
+        (unsigned char)bytes[3],
+        port
+    );
 }
 
 bool SocketAddressInet4::Assign(const char* str, unsigned short port)
@@ -280,31 +290,22 @@ void SocketAddressInet::DoToString(std::string* str) const
 
 bool SocketAddressInet::DoParse(const char* str)
 {
-    unsigned int b1, b2, b3, b4;
+    int bytes[4];
     int port;
-    char dummy; // Catch extra character
-    int count = sscanf(str, "%u.%u.%u.%u:%d%c", &b1, &b2, &b3, &b4, &port, &dummy);
-    if (count == 5 &&
-        b1 <= UCHAR_MAX && b2 <= UCHAR_MAX && b3 <= UCHAR_MAX && b4 <= UCHAR_MAX &&
-        port >= 0 && port <= USHRT_MAX
-    )
-    {
-        m_address.v4.sin_family = AF_INET;
+    if (!ParseSocketAddress4(str, bytes, &port))
+        return false;
 
-        unsigned char* p =
-            reinterpret_cast<unsigned char*>(&m_address.v4.sin_addr);
+    m_address.v4.sin_family = AF_INET;
 
-        p[0] = (unsigned char) b1;
-        p[1] = (unsigned char) b2;
-        p[2] = (unsigned char) b3;
-        p[3] = (unsigned char) b4;
+    unsigned char* p =
+        reinterpret_cast<unsigned char*>(&m_address.v4.sin_addr);
 
-        m_address.v4.sin_port = htons(port);
-
-        return true;
-    }
-
-    return false;
+    p[0] = (unsigned char) bytes[0];
+    p[1] = (unsigned char) bytes[1];
+    p[2] = (unsigned char) bytes[2];
+    p[3] = (unsigned char) bytes[3];
+    m_address.v4.sin_port = htons(port);
+    return true;
 }
 
 bool SocketAddressInet::DoCopyFrom(const SocketAddress& rhs)

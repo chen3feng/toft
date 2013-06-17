@@ -5,6 +5,7 @@
 // Created: 2013-02-07
 
 #include "toft/base/string/format/print_targets.h"
+
 #include <string.h>
 #include <algorithm>
 

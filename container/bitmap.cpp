@@ -4,6 +4,7 @@
 // Author: CHEN Feng <chen3feng@gmail.com>
 
 #include "toft/container/bitmap.h"
+
 #include <algorithm>
 
 namespace toft {

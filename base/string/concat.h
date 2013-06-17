@@ -14,6 +14,7 @@
 #pragma once
 
 #include <string>
+
 #include "toft/base/string/append_1.h"
 
 namespace toft {

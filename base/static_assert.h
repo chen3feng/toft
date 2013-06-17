@@ -26,9 +26,8 @@ template <> struct static_assertion_failure<true> {
 
 template<int x> struct static_assert_test {};
 
-// 编译期间的静态断言
-// 用于编译期间检查错误的场合，示例：
-// TOFT_STATIC_ASSERT(sizeof(Foo) == 48, "Foo 的大小必须为 48");
+// Static assertions during compilation, Usage:
+// TOFT_STATIC_ASSERT(sizeof(Foo) == 48, "Size of Foo must equal to 48");
 #define TOFT_STATIC_ASSERT(e, ...) \
     typedef ::toft::static_assert_test < \
             sizeof(::toft::static_assertion_failure<static_cast<bool>(e)>)> \

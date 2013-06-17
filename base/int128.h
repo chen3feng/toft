@@ -45,7 +45,7 @@ public:
     UInt128 operator>>(int amount) const;
 
     // Arithmetic operators.
-    // TODO: multiplication, division, etc.
+    // TODO(xxx): multiplication, division, etc.
     UInt128 operator+(const UInt128& b) const;
     UInt128 operator-(const UInt128& b) const;
     UInt128 operator+=(const UInt128& b);
@@ -85,7 +85,7 @@ extern std::ostream& operator<<(std::ostream& o, const UInt128& b);
 inline uint64_t UInt128Low64(const UInt128& v) { return v.lo_; }
 inline uint64_t UInt128High64(const UInt128& v) { return v.hi_; }
 
-// TODO: perhaps it would be nice to have int128, a signed 128-bit type?
+// TODO(xxx): perhaps it would be nice to have int128, a signed 128-bit type?
 
 // --------------------------------------------------------------------------
 //                      Implementation details follow
@@ -126,10 +126,10 @@ inline void UInt128::Initialize(uint64_t top, uint64_t bottom) {
         return (hi_ == b.hi_) ? (lo_ op b.lo_) : (hi_ op b.hi_);      \
     }
 
-CMP128(<)
-CMP128(>)
-CMP128(>=)
-CMP128(<=)
+CMP128( < )
+CMP128( > )
+CMP128( >= )
+CMP128( <= )
 
 #undef CMP128
 

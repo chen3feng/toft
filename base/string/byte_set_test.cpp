@@ -5,6 +5,7 @@
 // Created: 05/11/11
 
 #include "toft/base/string/byte_set.h"
+
 #include "thirdparty/gtest/gtest.h"
 
 namespace toft {

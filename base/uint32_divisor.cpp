@@ -4,6 +4,7 @@
 // Author: CHEN Feng <chen3feng@gmail.com>
 
 #include "toft/base/uint32_divisor.h"
+
 #include <stdexcept>
 
 namespace toft {

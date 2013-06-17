@@ -13,3 +13,17 @@ cc_test(
     srcs = 'md5_test.cpp',
     deps = [':md5'],
 )
+
+cc_library(
+    name = 'sha1',
+    srcs = 'sha1.cpp',
+)
+
+cc_test(
+    name = 'sha1_test',
+    srcs = 'sha1_test.cpp',
+    deps = [
+        ':sha1',
+        '//toft/encoding:encoding',
+    ],
+)

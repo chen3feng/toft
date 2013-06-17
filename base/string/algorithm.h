@@ -91,6 +91,8 @@ inline bool StringRemoveSuffix(std::string* str, const StringPiece& suffix)
 std::string ReplaceFirst(const StringPiece& s, const StringPiece& from, const StringPiece& to);
 
 std::string ReplaceAll(const StringPiece& s, const StringPiece& from, const StringPiece& to);
+void ReplaceAll(std::string* s, const StringPiece& from, const StringPiece& to);
+
 
 size_t ReplaceAllChars(std::string* s, const StringPiece& from, char to);
 std::string ReplaceAllChars(const StringPiece& s, const StringPiece& from, char to);

@@ -200,6 +200,13 @@ TEST(String, SplitLines)
     EXPECT_EQ("", lines[1]);
     EXPECT_EQ("bc", lines[2]);
 
+    lines.clear();
+    SplitLines(str, &lines, true);
+    EXPECT_EQ(3U, lines.size());
+    EXPECT_EQ("abc\r\n", lines[0]);
+    EXPECT_EQ("\n", lines[1]);
+    EXPECT_EQ("bc", lines[2]);
+
     str = "abc\r\n" "\r\n" "bc\r\n" "aaa\n" "\n" "\r\n";
     SplitLines(str, &lines);
     EXPECT_EQ(6U, lines.size());
@@ -221,6 +228,19 @@ TEST(String, ReplaceString)
     StripString(&str, "gx*", 'X');
     ASSERT_EQ(" ab c  d   efXhjijkkkkjkk//Xj\\X&^Xyz  end  ", str);
     ASSERT_EQ("A_C___B_H", ReplaceAllChars("A-C++/B.H", "/.-+", '_'));
+}
+
+TEST(String, InplaceReplaceAll)
+{
+    std::string s = "AAAB";
+    ReplaceAll(&s, "AA", "A");
+    EXPECT_EQ("AAB", s);
+    s = "AAAB";
+    ReplaceAll(&s, "A", "B");
+    EXPECT_EQ("BBBB", s);
+    s = "a.png";
+    ReplaceAll(&s, ".png", ".png.png");
+    EXPECT_EQ("a.png.png", s);
 }
 
 TEST(String, RemoveSubString)

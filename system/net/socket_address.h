@@ -13,6 +13,7 @@
 #include <stddef.h>
 #include <stdint.h>
 #include <string>
+
 #include "toft/system/net/ip_address.h"
 
 namespace toft {
@@ -155,7 +156,7 @@ protected:
     {
         Type m_address;
         sockaddr m_generic_address;
-#ifdef _WIN32 // sockaddr_storage 的对齐依赖于头文件包含顺序，取到最大值
+#ifdef _WIN32
         unsigned __int64 align;
 #endif
     };
@@ -323,8 +324,6 @@ public:
     explicit SocketAddressInet(const char* src);
     explicit SocketAddressInet(const std::string& src);
 
-    /// @param ip 网络字节序
-    /// @param port 本机字节序
     SocketAddressInet(unsigned int ip, unsigned short port);
     SocketAddressInet(
         unsigned char b1,

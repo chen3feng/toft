@@ -3,6 +3,7 @@
 // Author: CHEN Feng <chen3feng@gmail.com>
 
 #include "toft/base/unique_ptr.h"
+
 #include "thirdparty/gtest/gtest.h"
 
 namespace toft {
