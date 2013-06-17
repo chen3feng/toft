@@ -12,6 +12,7 @@
 #include <stddef.h>
 #include <stdint.h>
 #include <string>
+
 #include "toft/base/static_assert.h"
 #include "toft/base/string/string_piece.h"
 #include "toft/system/memory/unaligned.h"
@@ -285,12 +286,6 @@ inline int CompareMemory(const void *b1, const void *b2, size_t len)
     return CompareMemory(b1, b2, len, &prefix_length);
 }
 
-/// @brief  求两个串的最大公共前缀串
-/// @param  lhs     lhs的buffer
-/// @param  lhs_len lhs的长度
-/// @param  rhs     rhs的buffer
-/// @param  rhs_len rhs的长度
-/// @return 最大公共前缀串的长度
 inline size_t GetCommonPrefixLength(
     const void* lhs, size_t lhs_len,
     const void* rhs, size_t rhs_len
@@ -308,16 +303,6 @@ inline size_t GetCommonPrefixLength(const std::string& lhs, const std::string& r
             rhs.c_str(), rhs.length());
 }
 
-/// @brief  按字节大小比较字符串lhs 和 rhs
-/// @param  lhs     lhs的buffer
-/// @param  lhs_len lhs的长度
-/// @param  rhs     rhs的buffer
-/// @param  rhs_len rhs的长度
-/// @param  inclusive 返回两个字符串是否存在包含关系
-/// @retval <0 lhs < rhs
-/// @retval 0  lhs = rhs;
-/// @retval >0 lhs > rhs
-/// @note 需要 inline
 inline int CompareByteString(const void* lhs, size_t lhs_len,
         const void* rhs, size_t rhs_len, bool* inclusive,
         size_t* common_prefix_len = NULL)
@@ -331,7 +316,7 @@ inline int CompareByteString(const void* lhs, size_t lhs_len,
     while (pos < end_pos)
     {
         if (GetUnaligned<size_t>(p1 + pos) == GetUnaligned<size_t>(p2 + pos))
-            pos += sizeof(size_t); // 按机器字长剔除公共前缀串
+            pos += sizeof(size_t);
         else
             break;
     }
@@ -359,14 +344,6 @@ inline int CompareByteString(const void* lhs, size_t lhs_len,
     }
 }
 
-/// @brief  按字节大小比较字符串lhs 和 rhs
-/// @param  lhs     lhs的buffer
-/// @param  lhs_len lhs的长度
-/// @param  rhs     rhs的buffer
-/// @param  rhs_len rhs的长度
-/// @retval <0 lhs < rhs
-/// @retval 0  lhs = rhs;
-/// @retval >0 lhs > rhs
 inline int CompareByteString(
     const void* lhs, size_t lhs_len,
     const void* rhs, size_t rhs_len

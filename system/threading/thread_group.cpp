@@ -4,7 +4,9 @@
 // Author: CHEN Feng <chen3feng@gmail.com>
 
 #include "toft/system/threading/thread_group.h"
+
 #include <assert.h>
+
 #include "toft/base/scoped_ptr.h"
 
 namespace toft {

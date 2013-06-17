@@ -32,16 +32,11 @@
 
 #include "toft/base/arena.h"
 #include "toft/base/random.h"
+#include "toft/system/memory/barrier.h"
 
 #include "thirdparty/glog/logging.h"
 
 namespace toft {
-
-inline void MemoryBarrier() {
-    // See http://gcc.gnu.org/ml/gcc/2003-04/msg01180.html for a discussion on
-    // this idiom. Also see http://en.wikipedia.org/wiki/Memory_ordering.
-    __asm__ __volatile__("" : : : "memory");
-}
 
 class AtomicPointer {
 private:
@@ -97,7 +92,7 @@ public:
         // The returned iterator is not valid.
         explicit Iterator(const SkipList* list);
 
-        // Returns true iff the iterator is positioned at a valid node.
+        // Returns true if the iterator is positioned at a valid node.
         bool Valid() const;
 
         // Returns the key at the current position.

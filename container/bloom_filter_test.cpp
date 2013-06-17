@@ -9,7 +9,8 @@
 #include "thirdparty/gtest/gtest.h"
 
 #define TEST_URL_PREFIX \
-"https://www.qq.com/news/2010-09-21/deucation/advanced/oversea/united_states/california/university_of_california_berkeley/home/";
+"https://www.qq.com/news/2010-09-21/deucation/advanced/oversea/united_states/" \
+"california/university_of_california_berkeley/home/";
 
 namespace toft {
 
@@ -102,7 +103,7 @@ TEST(BloomFilter, Performace)
     BloomFilter bloom_filter(capacity, 0.001);
     printf(
         "memory size: %llu, hash number: %u\n",
-        (unsigned long long) bloom_filter.MemorySize(),
+        (unsigned long long) bloom_filter.MemorySize(),  // NOLINT(runtime/int)
         bloom_filter.HashNumber()
     );
 

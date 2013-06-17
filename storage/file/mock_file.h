@@ -18,6 +18,8 @@
 
 #include "thirdparty/gmock/gmock.h"
 
+// GLOBAL_NOLINT(whitespace/parens)
+
 namespace toft {
 
 class MockFileSystem;

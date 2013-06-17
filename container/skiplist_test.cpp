@@ -268,7 +268,7 @@ public:
                 // Note that generation 0 is never inserted, so it is ok if
                 // <*,0,*> is missing.
                 ASSERT_TRUE((gen(pos) == static_cast<uint64_t>(0)) ||
-                                (gen(pos) > static_cast<uint64_t>(initial_state.Get(key(pos))))
+                            (gen(pos) > static_cast<uint64_t>(initial_state.Get(key(pos))))
                 ) << "key: " << key(pos)
                 << "; gen: " << gen(pos)
                 << "; initgen: "
@@ -315,7 +315,6 @@ TEST(SkipTest, ConcurrentWithoutThreads) {
 // TODO(yeshunping) : Consider fake some code for
 //  Env::Default()->Schedule(ConcurrentReader, &state);
 //  for below test cases
-
 /*
 class TestState {
 public:
@@ -388,11 +387,25 @@ static void RunConcurrent(int run) {
     }
 }
 
-TEST(SkipTest, Concurrent1) { RunConcurrent(1); }
-TEST(SkipTest, Concurrent2) { RunConcurrent(2); }
-TEST(SkipTest, Concurrent3) { RunConcurrent(3); }
-TEST(SkipTest, Concurrent4) { RunConcurrent(4); }
-TEST(SkipTest, Concurrent5) { RunConcurrent(5); }
+TEST(SkipTest, Concurrent1) {
+    RunConcurrent(1);
+}
+
+TEST(SkipTest, Concurrent2) {
+    RunConcurrent(2);
+}
+
+TEST(SkipTest, Concurrent3) {
+    RunConcurrent(3);
+}
+
+TEST(SkipTest, Concurrent4) {
+    RunConcurrent(4);
+}
+
+TEST(SkipTest, Concurrent5) {
+    RunConcurrent(5);
+}
 */
 
 }  // namespace toft

@@ -9,6 +9,7 @@
 // Created: 2013-02-07
 
 #include "toft/base/string/format/print.h"
+
 #include "toft/base/string/format/vprint.h"
 
 namespace toft {

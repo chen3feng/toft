@@ -4,6 +4,7 @@
 // Author: CHEN Feng <chen3feng@gmail.com>
 
 #include "toft/text/wildcard.h"
+
 #include <fnmatch.h>
 
 namespace toft {

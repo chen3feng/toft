@@ -4,6 +4,7 @@
 // Author: CHEN Feng <chen3feng@gmail.com>
 
 #include "toft/base/string/compare.h"
+
 #include <ctype.h>
 #include <limits.h>
 

@@ -4,7 +4,9 @@
 // Author: CHEN Feng <chen3feng@gmail.com>
 
 #include "toft/base/class_registry/class_registry.h"
+
 #include <set>
+
 #include "toft/base/class_registry/class_registry_test_helper.h"
 #include "toft/base/scoped_ptr.h"
 
