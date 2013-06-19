@@ -15,6 +15,7 @@ TEST(Path, ToAbsolute)
     std::string filepath = "path_test";
     std::string fullpath = cwd + "/" + filepath;
     EXPECT_EQ(fullpath, Path::ToAbsolute(filepath));
+    EXPECT_EQ("/d", Path::ToAbsolute("/abc/.././d"));
 }
 
 TEST(Path, IsAbsolute)
