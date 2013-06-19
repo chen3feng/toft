@@ -57,22 +57,11 @@ std::string Path::GetDirectory(const std::string& filepath)
 
 std::string Path::ToAbsolute(const std::string& filepath)
 {
-    const int MAX_PATH_LEN = 4096;
-    char resolved[MAX_PATH_LEN];
-    resolved[0] = '\0';
-#ifdef _WIN32
-    _fullpath(resolved, filepath.c_str(), MAX_PATH_LEN);
-#else
-    if (realpath(filepath.c_str(), resolved) == NULL)
-    {
-        // realpath check the existance of the result path, just ignore any
-        // error except EINVAL.
-        // TODO(phongchen): rewrite by std::string operation.
-        if (errno == EINVAL)
-            return "";
-    }
-#endif
-    return resolved;
+    if (IsAbsolute(filepath))
+        return Normalize(filepath);
+    char cwd_buf[4096];
+    std::string cwd = getcwd(cwd_buf, sizeof(cwd_buf));
+    return Normalize(Join(cwd, filepath));
 }
 
 bool Path::IsAbsolute(const std::string& filepath)
