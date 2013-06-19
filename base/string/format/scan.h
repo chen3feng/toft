@@ -12,6 +12,7 @@
 #define TOFT_BASE_STRING_FORMAT_SCAN_H
 
 #include <string>
+
 #include "toft/base/string/format/scan_arg.h"
 
 // GLOBAL_NOLINT(build/include_what_you_use)

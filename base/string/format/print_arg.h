@@ -10,6 +10,7 @@
 
 #include <stddef.h>
 #include <string>
+
 #include "toft/base/string/format/print_target.h"
 #include "toft/base/string/format/specification.h"
 

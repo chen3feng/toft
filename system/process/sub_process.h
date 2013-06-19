@@ -3,8 +3,8 @@
 //
 // Author: Chen Feng <chen3feng@gmail.com>
 
-#ifndef TOFT_SYSTEM_PROCESS_PROCESS_H
-#define TOFT_SYSTEM_PROCESS_PROCESS_H
+#ifndef TOFT_SYSTEM_PROCESS_SUB_PROCESS_H
+#define TOFT_SYSTEM_PROCESS_SUB_PROCESS_H
 
 #include <stdint.h>
 #include <time.h>
@@ -12,6 +12,7 @@
 #include <map>
 #include <string>
 #include <vector>
+
 #include "toft/base/uncopyable.h"
 
 namespace toft {
@@ -111,4 +112,4 @@ private:
 
 } // namespace toft
 
-#endif // TOFT_SYSTEM_PROCESS_PROCESS_H
+#endif // TOFT_SYSTEM_PROCESS_SUB_PROCESS_H

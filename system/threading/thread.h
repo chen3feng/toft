@@ -11,8 +11,6 @@
 
 namespace toft {
 
-// Thread 类
-// 由用户直接传入线程函数使用
 class Thread
 {
     TOFT_DECLARE_UNCOPYABLE(Thread);

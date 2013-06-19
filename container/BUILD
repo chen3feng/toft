@@ -53,7 +53,7 @@ cc_test(
 
 cc_test(
     name = 'lru_cache_test',
-    srcs = ['lru_cache_test.cpp', ],
+    srcs = ['lru_cache_test.cpp'],
     deps = [
         '//toft/system/threading:threading',
         '//toft/system/time:time',

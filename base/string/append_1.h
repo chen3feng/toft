@@ -144,7 +144,7 @@ inline size_t GuessStringSize(const T& o)
 }
 
 template <size_t N>
-inline size_t GuessStringSize(const char(&str)[N])
+inline size_t GuessStringSize(const char(&str)[N])  // NOLINT(readability/casting)
 {
     return N - 1;
 }

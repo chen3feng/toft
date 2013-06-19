@@ -5,10 +5,12 @@
 // Created: 2013-02-07
 
 #include "toft/base/string/format/specification.h"
+
 #include <ctype.h>
 #include <limits.h>
 #include <stdlib.h>
 #include <string.h>
+
 #include "thirdparty/glog/logging.h"
 
 namespace toft {

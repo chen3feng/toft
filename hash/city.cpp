@@ -4,6 +4,7 @@
 // Authors: CHEN Feng <chen3feng@gmail.com>
 
 #include "toft/hash/city.h"
+
 #include "thirdparty/cityhash/city.h"
 
 namespace toft {
