@@ -60,13 +60,28 @@ cc_library(
 )
 
 cc_library(
+    name = '_lock_free_thread_pool',
+    srcs = [
+        'lock_free_thread_pool.cpp'
+    ],
+    deps = [
+        ':_sync_object',
+        ':_this_thread',
+        ':_thread',
+        '//toft/base:closure',
+        '//toft/system/atomic:atomic'
+    ]
+)
+
+cc_library(
     name = 'threading',
     deps = [
         ':_sync_object',
         ':_this_thread',
         ':_thread',
         ':_thread_group',
-        ':_thread_pool'
+        ':_thread_pool',
+        ':_lock_free_thread_pool'
     ]
 )
 
@@ -136,6 +151,21 @@ cc_test(
 cc_test(
     name = 'thread_pool_test',
     srcs = 'thread_pool_test.cpp',
+    deps = [
+        ':threading',
+    ]
+)
+
+cc_test(
+    name = 'lock_free_queue_test',
+    srcs = 'lock_free_queue_test.cpp',
+    deps = [
+    ]
+)
+
+cc_test(
+    name = 'lock_free_thread_pool_test',
+    srcs = 'lock_free_thread_pool_test.cpp',
     deps = [
         ':threading',
     ]
