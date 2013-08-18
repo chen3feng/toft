@@ -30,9 +30,6 @@ public:
     void AddTask(Closure<void ()>* callback);
     void AddTask(std::function<void ()> callback);
 
-    void AddPriorityTask(Closure<void ()>* callback);
-    void AddPriorityTask(std::function<void ()> callback);
-
 private:
     struct Task {
         Closure<void ()>* callback;

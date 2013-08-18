@@ -73,17 +73,9 @@ void LockFreeThreadPool::AddTask(std::function<void ()> callback) {
     AddTaskInternal(false, NULL, callback);
 }
 
-void LockFreeThreadPool::AddPriorityTask(Closure<void ()>* callback) {
-    AddTaskInternal(true, callback, NULL);
-}
-
-void LockFreeThreadPool::AddPriorityTask(std::function<void ()> callback) {
-    AddTaskInternal(true, NULL, callback);
-}
-
 void LockFreeThreadPool::AddTaskInternal(bool is_priority,
-                                 Closure<void ()>* callback,
-                                 std::function<void ()> function) {
+                                         Closure<void ()>* callback,
+                                         std::function<void ()> function) {
     CHECK(!m_exited);
     TaskNode* task_node = PickCompleteTask(true);
     task_node->callback = callback;
@@ -114,7 +106,7 @@ bool LockFreeThreadPool::NeedNewThread() {
 void LockFreeThreadPool::Task::Run() const {
     if (callback) {
         callback->Run();
-    } else if(function) {
+    } else if (function) {
         function();
     }
 }
