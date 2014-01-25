@@ -1,4 +1,4 @@
 toft
 ====
 
-C++ Base Library
+C++ Base Library for Linux server side development.

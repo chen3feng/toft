@@ -6,6 +6,7 @@
 #include "toft/storage/path/path.h"
 #include <errno.h>
 #include <stdlib.h>
+#include <unistd.h>
 #include "toft/base/array_size.h"
 #include "toft/base/string/algorithm.h"
 

@@ -135,10 +135,22 @@ bool ProtoJsonFormat::WriteToValue(const Message& message, Json::Value* root) {
             } else {
                 CreateNode(field, reflection, message, root);
             }
-        } else {
-            const Message& sub_message = reflection->GetMessage(message, field);
-            WriteToValue(sub_message, &((*root)[field_name]));
-        }
+      } else {
+          if (field->is_repeated()) {
+              Json::Value node;
+              for (int i = 0; i < reflection->FieldSize(message, field); ++i) {
+                  Json::Value sub_node;
+                  const Message& sub_message = reflection->GetRepeatedMessage(message,
+                                                                              field, i);
+                  WriteToValue(sub_message, &sub_node);
+                  node.append(sub_node);
+              }
+              (*root)[field_name] = node;
+          } else {
+              const Message& sub_message = reflection->GetMessage(message, field);
+              WriteToValue(sub_message, &((*root)[field_name]));
+          }
+      }
     }
     return true;
 }
