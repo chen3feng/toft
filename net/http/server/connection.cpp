@@ -5,6 +5,10 @@
 
 #include "toft/net/http/server/connection.h"
 #include "thirdparty/glog/logging.h"
+#include "toft/base/string/format.h"
+#include "toft/base/string/number.h"
+#include "toft/net/http/request.h"
+#include "toft/net/http/response.h"
 
 namespace toft {
 
@@ -12,7 +16,6 @@ HttpConnection::HttpConnection(EventDispatcher* dispatcher, int fd)
     : m_watcher(dispatcher, std::bind(&HttpConnection::OnIoEvents, this,
                                       std::placeholders::_1),
                 fd, EventMask_Read),
-      m_received_size(0),
       m_sent_size(0) {
     m_socket.Attach(fd);
     m_watcher.Start();
@@ -51,16 +54,28 @@ void HttpConnection::OnIoEvents(int events) {
 
 bool HttpConnection::OnReadable() {
     size_t kBufferSize = 65536;
-    m_receive_buffer.resize(m_received_size + kBufferSize);
-    size_t received_size;
-    char* buf = &m_receive_buffer[m_received_size];
-    if (!m_socket.Receive(buf, kBufferSize, &received_size)) {
+    size_t received_size = m_receive_buffer.size();
+    m_receive_buffer.resize(received_size + kBufferSize);
+    char* buf = &m_receive_buffer[received_size];
+    size_t new_received_size;
+    if (!m_socket.Receive(buf, kBufferSize, &new_received_size)) {
         OnClosed();
         return false;
     }
-    m_received_size += received_size;
-    LOG(INFO) << std::string(m_receive_buffer.data(), m_receive_buffer.size());
+    m_receive_buffer.resize(received_size + new_received_size);
+    LOG(INFO) << m_receive_buffer;
     HttpRequest request;
+    if (request.ParseHeaders(m_receive_buffer)) {
+        LOG(INFO) << "Request URI: " << request.Uri();
+        HttpResponse response;
+        response.SetStatus(HttpResponse::Status_OK);
+        static int i = 0;
+        std::string body = StringPrint("Hello %d", ++i);
+        response.SetBody(body);
+        response.SetHeader("Content-Length", NumberToString(body.size()));
+        Send(response.ToString());
+        m_receive_buffer.clear();
+    }
 
     return true;
 }

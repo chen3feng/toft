@@ -34,8 +34,7 @@ private:
 private:
     StreamSocket m_socket;
     IoEventWatcher m_watcher;
-    std::vector<char> m_receive_buffer;
-    size_t m_received_size;
+    std::string m_receive_buffer;
     std::list<std::string> m_send_queue;
     size_t m_sent_size;
 };
