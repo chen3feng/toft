@@ -84,7 +84,7 @@ TEST_F(HttpClientTest, Post)
     HttpClient::Options options;
     HttpClient::ErrorCode error;
     std::string data = "Post Content";
-    EXPECT_FALSE(client.Post(m_server_address + "/Post",
+    EXPECT_FALSE(client.Post(m_server_address + "/aaa/bbb",
                              data,
                              options,
                              &response,

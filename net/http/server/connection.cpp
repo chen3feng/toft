@@ -19,6 +19,7 @@ HttpConnection::HttpConnection(EventDispatcher* dispatcher, int fd)
 }
 
 void HttpConnection::Send(const StringPiece& data) {
+    m_send_queue.push_back(data.as_string());
 }
 
 void HttpConnection::Close() {
@@ -58,11 +59,29 @@ bool HttpConnection::OnReadable() {
         return false;
     }
     m_received_size += received_size;
+    LOG(INFO) << std::string(m_receive_buffer.data(), m_receive_buffer.size());
+    HttpRequest request;
+
     return true;
 }
 
 bool HttpConnection::OnWriteable() {
-    m_watcher.Stop();
+    while (!m_send_queue.empty()) {
+        const std::string& data = m_send_queue.front();
+        size_t data_size = data.size() - m_sent_size;
+        size_t sent_size;
+        if (m_socket.Send(data.data() + m_sent_size, data_size, &sent_size)) {
+            if (sent_size == data_size) {
+                m_send_queue.pop_front();
+                m_sent_size = 0;
+            } else {
+                m_sent_size += sent_size;
+                break;
+            }
+        } else {
+            break;
+        }
+    }
     return true;
 }
 

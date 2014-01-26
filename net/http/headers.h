@@ -56,7 +56,7 @@ public:
     void ToString(std::string* result) const;
     std::string ToString() const;
 
-    bool Parse(const StringPiece& data, int* error = NULL);
+    size_t Parse(const StringPiece& data, int* error = NULL);
 
     void Clear();
 
