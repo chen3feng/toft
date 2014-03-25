@@ -129,12 +129,13 @@ void ThreadPool::ThreadRunner() {
             task_node->Run();
             AddCompleteTask(task_node);
         } else {
-            m_cur_busy_thread_num--;
-            if (!m_event_new_task.TimedWait(m_idle_timeout)
-                && m_pending_tasks.empty() && m_cur_thread_num > m_min_thread_num) {
+            --m_cur_busy_thread_num;
+            bool got = m_event_new_task.TimedWait(m_idle_timeout);
+            ++m_cur_busy_thread_num;
+            if (!got && m_pending_tasks.empty() &&
+                m_cur_thread_num > m_min_thread_num) {
                 break;
             }
-            m_cur_busy_thread_num++;
         }
     }
 }
