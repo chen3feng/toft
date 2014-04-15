@@ -5,13 +5,13 @@
 // Created: 03/05/12
 // Description: HttpRequest class declaration
 
-#ifndef TOFT_NET_HTTP_HTTP_REQUEST_H
-#define TOFT_NET_HTTP_HTTP_REQUEST_H
+#ifndef TOFT_NET_HTTP_REQUEST_H
+#define TOFT_NET_HTTP_REQUEST_H
 #pragma once
 
-#include "toft/net/http/http_message.h"
 #include <algorithm>
 #include <string>
+#include "toft/net/http/message.h"
 
 namespace toft {
 
@@ -78,4 +78,4 @@ inline void swap(toft::HttpRequest& lhs, toft::HttpRequest& rhs) {
 
 } // namespace std
 
-#endif // TOFT_NET_HTTP_HTTP_REQUEST_H
+#endif // TOFT_NET_HTTP_REQUEST_H

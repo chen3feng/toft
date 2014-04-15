@@ -5,8 +5,8 @@
 // Created: 01/12/12
 // Description: HttpHeaders class
 
-#ifndef TOFT_NET_HTTP_HTTP_HEADERS_H
-#define TOFT_NET_HTTP_HTTP_HEADERS_H
+#ifndef TOFT_NET_HTTP_HEADERS_H
+#define TOFT_NET_HTTP_HEADERS_H
 #pragma once
 
 #include <algorithm>
@@ -56,7 +56,7 @@ public:
     void ToString(std::string* result) const;
     std::string ToString() const;
 
-    bool Parse(const StringPiece& data, int* error = NULL);
+    size_t Parse(const StringPiece& data, int* error = NULL);
 
     void Clear();
 
@@ -76,4 +76,4 @@ inline void swap(toft::HttpHeaders& lhs, toft::HttpHeaders& rhs) {
 }
 } // namespace std
 
-#endif // TOFT_NET_HTTP_HTTP_HEADERS_H
+#endif // TOFT_NET_HTTP_HEADERS_H

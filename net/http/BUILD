@@ -1,11 +1,11 @@
 cc_library(
-    name = 'http_types',
+    name = 'types',
     srcs = [
-        'http_headers.cpp',
-        'http_message.cpp',
-        'http_request.cpp',
-        'http_response.cpp',
-        'http_time.cpp',
+        'headers.cpp',
+        'message.cpp',
+        'request.cpp',
+        'response.cpp',
+        'time.cpp',
     ],
     deps = [
         '//toft/base/string:string',
@@ -15,10 +15,10 @@ cc_library(
 )
 
 cc_library(
-    name = 'http_client',
-    srcs = 'http_client.cpp',
+    name = 'client',
+    srcs = 'client.cpp',
     deps = [
-        ':http_types',
+        ':types',
         '//toft/net/uri:url',
         '//toft/system/net:net',
         '//thirdparty/glog:glog'
@@ -26,44 +26,44 @@ cc_library(
 )
 
 cc_test(
-    name = 'http_client_test',
-    srcs = 'http_client_test.cpp',
-    deps = ':http_client'
+    name = 'client_test',
+    srcs = 'client_test.cpp',
+    deps = ':client'
 )
 
 cc_test(
-    name = 'http_headers_test',
-    srcs = 'http_headers_test.cpp',
-    deps = ':http_types'
+    name = 'headers_test',
+    srcs = 'headers_test.cpp',
+    deps = ':types'
 )
 
 cc_test(
-    name = 'http_message_test',
-    srcs = 'http_message_test.cpp',
-    deps = ':http_types'
+    name = 'message_test',
+    srcs = 'message_test.cpp',
+    deps = ':types'
 )
 
 cc_test(
-    name = 'http_request_test',
-    srcs = 'http_request_test.cpp',
-    deps = ':http_types'
+    name = 'request_test',
+    srcs = 'request_test.cpp',
+    deps = ':types'
 )
 
 cc_test(
-    name = 'http_response_test',
-    srcs = 'http_response_test.cpp',
-    deps = ':http_types'
+    name = 'response_test',
+    srcs = 'response_test.cpp',
+    deps = ':types'
 )
 
 cc_test(
-    name = 'http_time_test',
-    srcs = 'http_time_test.cpp',
-    deps = ':http_types'
+    name = 'time_test',
+    srcs = 'time_test.cpp',
+    deps = ':types'
 )
 
 cc_test(
-    name = 'http_version_test',
-    srcs = 'http_version_test.cpp',
-    deps = ':http_types'
+    name = 'version_test',
+    srcs = 'version_test.cpp',
+    deps = ':types'
 )
 

@@ -1,8 +1,8 @@
 // Copyright 2011, The Toft Authors.
 // Author: Yongsong Liu <lyscsu@gmail.com>
 
-#ifndef TOFT_NET_HTTP_HTTP_TIME_H
-#define TOFT_NET_HTTP_HTTP_TIME_H
+#ifndef TOFT_NET_HTTP_TIME_H
+#define TOFT_NET_HTTP_TIME_H
 
 #include <time.h>
 #include <string>
@@ -20,4 +20,4 @@ bool FormatHttpTime(time_t time, std::string* str);
 
 } // namespace toft
 
-#endif // TOFT_NET_HTTP_HTTP_TIME_H
+#endif // TOFT_NET_HTTP_TIME_H

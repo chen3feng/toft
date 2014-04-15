@@ -5,7 +5,7 @@
 // Created: 03/05/12
 // Description:
 
-#include "toft/net/http/http_request.h"
+#include "toft/net/http/request.h"
 #include "thirdparty/gtest/gtest.h"
 
 namespace toft {
@@ -21,7 +21,7 @@ TEST(HttpMessage, ParseRequest)
         "Host: 10.6.222.133\r\n"
         "\r\n";
     HttpRequest request;
-    ASSERT_TRUE(request.ParseHeaders(request_text));
+    ASSERT_EQ(sizeof(request_text) - 1, request.ParseHeaders(request_text));
     ASSERT_EQ("GET / HTTP/1.1", request.StartLine());
 }
 

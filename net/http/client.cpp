@@ -4,7 +4,7 @@
 // Author: DongPing HUANG <hdping99@gmail.com>
 // Created: 11/05/11
 
-#include "toft/net/http/http_client.h"
+#include "toft/net/http/client.h"
 
 #include <algorithm>
 #include <utility>
@@ -12,7 +12,7 @@
 #include "toft/base/string/algorithm.h"
 #include "toft/base/string/number.h"
 #include "toft/base/unique_ptr.h"
-#include "toft/net/http/http_message.h"
+#include "toft/net/http/message.h"
 #include "toft/net/mime/mime.h"
 #include "toft/net/uri/uri.h"
 #include "toft/system/net/domain_resolver.h"

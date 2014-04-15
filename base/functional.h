@@ -21,6 +21,8 @@ namespace std {
 using tr1::function;
 using tr1::bind;
 using tr1::bad_function_call;
+using tr1::ref;
+using tr1::cref;
 namespace placeholders = tr1::placeholders;
 }
 

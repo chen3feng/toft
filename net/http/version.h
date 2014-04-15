@@ -3,8 +3,8 @@
 //
 // Author: CHEN Feng <chen3feng@gmail.com>
 
-#ifndef TOFT_NET_HTTP_HTTP_VERSION_H
-#define TOFT_NET_HTTP_HTTP_VERSION_H
+#ifndef TOFT_NET_HTTP_VERSION_H
+#define TOFT_NET_HTTP_VERSION_H
 #pragma once
 
 #include <stdint.h>
@@ -57,4 +57,4 @@ private:
 
 } // namespace toft
 
-#endif // TOFT_NET_HTTP_HTTP_VERSION_H
+#endif // TOFT_NET_HTTP_VERSION_H

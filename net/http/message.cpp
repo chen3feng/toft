@@ -2,7 +2,7 @@
 // Author: Hangjun Ye <yehangjun@gmail.com>
 // Xiaokang Liu <liuxk02@gmail.com>
 
-#include "toft/net/http/http_message.h"
+#include "toft/net/http/message.h"
 
 #include "toft/base/string/algorithm.h"
 #include "toft/base/string/concat.h"
@@ -130,7 +130,7 @@ bool HttpMessage::HasHeader(const StringPiece& header_name) const {
     return m_headers.Has(header_name);
 }
 
-bool HttpMessage::ParseHeaders(const StringPiece& data, HttpMessage::ErrorCode* error) {
+size_t HttpMessage::ParseHeaders(const StringPiece& data, HttpMessage::ErrorCode* error) {
     HttpMessage::ErrorCode error_placeholder;
     if (error == NULL)
         error = &error_placeholder;
@@ -144,16 +144,16 @@ bool HttpMessage::ParseHeaders(const StringPiece& data, HttpMessage::ErrorCode* 
 
     if (first_line.empty()) {
         *error = HttpMessage::ERROR_NO_START_LINE;
-        return false;
+        return 0;
     }
 
     if (!ParseStartLine(first_line, error))
-        return false;
+        return 0;
 
     int error_code = 0;
-    bool result = m_headers.Parse(data.substr(pos + 1), &error_code);
+    size_t result = m_headers.Parse(data.substr(pos + 1), &error_code);
     *error = static_cast<HttpMessage::ErrorCode>(error_code);
-    return result;
+    return pos + 1 + result;
 }
 
 int HttpMessage::GetContentLength() {

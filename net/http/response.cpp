@@ -5,7 +5,7 @@
 // Created: 03/05/12
 // Description: HttpResponse class implementation
 
-#include "toft/net/http/http_response.h"
+#include "toft/net/http/response.h"
 
 #include "toft/base/string/algorithm.h"
 #include "toft/base/string/concat.h"

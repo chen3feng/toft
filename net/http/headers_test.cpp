@@ -1,8 +1,9 @@
 // Copyright 2011, The Toft Authors.
 // Xiaokang Liu <liuxk02@gmail.com>
 
-#include "toft/net/http/http_headers.h"
-#include "toft/net/http/http_message.h"
+#include "toft/net/http/headers.h"
+#include "toft/net/http/message.h"
+
 #include "thirdparty/gtest/gtest.h"
 
 namespace toft {
@@ -12,37 +13,33 @@ TEST(HttpHeaders, Parse)
     HttpHeaders headers;
     int error;
 
-    EXPECT_FALSE(headers.Parse("", &error));
+    EXPECT_EQ(0U, headers.Parse("", &error));
     EXPECT_EQ(HttpMessage::ERROR_MESSAGE_NOT_COMPLETE, error);
 
-    EXPECT_FALSE(headers.Parse("Host: 127.0.0.1", &error));
+    EXPECT_EQ(0U, headers.Parse("Host: 127.0.0.1", &error));
     EXPECT_EQ(HttpMessage::ERROR_MESSAGE_NOT_COMPLETE, error);
 
-    EXPECT_FALSE(headers.Parse("Host: 127.0.0.1\r\n", &error));
+    EXPECT_EQ(0U, headers.Parse("Host: 127.0.0.1\r\n", &error));
     EXPECT_EQ(HttpMessage::ERROR_MESSAGE_NOT_COMPLETE, error);
 
     // Invalid, but accepted by all browsers
-    EXPECT_TRUE(headers.Parse("Host\r\n\r\n", &error));
+    EXPECT_EQ(8U, headers.Parse("Host\r\n\r\n", &error));
     EXPECT_EQ(0U, headers.Count());
 
-    EXPECT_TRUE(headers.Parse("Host: 127.0.0.1\r\n\r\n", &error));
+    const char* text = "Host: 127.0.0.1\r\n\r\n";
+    EXPECT_EQ(strlen(text), headers.Parse(text, &error));
     EXPECT_EQ(HttpMessage::SUCCESS, error);
     EXPECT_EQ(1U, headers.Count());
 
-    EXPECT_TRUE(headers.Parse(
-            "Host: 127.0.0.1\r\nContent-Type: text/xml\r\n\r\n", &error));
+    text = "Host: 127.0.0.1\r\nContent-Type: text/xml\r\n\r\n";
+    EXPECT_EQ(strlen(text), headers.Parse(text, &error));
     EXPECT_EQ(HttpMessage::SUCCESS, error);
     EXPECT_EQ(2U, headers.Count());
 
-    EXPECT_TRUE(headers.Parse("\n"));
-    EXPECT_EQ(HttpMessage::SUCCESS, error);
-    EXPECT_EQ(0U, headers.Count());
+    EXPECT_EQ(1U, headers.Parse("\n"));
+    EXPECT_EQ(2U, headers.Parse("\r\n"));
 
-    EXPECT_TRUE(headers.Parse("\r\n"));
-    EXPECT_EQ(HttpMessage::SUCCESS, error);
-    EXPECT_EQ(0U, headers.Count());
-
-    EXPECT_FALSE(headers.Parse("\r\n\r\n"));
+    EXPECT_EQ(2U, headers.Parse("\r\n\r\n"));
     EXPECT_EQ(HttpMessage::SUCCESS, error);
 }
 

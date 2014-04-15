@@ -4,15 +4,15 @@
 // Author: DongPing HUANG <hdping99@gmail.com>
 // Created: 11/05/11
 
-#ifndef TOFT_NET_HTTP_HTTP_CLIENT_H
-#define TOFT_NET_HTTP_HTTP_CLIENT_H
+#ifndef TOFT_NET_HTTP_CLIENT_H
+#define TOFT_NET_HTTP_CLIENT_H
 #pragma once
 
 #include <string>
 #include <vector>
 
-#include "toft/net/http/http_request.h"
-#include "toft/net/http/http_response.h"
+#include "toft/net/http/request.h"
+#include "toft/net/http/response.h"
 #include "toft/system/net/socket.h"
 
 namespace toft {
@@ -138,4 +138,4 @@ private:
 
 } // namespace toft
 
-#endif // TOFT_NET_HTTP_HTTP_CLIENT_H
+#endif // TOFT_NET_HTTP_CLIENT_H

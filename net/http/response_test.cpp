@@ -5,7 +5,7 @@
 // Created: 03/05/12
 // Description:
 
-#include "toft/net/http/http_response.h"
+#include "toft/net/http/response.h"
 #include "thirdparty/gtest/gtest.h"
 
 namespace toft {
@@ -28,7 +28,7 @@ TEST(HttpMessage, ParseResponse)
         "Content-Type: text/html\r\n"
         "\r\n";
 
-    EXPECT_TRUE(response.ParseHeaders(response_text));
+    EXPECT_EQ(sizeof(response_text) - 1, response.ParseHeaders(response_text));
     EXPECT_EQ(8U, response.Headers().Count());
     EXPECT_EQ(response_text, response.HeadersToString());
 }
@@ -46,7 +46,7 @@ TEST(HttpMessage, NonstrictParseResponse)
         "Content-Length: 615\r\n"
         "\r\n";
     HttpResponse response;
-    EXPECT_TRUE(response.ParseHeaders(response_text));
+    EXPECT_EQ(sizeof(response_text) - 1, response.ParseHeaders(response_text));
     EXPECT_EQ(4U, response.Headers().Count());
 
     static const char corrected_response_text[] =
@@ -69,7 +69,7 @@ TEST(HttpMessage, NonstrictParseResponse2)
         "Content-Type: text/html\r\n"
         "\r\n";
     HttpResponse response;
-    EXPECT_TRUE(response.ParseHeaders(response_text));
+    EXPECT_EQ(sizeof(response_text) - 1, response.ParseHeaders(response_text));
 }
 
 TEST(HttpResponse, ReasonPhrase)

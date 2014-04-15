@@ -2,15 +2,15 @@
 // Author: Hangjun Ye <yehangjun@gmail.com>
 // Xiaokang Liu <liuxk02@gmail.com>
 
-#ifndef TOFT_NET_HTTP_HTTP_MESSAGE_H
-#define TOFT_NET_HTTP_HTTP_MESSAGE_H
+#ifndef TOFT_NET_HTTP_MESSAGE_H
+#define TOFT_NET_HTTP_MESSAGE_H
 
 #include <map>
 #include <string>
 #include <vector>
 #include "toft/base/string/string_piece.h"
-#include "toft/net/http/http_headers.h"
-#include "toft/net/http/http_version.h"
+#include "toft/net/http/headers.h"
+#include "toft/net/http/version.h"
 
 namespace toft {
 
@@ -36,7 +36,7 @@ public:
 public:
     // Parse http headers (including the start line) from data.
     // return: error code which is defined as ErrorCode.
-    virtual bool ParseHeaders(const StringPiece& data, ErrorCode* error = NULL);
+    virtual size_t ParseHeaders(const StringPiece& data, ErrorCode* error = NULL);
 
     std::string StartLine() const {
         std::string result;
@@ -140,4 +140,4 @@ private:
 
 } // namespace toft
 
-#endif // TOFT_NET_HTTP_HTTP_MESSAGE_H
+#endif // TOFT_NET_HTTP_MESSAGE_H

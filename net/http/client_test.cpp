@@ -5,7 +5,7 @@
 // Created: 11/05/11
 // Description:
 
-#include "toft/net/http/http_client.h"
+#include "toft/net/http/client.h"
 #include <iostream>
 #include "thirdparty/gtest/gtest.h"
 
@@ -84,7 +84,7 @@ TEST_F(HttpClientTest, Post)
     HttpClient::Options options;
     HttpClient::ErrorCode error;
     std::string data = "Post Content";
-    EXPECT_FALSE(client.Post(m_server_address + "/Post",
+    EXPECT_FALSE(client.Post(m_server_address + "/aaa/bbb",
                              data,
                              options,
                              &response,

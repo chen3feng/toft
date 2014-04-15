@@ -5,12 +5,12 @@
 // Created: 01/12/12
 // Description: HttpHeaders class
 
-#include "toft/net/http/http_headers.h"
+#include "toft/net/http/headers.h"
 
 #include <utility>
 #include "toft/base/string/algorithm.h"
 #include "toft/base/string/concat.h"
-#include "toft/net/http/http_message.h"
+#include "toft/net/http/message.h"
 
 #include "thirdparty/glog/logging.h"
 
@@ -140,21 +140,38 @@ bool HttpHeaders::GetAt(int index, std::pair<std::string, std::string>* header) 
     return true;
 }
 
-bool HttpHeaders::Parse(const StringPiece& data, int* error)
+size_t HttpHeaders::Parse(const StringPiece& data, int* error)
 {
     int error_placeholder;
     if (error == NULL)
         error = &error_placeholder;
 
-    m_headers.clear();
+    // Starts with empty line means empty headers.
+    if (StringStartsWith(data, "\n") || StringStartsWith(data, "\r\n")) {
+        m_headers.clear();
+        return (data[0] == '\r') + 1; // sizeof \n or \r\n
+    }
+
+    size_t end_pos;
+    size_t tail_size;
+    if ((end_pos = data.find("\r\n\r\n")) != std::string::npos) {
+        tail_size = 4;
+    } else if ((end_pos = data.find("\n\n")) != std::string::npos) {
+        tail_size = 2;
+    } else {
+        *error = HttpMessage::ERROR_MESSAGE_NOT_COMPLETE;
+        return 0;
+    }
 
     std::vector<std::string> lines;
-    SplitLines(data, &lines);
+    SplitLines(data.substr(0, end_pos + tail_size), &lines);
 
-    if (lines.size() < 1 || !lines[lines.size() - 1].empty()) {
+    if (lines.empty()) {
         *error = HttpMessage::ERROR_MESSAGE_NOT_COMPLETE;
-        return false;
+        return 0;
     }
+
+    m_headers.clear();
 
     // Skip the head line and the last line(empty but '\n')
     for (int i = 0; i < static_cast<int>(lines.size() - 1); ++i) {
@@ -169,13 +186,13 @@ bool HttpHeaders::Parse(const StringPiece& data, int* error)
             } else {
                 *error = HttpMessage::ERROR_FIELD_NOT_COMPLETE;
                 m_headers.clear();
-                return false;
+                return 0;
             }
         }
     }
 
     *error = HttpMessage::SUCCESS;
-    return true;
+    return end_pos + tail_size;
 }
 
 void HttpHeaders::Clear()
