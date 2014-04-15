@@ -36,7 +36,7 @@ public:
 public:
     // Parse http headers (including the start line) from data.
     // return: error code which is defined as ErrorCode.
-    virtual bool ParseHeaders(const StringPiece& data, ErrorCode* error = NULL);
+    virtual size_t ParseHeaders(const StringPiece& data, ErrorCode* error = NULL);
 
     std::string StartLine() const {
         std::string result;
