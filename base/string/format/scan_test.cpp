@@ -112,12 +112,12 @@ TEST(Scan, IntOverflow)
     EXPECT_EQ(0, StringScan("-1", "%i", &u32));
     EXPECT_EQ(1U, u32);
 
-    int32_t i64 = 1;
+    int64_t i64 = 1;
     ASSERT_EQ(0, StringScan("0xFFFFFFFFFFFFFFFF1", "%i", &i64));
     EXPECT_EQ(0, StringScan("-0xFFFFFFFFFFFFFFFF1", "%i", &i64));
     EXPECT_EQ(1LL, i64);
 
-    uint32_t u64 = 1;
+    uint64_t u64 = 1;
     ASSERT_EQ(0, StringScan("0xFFFFFFFFFFFFFFFF1", "%i", &u64));
     EXPECT_EQ(0, StringScan("-1", "%i", &u64));
     EXPECT_EQ(1ULL, u64);
