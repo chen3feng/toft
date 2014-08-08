@@ -6,6 +6,7 @@
 #define TOFT_BASE_UNIQUE_PTR_H
 
 #include "toft/base/cxx11.h"
+#include "toft/base/type_traits.h"
 
 #ifdef TOFT_CXX11_ENABLED
 
@@ -57,13 +58,85 @@ struct default_delete<FILE>
     }
 };
 
+template <
+    typename Type,
+    typename Deleter,
+    bool DeleterIsEmpty
+>
+class unique_ptr_base_impl
+{
+protected:
+    unique_ptr_base_impl(Type* ptr, Deleter deleter)
+        : m_ptr(ptr), m_deleter(deleter)
+    {
+    }
+    // Get stored deleter
+    Deleter& get_deleter()
+    {
+        return m_deleter;
+    }
+
+    // Get stored deleter
+    const Deleter& get_deleter() const
+    {
+        return m_deleter;
+    }
+
+    void swap(unique_ptr_base_impl& rhs)
+    {
+        std::swap(m_ptr, rhs.m_ptr);
+        std::swap(m_deleter, rhs.m_deleter);
+    }
+
+protected:
+    Type* m_ptr;        // Stored pointer
+    Deleter m_deleter;    // Stored deleter
+};
+
+template <
+    typename Type,
+    typename Deleter
+>
+class unique_ptr_base_impl<Type, Deleter, true> : protected Deleter
+{
+protected:
+    unique_ptr_base_impl(Type* ptr, Deleter deleter)
+        : Deleter(deleter), m_ptr(ptr)
+    {
+    }
+    // Get stored deleter
+    Deleter& get_deleter()
+    {
+        return *this;
+    }
+
+    // Get stored deleter
+    const Deleter& get_deleter() const
+    {
+        return *this;
+    }
+
+    void swap(unique_ptr_base_impl& rhs)
+    {
+        std::swap(m_ptr, rhs.m_ptr);
+    }
+
+protected:
+    Type* m_ptr;        // Stored pointer
+};
+
 // unique_ptr_base, put common members here
 template <
-typename Type,
-         typename Deleter
-         >
-class unique_ptr_base
+    typename Type,
+    typename Deleter
+>
+class unique_ptr_base :
+    public unique_ptr_base_impl<Type, Deleter,
+        std::is_empty<Deleter>::value>
 {
+    typedef unique_ptr_base_impl<Type, Deleter,
+        std::is_empty<Deleter>::value> base;
+
 public:
     typedef Type element_type;
     typedef Deleter deleter_type;
@@ -71,28 +144,28 @@ public:
 
 protected:
     // Default ctor, null pointer initialized
-    unique_ptr_base() : m_ptr()
+    unique_ptr_base() : base(pointer(), deleter_type())
     {
     }
 
     // Construct from plain pointer
-    explicit unique_ptr_base(pointer ptr) : m_ptr(ptr)
+    explicit unique_ptr_base(pointer ptr) : base(ptr, deleter_type())
     {
     }
 
     // Construct from plain pointer and deleter
-    unique_ptr_base(pointer ptr, Deleter deleter):
-        m_ptr(ptr), m_deleter(deleter)
+    unique_ptr_base(pointer ptr, Deleter deleter) :
+        base(ptr, deleter)
     {
     }
 
     ~unique_ptr_base()
     {
-        if (m_ptr)
-            m_deleter(m_ptr);
+        if (this->m_ptr)
+            this->get_deleter()(this->m_ptr);
 #ifndef NDEBUG
         // set to NULL in debug mode to detect wild pointer error
-        m_ptr = pointer(); // or 0xCFCFCFCFCFCFCFCF or 0xDeadBeefDeadBeef
+        this->m_ptr = pointer(); // or 0xCFCFCFCFCFCFCFCF or 0xDeadBeefDeadBeef
 #endif
     }
 public:
@@ -106,63 +179,46 @@ public:
     // Swap with another unique_ptr
     void swap(unique_ptr_base& rhs)
     {
-        std::swap(m_ptr, rhs.m_ptr);
-        std::swap(m_deleter, rhs.m_deleter);
+        base::swap(rhs);
     }
 
     // Release control of stored pointer and return it
     pointer release()
     {
-        pointer p = m_ptr;
-        m_ptr = pointer();
+        pointer p = this->m_ptr;
+        this->m_ptr = pointer();
         return p;
     }
 
     // Assigns ptr to the stored pointer
     void reset(pointer ptr = pointer())
     {
-        assert(!ptr || ptr != m_ptr);
-        std::swap(m_ptr, ptr);
+        assert(!ptr || ptr != this->m_ptr);
+        std::swap(this->m_ptr, ptr);
         if (ptr)
-            m_deleter(ptr);
+            this->get_deleter()(ptr);
     }
 
     // Get stored pointer
     pointer get() const
     {
-        return m_ptr;
-    }
-
-    // Get stored deleter
-    Deleter& get_deleter()
-    {
-        return m_deleter;
-    }
-
-    // Get stored deleter
-    const Deleter& get_deleter() const
-    {
-        return m_deleter;
+        return this->m_ptr;
     }
 
     // Safe bool conversion
     operator void* () const
     {
-        return m_ptr;
+        return this->m_ptr;
     }
 
     bool operator!() const
     {
-        return !m_ptr;
+        return !this->m_ptr;
     }
 
 private: // disable copy and assign
     unique_ptr_base(const unique_ptr_base& rhs);
     unique_ptr_base& operator=(const unique_ptr_base& rhs);
-
-private:
-    pointer m_ptr;        // Stored pointer
-    Deleter m_deleter;    // Stored deleter
 };
 
 /// unique_ptr for single object

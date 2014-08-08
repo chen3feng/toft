@@ -14,6 +14,11 @@ protected:
     std::unique_ptr<int> p;
 };
 
+TEST_F(UniquePtrTest, EmptyDeleteOptimize)
+{
+    EXPECT_EQ(sizeof(p.get()), sizeof(p));
+}
+
 TEST_F(UniquePtrTest, Dereference)
 {
     EXPECT_EQ(1, *p);

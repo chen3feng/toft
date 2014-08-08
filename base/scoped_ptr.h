@@ -58,6 +58,16 @@ namespace toft {
 // sizeof(scoped_ptr<C>) == sizeof(C*)
 template <class C>
 class scoped_ptr {
+    // Forbid comparison of scoped_ptr types.  If C2 != C, it totally doesn't
+    // make sense, and if C2 == C, it still doesn't make sense because you should
+    // never have the same object owned by two different scoped_ptrs.
+    template <class C2> bool operator==(scoped_ptr<C2> const& p2) const;
+    template <class C2> bool operator!=(scoped_ptr<C2> const& p2) const;
+
+    // Disallow evil constructors
+    scoped_ptr(const scoped_ptr&);
+    void operator=(const scoped_ptr&);
+
     typedef void* SafeBool;
 
 public:
@@ -135,16 +145,6 @@ public:
 
 private:
     C* ptr_;
-
-    // Forbid comparison of scoped_ptr types.  If C2 != C, it totally doesn't
-    // make sense, and if C2 == C, it still doesn't make sense because you should
-    // never have the same object owned by two different scoped_ptrs.
-    template <class C2> bool operator==(scoped_ptr<C2> const& p2) const;
-    template <class C2> bool operator!=(scoped_ptr<C2> const& p2) const;
-
-    // Disallow evil constructors
-    scoped_ptr(const scoped_ptr&);
-    void operator=(const scoped_ptr&);
 };
 
 } // namespace toft
