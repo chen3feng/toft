@@ -162,17 +162,26 @@ static int ParseUnsigned(const char* str, const ScanSpecification& spec, Type* v
         return 0;
     }
 
+    const char* nonspace = str;
+    while (*nonspace && isspace(*nonspace)) { // Skip leading spaces
+        ++nonspace;
+    }
+    if (*nonspace == '-') {
+        errno = ERANGE;
+        return 0;
+    }
+
     char* endptr;
     int saved_errno = errno;
     Type v;
     errno = 0;
     if (sizeof(Type) > sizeof(long)) {
-        unsigned long long n = strtoull(str, &endptr, base);
+        unsigned long long n = strtoull(nonspace, &endptr, base);
         if (errno != 0)
             return 0;
         v = n;
     } else {
-        unsigned long n = strtoul(str, &endptr, base);
+        unsigned long n = strtoul(nonspace, &endptr, base);
         if (errno != 0)
             return 0;
         v = n;
