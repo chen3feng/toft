@@ -9,6 +9,7 @@
 #include "toft/base/preprocess/disallow_in_header.h"
 #include "toft/base/preprocess/join.h"
 #include "toft/base/preprocess/stringize.h"
+#include "toft/base/preprocess/varargs.h"
 
 /// prevent macro substitution for function-like macros
 /// if macro 'min()' was defined:
