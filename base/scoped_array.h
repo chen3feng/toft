@@ -22,6 +22,14 @@ namespace toft {
 // Size: sizeof(scoped_array<C>) == sizeof(C*)
 template <class C>
 class scoped_array {
+    // Forbid comparison of different scoped_array types.
+    template <class C2> bool operator==(scoped_array<C2> const& p2) const;
+    template <class C2> bool operator!=(scoped_array<C2> const& p2) const;
+
+    // Disallow evil constructors
+    scoped_array(const scoped_array&);
+    void operator=(const scoped_array&);
+
 public:
     // The element type
     typedef C element_type;
@@ -99,14 +107,6 @@ public:
 
 private:
     C* array_;
-
-    // Forbid comparison of different scoped_array types.
-    template <class C2> bool operator==(scoped_array<C2> const& p2) const;
-    template <class C2> bool operator!=(scoped_array<C2> const& p2) const;
-
-    // Disallow evil constructors
-    scoped_array(const scoped_array&);
-    void operator=(const scoped_array&);
 };
 
 } // namespace toft
