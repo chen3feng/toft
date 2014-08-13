@@ -11,12 +11,12 @@
 #include "thirdparty/google/protobuf/text_format.h"
 #include "thirdparty/gtest/gtest.h"
 #include "thirdparty/jsoncpp/json.h"
-#include "toft/encoding/unittest.pb.h"
+#include "toft/encoding/proto_json_format_test.pb.h"
 #include "toft/storage/file/file.h"
 
 namespace toft {
 
-TEST(JsonFormatUnittest, PrintToJson) {
+TEST(JsonFormtTest, PrintToJson) {
     toft::Person p;
     p.set_age(30);
     toft::NameInfo* name = p.mutable_name();
@@ -59,12 +59,12 @@ void TestJsonString(const std::string& json_file) {
     EXPECT_EQ(pb.SerializeAsString(), expected_pb.SerializeAsString());
 }
 
-TEST(JsonFormatUnittest, ParseFromFastJsonString) {
+TEST(JsonFormtTest, ParseFromFastJsonString) {
     std::string path = "json_fast_string.txt";
     TestJsonString(path);
 }
 
-TEST(JsonFormatUnittest, ParseFromStyledJsonString) {
+TEST(JsonFormtTest, ParseFromStyledJsonString) {
     std::string path = "json_styled_string.txt";
     TestJsonString(path);
 }

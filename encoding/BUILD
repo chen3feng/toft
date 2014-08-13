@@ -38,8 +38,8 @@ cc_test(
 )
 
 proto_library(
-    name = 'unittest_proto',
-    srcs = 'unittest.proto',
+    name = 'proto_json_format_test_proto',
+    srcs = 'proto_json_format_test.proto',
 )
 
 cc_library(
@@ -52,10 +52,10 @@ cc_library(
 )
 
 cc_test(
-    name = 'proto_json_format_unittest',
-    srcs = 'proto_json_format_unittest.cpp',
+    name = 'proto_json_format_test',
+    srcs = 'proto_json_format_test.cpp',
     deps = [':proto_json_format',
-            ':unittest_proto',
+            ':proto_json_format_test_proto',
             '//toft/storage/file:file',
            ],
     testdata = ['debug_string.txt',
