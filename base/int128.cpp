@@ -2,7 +2,9 @@
 // All Rights Reserved.
 //
 
+#ifndef __STDC_CONSTANT_MACROS
 #define __STDC_CONSTANT_MACROS
+#endif
 
 #include "toft/base/int128.h"
 
