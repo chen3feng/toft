@@ -12,8 +12,9 @@
 
 namespace toft {
 
+// Abstract base class of all concrete HttpHandler classes
 class HttpHandler {
-private:
+protected:
     HttpHandler();
 public:
     virtual ~HttpHandler() {}
