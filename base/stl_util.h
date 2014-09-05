@@ -116,12 +116,12 @@ void DeleteContainerPairSecondPointers(ForwardIterator begin,
 
 template<typename T, typename A, typename I>
 void AppendToVector(std::vector<T, A>* v, I first, I last) {
-    v->insert(v.end(), first, last);
+    v->insert(v->end(), first, last);
 }
 
 template<typename T, typename A>
 void AppendToVector(std::vector<T, A>* v, const T* buf, size_t size) {
-    v->insert(v.end(), buf, buf + size);
+    v->insert(v->end(), buf, buf + size);
 }
 
 // To treat a possibly-empty vector as an array, use these functions.

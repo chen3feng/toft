@@ -80,6 +80,7 @@ struct ByteOrderSwapperBase<8> {
 
 template <size_t Size>
 struct ByteOrderSwapper : public ByteOrderSwapperBase<Size> {
+    using ByteOrderSwapperBase<Size>::Swap;
 #if TOFT_BYTE_ORDER == TOFT_BIG_ENDIAN
     template <typename T> static T ToBig(T value) { return value; }
     template <typename T> static T FromBig(T value) { return value; }

@@ -58,6 +58,7 @@ private:
 template <typename CppWatcherType, typename CWatcherType>
 class EventWatcherBase : private CWatcherType {
     TOFT_DECLARE_UNCOPYABLE(EventWatcherBase);
+
 protected:
     typedef std::function<void(int event_mask)> CallbackType;
     EventWatcherBase(EventDispatcher* dispatcher, const CallbackType& callback)
@@ -155,7 +156,7 @@ public:
     }
 
     void Set(int events) {
-        struct ev_io* w = c_watcher();
+        struct ::ev_io* w = c_watcher();
         if (events == w->events)
             return;
         bool active = IsActive();

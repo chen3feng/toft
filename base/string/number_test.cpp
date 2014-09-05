@@ -3,6 +3,10 @@
 // Author: CHEN Feng <chen3feng@gmail.com>
 // Created:  03/31/2011
 
+#ifndef __STDC_FORMAT_MACROS
+#define __STDC_FORMAT_MACROS
+#endif
+
 #include "toft/base/string/number.h"
 
 #include <inttypes.h>
