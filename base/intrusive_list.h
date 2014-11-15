@@ -54,7 +54,10 @@ public:
     }
 
     // copy to another node is meaningless, so just init self
-    list_node& operator=(const list_node&) { return *this; }
+    list_node& operator=(const list_node&)
+    {
+        return *this;
+    }
 };
 
 /// convert member's address to its container's address
@@ -93,12 +96,19 @@ public:
         friend class intrusive_list<T, Node>;
     public:
         iterator() : m_node(NULL) {}
+
     private:
         explicit iterator(list_node* node) : m_node(node) {}
+
     public:
-        T& operator*()
+        T& operator*() const
         {
             return *member_to_container(m_node, Node);
+        }
+
+        T* operator->() const
+        {
+            return member_to_container(m_node, Node);
         }
 
         iterator& operator++()
@@ -136,6 +146,7 @@ public:
         {
             return m_node != rhs.m_node;
         }
+
     private:
         list_node* m_node;
     };
@@ -148,10 +159,15 @@ public:
     private:
         explicit const_iterator(const list_node* node) : m_node(node) {}
     public:
-        const T& operator*()
+        const T& operator*() const
         {
             return *member_to_container(m_node, Node);
         }
+        const T* operator->() const
+        {
+            return member_to_container(m_node, Node);
+        }
+
         const_iterator& operator++()
         {
             m_node = m_node->next;
@@ -182,6 +198,7 @@ public:
         {
             return m_node != rhs.m_node;
         }
+
     private:
         const list_node* m_node;
     };
@@ -268,6 +285,22 @@ public:
             erase(i++);
         }
     }
+
+    void splice(intrusive_list& other) {
+        if (other.empty())
+            return;
+        list_node* first = other.m_head.next;
+        list_node* last = other.m_head.prev;
+        list_node* at = m_head.next;
+
+        first->prev = &m_head;
+        m_head.next = first;
+
+        last->next = at;
+        at->prev = last;
+        other.m_head.init();
+    }
+
 private:
     static void add(
         list_node * node,
@@ -289,6 +322,7 @@ private:
     {
         return *member_to_container(node, Node);
     }
+
 private:
     list_node m_head;
 };

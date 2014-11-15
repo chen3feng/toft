@@ -81,4 +81,16 @@ TEST(ListTest, Clear)
     ASSERT_FALSE(u3.link.is_linked());
 }
 
+TEST(ListTest, Splicr) {
+    intrusive_list<User> l1;
+    intrusive_list<User> l2;
+    User u1, u2, u3;
+    l1.push_back(&u1);
+    l1.push_back(&u2);
+    l2.push_back(&u3);
+    l1.splice(l2);
+    EXPECT_EQ(3U, l1.size());
+    EXPECT_TRUE(l2.empty());
+}
+
 } // namespace toft
