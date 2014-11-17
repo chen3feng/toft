@@ -103,4 +103,13 @@ TEST(Thread, Detach)
     }
 }
 
+TEST(Thread, CreateDetach) {
+    ThreadAttributes attributes;
+    attributes.SetDetached(true);
+    for (int i = 0; i < 100; ++i) {
+        Thread thread(attributes, std::bind(ThisThread::Sleep, 1));
+        ASSERT_FALSE(thread.IsJoinable());
+    }
+}
+
 } // namespace toft

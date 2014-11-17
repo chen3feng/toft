@@ -24,6 +24,12 @@ public:
     {
     }
 
+    explicit Impl(const ThreadAttributes& attributes, const std::function<void ()>& function) :
+        BaseThread(attributes),
+        m_function(function)
+    {
+    }
+
     ~Impl()
     {
         m_function = NULL;
@@ -73,27 +79,37 @@ Thread::Thread(const std::function<void ()>& function) :
     m_pimpl->Start();
 }
 
+Thread::Thread(const ThreadAttributes& attr, const std::function<void ()>& function)
+    : m_pimpl(new Impl(attr, function)) {
+    bool detached = m_pimpl->m_attributes.IsDetached();
+    m_pimpl->Start();
+    if (detached)
+        m_pimpl = NULL;
+}
+
 Thread::~Thread()
 {
     delete m_pimpl;
     m_pimpl = NULL;
 }
 
-void Thread::SetStackSize(size_t size)
-{
-    return m_pimpl->SetStackSize(size);
-}
-
 void Thread::Start(const std::function<void ()>& function)
 {
     m_pimpl->Initialize(function);
+    bool detached = m_pimpl->m_attributes.IsDetached();
     m_pimpl->Start();
+    if (detached)
+        m_pimpl = NULL;
 }
 
 bool Thread::TryStart(const std::function<void ()>& function)
 {
     m_pimpl->Initialize(function);
-    return m_pimpl->TryStart();
+    bool detached = m_pimpl->m_attributes.IsDetached();
+    bool result = m_pimpl->TryStart();
+    if (result && detached)
+        m_pimpl = NULL;
+    return result;
 }
 
 bool Thread::Join()
@@ -106,23 +122,10 @@ void Thread::Detach()
     // After detached, the m_pimpl will be deleted in Thread::Impl::OnExit.
     // So don't delete it here, just set it be NULL to mark this thread object
     // to be detached.
-    m_pimpl->DoDetach();
-    m_pimpl = NULL;
-}
-
-void Thread::SendStopRequest()
-{
-    m_pimpl->SendStopRequest();
-}
-
-bool Thread::IsStopRequested() const
-{
-    return m_pimpl->IsStopRequested();
-}
-
-bool Thread::StopAndWaitForExit()
-{
-    return m_pimpl->StopAndWaitForExit();
+    if (m_pimpl) {
+        m_pimpl->DoDetach();
+        m_pimpl = NULL;
+    }
 }
 
 bool Thread::IsAlive() const

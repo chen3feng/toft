@@ -7,6 +7,7 @@
 
 #include "toft/base/closure.h"
 #include "toft/base/functional.h"
+#include "toft/system/atomic/atomic.h"
 #include "toft/system/threading/this_thread.h"
 #include "toft/system/time/clock.h"
 
@@ -23,7 +24,7 @@ public:
 };
 
 TEST(ThreadPool, Closure) {
-    ThreadPool threadpool(4, 4);
+    ThreadPool threadpool(4);
     Foo foo;
     for (int i = 0; i < 10; ++i) {
         for (int j = 0; j < 20; ++j) {
@@ -36,7 +37,7 @@ TEST(ThreadPool, Closure) {
 }
 
 TEST(ThreadPool, Function) {
-    ThreadPool threadpool(4, 4);
+    ThreadPool threadpool(4);
     Foo foo;
     for (int i = 0; i < 10; ++i) {
         for (int j = 0; j < 20; ++j) {
@@ -53,7 +54,7 @@ static void DoNothong()
 
 TEST(ThreadPool, MessTasks)
 {
-    ThreadPool threadpool(0, 4);
+    ThreadPool threadpool(4);
     for (int i = 0; i < 10000; ++i)
     {
         threadpool.AddTask(DoNothong);
@@ -71,7 +72,7 @@ TEST(ThreadPool, Terminate)
 
 TEST(ThreadPool, AfterBusy)
 {
-    ThreadPool threadpool(0, 4);
+    ThreadPool threadpool(4);
     for (int i = 0; i < 1000; ++i)
     {
         threadpool.AddTask(DoNothong);
@@ -90,7 +91,7 @@ static void test_blocking()
 
 TEST(ThreadPool, MixedBlockingAndNonblocking)
 {
-    ThreadPool threadpool(0, 4);
+    ThreadPool threadpool(4);
     threadpool.AddTask(test_blocking);
     threadpool.AddTask(test_blocking);
     threadpool.AddTask(test_blocking);
@@ -102,7 +103,7 @@ TEST(ThreadPool, MixedBlockingAndNonblocking)
 
 TEST(ThreadPool, Blocking)
 {
-    ThreadPool threadpool(0, 4);
+    ThreadPool threadpool(4);
     threadpool.AddTask(test_blocking);
     threadpool.AddTask(test_blocking);
     threadpool.AddTask(test_blocking);
@@ -131,13 +132,13 @@ TEST_P(ThreadPoolTest, Performance)
 {
     int num_threads = GetParam();
     std::cout << "Test with " << num_threads << " threads." << "\n";
-    ThreadPool threadpool(num_threads, num_threads);
+    ThreadPool threadpool(num_threads);
     for (int i = 0; i < kLoopCount; ++i)
         threadpool.AddTask(DoNothong);
     // threadpool.WaitForIdle();
 }
 
-INSTANTIATE_TEST_CASE_P(ThreadPoolTest, ThreadPoolTest, testing::Values(1, 2, 4, 8));
+INSTANTIATE_TEST_CASE_P(ThreadPoolTest, ThreadPoolTest, testing::Values(1, 2, 4, 8, 16, 32));
 
 static void LatencyProc(void* p, int64_t issue_time)
 {
@@ -182,7 +183,7 @@ TEST(ThreadPool, CreateDestroyPerformance)
     {
         ThreadPool threadpool;
         threadpool.AddTask(DoNothong);
-        threadpool.Terminate(true);
+        threadpool.Terminate();
     }
 }
 

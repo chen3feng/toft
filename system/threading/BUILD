@@ -25,6 +25,7 @@ cc_library(
 cc_library(
     name = '_thread',
     srcs = [
+        'thread_types.cpp',
         'thread.cpp',
         'base_thread.cpp',
     ],
@@ -55,7 +56,8 @@ cc_library(
         ':_this_thread',
         ':_thread',
         '//toft/base:closure',
-        '//toft/system/atomic:atomic'
+        '//toft/base/string:string',
+        '//toft/system/info:info'
     ]
 )
 
@@ -138,5 +140,6 @@ cc_test(
     srcs = 'thread_pool_test.cpp',
     deps = [
         ':threading',
+        '//toft/system/atomic:atomic',
     ]
 )

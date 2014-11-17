@@ -119,7 +119,7 @@ static void ReadThread(LruCache<int, int> *cache) {
 
 TEST(ThreadSafeLruCacheTest, MultiThread) {
     LruCache<int, int> cache(900);
-    ThreadPool pool(7, 7);
+    ThreadPool pool(7);
     for (int i = 0; i < 2; ++i) {
         pool.AddTask(NewClosure(SetThread, &cache));
     }
@@ -127,6 +127,5 @@ TEST(ThreadSafeLruCacheTest, MultiThread) {
         pool.AddTask(NewClosure(ReadThread, &cache));
     }
 }
-
 
 }  // namespace toft

@@ -21,6 +21,8 @@ public:
     Thread();
 
     explicit Thread(const std::function<void ()>& function);
+    explicit Thread(const ThreadAttributes& attr, const std::function<void ()>& function);
+
     virtual ~Thread();
 
     // Can only call before Start.

@@ -24,10 +24,10 @@ public:
 
 protected:
     BaseThread();
+    explicit BaseThread(const ThreadAttributes& attributes);
 
 public:
     virtual ~BaseThread();
-    void SetStackSize(size_t size);
 
     // Start or TryStary Must be called to start a thread, or the thread will
     // not be created.
@@ -42,15 +42,6 @@ public:
     // Wait for thread termination
     // the thread must be started and not detached
     bool Join();
-
-    // Whether the SendStopRequest or StopAndWaitForExit called
-    bool IsStopRequested() const;
-
-    // Make IsStopRequested return true
-    void SendStopRequest();
-
-    // call SendStopRequest and then Join
-    bool StopAndWaitForExit();
 
     // Whether the thread is still alive
     bool IsAlive() const;
@@ -80,29 +71,17 @@ private:
     // The derived class must override this function as the thread entry point
     virtual void Entry() = 0;
 
-    // Do some class shared initializing
     static void Cleanup(void* param);
 
 private:
     static void* StaticEntry(void* inThread);
 
 private:
+    ThreadAttributes m_attributes;
     HandleType m_handle;
     int m_id;
-    size_t m_stack_size;
-    volatile bool m_stop_requested;
     volatile bool m_is_alive;
 };
-
-inline void BaseThread::SendStopRequest()
-{
-    m_stop_requested = true;
-}
-
-inline bool BaseThread::IsStopRequested() const
-{
-    return m_stop_requested;
-}
 
 inline ThreadHandleType BaseThread::GetHandle() const
 {

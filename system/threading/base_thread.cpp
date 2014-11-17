@@ -14,18 +14,19 @@
 
 namespace toft {
 
-void BaseThread::SetStackSize(size_t size)
-{
-    m_stack_size = size;
-}
 
 BaseThread::BaseThread():
     m_handle(),
     m_id(-1),
-    m_stack_size(0),
-    m_stop_requested(false),
     m_is_alive(false)
 {
+}
+
+BaseThread::BaseThread(const ThreadAttributes& attributes) :
+    m_attributes(attributes),
+    m_handle(),
+    m_id(-1),
+    m_is_alive(false) {
 }
 
 BaseThread::~BaseThread()
@@ -50,14 +51,9 @@ int BaseThread::DoStart()
 
     m_handle = ThreadHandleType();
     m_id = 0;
-    m_stop_requested = false;
 
-    pthread_attr_t attr;
-    TOFT_CHECK_PTHREAD_ERROR(pthread_attr_init(&attr));
-    if (m_stack_size)
-        TOFT_CHECK_PTHREAD_ERROR(pthread_attr_setstacksize(&attr, m_stack_size));
+    const pthread_attr_t &attr = m_attributes.m_attr;
     int error = pthread_create(&m_handle, &attr, StaticEntry, this);
-    TOFT_CHECK_PTHREAD_ERROR(pthread_attr_destroy(&attr));
     if (error)
         m_id = -1;
     return error;
@@ -75,16 +71,6 @@ bool BaseThread::TryStart()
         return true;
     if (error != EAGAIN)
         TOFT_CHECK_PTHREAD_ERROR(error);
-    return false;
-}
-
-bool BaseThread::StopAndWaitForExit()
-{
-    if (IsJoinable())
-    {
-        m_stop_requested = true;
-        return Join();
-    }
     return false;
 }
 
@@ -131,6 +117,7 @@ bool BaseThread::IsJoinable() const
 void BaseThread::Cleanup(void* param)
 {
     BaseThread* thread = static_cast<BaseThread*>(param);
+    thread->m_is_alive = false;
     thread->OnExit();
 }
 
@@ -141,9 +128,20 @@ void BaseThread::OnExit()
 void* BaseThread::StaticEntry(void* param)
 {
     BaseThread* base_thread = static_cast<BaseThread*>(param);
-    base_thread->m_is_alive = true;
-    base_thread->m_id = ThisThread::GetId();
-
+    bool detached = base_thread->m_attributes.IsDetached();
+    if (!detached) {
+        base_thread->m_is_alive = true;
+        base_thread->m_id = ThisThread::GetId();
+    }
+    const std::string& name = base_thread->m_attributes.m_name;
+    if (!name.empty()) {
+        // Set thread name for easy debugging.
+#if __GLIBC__ > 2 || __GLIBC__ == 2 && __GLIBC_MINOR__ >= 12
+        pthread_setname_np(pthread_self(), name.c_str());
+#else
+        prctl(PR_SET_NAME, name.c_str(), 0, 0, 0);
+#endif
+    }
     pthread_cleanup_push(Cleanup, param);
     base_thread->Entry();
     base_thread->m_is_alive = false;
