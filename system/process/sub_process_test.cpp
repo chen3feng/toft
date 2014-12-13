@@ -2,7 +2,6 @@
 // All rights reserved.
 //
 // Author: CHEN Feng <chen3feng@gmail.com>
-// Author: Simon Wang <simonwang@tencent.com>
 // Created: 10/27/11
 // Description:
 

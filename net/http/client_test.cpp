@@ -35,7 +35,7 @@ TEST_F(HttpClientTest, GetWithBadProxy)
     HttpClient client;
     HttpResponse response;
     HttpClient::ErrorCode error;
-    client.SetProxy("http://-proxy.tencent.com:8080");
+    client.SetProxy("http://-proxy.test.com:8080");
     EXPECT_FALSE(client.Get(m_server_address + "/hello.txt", &response, &error));
     EXPECT_EQ(HttpClient::ERROR_INVALID_PROXY_ADDRESS, error);
 }

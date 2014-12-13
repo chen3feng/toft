@@ -1,6 +1,6 @@
 // Copyright (C) 2011, The Toft Authors.
 // Authors: An Qin <anqin.qin@gmail.com>
-//          CHEN Feng <phongchen@tencent.com>
+//          CHEN Feng <chen3feng@gmail.com>
 // Created: 2010-06-18
 //
 // Description:

@@ -1,5 +1,5 @@
 // Copyright (c) 2012, The Toft Authors. All rights reserved.
-// Author: Liu Xiaokang <hsiaokangliu@tencent.com>
+// Author: Liu Xiaokang <liuxk02@gmail.com>
 
 #include "toft/storage/path/path.h"
 #include <string>
