@@ -17,6 +17,9 @@ cc_test(
 cc_library(
     name = 'sha1',
     srcs = 'sha1.cpp',
+    deps = [
+        '//toft/encoding:encoding',
+    ],
 )
 
 cc_test(
@@ -24,6 +27,5 @@ cc_test(
     srcs = 'sha1_test.cpp',
     deps = [
         ':sha1',
-        '//toft/encoding:encoding',
     ],
 )

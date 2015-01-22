@@ -45,23 +45,27 @@ proto_library(
 cc_library(
     name = 'proto_json_format',
     srcs = 'proto_json_format.cpp',
-    deps = ['//thirdparty/glog:glog',
-            '//thirdparty/jsoncpp:jsoncpp',
-            '//thirdparty/protobuf:protobuf',
-           ],
+    deps = [
+        '//toft/base/string:string',
+        '//thirdparty/glog:glog',
+        '//thirdparty/jsoncpp:jsoncpp',
+        '//thirdparty/protobuf:protobuf',
+    ],
 )
 
 cc_test(
     name = 'proto_json_format_test',
     srcs = 'proto_json_format_test.cpp',
-    deps = [':proto_json_format',
-            ':proto_json_format_test_proto',
-            '//toft/storage/file:file',
-           ],
-    testdata = ['debug_string.txt',
-                'json_fast_string.txt',
-                'json_styled_string.txt',
-               ]
+    deps = [
+        ':proto_json_format',
+        ':proto_json_format_test_proto',
+        '//toft/storage/file:file',
+    ],
+    testdata = [
+        'debug_string.txt',
+        'json_fast_string.txt',
+        'json_styled_string.txt',
+    ],
 )
 
 cc_test(
