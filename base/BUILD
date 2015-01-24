@@ -15,6 +15,17 @@ cc_test(
     ]
 )
 
+cc_library(
+    name = 'static_resource',
+    srcs = 'static_resource.cpp',
+    deps = '//toft/base/string:string'
+)
+
+resource_library(
+    name = 'static_resource_test_data',
+    srcs = 'static_resource.testdata',
+)
+
 cc_library(name = 'byte_order', srcs = 'byte_order.cpp')
 
 cc_library(
@@ -80,6 +91,15 @@ cc_test(
     ]
 )
 
+cc_test(
+    name = 'static_resource_test',
+    srcs = 'static_resource_test.cpp',
+    deps = [
+        ':static_resource',
+        ':static_resource_test_data',
+    ],
+)
+
 cc_test(name = 'array_size_test', srcs = 'array_size_test.cpp')
 cc_test(name = 'byte_order_test', srcs = 'byte_order_test.cpp')
 cc_test(name = 'closure_test', srcs = 'closure_test.cpp', deps = ':closure')
@@ -89,7 +109,6 @@ cc_test(name = 'preprocess_test', srcs = 'preprocess_test.cpp')
 cc_test(name = 'shared_ptr_test', srcs = 'shared_ptr_test.cpp')
 cc_test(name = 'singleton_test', srcs = 'singleton_test.cpp')
 cc_test(name = 'static_assert_test', srcs = 'static_assert_test.cpp')
-cc_test(name = 'static_resource_test', srcs = 'static_resource_test.cpp')
 cc_test(name = 'stl_util_test', srcs = 'stl_util_test.cpp')
 cc_test(name = 'unique_ptr_test', srcs = 'unique_ptr_test.cpp')
 cc_test(name = 'unordered_test', srcs = 'unordered_test.cpp')

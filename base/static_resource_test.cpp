@@ -6,6 +6,7 @@
 // Description: static resource test
 
 #include "toft/base/static_resource.h"
+#include "toft/base/static_resource_test_data.h"
 #include "thirdparty/gtest/gtest.h"
 
 namespace toft {
@@ -16,6 +17,16 @@ TEST(StaticResource, Test)
 {
     StringPiece resource = TOFT_STATIC_RESOURCE(test);
     EXPECT_STREQ(RESOURCE_test, resource.data());
+}
+
+TEST(StaticResource, Package)
+{
+    const StaticResourcePackage& package =
+        TOFT_STATIC_RESOURCE_PACKAGE(toft_base_static_resource_test_data);
+    StringPiece data;
+    ASSERT_TRUE(package.Find("static_resource.testdata", &data));
+    EXPECT_EQ("hello, blade!\n", data);
+    ASSERT_FALSE(package.Find("wtf", &data));
 }
 
 } // namespace toft
