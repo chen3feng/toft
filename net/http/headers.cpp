@@ -97,8 +97,7 @@ HttpHeaders& HttpHeaders::Add(const StringPiece& header_name,
     return *this;
 }
 
-HttpHeaders& HttpHeaders::Add(const HttpHeaders& rhs)
-{
+HttpHeaders& HttpHeaders::Add(const HttpHeaders& rhs) {
     m_headers.insert(m_headers.end(), rhs.m_headers.begin(), rhs.m_headers.end());
     return *this;
 }
@@ -106,7 +105,7 @@ HttpHeaders& HttpHeaders::Add(const HttpHeaders& rhs)
 bool HttpHeaders::Remove(const StringPiece& header_name) {
     bool result = false;
     std::vector<std::pair<std::string, std::string> >::iterator iter;
-    for (iter = m_headers.begin(); iter != m_headers.end(); ) {
+    for (iter = m_headers.begin(); iter != m_headers.end();) {
         if (header_name.ignore_case_equal(iter->first)) {
             iter = m_headers.erase(iter);
             result = true;
@@ -127,13 +126,11 @@ bool HttpHeaders::Has(const StringPiece& header_name) const {
     return false;
 }
 
-size_t HttpHeaders::Count() const
-{
+size_t HttpHeaders::Count() const {
     return m_headers.size();
 }
 
-bool HttpHeaders::GetAt(int index, std::pair<std::string, std::string>* header) const
-{
+bool HttpHeaders::GetAt(int index, std::pair<std::string, std::string>* header) const {
     if (index < 0 || index >= static_cast<int>(m_headers.size()))
         return false;
     *header = m_headers[index];
@@ -163,7 +160,7 @@ size_t HttpHeaders::Parse(const StringPiece& data, int* error)
         return 0;
     }
 
-    std::vector<std::string> lines;
+    std::vector<StringPiece> lines;
     SplitLines(data.substr(0, end_pos + tail_size), &lines);
 
     if (lines.empty()) {
@@ -175,11 +172,18 @@ size_t HttpHeaders::Parse(const StringPiece& data, int* error)
 
     // Skip the head line and the last line(empty but '\n')
     for (int i = 0; i < static_cast<int>(lines.size() - 1); ++i) {
-        std::string::size_type pos = lines[i].find(":");
-        if (pos != std::string::npos) {
-            m_headers.push_back(std::pair<std::string, std::string>(
-                    StringTrim(lines[i].substr(0, pos)),
-                    StringTrim(lines[i].substr(pos + 1))));
+        StringPiece line = lines[i];
+        size_t pos = line.find(':');
+        if (pos != StringPiece::npos) {
+            StringPiece name = line.substr(0, pos);
+            StringPiece value = line.substr(pos + 1);
+            StringTrim(&name);
+            StringTrim(&value);
+            // Push an empty element and modify it to avoid copy.
+            m_headers.push_back(std::pair<std::string, std::string>());
+            std::pair<std::string, std::string> &header = m_headers.back();
+            name.copy_to_string(&header.first);
+            value.copy_to_string(&header.second);
         } else {
             if (!lines[i].empty()) {
                 VLOG(3) << "Invalid http header" << lines[i] << ", ignore";
@@ -195,13 +199,11 @@ size_t HttpHeaders::Parse(const StringPiece& data, int* error)
     return end_pos + tail_size;
 }
 
-void HttpHeaders::Clear()
-{
+void HttpHeaders::Clear() {
     m_headers.clear();
 }
 
-void HttpHeaders::Swap(HttpHeaders* rhs)
-{
+void HttpHeaders::Swap(HttpHeaders* rhs) {
     m_headers.swap(rhs->m_headers);
 }
 

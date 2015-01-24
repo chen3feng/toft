@@ -4,21 +4,26 @@
 
 #include "toft/net/http/message.h"
 
+#include <ctype.h>
 #include "toft/base/string/algorithm.h"
 #include "toft/base/string/concat.h"
-#include "toft/base/string/format.h"
 #include "toft/base/string/number.h"
 
 namespace toft {
 
-bool HttpMessage::ParseVersion(const std::string& version_str)
+bool HttpMessage::ParseVersion(StringPiece version_str)
 {
-    if (!StringStartsWith(version_str, "HTTP/"))
+    if (!version_str.starts_with("HTTP/"))
         return false;
-    const std::string& ver = version_str.substr(5);
-    int major, minor;
-    if (StringScan(ver, "%d.%d", &major, &minor) != 2)
+    StringPiece ver = version_str.substr(5);
+    if (ver.size() != 3)
         return false;
+    if (ver[1] != '.')
+        return false;
+    if (!isdigit(ver[0]) || !isdigit(ver[2]))
+        return false;
+    int major = ver[0] - '0';
+    int minor = ver[2] - '0';
     SetVersion(HttpVersion(major, minor));
     return true;
 }
@@ -47,20 +52,17 @@ std::string HttpMessage::HeadersToString() const {
     return result;
 }
 
-void HttpMessage::AppendToString(std::string* result) const
-{
+void HttpMessage::AppendToString(std::string* result) const {
     AppendHeadersToString(result);
     result->append(m_body);
 }
 
-void HttpMessage::ToString(std::string* result) const
-{
+void HttpMessage::ToString(std::string* result) const {
     result->clear();
     AppendToString(result);
 }
 
-std::string HttpMessage::ToString() const
-{
+std::string HttpMessage::ToString() const {
     std::string result;
     AppendToString(&result);
     return result;
@@ -139,8 +141,8 @@ size_t HttpMessage::ParseHeaders(const StringPiece& data, HttpMessage::ErrorCode
     if (pos == StringPiece::npos) {
         pos = data.size();
     }
-    std::string first_line =
-        StringTrimRight(data.substr(0, pos), "\r");
+    StringPiece first_line = data.substr(0, pos);
+    RemoveLineEnding(&first_line);
 
     if (first_line.empty()) {
         *error = HttpMessage::ERROR_NO_START_LINE;
@@ -164,7 +166,7 @@ int HttpMessage::GetContentLength() {
     int length = 0;
     bool ret = StringToNumber(content_length, &length);
     return (ret && length >= 0) ? length : -1;
-};
+}
 
 bool HttpMessage::IsKeepAlive() const {
     const std::string* alive;

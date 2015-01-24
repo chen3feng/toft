@@ -120,7 +120,7 @@ public:
     std::string ToString() const;
 
 protected:
-    bool ParseVersion(const std::string& version_str);
+    bool ParseVersion(StringPiece version_str);
 
     // append without ending "\r\n"
     virtual void AppendStartLineToString(std::string* result) const = 0;

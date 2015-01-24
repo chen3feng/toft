@@ -37,11 +37,11 @@ void HttpRequest::Reset() {
 }
 
 // static
-HttpRequest::MethodType HttpRequest::GetMethodByName(const char* method_name) {
+HttpRequest::MethodType HttpRequest::GetMethodByName(StringPiece method_name) {
     int i = 0;
     while (kValidMethodNames[i].method_name != NULL) {
         // Method is case sensitive.
-        if (strcmp(method_name, kValidMethodNames[i].method_name) == 0) {
+        if (method_name == kValidMethodNames[i].method_name) {
             return kValidMethodNames[i].method;
         }
         ++i;
@@ -62,22 +62,36 @@ bool HttpRequest::ParseStartLine(const StringPiece& data, HttpMessage::ErrorCode
     if (error == NULL)
         error = &error_placeholder;
 
-    std::vector<std::string> fields;
-    SplitString(data, " ", &fields);
-    if (fields.size() != 2 && fields.size() != 3) {
+    static const size_t kMinHttpMethodLength = 3;
+    size_t pos = data.find(' ', kMinHttpMethodLength);
+    if (pos == StringPiece::npos) {
         *error = ERROR_START_LINE_NOT_COMPLETE;
         return false;
     }
 
-    m_method = GetMethodByName(fields[0].c_str());
+    StringPiece method = data.substr(0, pos);
+    StringTrim(&method);
+    m_method = GetMethodByName(method);
     if (m_method == METHOD_UNKNOWN) {
         *error = ERROR_METHOD_NOT_FOUND;
         return false;
     }
-    m_uri = fields[1];
 
-    if (fields.size() == 3) {
-        if (!ParseVersion(fields[2])) {
+    size_t prev_pos = pos + 1;
+    pos = data.find(' ', prev_pos);
+    StringPiece uri;
+    if (pos == StringPiece::npos) {
+        uri = data.substr(prev_pos);
+    } else {
+        uri = data.substr(prev_pos, pos - prev_pos);
+    }
+    StringTrim(&uri);
+    uri.copy_to_string(&m_uri);
+
+    if (pos != StringPiece::npos) {
+        StringPiece version = data.substr(pos);
+        StringTrim(&version);
+        if (!ParseVersion(version)) {
             *error = ERROR_VERSION_UNSUPPORTED;
             return false;
         }

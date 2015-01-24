@@ -100,6 +100,7 @@ private:
         StatusCode status_code, const char* no_match);
     virtual void AppendStartLineToString(std::string* result) const;
     virtual bool ParseStartLine(const StringPiece& data, ErrorCode* error);
+    bool ParseStatusCode(StringPiece status);
 
     StatusCode m_status;
 };

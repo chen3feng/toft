@@ -31,14 +31,13 @@ public:
         METHOD_UPPER_BOUND,  // no use, just label the bound.
     };
 
-    HttpRequest() : m_method(METHOD_UNKNOWN) {
-        m_uri = "/";
+    HttpRequest() : m_method(METHOD_UNKNOWN), m_uri("/") {
     }
     ~HttpRequest() {}
     virtual void Reset();
 
 public:
-    static MethodType GetMethodByName(const char* method_name);
+    static MethodType GetMethodByName(StringPiece method_name);
     static const char* GetMethodName(MethodType method);
 
     MethodType Method() const { return m_method; }

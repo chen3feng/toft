@@ -7,6 +7,7 @@
 
 #include "toft/net/http/response.h"
 
+#include <ctype.h>
 #include "toft/base/string/algorithm.h"
 #include "toft/base/string/concat.h"
 #include "toft/base/string/number.h"
@@ -93,7 +94,7 @@ bool HttpResponse::ParseStartLine(const StringPiece& data, HttpMessage::ErrorCod
     if (error == NULL)
         error = &error_placeholder;
 
-    std::vector<std::string> fields;
+    std::vector<StringPiece> fields;
     SplitString(data, " ", &fields);
     if (fields.size() < 2) {
         *error = ERROR_START_LINE_NOT_COMPLETE;
@@ -105,17 +106,23 @@ bool HttpResponse::ParseStartLine(const StringPiece& data, HttpMessage::ErrorCod
         return false;
     }
 
-    int status;
-    if (!StringToNumber(fields[1], &status, 10)) {
+    if (!ParseStatusCode(fields[1])) {
         *error = ERROR_RESPONSE_STATUS_NOT_FOUND;
         return false;
     }
-    if (status < 100 || status > 999) {
-        *error = ERROR_RESPONSE_STATUS_NOT_FOUND;
-        return false;
-    }
+    return true;
+}
 
-    m_status = static_cast<StatusCode>(status);
+bool HttpResponse::ParseStatusCode(StringPiece status)
+{
+    if (status.size() != 3)
+        return false;
+    if (!isdigit(status[0]) || !isdigit(status[1]) || !isdigit(status[2]))
+        return false;
+    int code = (status[0] - '0') * 100 + (status[1] - '0') * 10 + (status[2] - '0');
+    if (code < 100 || code > 999)
+        return false;
+    m_status = static_cast<StatusCode>(code);
     return true;
 }
 
