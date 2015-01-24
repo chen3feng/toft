@@ -33,7 +33,9 @@ std::string ReplaceFirst(
     std::string res;
     std::string::size_type pos = s.find(oldsub);
     if (pos == std::string::npos)
+    {
         return s.as_string();
+    }
     else
     {
         res.append(s.data(), pos);
@@ -67,7 +69,6 @@ std::string ReplaceAll(const StringPiece& s, const StringPiece& oldsub,
     return res;
 }
 
-// Replace all the chars in "from" to "to" in a string
 void ReplaceAll(std::string* s, const StringPiece& from, const StringPiece& to)
 {
     size_t pos = 0;
@@ -150,12 +151,13 @@ std::string JoinStrings(const std::vector<std::string>& components, const String
 char* RemoveLineEnding(char* line)
 {
     size_t length = strlen(line);
-    while (length > 0 && (line[length-1] == '\r' || line[length-1] == '\n'))
+    while (length > 0 && (line[length - 1] == '\r' || line[length - 1] == '\n'))
         line[--length] = '\0';
     return line;
 }
 
-void RemoveLineEnding(std::string* line)
+template <typename StringType>
+void DoRemoveLineEnding(StringType* line)
 {
     while (!line->empty())
     {
@@ -165,6 +167,16 @@ void RemoveLineEnding(std::string* line)
         else
             break;
     }
+}
+
+void RemoveLineEnding(std::string* line)
+{
+    DoRemoveLineEnding(line);
+}
+
+void RemoveLineEnding(StringPiece* line)
+{
+    DoRemoveLineEnding(line);
 }
 
 void RemoveContinuousBlank(std::string* str)
@@ -213,7 +225,7 @@ std::string RemoveAll(const StringPiece& s, const StringPiece& substr, bool fill
            ReplaceAll(s, substr, "");
 }
 
-template <typename ITR>
+template <typename StringType, typename ITR>
 static inline
 void SplitStringToIteratorUsing(const StringPiece& full, const char* delim, ITR& result)
 {
@@ -231,7 +243,7 @@ void SplitStringToIteratorUsing(const StringPiece& full, const char* delim, ITR&
             {
                 const char* start = p;
                 while (++p != end && *p != c) {}
-                *result++ = std::string(start, p - start);
+                *result++ = StringType(start, p - start);
             }
         }
         return;
@@ -260,10 +272,10 @@ void SplitStringByAnyOf(
 {
     result->clear();
     std::back_insert_iterator<std::vector<std::string> > it(*result);
-    SplitStringToIteratorUsing(full, delim, it);
+    SplitStringToIteratorUsing<std::string>(full, delim, it);
 }
 
-template <typename ITR>
+template <typename StringType, typename ITR>
 static inline
 void SplitUsingStringDelimiterToIterator(const StringPiece& full,
                                          const char* delim,
@@ -282,14 +294,14 @@ void SplitUsingStringDelimiterToIterator(const StringPiece& full,
     // Optimize the common case where delim is a single character.
     if (delim[1] == '\0')
     {
-        SplitStringToIteratorUsing(full, delim, result);
+        SplitStringToIteratorUsing<StringType>(full, delim, result);
         return;
     }
 
     size_t delim_length = strlen(delim);
-    for (std::string::size_type begin_index = 0; begin_index < full.size(); )
+    for (size_t begin_index = 0; begin_index < full.size();)
     {
-        std::string::size_type end_index = full.find(delim, begin_index);
+        size_t end_index = full.find(delim, begin_index);
         if (end_index == std::string::npos)
         {
             *result++ = full.substr(begin_index).as_string();
@@ -297,7 +309,8 @@ void SplitUsingStringDelimiterToIterator(const StringPiece& full,
         }
         if (end_index > begin_index)
         {
-            *result++ = full.substr(begin_index, (end_index - begin_index)).as_string();
+            StringType value(full.data() + begin_index, end_index - begin_index);
+            *result++ = value;
         }
         begin_index = end_index + delim_length;
     }
@@ -309,7 +322,15 @@ void SplitString(const StringPiece& full,
 {
     result->clear();
     std::back_insert_iterator<std::vector<std::string> > it(*result);
-    SplitUsingStringDelimiterToIterator(full, delim, it);
+    SplitUsingStringDelimiterToIterator<std::string>(full, delim, it);
+}
+
+void SplitString(const StringPiece& full,
+                 const char* delim,
+                 std::vector<StringPiece>* result) {
+    result->clear();
+    std::back_insert_iterator<std::vector<StringPiece> > it(*result);
+    SplitUsingStringDelimiterToIterator<StringPiece>(full, delim, it);
 }
 
 void SplitStringToSet(const StringPiece& full,
@@ -317,7 +338,7 @@ void SplitStringToSet(const StringPiece& full,
                       std::set<std::string>* result) {
     result->clear();
     std::insert_iterator<std::set<std::string> > it(*result, result->end());
-    SplitUsingStringDelimiterToIterator(full, delim, it);
+    SplitUsingStringDelimiterToIterator<std::string>(full, delim, it);
 }
 
 void SplitStringByDelimiter(const StringPiece& full,
@@ -388,16 +409,17 @@ void SplitStringKeepEmpty(
     result->push_back(token);
 }
 
-void SplitLines(
+template <typename StringType>
+void DoSplitLines(
     const StringPiece& full,
-    std::vector<std::string>* result,
+    std::vector<StringType>* result,
     bool keep_line_endling
 )
 {
     result->clear();
     size_t prev_pos = 0;
     size_t pos;
-    std::string token;
+    StringType token;
     while ((pos = full.find('\n', prev_pos)) != std::string::npos)
     {
         token.assign(full.data() + prev_pos, pos - prev_pos + 1);
@@ -415,8 +437,23 @@ void SplitLines(
     }
 }
 
-void StringTrimLeft(std::string* str)
+void SplitLines(
+    const StringPiece& full,
+    std::vector<std::string>* result,
+    bool keep_line_endling)
 {
+    DoSplitLines(full, result, keep_line_endling);
+}
+
+void SplitLines(
+    const StringPiece& full,
+    std::vector<StringPiece>* result,
+    bool keep_line_endling)
+{
+    DoSplitLines(full, result, keep_line_endling);
+}
+
+void StringTrimLeft(std::string* str) {
     size_t start_pos = 0;
     size_t end_pos = str->length();
     while (start_pos != end_pos && isspace(str->at(start_pos)))
@@ -446,11 +483,12 @@ std::string StringTrimRight(const StringPiece& str)
     return res;
 }
 
-void StringTrim(std::string* str)
+template <typename StringType>
+static void DoStringTrim(StringType* str)
 {
     size_t start_pos = 0;
     size_t end_pos = str->length();
-    while (start_pos != end_pos && isspace(str->at(start_pos)))
+    while (start_pos != end_pos && isspace((*str)[start_pos]))
         start_pos++;
     if (start_pos == end_pos)
     {
@@ -458,9 +496,19 @@ void StringTrim(std::string* str)
         return;
     }
     end_pos--;
-    while (isspace(str->at(end_pos))) // end_pos always >= 0
+    while (isspace((*str)[end_pos])) // end_pos always >= 0
         end_pos--;
     *str = str->substr(start_pos, end_pos - start_pos + 1);
+}
+
+void StringTrim(std::string* str)
+{
+    DoStringTrim(str);
+}
+
+void StringTrim(StringPiece* str)
+{
+    DoStringTrim(str);
 }
 
 std::string StringTrim(const StringPiece& str)
@@ -506,7 +554,8 @@ std::string StringTrimRight(const StringPiece& str, const StringPiece& trim_valu
     return res;
 }
 
-void StringTrim(std::string* str, const StringPiece& trim_value)
+template <typename StringType>
+static void DoStringTrim(StringType* str, const StringPiece& trim_value)
 {
     StringPiece piece(*str);
     size_t start_pos = piece.find_first_not_of(trim_value);
@@ -519,8 +568,17 @@ void StringTrim(std::string* str, const StringPiece& trim_value)
     *str = str->substr(start_pos, end_pos - start_pos + 1);
 }
 
-std::string StringTrim(const StringPiece& str, const StringPiece& trim_value)
+void StringTrim(std::string* str, const StringPiece& trim_value)
 {
+    DoStringTrim(str, trim_value);
+}
+
+void StringTrim(StringPiece* str, const StringPiece& trim_value)
+{
+    DoStringTrim(str, trim_value);
+}
+
+std::string StringTrim(const StringPiece& str, const StringPiece& trim_value) {
     std::string res = str.as_string();
     StringTrim(&res, trim_value);
     return res;

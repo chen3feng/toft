@@ -122,7 +122,26 @@ public:
         set(str.data(), str.size());
     }
 
-    char operator[](size_type i) const { return m_ptr[i]; }
+    void assign(const char* buffer, size_t len) {
+        set(buffer, len);
+    }
+    void assign(const char* str) {
+        set(str);
+    }
+    void assign(const void* buffer, size_t len) {
+        set(buffer, len);
+    }
+    void assign(const std::string& str) {
+        set(str);
+    }
+
+    char operator[](size_type i) const {
+        return m_ptr[i];
+    }
+
+    void resize(size_t n) {
+        m_length = n;
+    }
 
     void remove_prefix(ptrdiff_t n) {
         assert((ptrdiff_t) m_length >= n);

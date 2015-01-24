@@ -365,9 +365,9 @@ TEST(StringPieceTest, CheckSTL) {
     //  StringPiece g("xx not found bb");
     StringPiece i("56");
     ASSERT_EQ(h.find_last_of(a), StringPiece::npos);
-    ASSERT_EQ(g.find_last_of(a), g.size()-1);
+    ASSERT_EQ(g.find_last_of(a), g.size() - 1);
     ASSERT_EQ(a.find_last_of(b), 2U);
-    ASSERT_EQ(a.find_last_of(c), a.size()-1);
+    ASSERT_EQ(a.find_last_of(c), a.size() - 1);
     ASSERT_EQ(f.find_last_of(i), 6U);
     ASSERT_EQ(a.find_last_of('a'), 0U);
     ASSERT_EQ(a.find_last_of('b'), 1U);
@@ -398,7 +398,7 @@ TEST(StringPieceTest, CheckSTL) {
     ASSERT_EQ(d.find_last_of(f, 4), StringPiece::npos);
     ASSERT_EQ(e.find_last_of(f, 4), StringPiece::npos);
 
-    ASSERT_EQ(a.find_last_not_of(b), a.size()-1);
+    ASSERT_EQ(a.find_last_not_of(b), a.size() - 1);
     ASSERT_EQ(a.find_last_not_of(c), 22U);
     ASSERT_EQ(b.find_last_not_of(a), StringPiece::npos);
     ASSERT_EQ(b.find_last_not_of(b), StringPiece::npos);
@@ -407,8 +407,8 @@ TEST(StringPieceTest, CheckSTL) {
     ASSERT_EQ(a.find_last_not_of(b, 3), 3U);
     ASSERT_EQ(a.find_last_not_of(b, 2), StringPiece::npos);
     // empty string nonsense
-    ASSERT_EQ(f.find_last_not_of(d), f.size()-1);
-    ASSERT_EQ(f.find_last_not_of(e), f.size()-1);
+    ASSERT_EQ(f.find_last_not_of(d), f.size() - 1);
+    ASSERT_EQ(f.find_last_not_of(e), f.size() - 1);
     ASSERT_EQ(f.find_last_not_of(d, 4), 4U);
     ASSERT_EQ(f.find_last_not_of(e, 4), 4U);
     ASSERT_EQ(d.find_last_not_of(d), StringPiece::npos);

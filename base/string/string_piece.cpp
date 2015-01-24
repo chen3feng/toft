@@ -114,8 +114,10 @@ size_type StringPiece::find(char c, size_type pos) const {
     if (pos >= m_length)
         return npos;
 
-    const char* result = std::find(m_ptr + pos, m_ptr + m_length, c);
-    return result != m_ptr + m_length ? static_cast<size_t>(result - m_ptr) : npos;
+    const void* result = memchr(m_ptr + pos, c, m_length - pos);
+    if (result)
+        return reinterpret_cast<const char*>(result) - m_ptr;
+    return npos;
 }
 
 size_type StringPiece::rfind(const StringPiece& s, size_type pos) const {

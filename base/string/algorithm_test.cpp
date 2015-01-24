@@ -129,8 +129,8 @@ TEST(String, UpperAndLowerCase)
     ASSERT_EQ("a中b文c测d试e", LowerString("A中B文C测D试E"));
 }
 
-TEST(String, SplitString)
-{
+template <typename StringType>
+static void TestSplitString() {
     string str = " ab c  d   efg  end ";
     vector<string> vec;
     SplitString(str, " ", &vec);
@@ -155,6 +155,11 @@ TEST(String, SplitString)
     ASSERT_NE(result.count("aa"), 0U);
     ASSERT_NE(result.count("dd"), 0U);
     ASSERT_NE(result.count("cc"), 0U);
+}
+
+TEST(String, SplitString) {
+    TestSplitString<std::string>();
+    TestSplitString<StringPiece>();
 }
 
 TEST(String, SplitStringByAnyOf)
@@ -190,10 +195,10 @@ TEST(String, SplitStringKeepEmpty)
     ASSERT_EQ("end ", vec[3]);
 }
 
-TEST(String, SplitLines)
-{
-    vector<string> lines;
-    string str = "abc\r\n" "\n" "bc";
+template <typename StringType>
+static void TestSplitLines() {
+    vector<StringType> lines;
+    StringType str = "abc\r\n" "\n" "bc";
     SplitLines(str, &lines);
     EXPECT_EQ(3U, lines.size());
     EXPECT_EQ("abc", lines[0]);
@@ -218,8 +223,13 @@ TEST(String, SplitLines)
     EXPECT_EQ("", lines[5]);
 }
 
-TEST(String, ReplaceString)
+TEST(String, SplitLines)
 {
+    TestSplitLines<std::string>();
+    TestSplitLines<StringPiece>();
+}
+
+TEST(String, ReplaceString) {
     string str = " ab c  d   efghjijkkkkjkk//gj\\*&^xyz  end  ";
     ASSERT_EQ(" ab c  d   efghjijookkjkk//gj\\*&^xyz  end  ", ReplaceFirst(str, "kk", "oo"));
     ASSERT_EQ(" ab c  d   efghjijkkkkjkk//gj\\*&^xyz  end  ", ReplaceFirst(str, "", "xxxx"));
@@ -251,28 +261,33 @@ TEST(String, RemoveSubString)
     ASSERT_EQ(" abcdefgh i kkkk kk//g \\*&^xyz", RemoveAll(str, "j", true));
 }
 
+TEST(String, RemoveLineEndingC)
+{
+    char str[] = "hello, world\r\n\r\n";
+    EXPECT_STREQ("hello, world", RemoveLineEnding(str));
+    EXPECT_STREQ("hello, world", RemoveLineEnding(str));
+
+    char empty[] = "";
+    EXPECT_STREQ("", RemoveLineEnding(empty));
+}
+
+template <typename StringType>
+static void TestRemoveLineEnding() {
+    StringType str = "hello, world\r\n\r\n";
+    RemoveLineEnding(&str);
+    EXPECT_EQ("hello, world", str);
+    RemoveLineEnding(&str);
+    EXPECT_EQ("hello, world", str);
+
+    StringType empty = "";
+    RemoveLineEnding(&empty);
+    EXPECT_EQ("", empty);
+}
+
 TEST(String, RemoveLineEnding)
 {
-    {
-        char str[] = "hello, world\r\n\r\n";
-        EXPECT_STREQ("hello, world", RemoveLineEnding(str));
-        EXPECT_STREQ("hello, world", RemoveLineEnding(str));
-
-        char empty[] = "";
-        EXPECT_STREQ("", RemoveLineEnding(empty));
-    }
-
-    {
-        std::string str = "hello, world\r\n\r\n";
-        RemoveLineEnding(&str);
-        EXPECT_EQ("hello, world", str);
-        RemoveLineEnding(&str);
-        EXPECT_EQ("hello, world", str);
-
-        std::string empty = "";
-        RemoveLineEnding(&empty);
-        EXPECT_EQ("", empty);
-    }
+    TestRemoveLineEnding<std::string>();
+    TestRemoveLineEnding<StringPiece>();
 }
 
 TEST(String, JoinStrings)
@@ -299,7 +314,7 @@ TEST(String, JoinStringsIterator)
     str_vector.push_back("123");
     ASSERT_EQ("abc\txyz\t123",
               JoinStrings<vector<string>::const_iterator>(
-                str_vector.begin(), str_vector.end(), "\t"));
+                  str_vector.begin(), str_vector.end(), "\t"));
 }
 
 } // namespace toft

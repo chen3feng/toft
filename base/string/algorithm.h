@@ -111,6 +111,7 @@ inline void StripString(std::string* s, const std::string& remove, char replacew
 
 char* RemoveLineEnding(char* line);
 void RemoveLineEnding(std::string* line);
+void RemoveLineEnding(StringPiece* line);
 
 std::string RemoveContinuousBlank(const StringPiece& str);
 void RemoveContinuousBlank(std::string* str);
@@ -167,6 +168,10 @@ void SplitString(const StringPiece& full,
                  const char* delim,
                  std::vector<std::string>* result);
 
+void SplitString(const StringPiece& full,
+                 const char* delim,
+                 std::vector<StringPiece>* result);
+
 void SplitStringToSet(const StringPiece& full,
                       const char* delim,
                       std::set<std::string>* result);
@@ -186,6 +191,12 @@ void SplitStringKeepEmpty(
 void SplitLines(
     const StringPiece& full,
     std::vector<std::string>* result,
+    bool keep_line_endling = false
+);
+
+void SplitLines(
+    const StringPiece& full,
+    std::vector<StringPiece>* result,
     bool keep_line_endling = false
 );
 
@@ -231,7 +242,10 @@ inline void StringTrimRight(std::string* str, char trim_char)
 }
 
 void StringTrim(std::string* str);
+void StringTrim(StringPiece* str);
+
 void StringTrim(std::string* str, const StringPiece& trim_chars);
+void StringTrim(StringPiece* str, const StringPiece& trim_chars);
 inline void StringTrim(std::string* str, char trim_char)
 {
     StringTrim(str, StringPiece(&trim_char, 1));
