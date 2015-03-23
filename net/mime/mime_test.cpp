@@ -11,7 +11,7 @@ namespace toft {
 TEST(MimeType, FromFileExtension)
 {
     MimeType mt;
-    ASSERT_TRUE(mt.FromFileExtension("txt"));
+    ASSERT_TRUE(mt.FromFileExtension(".txt"));
     EXPECT_EQ("text/plain", mt.ToString());
     ASSERT_FALSE(mt.FromFileExtension("###"));
 }
