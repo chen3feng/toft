@@ -27,26 +27,30 @@ public:
     static bool Get32(StringPiece* input, uint32_t* value);
     static bool Get64(StringPiece* input, uint64_t* value);
     static bool GetLengthPrefixedStringPiece(StringPiece* input, StringPiece* result);
-    static const char* GetLengthPrefixedStringPiece(const char* p,
-                                                    const char* limit,
-                                                    StringPiece* result);
 
-    // Pointer-based variants of Get...  These either store a value
-    // in *v and return a pointer just past the parsed value, or return
+    // Pointer-based variants of Put...  These either store a value
+    // in *v and return a pointer just past the stored value, or return
     // NULL on error.  These routines only look at bytes in the range
     // [p..limit-1]
     static char* Encode32(char* p, char* limit, uint32_t v);
     static char* Encode64(char* p, char* limit, uint64_t v);
+    static char* PutLengthPrefixedStringPiece(char* p,
+                                              char* limit,
+                                              const StringPiece& value);
 
-    // Pointer-based variants of Get...  These either store a value
+    // Pointer-based variants of Get...  These either parse a value
     // in *v and return a pointer just past the parsed value, or return
     // NULL on error.  These routines only look at bytes in the range
     // [p..limit-1]
     static const char* Decode32(const char* p, const char* limit, uint32_t* v);
     static const char* Decode64(const char* p, const char* limit, uint64_t* v);
+    static const char* GetLengthPrefixedStringPiece(const char* p,
+                                                    const char* limit,
+                                                    StringPiece* result);
 
     // Returns the EncodedLength of the varint32 or varint64 encoding of "v"
     static int EncodedLength(uint64_t v);
+    static int EncodedLength(const StringPiece& value);
 
     // Lower-level versions of Put... that write directly into a character buffer
     // and return a pointer just past the last byte written.
