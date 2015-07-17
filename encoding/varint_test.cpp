@@ -121,6 +121,35 @@ TEST(VarintTest, Strings) {
     ASSERT_EQ("", input.as_string());
 }
 
+
+TEST(VarintTest, Strings2) {
+    char buf[1024];
+    char* limit = buf + 1024;
+
+    char* ptr1 = buf;
+    ptr1 = Varint::PutLengthPrefixedStringPiece(ptr1, limit, StringPiece(""));
+    ptr1 = Varint::PutLengthPrefixedStringPiece(ptr1, limit, StringPiece("foo"));
+    ptr1 = Varint::PutLengthPrefixedStringPiece(ptr1, limit, StringPiece("bar"));
+    ptr1 = Varint::PutLengthPrefixedStringPiece(ptr1, limit, StringPiece(std::string(200, 'x')));
+
+    StringPiece v;
+    const char* ptr2 = buf;
+    ptr2 = Varint::GetLengthPrefixedStringPiece(ptr2, limit, &v);
+    ASSERT_TRUE(ptr2 != NULL);
+    ASSERT_EQ("", v.as_string());
+    ptr2 = Varint::GetLengthPrefixedStringPiece(ptr2, limit, &v);
+    ASSERT_TRUE(ptr2 != NULL);
+    ASSERT_EQ("foo", v.as_string());
+    ptr2 = Varint::GetLengthPrefixedStringPiece(ptr2, limit, &v);
+    ASSERT_TRUE(ptr2 != NULL);
+    ASSERT_EQ("bar", v.as_string());
+    ptr2 = Varint::GetLengthPrefixedStringPiece(ptr2, limit, &v);
+    ASSERT_TRUE(ptr2 != NULL);
+    ASSERT_EQ(std::string(200, 'x'), v.as_string());
+
+    ASSERT_EQ(ptr1, ptr2);
+}
+
 TEST(VarintTest, Encode32) {
     char buf[1];
     EXPECT_EQ(buf + 1, Varint::Encode32(buf, buf + 1, 1));

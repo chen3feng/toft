@@ -80,6 +80,16 @@ void Varint::PutLengthPrefixedStringPiece(std::string* dst, const StringPiece& v
     dst->append(value.data(), value.size());
 }
 
+char* Varint::PutLengthPrefixedStringPiece(char* p,
+                                           char* limit,
+                                           const StringPiece& value) {
+    if (EncodedLength(value) > limit - p)
+        return NULL;
+    char* ptr = UnsafeEncode32(p, value.size());
+    memcpy(ptr, value.data(), value.size());
+    return ptr + value.size();
+}
+
 int Varint::EncodedLength(uint64_t v) {
     int len = 1;
     while (v >= static_cast<uint64_t>(kIncompleteMask)) {
@@ -87,6 +97,10 @@ int Varint::EncodedLength(uint64_t v) {
         len++;
     }
     return len;
+}
+
+int Varint::EncodedLength(const StringPiece& value) {
+    return EncodedLength(value.size()) + static_cast<int>(value.size());
 }
 
 const char* Varint::Decode32Fallback(const char* p, const char* limit, uint32_t* value) {
