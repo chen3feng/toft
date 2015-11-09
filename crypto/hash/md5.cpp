@@ -240,7 +240,7 @@ UInt128 MD5::Final() {
     uint64_t top = 0;
     uint64_t bottom = 0;
     memcpy(&top, context_.buf, 8);
-    memcpy(&bottom, context_.buf + 8, 8);
+    memcpy(&bottom, context_.buf + 2, 8);
     return UInt128(top, bottom);
 }
 
