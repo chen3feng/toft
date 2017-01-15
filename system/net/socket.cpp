@@ -281,7 +281,9 @@ bool DataSocket::Connect(const SocketAddress& address, int64_t timeout_ms)
         case EWOULDBLOCK: // For winsock
         case EINPROGRESS:
             {
-                timeval tv = { timeout_ms / 1000, timeout_ms % 1000 * 1000 };
+                timeval tv = {
+                    static_cast<time_t>(timeout_ms / 1000),
+                    static_cast<suseconds_t>(timeout_ms % 1000 * 1000) };
                 if (WaitWriteable(&tv))
                 {
                     // WaitWriteable success doesn't means connect success.

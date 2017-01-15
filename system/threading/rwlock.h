@@ -9,6 +9,7 @@
 #include <assert.h>
 #include <errno.h>
 #include <pthread.h>
+#include <string.h>
 
 #include "toft/base/uncopyable.h"
 #include "toft/system/check_error.h"
@@ -108,7 +109,7 @@ private:
 #ifdef __GLIBC__
         // If your program crashed here at runtime, maybe the rwlock object
         // has been destructed.
-        if (m_lock.__data.__flags == 0xFFFFFFFFU)
+        if (memcmp(&m_lock.__data.__flags,  "\xFF\xFF\xFF\xFF", 4) == 0)
             TOFT_CHECK_ERRNO_ERROR(EINVAL);
 #endif
     }

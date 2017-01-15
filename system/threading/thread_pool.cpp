@@ -95,8 +95,8 @@ void ThreadPool::AddTaskInternal(
         }
 
         context.pending_tasks.push_back(task);
+        context.cond.Signal();
     }
-    context.cond.Signal();
 }
 
 void ThreadPool::AddTask(Closure<void()>* callback) {

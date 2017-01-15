@@ -222,8 +222,8 @@ void MD5::FinalInternal() {
     byteReverse(context_.in, 14);
 
     /* Append length in bits and transform */
-    ((uint32_t *) context_.in)[14] = context_.bits[0];
-    ((uint32_t *) context_.in)[15] = context_.bits[1];
+    memcpy(context_.in + 14 * 4, &context_.bits[0], 4);
+    memcpy(context_.in + 15 * 4, &context_.bits[1], 4);
 
     MD5Transform(context_.buf, (uint32_t *) context_.in);
     byteReverse((unsigned char *) context_.buf, 4);

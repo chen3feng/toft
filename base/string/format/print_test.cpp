@@ -51,7 +51,7 @@ TEST(StringPrint, Signed)
     short s = 9527;
     int i = 95279527;
     long l = 95279527L;
-    long ll = 9527952795279527LL;
+    long long ll = 9527952795279527LL;
 
     EXPECT_EQ("42", StringPrint("%i", sc));
 
@@ -74,7 +74,7 @@ TEST(StringPrint, Unsigned)
     unsigned short us = 9527;
     unsigned int ui = 95279527U;
     unsigned long ul = 95279527UL;
-    unsigned long ull = 9527952795279527ULL;
+    unsigned long long ull = 9527952795279527ULL;
 
     EXPECT_EQ("142", StringPrint("%d", uc));
     EXPECT_EQ("142", StringPrint("%i", uc));
