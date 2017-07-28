@@ -5,7 +5,7 @@
 
 #include "toft/hash/crc32.h"
 
-#include "thirdparty/gtest/gtest.h"
+#include "gtest/gtest.h"
 
 namespace toft {
 

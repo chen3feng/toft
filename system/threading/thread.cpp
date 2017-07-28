@@ -10,7 +10,7 @@
 #include "toft/system/check_error.h"
 #include "toft/system/threading/base_thread.h"
 
-#include "thirdparty/glog/logging.h"
+#include "glog/logging.h"
 
 namespace toft {
 

@@ -4,7 +4,7 @@
 #include "toft/system/net/socket.h"
 #include "toft/system/threading/thread.h"
 #
-#include "thirdparty/gtest/gtest.h"
+#include "gtest/gtest.h"
 
 namespace toft {
 

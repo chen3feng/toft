@@ -2,7 +2,7 @@
 // All rights reserved.
 //
 // Author: CHEN Feng <chen3feng@gmail.com>
-
+/*
 #ifndef TOFT_SYSTEM_THREADING_SPINLOCK_H
 #define TOFT_SYSTEM_THREADING_SPINLOCK_H
 
@@ -38,3 +38,4 @@ private:
 
 #endif // TOFT_SYSTEM_THREADING_SPINLOCK_H
 
+*/

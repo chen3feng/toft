@@ -7,7 +7,7 @@
 /// @author CHEN Feng <chen3feng@gmail.com>
 
 #include "toft/net/uri/query_params.h"
-#include "thirdparty/gtest/gtest.h"
+#include "gtest/gtest.h"
 
 namespace toft {
 

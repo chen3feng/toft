@@ -7,7 +7,7 @@
 #include <ctype.h>
 #include <limits.h>
 #include <locale.h>
-#include "thirdparty/gtest/gtest.h"
+#include "gtest/gtest.h"
 
 namespace toft {
 

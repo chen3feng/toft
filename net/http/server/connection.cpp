@@ -4,7 +4,7 @@
 // Author: CHEN Feng <chen3feng@gmail.com>
 
 #include "toft/net/http/server/connection.h"
-#include "thirdparty/glog/logging.h"
+#include "glog/logging.h"
 #include "toft/base/string/format.h"
 #include "toft/base/string/number.h"
 #include "toft/net/http/request.h"

@@ -8,7 +8,7 @@
 #include "toft/net/http/request.h"
 #include "toft/net/http/response.h"
 
-#include "thirdparty/gtest/gtest.h"
+#include "gtest/gtest.h"
 
 namespace toft {
 

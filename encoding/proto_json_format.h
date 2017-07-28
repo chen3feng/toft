@@ -4,6 +4,7 @@
 #ifndef TOFT_ENCODING_PROTO_JSON_FORMAT_H_
 #define TOFT_ENCODING_PROTO_JSON_FORMAT_H_
 
+/*
 #include <string>
 
 #include "toft/base/uncopyable.h"
@@ -44,4 +45,5 @@ private:
 
 }  // namespace toft
 
+*/
 #endif  // TOFT_ENCODING_PROTO_JSON_FORMAT_H_

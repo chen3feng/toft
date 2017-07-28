@@ -7,7 +7,7 @@
 #include "toft/storage/sstable/sstable_reader.h"
 #include "toft/storage/sstable/sstable_writer.h"
 
-#include "thirdparty/glog/logging.h"
+#include "glog/logging.h"
 
 DEFINE_string(sstable_path,
               "toft/storage/sstable/test/testdata/test.sstable",

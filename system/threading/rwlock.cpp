@@ -3,6 +3,7 @@
 //
 // Author: CHEN Feng <chen3feng@gmail.com>
 
+/*
 #include "toft/system/threading/rwlock.h"
 
 #include <string.h>
@@ -31,3 +32,4 @@ RwLock::~RwLock()
 }
 
 } // namespace toft
+*/

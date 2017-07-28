@@ -8,7 +8,7 @@
 #include "toft/base/string/algorithm.h"
 #include "toft/storage/sstable/hfile/coding.h"
 
-#include "thirdparty/glog/logging.h"
+#include "glog/logging.h"
 
 namespace {
 static const std::string kTrailerBlockMagic = "TRABLK\34\36";

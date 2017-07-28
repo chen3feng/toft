@@ -6,7 +6,7 @@
 
 #include "toft/base/shared_ptr.h"
 
-#include "thirdparty/gtest/gtest.h"
+#include "gtest/gtest.h"
 
 TEST(SharedPtr, Test)
 {

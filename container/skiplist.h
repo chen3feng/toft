@@ -34,7 +34,7 @@
 #include "toft/base/random.h"
 #include "toft/system/memory/barrier.h"
 
-#include "thirdparty/glog/logging.h"
+#include "glog/logging.h"
 
 namespace toft {
 

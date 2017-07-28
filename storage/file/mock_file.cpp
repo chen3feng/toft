@@ -4,7 +4,7 @@
 // Author: CHEN Feng <chen3feng@gmail.com>
 
 #include "toft/storage/file/mock_file.h"
-#include "thirdparty/glog/logging.h"
+#include "glog/logging.h"
 
 namespace toft {
 

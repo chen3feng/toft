@@ -10,7 +10,7 @@
 #include "toft/system/threading/condition_variable.h"
 #include "toft/system/threading/mutex.h"
 
-#include "thirdparty/gtest/gtest.h"
+#include "gtest/gtest.h"
 
 namespace toft {
 

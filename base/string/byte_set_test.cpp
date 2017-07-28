@@ -6,7 +6,7 @@
 
 #include "toft/base/string/byte_set.h"
 
-#include "thirdparty/gtest/gtest.h"
+#include "gtest/gtest.h"
 
 namespace toft {
 

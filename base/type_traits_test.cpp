@@ -6,7 +6,7 @@
 
 #include "toft/base/type_traits.h"
 
-#include "thirdparty/gtest/gtest.h"
+#include "gtest/gtest.h"
 
 TEST(TypeTraits, IsVoid)
 {

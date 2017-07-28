@@ -9,8 +9,8 @@
 #include "toft/storage/file/file.h"
 #include "toft/storage/path/path.h"
 
-#include "thirdparty/gflags/gflags.h"
-#include "thirdparty/glog/logging.h"
+#include "gflags/gflags.h"
+#include "glog/logging.h"
 
 DEFINE_string(temp_sstable_dir, "/tmp",
               "dir for the temp sstable file that is used for building phrase");

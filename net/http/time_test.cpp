@@ -2,7 +2,7 @@
 // Author: Yongsong Liu <lyscsu@gmail.com>
 
 #include "toft/net/http/time.h"
-#include "thirdparty/gtest/gtest.h"
+#include "gtest/gtest.h"
 
 namespace toft {
 

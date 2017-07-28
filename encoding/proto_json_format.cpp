@@ -1,6 +1,7 @@
 // Copyright (c) 2013, The Toft Authors. All rights reserved.
 // Author: Ye Shunping <yeshunping@gmail.com>
 
+/*
 #include "toft/encoding/proto_json_format.h"
 
 #include <stdio.h>
@@ -9,10 +10,10 @@
 #include <string>
 #include <vector>
 
-#include "thirdparty/glog/logging.h"
-#include "thirdparty/google/protobuf/descriptor.h"
-#include "thirdparty/google/protobuf/message.h"
-#include "thirdparty/jsoncpp/json.h"
+#include "glog/logging.h"
+#include "google/protobuf/descriptor.h"
+#include "google/protobuf/message.h"
+#include "jsoncpp/json.h"
 #include "toft/base/string/number.h"
 
 namespace toft {
@@ -352,3 +353,4 @@ bool ProtoJsonFormat::ParseFromValue(const Json::Value& input, Message* output) 
 }
 
 }  // namespace toft
+*/

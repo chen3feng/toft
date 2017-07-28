@@ -16,7 +16,7 @@
 #include "toft/base/uncopyable.h"
 #include "toft/storage/file/file.h"
 
-#include "thirdparty/gmock/gmock.h"
+#include "gmock/gmock.h"
 
 // GLOBAL_NOLINT(whitespace/parens)
 

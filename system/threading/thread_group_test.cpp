@@ -6,7 +6,7 @@
 #include "toft/system/threading/thread_group.h"
 #include "toft/system/threading/mutex.h"
 
-#include "thirdparty/gtest/gtest.h"
+#include "gtest/gtest.h"
 
 namespace toft {
 

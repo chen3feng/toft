@@ -17,7 +17,7 @@
 #include "toft/storage/sstable/sstable.h"
 #include "toft/storage/sstable/sstable_reader.h"
 
-#include "thirdparty/glog/logging.h"
+#include "glog/logging.h"
 
 DEFINE_bool(tolerate_sstable_open_failure, false, "whether to tolerate sstable open failure");
 DEFINE_bool(ignore_sstable_setid, false, "If true, ignore sstable's setid");

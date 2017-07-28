@@ -5,7 +5,7 @@
 
 #include "toft/compress/block/snappy.h"
 
-#include "thirdparty/snappy/snappy.h"
+#include "snappy/snappy.h"
 
 namespace toft {
 SnappyCompression::SnappyCompression() {}

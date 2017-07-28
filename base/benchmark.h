@@ -59,7 +59,7 @@ extern int nbenchmarks;
 extern toft::Benchmark* benchmarks[10000];
 }  // namespace toft
 
-//  It's implemented in file: thirdparty/gperftools-2.0/src/base/sysinfo.cc
+//  It's implemented in file: gperftools-2.0/src/base/sysinfo.cc
 extern int NumCPUs();
 
 #define TOFT_BENCHMARK(f) \

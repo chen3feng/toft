@@ -5,8 +5,8 @@
 
 #include "toft/compress/block/lzo.h"
 
-#include "thirdparty/glog/logging.h"
-#include "thirdparty/lzo/lzo1x.h"
+#include "glog/logging.h"
+#include "lzo/lzo1x.h"
 
 namespace {
 const int kInitBuffSize = 64 * 1024;

@@ -7,7 +7,7 @@
 
 #include <string>
 
-#include "thirdparty/gtest/gtest.h"
+#include "gtest/gtest.h"
 #include "toft/base/scoped_ptr.h"
 #include "toft/base/string/string_piece.h"
 #include "toft/storage/file/file.h"

@@ -3,6 +3,7 @@
 //
 // Author: CHEN Feng <chen3feng@gmail.com>
 
+/*
 #include "toft/system/threading/spinlock.h"
 #include "toft/system/check_error.h"
 #include "toft/system/threading/this_thread.h"
@@ -44,3 +45,4 @@ void SpinLock::Unlock()
 }
 
 } // namespace toft
+*/

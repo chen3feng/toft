@@ -125,7 +125,7 @@ void RemoveContinuousBlank(std::string* str);
 //
 //    There are also interfaces for STL-like iterator range, the typical usage is to join
 //    repeated string field in protocol buffer message.
-//    See also: thirdparty/protobuf/repeated_field.h
+//    See also: protobuf/repeated_field.h
 std::string JoinStrings(const std::vector<std::string>& components, const StringPiece& delim);
 void JoinStrings(const std::vector<std::string>& components,
                  const StringPiece& delim,

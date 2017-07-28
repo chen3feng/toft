@@ -14,7 +14,7 @@
 #include "toft/base/string/format/print_targets.h"
 #include "toft/base/string/number.h"
 
-#include "thirdparty/glog/logging.h"
+#include "glog/logging.h"
 
 // GLOBAL_NOLINT(runtime/int)
 

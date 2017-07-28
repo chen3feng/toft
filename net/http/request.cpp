@@ -9,7 +9,7 @@
 #include "toft/base/string/algorithm.h"
 #include "toft/base/string/concat.h"
 
-#include "thirdparty/glog/logging.h"
+#include "glog/logging.h"
 
 namespace toft {
 

@@ -6,7 +6,7 @@
 
 #include "toft/base/singleton.h"
 
-#include "thirdparty/gtest/gtest.h"
+#include "gtest/gtest.h"
 
 namespace toft {
 

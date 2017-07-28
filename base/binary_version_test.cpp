@@ -7,7 +7,7 @@
 
 #include "toft/base/binary_version.h"
 
-#include "thirdparty/gtest/gtest.h"
+#include "gtest/gtest.h"
 
 TEST(BinaryVersion, Test)
 {

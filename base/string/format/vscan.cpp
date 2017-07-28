@@ -11,7 +11,7 @@
 
 #include "toft/base/string/format/scan_arg.h"
 
-#include "thirdparty/glog/logging.h"
+#include "glog/logging.h"
 
 namespace toft {
 

@@ -6,7 +6,7 @@
 #include "toft/base/unordered_map.h"
 #include "toft/base/unordered_set.h"
 
-#include "thirdparty/gtest/gtest.h"
+#include "gtest/gtest.h"
 
 TEST(Unordered, Set) {
     std::unordered_set<int> us;

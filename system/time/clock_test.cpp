@@ -5,7 +5,7 @@
 
 #include "toft/system/time/clock.h"
 
-#include "thirdparty/gtest/gtest.h"
+#include "gtest/gtest.h"
 
 namespace toft {
 

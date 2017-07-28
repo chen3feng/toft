@@ -10,7 +10,7 @@
 #include "toft/compress/block/block_compression.h"
 #include "toft/storage/sstable/hfile/coding.h"
 
-#include "thirdparty/glog/logging.h"
+#include "glog/logging.h"
 
 //  GLOBAL_NOLINT(runtime/sizeof)
 

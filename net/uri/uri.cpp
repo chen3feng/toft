@@ -21,7 +21,7 @@
 
 namespace toft {
 
-void UriAuthority::Swap(UriAuthority* other)
+void UriAuthority::Swap(UriAuthority* other) throw()
 {
     using std::swap;
     swap(m_has_user_info, other->m_has_user_info);
@@ -915,10 +915,10 @@ bool URI::WriteToBuffer(char* buffer, size_t buffer_size, size_t* result_size) c
     *result_size = static_cast<size_t>(oss.tellp());
     buffer[*result_size] = '\0';
 
-    return oss;
+    return (bool)oss;
 }
 
-void URI::Swap(URI* other)
+void URI::Swap(URI* other) throw()
 {
     using namespace std;
     swap(m_has_authority, other->m_has_authority);

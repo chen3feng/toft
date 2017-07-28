@@ -5,7 +5,7 @@
 
 #include "toft/storage/sstable/hfile/coding.h"
 
-#include "thirdparty/gtest/gtest.h"
+#include "gtest/gtest.h"
 
 namespace toft {
 namespace hfile {

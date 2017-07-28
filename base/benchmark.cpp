@@ -8,7 +8,7 @@
 #include "toft/base/benchmark.h"
 #include "toft/system/time/clock.h"
 
-#include "thirdparty/glog/logging.h"
+#include "glog/logging.h"
 
 namespace {
 const char kColorCyan[] = "\033[;36m";

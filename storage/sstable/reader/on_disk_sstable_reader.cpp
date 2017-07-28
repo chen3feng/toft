@@ -7,7 +7,7 @@
 
 #include <algorithm>
 
-#include "thirdparty/gflags/gflags.h"
+#include "gflags/gflags.h"
 
 DEFINE_int32(on_disk_sstable_block_cache, 128,
              "max # of item in the block cache for one on disk sstable");

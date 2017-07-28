@@ -7,7 +7,7 @@
 
 #include "toft/system/net/ip_address.h"
 
-#include "thirdparty/gtest/gtest.h"
+#include "gtest/gtest.h"
 
 namespace toft {
 

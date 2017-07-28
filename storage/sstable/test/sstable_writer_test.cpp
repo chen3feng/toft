@@ -14,8 +14,8 @@
 #include "toft/storage/sstable/test/test_util.h"
 #include "toft/storage/sstable/types.h"
 
-#include "thirdparty/glog/logging.h"
-#include "thirdparty/gtest/gtest.h"
+#include "glog/logging.h"
+#include "gtest/gtest.h"
 
 namespace toft {
 

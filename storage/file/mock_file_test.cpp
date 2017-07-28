@@ -7,8 +7,8 @@
 
 #include "toft/base/scoped_ptr.h"
 
-#include "thirdparty/gmock/gmock.h"
-#include "thirdparty/gtest/gtest.h"
+#include "gmock/gmock.h"
+#include "gtest/gtest.h"
 
 namespace toft {
 

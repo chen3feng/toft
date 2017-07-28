@@ -49,7 +49,7 @@ public:
     void AssertLocked() const
     {
         // by inspect internal data
-        assert(m_mutex.__data.__lock > 0);
+        //assert(m_mutex.__data.__lock > 0);
     }
 
     void Unlock()
@@ -91,7 +91,11 @@ class AdaptiveMutex : public internal::MutexBase
 {
 public:
     typedef ScopedLocker<AdaptiveMutex> Locker;
+#ifdef __APPLE__
+    AdaptiveMutex() : internal::MutexBase(PTHREAD_MUTEX_DEFAULT)
+#else
     AdaptiveMutex() : internal::MutexBase(PTHREAD_MUTEX_ADAPTIVE_NP)
+#endif
     {
     }
 };

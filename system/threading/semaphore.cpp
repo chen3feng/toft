@@ -3,6 +3,7 @@
 //
 // Author: CHEN Feng <chen3feng@gmail.com>
 
+/*
 #include "toft/system/threading/semaphore.h"
 
 #include <fcntl.h>
@@ -119,3 +120,4 @@ bool NamedSemaphore::Unlink(const std::string& name)
 }
 
 } // namespace toft
+*/

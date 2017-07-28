@@ -15,7 +15,7 @@
 #include "toft/base/uncopyable.h"
 #include "toft/system/threading/mutex.h"
 
-#include "thirdparty/glog/logging.h"
+#include "glog/logging.h"
 
 namespace toft {
 

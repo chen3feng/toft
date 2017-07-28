@@ -12,7 +12,7 @@
 #include "toft/base/string/concat.h"
 #include "toft/net/http/message.h"
 
-#include "thirdparty/glog/logging.h"
+#include "glog/logging.h"
 
 namespace toft {
 

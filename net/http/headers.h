@@ -71,7 +71,7 @@ private:
 // adapt to std::swap
 namespace std {
 template <>
-inline void swap(toft::HttpHeaders& lhs, toft::HttpHeaders& rhs) {
+inline void swap(toft::HttpHeaders& lhs, toft::HttpHeaders& rhs) throw() {
     lhs.Swap(&rhs);
 }
 } // namespace std

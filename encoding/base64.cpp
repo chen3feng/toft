@@ -5,9 +5,9 @@
 
 #include "toft/encoding/base64.h"
 
-#include "thirdparty/stringencoders/modp_b64.h"
-#include "thirdparty/stringencoders/modp_b64r.h"
-#include "thirdparty/stringencoders/modp_b64w.h"
+#include "stringencoders/modp_b64.h"
+#include "stringencoders/modp_b64r.h"
+#include "stringencoders/modp_b64w.h"
 
 namespace toft {
 

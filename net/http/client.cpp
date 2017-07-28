@@ -17,7 +17,7 @@
 #include "toft/net/uri/uri.h"
 #include "toft/system/net/domain_resolver.h"
 
-#include "thirdparty/glog/logging.h"
+#include "glog/logging.h"
 
 namespace toft {
 

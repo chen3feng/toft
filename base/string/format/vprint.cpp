@@ -13,7 +13,7 @@
 #include "toft/base/string/format/print_targets.h"
 #include "toft/base/string/format/specification.h"
 
-#include "thirdparty/glog/logging.h"
+#include "glog/logging.h"
 
 namespace toft {
 

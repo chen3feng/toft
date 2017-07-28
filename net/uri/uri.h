@@ -87,7 +87,7 @@ public: // Attributes
         ClearPort();
     }
 
-    void Swap(UriAuthority* other);
+    void Swap(UriAuthority* other) throw();
 private:
     bool m_has_user_info;
     bool m_has_port;
@@ -267,7 +267,7 @@ public: // operations
     void Clear();
 
     // swap with other URI object
-    void Swap(URI* other);
+    void Swap(URI* other) throw();
 
     bool Normalize();
     bool ToAbsolute(const URI& base);
@@ -321,13 +321,13 @@ namespace std
 {
 
 template <>
-inline void swap(toft::UriAuthority& x, toft::UriAuthority& y)
+inline void swap(toft::UriAuthority& x, toft::UriAuthority& y) throw()
 {
     x.Swap(&y);
 }
 
 template <>
-inline void swap(toft::URI& x, toft::URI& y)
+inline void swap(toft::URI& x, toft::URI& y) throw()
 {
     x.Swap(&y);
 }

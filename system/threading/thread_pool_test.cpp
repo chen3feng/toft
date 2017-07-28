@@ -11,8 +11,8 @@
 #include "toft/system/threading/this_thread.h"
 #include "toft/system/time/clock.h"
 
-#include "thirdparty/glog/logging.h"
-#include "thirdparty/gtest/gtest.h"
+#include "glog/logging.h"
+#include "gtest/gtest.h"
 
 namespace toft {
 

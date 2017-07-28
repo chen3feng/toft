@@ -136,10 +136,14 @@ void* BaseThread::StaticEntry(void* param)
     const std::string& name = base_thread->m_attributes.m_name;
     if (!name.empty()) {
         // Set thread name for easy debugging.
+#ifdef __APPLE__
+        pthread_setname_np(name.c_str());
+#else
 #if __GLIBC__ > 2 || __GLIBC__ == 2 && __GLIBC_MINOR__ >= 12
         pthread_setname_np(pthread_self(), name.c_str());
 #else
         prctl(PR_SET_NAME, name.c_str(), 0, 0, 0);
+#endif
 #endif
     }
     pthread_cleanup_push(Cleanup, param);

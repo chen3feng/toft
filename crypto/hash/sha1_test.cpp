@@ -5,7 +5,7 @@
 
 #include "toft/crypto/hash/sha1.h"
 
-#include "thirdparty/gtest/gtest.h"
+#include "gtest/gtest.h"
 
 namespace toft {
 

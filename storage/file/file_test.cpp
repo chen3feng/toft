@@ -6,7 +6,7 @@
 #include "toft/storage/file/file.h"
 #include "toft/storage/file/local_file.h"
 
-#include "thirdparty/gtest/gtest.h"
+#include "gtest/gtest.h"
 
 namespace toft {
 

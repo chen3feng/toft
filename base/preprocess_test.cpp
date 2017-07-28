@@ -8,7 +8,7 @@
 #include "toft/base/preprocess.h"
 #include "toft/base/preprocess_test_helper.h"
 
-#include "thirdparty/gtest/gtest.h"
+#include "gtest/gtest.h"
 
 TEST(Preprocess, Stringize)
 {
