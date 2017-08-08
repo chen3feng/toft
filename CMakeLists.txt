@@ -8,5 +8,6 @@ configure_file (
     )
 
 include(toft)
-add_library(toft ${toft_src})
-add_dependencies(toft gtest glog gflags cityhash libev boost protobuf snappy lzo)
+#add_library(toft ${toft_src})
+#add_dependencies(toft gtest glog gflags cityhash libev boost protobuf snappy lzo)
+cc_library(toft SRCS ${toft_src} DEPS gtest glog gflags cityhash libev boost protobuf snappy lzo)
