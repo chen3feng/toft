@@ -28,6 +28,7 @@ class MockFileSystem;
 class MockFile : public File
 {
 public:
+    MockFile(const std::string& file_path, const char* mode) : File(file_path, mode) {}
     MOCK_METHOD2(Read, int64_t (void* buffer, int64_t size));
     MOCK_METHOD2(Write, int64_t (const void* buffer, int64_t size));
     MOCK_METHOD0(Flush, bool ());
@@ -35,6 +36,10 @@ public:
     MOCK_METHOD2(Seek, bool (int64_t offset, int whence));
     MOCK_METHOD0(Tell, int64_t ());
     MOCK_METHOD2(ReadLine, bool (std::string* line, size_t max_size));
+    MOCK_METHOD2(ReadLine, bool (StringPiece* line, size_t max_size));
+    MOCK_METHOD2(ReadLineWithLineEnding, bool (std::string* line, size_t max_size));
+    MOCK_METHOD2(ReadLineWithLineEnding, bool (StringPiece* line, size_t max_size));
+    MOCK_METHOD0(IsEof, bool ());
 };
 
 // File object returned by File::Open, wrapper a real MockFile object, and
@@ -46,7 +51,7 @@ public:
 class FileMock : public File {
 public:
     FileMock(MockFileSystem* fs, const std::string& path,
-             const std::shared_ptr<MockFile>& file);
+             const std::shared_ptr<MockFile>& file, const char* mode);
     virtual ~FileMock();
     virtual int64_t Read(void* buffer, int64_t size);
     virtual int64_t Write(const void* buffer, int64_t size);
@@ -55,6 +60,10 @@ public:
     virtual bool Seek(int64_t offset, int whence);
     virtual int64_t Tell();
     virtual bool ReadLine(std::string* line, size_t max_size);
+    virtual bool ReadLine(StringPiece* line, size_t max_size);
+    virtual bool ReadLineWithLineEnding(std::string* line, size_t max_size);
+    virtual bool ReadLineWithLineEnding(StringPiece* line, size_t max_size);
+    virtual bool IsEof();
 
     // Get the wrapped MockFile object from FileMock object.
     // NOTE: To implement EXPECT_FILE_CALL only.
@@ -100,6 +109,8 @@ public:
                                          const std::string& pattern,
                                          int include_types,
                                          int exclude_types));
+    MOCK_METHOD1(GetFileType, FileType (const std::string &file_path));
+
 private:
     FileSystemMock* m_old;
 };
@@ -122,6 +133,8 @@ private:
                                   const std::string& pattern,
                                   int include_types,
                                   int exclude_types);
+    virtual FileType GetFileType(const std::string &file_path);
+
 private:
     static FileSystemMock* s_mock;
     // We expect call File::Open with same path returns same MockFile object.

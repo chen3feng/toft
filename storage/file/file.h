@@ -12,6 +12,7 @@
 #include <string>
 #include <vector>
 #include "toft/base/class_registry.h"
+#include "toft/base/string/string_piece.h"
 #include "toft/base/uncopyable.h"
 
 namespace toft {
@@ -37,6 +38,7 @@ enum FileType {
 struct FileEntry {
     int type; // FileType enum combination.
     std::string name; // Without dir.
+    int64_t file_size;
 };
 
 // To iterate file entries in a dir.
@@ -60,7 +62,7 @@ class File {
 protected:
     // You can't construct a File object, you must carete it by the static Open
     // method.
-    File();
+    File(const std::string& file_path, const char* mode);
 
 public:
     virtual ~File();
@@ -92,11 +94,21 @@ public:
     // Read next text line into *line, end of line will be stripped.
     // Read at most max_size if no eol found.
     virtual bool ReadLine(std::string* line, size_t max_size = 65536) = 0;
+    virtual bool ReadLine(StringPiece* line, size_t max_size = 65536) = 0;
+    virtual bool ReadLineWithLineEnding(std::string* line, size_t max_size = 65536) = 0;
+    virtual bool ReadLineWithLineEnding(StringPiece* line, size_t max_size = 65536) = 0;
+
+    virtual bool IsEof() = 0;
+
+    std::string file_path() { return m_file_path; }
+    std::string mode() { return m_mode; }
 
 public:
     // The returned File* object is created by new and can be deleted.
     // So it can be stored into a scoped_ptr.
     static File* Open(const std::string& file_path, const char* mode);
+
+    static FileType GetFileType(const std::string &file_path);
 
     // Check whether a path exists.
     static bool Exists(const std::string& file_path);
@@ -124,8 +136,11 @@ public:
                                  const std::string& pattern = "*",
                                  int include_type = FileType_All,
                                  int exclude_type = FileType_None);
+protected:
+    std::string m_file_path;
+    std::string m_mode;
 
-private:
+public:
     static FileSystem* GetFileSystemByPath(const std::string& file_path);
 };
 
@@ -138,6 +153,7 @@ protected:
     virtual ~FileSystem();
 public:
     virtual File* Open(const std::string& file_path, const char* mode) = 0;
+    virtual FileType GetFileType(const std::string &file_path) = 0;
     virtual bool Exists(const std::string& file_path) = 0;
     virtual bool Delete(const std::string& file_path) = 0;
     virtual bool Rename(const std::string& from, const std::string& to) = 0;

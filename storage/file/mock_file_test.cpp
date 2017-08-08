@@ -72,11 +72,12 @@ TEST(MockFile, ReadLine)
 {
     scoped_ptr<File> file(File::Open("/mock/test", "r"));
 
-    TOFT_FILE_EXPECT_CALL(*file, ReadLine(_, _))
-        .WillOnce(DoAll(SetArgPointee<0>("hello"), Return(true)))
+    std::string line;
+    const char *arg_pointee = "hello";
+    TOFT_FILE_EXPECT_CALL(*file, ReadLine(&line, _))
+        .WillOnce(DoAll(SetArgPointee<0>(arg_pointee), Return(true)))
         .WillRepeatedly(Return(false));
 
-    std::string line;
     EXPECT_TRUE(file->ReadLine(&line));
     EXPECT_EQ("hello", line);
     EXPECT_FALSE(file->ReadLine(&line));

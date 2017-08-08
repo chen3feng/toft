@@ -48,7 +48,8 @@ bool FileSystem::ReadLines(const std::string& file_path,
 /////////////////////////////////////////////////////////////////////////////
 // File
 
-File::File() {}
+File::File(const std::string& file_path, const char* mode) : m_file_path(file_path),
+                                                             m_mode(std::string(mode)) {}
 File::~File() {}
 
 FileSystem* File::GetFileSystemByPath(const std::string& file_path)
@@ -70,6 +71,11 @@ File* File::Open(const std::string& file_path, const char* mode)
 {
     FileSystem* fs = GetFileSystemByPath(file_path);
     return fs->Open(file_path, mode);
+}
+
+FileType File::GetFileType(const std::string &file_path) {
+    FileSystem* fs = GetFileSystemByPath(file_path);
+    return fs->GetFileType(file_path);
 }
 
 bool File::Exists(const std::string& file_path)
