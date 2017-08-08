@@ -110,6 +110,7 @@ inline void StripString(std::string* s, const std::string& remove, char replacew
 }
 
 char* RemoveLineEnding(char* line);
+void RemoveLineEnding(char* line, size_t* length);
 void RemoveLineEnding(std::string* line);
 void RemoveLineEnding(StringPiece* line);
 
