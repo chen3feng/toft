@@ -54,6 +54,11 @@ public:
                             const std::string& p3, const std::string& p4,
                             const std::string& p5, const std::string& p6);
 
+    static std::string ToRelative(const std::string& base_directory,
+                                  const std::string& file_path);
+
+    static std::string GetCwd();
+
 private:
     static std::string DoJoin(const std::string** paths, size_t size);
 };
