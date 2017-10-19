@@ -75,8 +75,7 @@ protected:
         // ipaddress or hostname, port, username and password.
         hdfsFS GetConnection(const std::string& scheme,
                              const std::string& host_port,
-                             const std::string& username,
-                             const std::string& password);
+                             const std::string& username);
 
     private:
         typedef boost::unordered_map<std::pair<std::string, std::string>, hdfsFS> HDFSFSMap;
@@ -121,7 +120,7 @@ private:
 
     hdfsFile m_file; // internal hdfsFile obj
     hdfsFS m_fs; // internal hdfsFS obj
-    //LineReader m_line_reader; //internal hdfsLineReader obj
+    LineReader m_line_reader; //internal hdfsLineReader obj
 
     bool m_iseof;
     bool m_closed;

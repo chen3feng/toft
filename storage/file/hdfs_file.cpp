@@ -160,8 +160,7 @@ hdfsFS HDFSFileSystem::HDFSFSCache::GetConnection(const std::string& scheme,
 
 hdfsFS HDFSFileSystem::HDFSFSCache::GetConnection(const std::string& scheme,
                                                   const std::string& host_port,
-                                                  const std::string& username,
-                                                  const std::string& password) {
+                                                  const std::string& username) {
     vector<string> split;
     if (!UriUtils::Explode(host_port, ':', &split)) {
         return false;
@@ -228,13 +227,13 @@ hdfsFS HDFSFileSystem::GetHDFSFS(const std::string& file_path,
         std::map<std::string, std::string>::iterator it;
         it = params->find("username");
         std::string username = it->second;
-        it = params->find("password");
-        std::string password = it->second;
-        if (it == params->end()) {
-            return NULL;
-        }
+        //it = params->find("password");
+        //std::string password = it->second;
+        //if (it == params->end()) {
+        //    return NULL;
+        //}
         fs = m_fs_cache.GetConnection(sections[0],
-                cluster_name, username, password);
+                cluster_name, username);
     } else {
         fs = m_fs_cache.GetConnection(sections[0], cluster_name);
     }
@@ -272,7 +271,8 @@ File* HDFSFileSystem::Open(const std::string& file_path, const char* mode) {
     if (!file) {
         return NULL;
     }
-    return new HDFSFile(file, fs, file_path, mode);
+    File* file0 = new HDFSFile(file, fs, file_path, mode);
+    return file0;
 }
 
 FileType HDFSFileSystem::GetFileType(const std::string &file_path) {
@@ -378,7 +378,7 @@ HDFSFile::HDFSFile(hdfsFile file, hdfsFS fs, const std::string& file_path, const
         : File(file_path, mode),
         m_file(file),
         m_fs(fs),
-        //m_line_reader(NULL),
+        m_line_reader(NULL),
         m_iseof(false),
         m_closed(false) {
 }
@@ -408,9 +408,9 @@ bool HDFSFile::Flush() {
 
 bool HDFSFile::Close() {
     m_closed = true;
-   // if (m_line_reader) {
-   //     closeLineReader(m_line_reader);
-   // }
+    if (m_line_reader) {
+        closeLineReader(m_line_reader);
+    }
     return hdfsCloseFile(m_fs, m_file) == 0;
 }
 
@@ -438,40 +438,40 @@ int64_t HDFSFile::Tell() {
 }
 
 bool HDFSFile::ReadLine(std::string* line, size_t max_size) {
-   // if (!m_line_reader) {
-   //     m_line_reader = createLineReader(m_file);
-   // }
-   // if (!m_line_reader) {
-   //     return false;
-   // }
+    if (!m_line_reader) {
+        m_line_reader = createLineReader(m_file);
+    }
+    if (!m_line_reader) {
+        return false;
+    }
 
-   // void* raw_line;
-   // int n_bytes = readLineByLineReader(m_fs, m_line_reader, &raw_line);
-   // if (-1 == n_bytes) m_iseof = true;
+    void* raw_line;
+    int n_bytes = readLineByLineReader(m_fs, m_line_reader, &raw_line);
+    if (-1 == n_bytes) m_iseof = true;
 
-   // if (!(n_bytes > 0) || !(static_cast<size_t>(n_bytes) < max_size)){
-   //     return false;
-   // }
-   // line->assign(reinterpret_cast<char*>(raw_line), n_bytes);
+    if (!(n_bytes > 0) || !(static_cast<size_t>(n_bytes) < max_size)){
+        return false;
+    }
+    line->assign(reinterpret_cast<char*>(raw_line), n_bytes);
     return true;
 }
 
 bool HDFSFile::ReadLine(StringPiece* line, size_t max_size) {
-   // if (!m_line_reader) {
-   //     m_line_reader = createLineReader(m_file);
-   // }
-   // if (!m_line_reader) {
-   //     return false;
-   // }
+    if (!m_line_reader) {
+        m_line_reader = createLineReader(m_file);
+    }
+    if (!m_line_reader) {
+        return false;
+    }
 
-   // void* raw_line;
-   // int n_bytes = readLineByLineReader(m_fs, m_line_reader, &raw_line);
-   // if (-1 == n_bytes) m_iseof = true;
+    void* raw_line;
+    int n_bytes = readLineByLineReader(m_fs, m_line_reader, &raw_line);
+    if (-1 == n_bytes) m_iseof = true;
 
-   // if (!(n_bytes > 0) || !(static_cast<size_t>(n_bytes) < max_size)){
-   //     return false;
-   // }
-   // line->set(reinterpret_cast<char*>(raw_line), n_bytes);
+    if (!(n_bytes > 0) || !(static_cast<size_t>(n_bytes) < max_size)){
+        return false;
+    }
+    line->set(reinterpret_cast<char*>(raw_line), n_bytes);
     return true;
 }
 
