@@ -227,10 +227,10 @@ int64_t LocalFile::Tell()
 
 bool LocalFile::ReadLine(std::string* line, size_t max_size)
 {
-    bool is_read = BufferedReadLine(max_size + 1);
+    size_t length;
+    bool is_read = BufferedReadLine(max_size + 1, &length);
     if (!is_read)
         return false;
-    size_t length = strlen(m_buffer.get());
     RemoveLineEnding(m_buffer.get(), &length);
     line->assign(m_buffer.get(), length);
     return true;
@@ -238,33 +238,35 @@ bool LocalFile::ReadLine(std::string* line, size_t max_size)
 
 bool LocalFile::ReadLineWithLineEnding(std::string* line, size_t max_size)
 {
-    bool is_read = BufferedReadLine(max_size + 1);
+    size_t length;
+    bool is_read = BufferedReadLine(max_size + 1, &length);
     if (!is_read) {
         return false;
     }
-    line->assign(m_buffer.get());
+    line->assign(m_buffer.get(), length);
     return true;
 }
 
 bool LocalFile::ReadLine(StringPiece* line, size_t max_size)
 {
-    bool is_read = BufferedReadLine(max_size + 1);
+    size_t length;
+    bool is_read = BufferedReadLine(max_size + 1, &length);
     if (!is_read) {
         return false;
     }
-    size_t length = strlen(m_buffer.get());
     RemoveLineEnding(m_buffer.get(), &length);
-    line->set(m_buffer.get());
+    line->set(m_buffer.get(), length);
     return true;
 }
 
 bool LocalFile::ReadLineWithLineEnding(StringPiece* line, size_t max_size)
 {
-    bool is_read = BufferedReadLine(max_size + 1);
+    size_t length;
+    bool is_read = BufferedReadLine(max_size + 1, &length);
     if (!is_read) {
         return false;
     }
-    line->set(m_buffer.get());
+    line->set(m_buffer.get(), length);
     return true;
 }
 
@@ -273,12 +275,15 @@ bool LocalFile::IsEof() {
     return true;
 }
 
-bool LocalFile::BufferedReadLine(size_t max_size) {
+bool LocalFile::BufferedReadLine(size_t max_size, size_t* bytes_read) {
     if (max_size > m_buffer_size) {
         ResizeBuffer(max_size);
     }
 
-    return fgets(m_buffer.get(), max_size, m_fp) != NULL;
+    int64_t current_offset = ftello(m_fp);
+    bool ret = fgets(m_buffer.get(), max_size, m_fp) != NULL;
+    *bytes_read = ftello(m_fp) - current_offset;
+    return ret;
 }
 
 void LocalFile::ResizeBuffer(size_t buffer_size) {

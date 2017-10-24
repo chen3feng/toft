@@ -53,7 +53,7 @@ public:
     virtual bool IsEof();
 
 private:
-    bool BufferedReadLine(size_t max_size);
+    bool BufferedReadLine(size_t max_size, size_t* bytes_read);
     void ResizeBuffer(size_t buffer_size);
 
 private:
