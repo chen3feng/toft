@@ -12,7 +12,7 @@
 #include <string>
 
 #include "boost/unordered_map.hpp"
-#include "client/hdfs.h"
+#include "hdfs/hdfs.h"
 
 #include "toft/storage/file/file.h"
 
