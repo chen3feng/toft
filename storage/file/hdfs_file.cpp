@@ -138,7 +138,7 @@ hdfsFS HDFSFileSystem::HDFSFSCache::GetConnection(const std::string& scheme,
                                                   const std::string& host_port) {
     vector<string> split;
     if (!UriUtils::Explode(host_port, ':', &split)) {
-        return false;
+        return NULL;
     }
     int port = atoi(split[1].c_str());
     string host = split[0];
@@ -163,7 +163,7 @@ hdfsFS HDFSFileSystem::HDFSFSCache::GetConnection(const std::string& scheme,
                                                   const std::string& username) {
     vector<string> split;
     if (!UriUtils::Explode(host_port, ':', &split)) {
-        return false;
+        return NULL;
     }
     int port = atoi(split[1].c_str());
     string host = split[0];
@@ -363,7 +363,7 @@ FileIterator* HDFSFileSystem::Iterate(const std::string& dir,
     if (!fs) return NULL;
     std::string shifted_path;
     if (!UriUtils::Shift(dir, &shifted_path, 2, '/')) {
-        return false;
+        return NULL;
     }
     return new HDFSFileIterator(fs, shifted_path, pattern, include_types, exclude_types);
 }

@@ -9,7 +9,7 @@
 
 // GLOBAL_NOLINT(runtime/int)
 
-#ifdef __unix__
+#if (defined(__unix__) || __APPLE__)
 
 #include <pwd.h>
 #include <unistd.h>
@@ -22,7 +22,7 @@
 #endif
 namespace toft {
 
-#ifdef __unix__
+#if (defined(__unix__) || __APPLE__)
 unsigned int GetLogicalCpuNumber()
 {
     return sysconf(_SC_NPROCESSORS_ONLN);
