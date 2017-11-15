@@ -10,4 +10,10 @@ configure_file (
 include(toft)
 cc_library(toft SRCS ${toft_src} DEPS toft_other hdfs libgsasl libxml2 gmock glog gflags cityhash libev boost protobuf snappy stringencoders uuid krb5 k5crypto com_err krb5support)
 cc_library(toft_other SRCS ${toft_other_src} DEPS hdfs libgsasl libxml2 gmock glog gflags cityhash libev boost protobuf snappy stringencoders uuid krb5 k5crypto com_err krb5support)
-target_link_libraries(toft -lz -lcrypto -liconv -llzma -lgcrypt -lidn -lresolv)
+
+if(APPLE)
+  target_link_libraries(toft -lz -lcrypto -liconv -llzma -lgcrypt -lidn -lresolv)
+else()
+  # looks like keytuils is involed when building krb on Linux platform
+  target_link_libraries(toft -lz -lcrypto -liconv -llzma -lgcrypt -lidn -lresolv -lkeyutils)
+endif()
