@@ -4,7 +4,7 @@
 // Author: CHEN Feng <chen3feng@gmail.com>
 
 #include "toft/net/mime/mime.h"
-#include "thirdparty/gtest/gtest.h"
+#include "gtest/gtest.h"
 
 namespace toft {
 

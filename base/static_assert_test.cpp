@@ -7,7 +7,7 @@
 
 #include "toft/base/static_assert.h"
 
-#include "thirdparty/gtest/gtest.h"
+#include "gtest/gtest.h"
 
 namespace toft {
 

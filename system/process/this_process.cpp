@@ -11,7 +11,7 @@
 #include "toft/storage/path/path.h"
 #include "toft/system/process/process_local_const.h"
 
-#include "thirdparty/glog/logging.h"
+#include "glog/logging.h"
 
 namespace toft {
 

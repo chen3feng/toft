@@ -5,7 +5,7 @@
 
 #include "toft/system/time/date.h"
 
-#include "thirdparty/gtest/gtest.h"
+#include "gtest/gtest.h"
 
 namespace toft {
 

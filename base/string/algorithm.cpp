@@ -156,6 +156,13 @@ char* RemoveLineEnding(char* line)
     return line;
 }
 
+void RemoveLineEnding(char* line, size_t* length)
+{
+    size_t& len = *length;
+    while (*length > 0 && (line[*length-1] == '\r' || line[*length-1] == '\n'))
+        line[--*length] = '\0';
+}
+
 template <typename StringType>
 void DoRemoveLineEnding(StringType* line)
 {

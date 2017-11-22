@@ -14,7 +14,11 @@ static inline int DebugEnabled(int type)
     if (type == PTHREAD_MUTEX_RECURSIVE)
         return type;
     // Alwasy enable errcheck in debug mode
+#ifdef __APPLE__
+    return PTHREAD_MUTEX_ERRORCHECK;
+#else
     return PTHREAD_MUTEX_ERRORCHECK_NP;
+#endif
 #endif
 }
 

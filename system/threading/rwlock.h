@@ -2,7 +2,7 @@
 // All rights reserved.
 //
 // Author: CHEN Feng <chen3feng@gmail.com>
-
+/*
 #ifndef TOFT_SYSTEM_THREADING_RWLOCK_H
 #define TOFT_SYSTEM_THREADING_RWLOCK_H
 
@@ -119,5 +119,5 @@ private:
 };
 
 } // namespace toft
-
+*/
 #endif // TOFT_SYSTEM_THREADING_RWLOCK_H

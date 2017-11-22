@@ -3,13 +3,20 @@
 
 #include "toft/net/http/time.h"
 
+//#include <locale.h>
+#ifdef __APPLE__
+#include <xlocale.h>
+#else
 #include <locale.h>
+#endif
 #include <string.h>
 #include <time.h>
 #include <sys/timeb.h>
 #include <sys/types.h>
 
 namespace toft {
+
+//typedef void *locale_t;
 
 static locale_t GetCLocale()
 {

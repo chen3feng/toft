@@ -7,7 +7,7 @@
 
 #include "toft/storage/file/file.h"
 
-#include "thirdparty/glog/logging.h"
+#include "glog/logging.h"
 
 namespace toft {
 namespace hfile {

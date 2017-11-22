@@ -9,8 +9,8 @@
 #include "toft/base/array_size.h"
 #include "toft/storage/file/file.h"
 
-#include "thirdparty/glog/logging.h"
-#include "thirdparty/gtest/gtest.h"
+#include "glog/logging.h"
+#include "gtest/gtest.h"
 
 namespace toft {
 

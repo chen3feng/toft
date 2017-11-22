@@ -12,7 +12,7 @@
 #include "toft/storage/sstable/writer/unsorted_sstable_writer.h"
 #include "toft/system/time/clock.h"
 
-#include "thirdparty/glog/logging.h"
+#include "glog/logging.h"
 
 DEFINE_string(tmp_dir_and_prefix, "/tmp/tmp_sstable",
               "dir and prefix for the CompositedSSTableWriter's "

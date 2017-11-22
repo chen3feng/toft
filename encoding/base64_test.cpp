@@ -4,7 +4,7 @@
 // Author: CHEN Feng <chen3feng@gmail.com>
 
 #include "toft/encoding/base64.h"
-#include "thirdparty/gtest/gtest.h"
+#include "gtest/gtest.h"
 
 const std::string kText = ".<>@???????";
 const std::string kBase64Text = "Ljw+QD8/Pz8/Pz8=";

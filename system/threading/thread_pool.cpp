@@ -7,7 +7,7 @@
 
 #include "toft/system/threading/thread_pool.h"
 
-#include "thirdparty/glog/logging.h"
+#include "glog/logging.h"
 
 #include "toft/base/scoped_ptr.h"
 #include "toft/base/string/concat.h"

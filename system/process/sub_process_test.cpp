@@ -11,9 +11,9 @@
 #include "toft/system/process/this_process.h"
 #include "toft/system/threading/this_thread.h"
 
-#include "thirdparty/gflags/gflags.h"
-#include "thirdparty/glog/logging.h"
-#include "thirdparty/gtest/gtest.h"
+#include "gflags/gflags.h"
+#include "glog/logging.h"
+#include "gtest/gtest.h"
 
 DEFINE_bool(test_mode, true, "run as gtest or normal process");
 DEFINE_int32(loop_count, 1, "run loop count");

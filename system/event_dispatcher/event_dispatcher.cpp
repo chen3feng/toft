@@ -4,7 +4,7 @@
 // Author: CHEN Feng <chen3feng@gmail.com>
 
 #include "toft/system/event_dispatcher/event_dispatcher.h"
-#include "thirdparty/libev/ev++.h"
+#include "libev/ev++.h"
 
 namespace toft {
 

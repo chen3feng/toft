@@ -5,7 +5,7 @@
 
 #include "toft/base/benchmark.h"
 
-#include "thirdparty/gflags/gflags.h"
+#include "gflags/gflags.h"
 
 extern int toft::nbenchmarks;
 extern toft::Benchmark* toft::benchmarks[];

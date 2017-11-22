@@ -6,7 +6,7 @@
 
 #include "toft/system/process/process_local_const.h"
 
-#include "thirdparty/gtest/gtest.h"
+#include "gtest/gtest.h"
 
 namespace toft {
 

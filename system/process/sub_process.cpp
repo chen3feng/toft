@@ -11,6 +11,7 @@
 #include <signal.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <unistd.h>
 #include <sys/types.h>
 #include <sys/wait.h>
 #include <vector>
@@ -20,7 +21,8 @@
 #include "toft/system/eintr_ignored.h"
 #include "toft/system/time/clock.h"
 
-#include "thirdparty/glog/logging.h"
+#include "glog/logging.h"
+#include "boost/process/environment.hpp"
 
 namespace toft {
 
@@ -155,13 +157,10 @@ static void GetAllEnvironments(std::map<std::string, std::string>* envs)
 {
     envs->clear();
     int i = 0;
-    while (environ[i]) {
-        char* env = environ[i];
-        char* p = strchr(env, '=');
-        if (p) {
-            (*envs)[std::string(env, p)] = p + 1;
-        }
-        ++i;
+    boost::process::environment env = boost::this_process::environment();
+    boost::process::environment::iterator it = env.begin();
+    for (; it != env.end(); it++) {
+        (*envs)[it->get_name()] = it->to_string();
     }
 }
 
@@ -206,8 +205,16 @@ void SubProcess::DoExec(const char* const* args,
     std::map<std::string, std::string> envs;
     std::vector<std::string> venvs;
     std::vector<const char*> cenvs;
-    char** env = ::environ;
+
+    GetAllEnvironments(&envs);
+    EnvironmentsToStringVector(envs, &venvs);
+    StringVectorToCStringVector(venvs, &cenvs);
+    char** env = const_cast<char**>(&cenvs[0]);
+
     if (options.m_replace_envs || !options.m_envs.empty()) {
+        envs.clear();
+        venvs.clear();
+        cenvs.clear();
         if (!options.m_replace_envs)
             GetAllEnvironments(&envs);
         AppendEnvironments(&envs, options.m_envs, true);
@@ -240,9 +247,9 @@ void SubProcess::DoExec(const char* const* args,
         }
     }
 
-    execvpe(args[0], const_cast<char**>(args), env);
+    execve(args[0], const_cast<char**>(args), env);
     int error = errno;
-    PLOG(ERROR) << "Failed to execvpe " << args[0];
+    PLOG(ERROR) << "Failed to execve " << args[0];
 
     // Notify parent process.
     if (write(pipe_write_fd, &error, sizeof(error)) != sizeof(error)) {
@@ -256,7 +263,7 @@ bool SubProcess::Create(const char* const* args, const CreateOptions& options)
 {
     CHECK_LE(m_pid, 0) << "Already running or not waited";
 
-    int fds[2]; // To pass the error of execvpe.
+    int fds[2]; // To pass the error of execve.
     if (pipe(fds) < 0) {
         PLOG(ERROR) << "Can't create pipe";
         return false;

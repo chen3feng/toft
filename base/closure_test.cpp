@@ -11,7 +11,7 @@
 #include "toft/base/functional.h"
 #include "toft/base/scoped_ptr.h"
 
-#include "thirdparty/gtest/gtest.h"
+#include "gtest/gtest.h"
 
 // GLOBAL_NOLINT(runtime/int)
 // GLOBAL_NOLINT(readability/casting)

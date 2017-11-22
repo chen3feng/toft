@@ -4,13 +4,13 @@
 // Author: CHEN Feng <chen3feng@gmail.com>
 
 #include "toft/storage/file/mock_file.h"
-#include "thirdparty/glog/logging.h"
+#include "glog/logging.h"
 
 namespace toft {
 
 FileMock::FileMock(MockFileSystem* fs, const std::string& path,
-                   const std::shared_ptr<MockFile>& file)
-    : m_fs(fs), m_path(path), m_mock(file) {}
+                   const std::shared_ptr<MockFile>& file, const char* mode)
+    : File(path, mode), m_fs(fs), m_path(path), m_mock(file) {}
 
 FileMock::~FileMock() {
     m_mock.reset();
@@ -43,6 +43,22 @@ int64_t FileMock::Tell() {
 
 bool FileMock::ReadLine(std::string* line, size_t max_size) {
     return m_mock->ReadLine(line, max_size);
+}
+
+bool FileMock::ReadLine(StringPiece* line, size_t max_size) {
+    return m_mock->ReadLine(line, max_size);
+}
+
+bool FileMock::ReadLineWithLineEnding(std::string* line, size_t max_size) {
+    return m_mock->ReadLineWithLineEnding(line, max_size);
+}
+
+bool FileMock::ReadLineWithLineEnding(StringPiece* line, size_t max_size) {
+    return m_mock->ReadLineWithLineEnding(line, max_size);
+}
+
+bool FileMock::IsEof() {
+    return m_mock->IsEof();
 }
 
 MockFile* FileMock::FromFile(File* file, const char* filename, int line)
@@ -87,10 +103,10 @@ File* MockFileSystem::Open(const std::string& file_path, const char* mode) {
         return s_mock->Open(file_path, mode);
     OpenedFileMap::iterator i = m_opened_files.find(file_path);
     if (i == m_opened_files.end()) {
-        std::shared_ptr<MockFile> file(new MockFile);
+        std::shared_ptr<MockFile> file(new MockFile(file_path, mode));
         i = m_opened_files.insert(std::make_pair(file_path, file)).first;
     }
-    return new FileMock(this, file_path, i->second);
+    return new FileMock(this, file_path, i->second, mode);
 }
 
 bool MockFileSystem::Exists(const std::string& file_path) {
@@ -131,6 +147,11 @@ FileIterator* MockFileSystem::Iterate(const std::string& dir,
                                       int exclude_types) {
     CHECK_FILE_SYSTEM_MOCK();
     return s_mock->Iterate(dir, pattern, include_types, exclude_types);
+}
+
+FileType MockFileSystem::GetFileType(const std::string &file_path) {
+    CHECK_FILE_SYSTEM_MOCK();
+    return s_mock->GetFileType(file_path);
 }
 
 TOFT_REGISTER_FILE_SYSTEM("mock", MockFileSystem);

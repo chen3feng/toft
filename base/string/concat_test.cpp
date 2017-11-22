@@ -8,9 +8,9 @@
 #include "toft/base/string/concat.h"
 #include "toft/base/string/format.h"
 
-#include "thirdparty/gtest/gtest.h"
-#include "thirdparty/perftools/profiler.h"
-#include "thirdparty/protobuf/text_format.h"
+#include "gtest/gtest.h"
+#include "perftools/profiler.h"
+#include "protobuf/text_format.h"
 
 namespace toft {
 

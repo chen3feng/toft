@@ -8,24 +8,16 @@
 #define TOFT_BASE_TYPE_TRAITS_H
 #pragma once
 
-#include <features.h>
+#include "toft/config.h"
 
-#if __GNUC_PREREQ(4, 1)
-#define TOFT_HAS_STD_TR1_TYPE_TRAITS
-#endif
-
-#if __GNUC_PREREQ(4, 5) && defined(__GXX_EXPERIMENTAL_CXX0X__)
-#define TOFT_HAS_STD_TYPE_TRAITS
-#endif
-
-#if defined TOFT_HAS_STD_TYPE_TRAITS
+#ifdef _STD_HAS_TYPE_TRAITS
 #include "toft/base/type_traits/std.h"
-#elif defined TOFT_HAS_STD_TR1_TYPE_TRAITS
+#elif defined _TR1_HAS_TYPE_TRAITS
 #include "toft/base/type_traits/tr1.h"
 #else
 #include "toft/base/type_traits/missing.h"
 #endif
-
+    
 #undef TOFT_HAS_STD_TYPE_TRAITS
 #undef TOFT_HAS_STD_TR1_TYPE_TRAITS
 

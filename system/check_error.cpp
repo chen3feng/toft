@@ -10,8 +10,8 @@
 #include <errno.h>
 #include <string.h>
 
-#include "thirdparty/glog/logging.h"
-#include "thirdparty/glog/raw_logging.h"
+#include "glog/logging.h"
+#include "glog/raw_logging.h"
 
 namespace toft {
 

@@ -10,7 +10,7 @@
 #include <string>
 #include <vector>
 
-#include "thirdparty/gtest/gtest.h"
+#include "gtest/gtest.h"
 
 using namespace std;
 

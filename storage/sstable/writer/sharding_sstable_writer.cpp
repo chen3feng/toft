@@ -12,7 +12,7 @@
 #include "toft/storage/sharding/sharding.h"
 #include "toft/storage/sstable/writer/composited_sstable_writer.h"
 
-#include "thirdparty/glog/logging.h"
+#include "glog/logging.h"
 
 namespace toft {
 

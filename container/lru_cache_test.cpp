@@ -9,8 +9,8 @@
 #include "toft/system/threading/thread_pool.h"
 #include "toft/system/time/clock.h"
 
-#include "thirdparty/glog/logging.h"
-#include "thirdparty/gtest/gtest.h"
+#include "glog/logging.h"
+#include "gtest/gtest.h"
 
 namespace toft {
 

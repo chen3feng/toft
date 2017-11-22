@@ -3,7 +3,7 @@
 
 #include "toft/system/threading/condition_variable.h"
 
-#include "thirdparty/gtest/gtest.h"
+#include "gtest/gtest.h"
 
 namespace toft {
 

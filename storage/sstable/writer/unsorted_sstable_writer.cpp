@@ -8,7 +8,7 @@
 #include "toft/storage/file/file.h"
 #include "toft/storage/sstable/sstable.h"
 
-#include "thirdparty/gflags/gflags.h"
+#include "gflags/gflags.h"
 
 namespace toft {
 

@@ -7,7 +7,7 @@
 
 #include "toft/net/http/client.h"
 #include <iostream>
-#include "thirdparty/gtest/gtest.h"
+#include "gtest/gtest.h"
 
 namespace toft {
 

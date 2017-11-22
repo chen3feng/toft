@@ -12,7 +12,7 @@
 #include "toft/base/scoped_ptr.h"
 #include "toft/storage/sstable/sstable_reader.h"
 
-#include "thirdparty/gflags/gflags.h"
+#include "gflags/gflags.h"
 
 DECLARE_bool(tolerate_sstable_open_failure);
 

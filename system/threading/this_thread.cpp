@@ -10,7 +10,7 @@
 #include <string.h>
 
 #include <pthread.h>
-#include <syscall.h>
+#include <sys/syscall.h>
 #include <unistd.h>
 
 namespace toft {

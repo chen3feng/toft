@@ -6,7 +6,7 @@
 #include "toft/system/memory/unaligned.h"
 #include "toft/system/time/clock.h"
 
-#include "thirdparty/gtest/gtest.h"
+#include "gtest/gtest.h"
 
 #define TEST_URL_PREFIX \
 "https://www.qq.com/news/2010-09-21/deucation/advanced/oversea/united_states/" \

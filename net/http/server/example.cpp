@@ -5,8 +5,8 @@
 
 #include "toft/net/http/server/server.h"
 
-#include "thirdparty/gflags/gflags.h"
-#include "thirdparty/glog/logging.h"
+#include "gflags/gflags.h"
+#include "glog/logging.h"
 
 int main(int argc, char** argv) {
     FLAGS_alsologtostderr = true;

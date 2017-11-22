@@ -12,7 +12,7 @@ namespace toft {
 
 class SystemClock : public Clock {
 public:
-    explicit SystemClock(int id) : m_id(id) {}
+    explicit SystemClock(int id) : m_id((clockid_t)id) {}
     virtual int64_t StartTime() {
         return 19700101000000L;
     }

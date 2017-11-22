@@ -7,8 +7,8 @@
 
 #include "toft/compress/block/block_compression.h"
 
-#include "thirdparty/glog/logging.h"
-#include "thirdparty/gtest/gtest.h"
+#include "glog/logging.h"
+#include "gtest/gtest.h"
 
 namespace toft {
 
@@ -37,10 +37,5 @@ void TestCompression(const std::string& name, const std::string& test_str) {
 TEST(CompressionTest, SnappyCompression) {
     TestCompression("snappy", test_str);
     TestCompression("snappy", test_empty_str);
-}
-
-TEST(CompressionTest, LzoCompression) {
-    TestCompression("lzo", test_str);
-    TestCompression("lzo", test_empty_str);
 }
 }  // namespace toft

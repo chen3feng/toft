@@ -5,7 +5,7 @@
 
 #include "toft/text/wildcard.h"
 
-#include "thirdparty/gtest/gtest.h"
+#include "gtest/gtest.h"
 
 namespace toft {
 

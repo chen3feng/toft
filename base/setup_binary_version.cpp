@@ -7,7 +7,7 @@
 
 #include "toft/base/binary_version.h"
 
-#include "thirdparty/gflags/gflags.h"
+#include "gflags/gflags.h"
 
 namespace toft {
 

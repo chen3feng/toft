@@ -6,7 +6,7 @@
 #include "toft/hash/fingerprint.h"
 #include "toft/hash/murmur.h"
 
-#include "thirdparty/stringencoders/modp_b16.h"
+#include "modp_b16.h"
 
 namespace toft {
 

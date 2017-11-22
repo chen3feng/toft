@@ -13,6 +13,7 @@
 #include <string.h>
 #include <unistd.h>
 #include <sys/stat.h>
+#include <stdio.h>
 
 #include "toft/base/string/algorithm.h"
 #include "toft/base/unique_ptr.h"
@@ -50,6 +51,14 @@ public:
             if (!Wildcard::Match(m_pattern, de->d_name))
                 continue;
 
+            struct stat buf;
+            // user should be careful about entry.file_size
+            std::string path = Path::Join(m_dir, de->d_name);
+            if (stat(path.c_str(), &buf) == 0) {
+                entry->file_size = buf.st_size;
+            } else {
+                entry->file_size = -1;
+            }
             entry->type = type;
             entry->name = de->d_name;
             return true;
@@ -105,7 +114,19 @@ File* LocalFileSystem::Open(const std::string& file_path, const char* mode)
         fp(fopen(file_path.c_str(), mode), &fclose);
     if (!fp)
         return NULL;
-    return new LocalFile(fp.release());
+    return new LocalFile(fp.release(), file_path, mode);
+}
+
+FileType LocalFileSystem::GetFileType(const std::string &file_path) {
+    FileType file_type = FileType_None;
+    struct stat st;
+    if (stat(file_path.c_str(), &st) >= 0) {
+        if (S_ISREG(st.st_mode)) file_type = FileType_Regular;
+        else if (S_ISDIR(st.st_mode)) file_type = FileType_Directory;
+        // Do not care other types;
+    }
+
+    return file_type;
 }
 
 bool LocalFileSystem::Exists(const std::string& file_path)
@@ -116,6 +137,10 @@ bool LocalFileSystem::Exists(const std::string& file_path)
 bool LocalFileSystem::Delete(const std::string& file_path)
 {
     return remove(file_path.c_str()) == 0;
+}
+
+bool LocalFileSystem::Mkdir(const std::string& path, int mode) {
+    return mkdir(path.c_str(), mode) == 0;
 }
 
 bool LocalFileSystem::Rename(const std::string& from, const std::string& to) {
@@ -150,8 +175,8 @@ TOFT_REGISTER_FILE_SYSTEM("local", LocalFileSystem);
 /////////////////////////////////////////////////////////////////////////////
 // LocalFile
 
-LocalFile::LocalFile(FILE* fp) : m_fp(fp)
-{
+LocalFile::LocalFile(FILE* fp, const std::string& file_path, const char* mode)
+    : File(file_path, mode), m_fp(fp), m_buffer_size(0u) {
 }
 
 LocalFile::~LocalFile()
@@ -162,18 +187,18 @@ LocalFile::~LocalFile()
 int64_t LocalFile::Read(void* buffer, int64_t size)
 {
     int64_t nread = fread(buffer, 1, size, m_fp);
-    if (nread == 0 && size > 0 && ferror(m_fp))
-        return -1;
+    if (ferror(m_fp)) return -1;
     return nread;
 }
 
 int64_t LocalFile::Write(const void* buffer,
                          int64_t size)
 {
-    int64_t nwrite = fwrite(buffer, 1, size, m_fp);
-    if (nwrite == 0 && size > 0 && ferror(m_fp))
-        return -1;
-    return nwrite;
+    // size_t nwrite = fwrite(buffer, 1, size, m_fp);
+    // if (ferror(m_fp)) return -1;
+    // return nwrite;
+    int fd = fileno(m_fp);
+    return write(fd, buffer, size);
 }
 
 bool LocalFile::Flush()
@@ -202,13 +227,68 @@ int64_t LocalFile::Tell()
 
 bool LocalFile::ReadLine(std::string* line, size_t max_size)
 {
-    line->resize(max_size + 1);
-    char* p = fgets(&(*line)[0], max_size, m_fp);
-    if (!p)
+    size_t length;
+    bool is_read = BufferedReadLine(max_size + 1, &length);
+    if (!is_read)
         return false;
-    line->resize(strlen(p));
-    RemoveLineEnding(line);
+    RemoveLineEnding(m_buffer.get(), &length);
+    line->assign(m_buffer.get(), length);
     return true;
+}
+
+bool LocalFile::ReadLineWithLineEnding(std::string* line, size_t max_size)
+{
+    size_t length;
+    bool is_read = BufferedReadLine(max_size + 1, &length);
+    if (!is_read) {
+        return false;
+    }
+    line->assign(m_buffer.get(), length);
+    return true;
+}
+
+bool LocalFile::ReadLine(StringPiece* line, size_t max_size)
+{
+    size_t length;
+    bool is_read = BufferedReadLine(max_size + 1, &length);
+    if (!is_read) {
+        return false;
+    }
+    RemoveLineEnding(m_buffer.get(), &length);
+    line->set(m_buffer.get(), length);
+    return true;
+}
+
+bool LocalFile::ReadLineWithLineEnding(StringPiece* line, size_t max_size)
+{
+    size_t length;
+    bool is_read = BufferedReadLine(max_size + 1, &length);
+    if (!is_read) {
+        return false;
+    }
+    line->set(m_buffer.get(), length);
+    return true;
+}
+
+bool LocalFile::IsEof() {
+    if (0 == feof(m_fp))  return false;
+    return true;
+}
+
+bool LocalFile::BufferedReadLine(size_t max_size, size_t* bytes_read) {
+    if (max_size > m_buffer_size) {
+        ResizeBuffer(max_size);
+    }
+
+    int64_t current_offset = ftello(m_fp);
+    bool ret = fgets(m_buffer.get(), max_size, m_fp) != NULL;
+    *bytes_read = ftello(m_fp) - current_offset;
+    return ret;
+}
+
+void LocalFile::ResizeBuffer(size_t buffer_size) {
+    m_buffer_size = buffer_size;
+    m_buffer.reset(new char[buffer_size]);
 }
 
 } // namespace toft

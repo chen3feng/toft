@@ -8,7 +8,7 @@
 #include <signal.h>
 #include <stdio.h>
 #include <unistd.h>
-#include "thirdparty/gtest/gtest.h"
+#include "gtest/gtest.h"
 
 namespace toft {
 

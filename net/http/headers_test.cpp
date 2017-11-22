@@ -4,7 +4,7 @@
 #include "toft/net/http/headers.h"
 #include "toft/net/http/message.h"
 
-#include "thirdparty/gtest/gtest.h"
+#include "gtest/gtest.h"
 
 namespace toft {
 

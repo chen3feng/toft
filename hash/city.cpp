@@ -5,7 +5,7 @@
 
 #include "toft/hash/city.h"
 
-#include "thirdparty/cityhash/city.h"
+#include "cityhash/city.h"
 
 namespace toft {
 

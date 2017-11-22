@@ -9,7 +9,7 @@
 #include "toft/encoding/percent_test_gbk.cpp"
 #include "toft/encoding/percent_test_utf8.cpp"
 
-#include "thirdparty/gtest/gtest.h"
+#include "gtest/gtest.h"
 
 namespace toft {
 

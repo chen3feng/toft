@@ -4,7 +4,7 @@
 #include "toft/storage/path/path.h"
 #include <string>
 #include <vector>
-#include "thirdparty/gtest/gtest.h"
+#include "gtest/gtest.h"
 
 namespace toft {
 

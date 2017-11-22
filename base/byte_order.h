@@ -11,11 +11,8 @@
 
 #include <stddef.h>
 
-#ifdef __unix__
-#include <byteswap.h>
-#include <endian.h>
 #include <arpa/inet.h>
-#endif
+#include "portable_byte_order.h"
 
 // define __LITTLE_ENDIAN
 #ifndef __LITTLE_ENDIAN

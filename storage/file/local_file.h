@@ -9,6 +9,8 @@
 
 #include <stdio.h>
 #include <string>
+#include "toft/base/scoped_array.h"
+#include "toft/base/string/string_piece.h"
 #include "toft/storage/file/file.h"
 
 namespace toft {
@@ -16,6 +18,7 @@ namespace toft {
 class LocalFileSystem : public FileSystem {
 public:
     virtual File* Open(const std::string& file_path, const char* mode);
+    virtual FileType GetFileType(const std::string &file_path);
     virtual bool Exists(const std::string& file_path);
     virtual bool Delete(const std::string& file_path);
     virtual bool Rename(const std::string& from, const std::string& to);
@@ -24,12 +27,13 @@ public:
                                   const std::string& pattern,
                                   int include_types,
                                   int exclude_types);
+    virtual bool Mkdir(const std::string& path, int mode);
 };
 
 // Represent a file object on local mounted file system
 class LocalFile : public File {
     friend class LocalFileSystem;
-    explicit LocalFile(FILE* fp);
+    explicit LocalFile(FILE* fp, const std::string& file_path, const char* mode);
 public:
     virtual ~LocalFile();
 
@@ -42,8 +46,20 @@ public:
     virtual bool Seek(int64_t offset, int whence);
     virtual int64_t Tell();
     virtual bool ReadLine(std::string* line, size_t max_size);
+    virtual bool ReadLine(StringPiece* line, size_t max_size);
+    virtual bool ReadLineWithLineEnding(std::string* line, size_t max_size);
+    virtual bool ReadLineWithLineEnding(StringPiece* line, size_t max_size);
+
+    virtual bool IsEof();
+
+private:
+    bool BufferedReadLine(size_t max_size, size_t* bytes_read);
+    void ResizeBuffer(size_t buffer_size);
+
 private:
     FILE* m_fp;
+    scoped_array<char> m_buffer;
+    size_t m_buffer_size;
 };
 
 } // namespace toft

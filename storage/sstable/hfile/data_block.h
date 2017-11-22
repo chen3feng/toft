@@ -13,7 +13,7 @@
 #include "toft/storage/sstable/hfile/block.h"
 #include "toft/storage/sstable/types.h"
 
-#include "thirdparty/glog/logging.h"
+#include "glog/logging.h"
 
 namespace toft {
 class BlockCompression;

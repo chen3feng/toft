@@ -48,7 +48,7 @@ TOFT_CLASS_REGISTRY_DEFINE(block_compression_registry, BlockCompression);
         class_name)
 
 #define TOFT_CREATE_BLOCK_COMPRESSION(name) \
-    TOFT_CLASS_REGISTRY_CREATE_OBJECT(block_compression_registry, name)
+    TOFT_CLASS_REGISTRY_CREATE_OBJECT(toft::block_compression_registry, name)
 
 }  // namespace toft
 #endif  // TOFT_COMPRESS_BLOCK_BLOCK_COMPRESSION_H

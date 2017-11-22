@@ -9,7 +9,7 @@
 #include "toft/system/event_dispatcher/event_dispatcher.h"
 #include "toft/system/net/socket.h"
 
-#include "thirdparty/glog/logging.h"
+#include "glog/logging.h"
 
 namespace toft {
 

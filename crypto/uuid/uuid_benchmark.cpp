@@ -4,7 +4,7 @@
 #include "toft/base/benchmark.h"
 #include "toft/crypto/uuid/uuid.h"
 
-#include "thirdparty/glog/logging.h"
+#include "glog/logging.h"
 
 static void CreateCanonicalUUIDString(int n) {
     for (int i = 0; i < n; i++) {

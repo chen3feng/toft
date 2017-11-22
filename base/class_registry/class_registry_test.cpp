@@ -10,7 +10,7 @@
 #include "toft/base/class_registry/class_registry_test_helper.h"
 #include "toft/base/scoped_ptr.h"
 
-#include "thirdparty/gtest/gtest.h"
+#include "gtest/gtest.h"
 
 namespace toft {
 namespace base_namespace {

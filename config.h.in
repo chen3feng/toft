@@ -1,0 +1,3 @@
+#cmakedefine _STD_HAS_TYPE_TRAITS
+#cmakedefine _TR1_HAS_TYPE_TRAITS
+

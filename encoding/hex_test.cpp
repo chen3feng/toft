@@ -6,7 +6,7 @@
 #include "toft/encoding/hex.h"
 #include "toft/base/array_size.h"
 
-#include "thirdparty/gtest/gtest.h"
+#include "gtest/gtest.h"
 
 namespace toft {
 

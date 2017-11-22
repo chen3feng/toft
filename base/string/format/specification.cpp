@@ -11,7 +11,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "thirdparty/glog/logging.h"
+#include "glog/logging.h"
 
 namespace toft {
 

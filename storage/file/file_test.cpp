@@ -6,11 +6,13 @@
 #include "toft/storage/file/file.h"
 #include "toft/storage/file/local_file.h"
 
-#include "thirdparty/gtest/gtest.h"
+#include "gtest/gtest.h"
 
 namespace toft {
 
 const char* const kFileName = "testdata/testfile.txt";
+const char* const kLinkFileName = "testdata/testfile.link";
+const char* const kWithNullFileName = "file.data_null";
 
 class FileTest : public testing::Test {
 protected:
@@ -101,16 +103,146 @@ TEST_F(FileTest, ReadAll) {
 
 TEST_F(FileTest, ReadLine) {
     scoped_ptr<File> fp(File::Open(kFileName, "r"));
-    std::string line;
-    ASSERT_TRUE(fp->ReadLine(&line));
-    EXPECT_EQ("helloworld1", line);
-    ASSERT_TRUE(fp->ReadLine(&line));
-    EXPECT_EQ("helloworld2", line);
-    ASSERT_TRUE(fp->ReadLine(&line));
-    EXPECT_EQ("helloworld3", line);
-    ASSERT_TRUE(fp->ReadLine(&line));
-    EXPECT_EQ("", line);
-    ASSERT_FALSE(fp->ReadLine(&line));
+    {
+        std::string line;
+        ASSERT_TRUE(fp->ReadLine(&line));
+        EXPECT_EQ("helloworld1", line);
+        ASSERT_TRUE(fp->ReadLine(&line));
+        EXPECT_EQ("helloworld2", line);
+        ASSERT_TRUE(fp->ReadLine(&line));
+        EXPECT_EQ("helloworld3", line);
+        ASSERT_TRUE(fp->ReadLine(&line));
+        EXPECT_EQ("", line);
+        ASSERT_FALSE(fp->ReadLine(&line));
+    }
+
+    fp->Seek(0, SEEK_SET);
+    {
+        StringPiece line;
+        ASSERT_TRUE(fp->ReadLine(&line));
+        EXPECT_EQ("helloworld1", line);
+        ASSERT_TRUE(fp->ReadLine(&line));
+        EXPECT_EQ("helloworld2", line);
+        ASSERT_TRUE(fp->ReadLine(&line));
+        EXPECT_EQ("helloworld3", line);
+        ASSERT_TRUE(fp->ReadLine(&line));
+        EXPECT_EQ("", line);
+        ASSERT_FALSE(fp->ReadLine(&line));
+    }
+
+    fp->Seek(0, SEEK_SET);
+    {
+        StringPiece line;
+        ASSERT_TRUE(fp->ReadLine(&line, 2));
+        EXPECT_EQ("he", line);
+        fp->Seek(34, SEEK_SET);
+        ASSERT_TRUE(fp->ReadLine(&line, 2));
+        EXPECT_EQ("3", line);
+        ASSERT_TRUE(fp->ReadLine(&line, 2));
+        EXPECT_EQ("", line);
+        ASSERT_FALSE(fp->ReadLine(&line));
+    }
+    fp->Seek(35, SEEK_SET);
+    {
+        StringPiece line;
+        ASSERT_TRUE(fp->ReadLine(&line, 1));
+        EXPECT_EQ("", line);
+        ASSERT_TRUE(fp->ReadLine(&line, 1));
+        EXPECT_EQ("", line);
+        ASSERT_FALSE(fp->ReadLine(&line));
+    }
+}
+
+TEST_F(FileTest, ReadLineWithLineEnding) {
+    scoped_ptr<File> fp(File::Open(kFileName, "r"));
+    {
+        std::string line;
+        ASSERT_TRUE(fp->ReadLineWithLineEnding(&line));
+        EXPECT_EQ("helloworld1\n", line);
+        ASSERT_TRUE(fp->ReadLineWithLineEnding(&line));
+        EXPECT_EQ("helloworld2\n", line);
+        ASSERT_TRUE(fp->ReadLineWithLineEnding(&line));
+        EXPECT_EQ("helloworld3\n", line);
+        ASSERT_TRUE(fp->ReadLineWithLineEnding(&line));
+        EXPECT_EQ("\n", line);
+        ASSERT_FALSE(fp->ReadLineWithLineEnding(&line));
+    }
+
+    fp->Seek(0, SEEK_SET);
+    {
+        StringPiece line;
+        ASSERT_TRUE(fp->ReadLineWithLineEnding(&line));
+        EXPECT_EQ("helloworld1\n", line);
+        ASSERT_TRUE(fp->ReadLineWithLineEnding(&line));
+        EXPECT_EQ("helloworld2\n", line);
+        ASSERT_TRUE(fp->ReadLineWithLineEnding(&line));
+        EXPECT_EQ("helloworld3\n", line);
+        ASSERT_TRUE(fp->ReadLineWithLineEnding(&line));
+        EXPECT_EQ("\n", line);
+        ASSERT_FALSE(fp->ReadLine(&line));
+    }
+
+    fp->Seek(0, SEEK_SET);
+    {
+        StringPiece line;
+        ASSERT_TRUE(fp->ReadLineWithLineEnding(&line, 2));
+        EXPECT_EQ("he", line);
+        fp->Seek(34, SEEK_SET);
+        ASSERT_TRUE(fp->ReadLineWithLineEnding(&line, 2));
+        EXPECT_EQ("3\n", line);
+        ASSERT_TRUE(fp->ReadLineWithLineEnding(&line, 2));
+        EXPECT_EQ("\n", line);
+        ASSERT_FALSE(fp->ReadLineWithLineEnding(&line));
+    }
+    fp->Seek(35, SEEK_SET);
+    {
+        StringPiece line;
+        ASSERT_TRUE(fp->ReadLineWithLineEnding(&line, 1));
+        EXPECT_EQ("\n", line);
+        ASSERT_TRUE(fp->ReadLineWithLineEnding(&line, 1));
+        EXPECT_EQ("\n", line);
+        ASSERT_FALSE(fp->ReadLineWithLineEnding(&line));
+    }
+}
+
+TEST_F(FileTest, ReadLineWithNull) {
+    {
+        scoped_ptr<File> fp(File::Open(kWithNullFileName, "w"));
+        int64_t wrote = fp->Write("he\0llo1\n", 8);
+        EXPECT_EQ(8, wrote);
+        wrote = fp->Write("hel\0lo2", 7);
+        EXPECT_EQ(7, wrote);
+        EXPECT_TRUE(fp->Flush());
+        EXPECT_TRUE(fp->Close());
+    }
+    {
+        scoped_ptr<File> fp(File::Open(kWithNullFileName, "r"));
+        {
+            std::string line;
+            std::string expected;
+            ASSERT_TRUE(fp->ReadLineWithLineEnding(&line));
+            EXPECT_EQ(expected.assign("he\0llo1\n", 8), line);
+            ASSERT_TRUE(fp->ReadLine(&line));
+            EXPECT_EQ(expected.assign("hel\0lo2", 7), line);
+        }
+        fp->Seek(0, SEEK_SET);
+        {
+            StringPiece line;
+            std::string expected;
+            ASSERT_TRUE(fp->ReadLine(&line));
+            EXPECT_EQ(expected.assign("he\0llo1", 7), line.as_string());
+            ASSERT_TRUE(fp->ReadLineWithLineEnding(&line));
+            EXPECT_EQ(expected.assign("hel\0lo2", 7), line.as_string());
+        }
+    }
+    {
+        std::vector<std::string> lines;
+        std::string expected;
+        ASSERT_TRUE(File::ReadLines(kWithNullFileName, &lines));
+        EXPECT_EQ(2U, lines.size());
+        EXPECT_EQ(expected.assign("he\0llo1", 7), lines[0]);
+        EXPECT_EQ(expected.assign("hel\0lo2", 7), lines[1]);
+    }
 }
 
 TEST_F(FileTest, ReadLines) {
@@ -125,6 +257,7 @@ TEST_F(FileTest, ReadLines) {
 
 TEST_F(FileTest, Exists) {
     EXPECT_TRUE(File::Exists(kFileName));
+    EXPECT_TRUE(File::Exists(kLinkFileName));
     EXPECT_FALSE(File::Exists("non-exist"));
 }
 
@@ -192,6 +325,20 @@ TEST_F(FileTest, IterateWithExcludeTypes) {
     while (i->GetNext(&entry)) {
         ASSERT_NE("dir", entry.name);
     }
+}
+
+TEST_F(FileTest, IsEof) {
+    scoped_ptr<File> fp(File::Open(kFileName, "r"));
+    std::string line;
+    ASSERT_TRUE(fp->ReadLine(&line));
+    EXPECT_FALSE(fp->IsEof());
+
+    ASSERT_TRUE(fp->ReadLine(&line));
+    ASSERT_TRUE(fp->ReadLine(&line));
+    ASSERT_TRUE(fp->ReadLine(&line));
+    ASSERT_FALSE(fp->ReadLine(&line));
+
+    EXPECT_TRUE(fp->IsEof());
 }
 
 } // namespace toft

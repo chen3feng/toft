@@ -110,6 +110,7 @@ inline void StripString(std::string* s, const std::string& remove, char replacew
 }
 
 char* RemoveLineEnding(char* line);
+void RemoveLineEnding(char* line, size_t* length);
 void RemoveLineEnding(std::string* line);
 void RemoveLineEnding(StringPiece* line);
 
@@ -125,7 +126,7 @@ void RemoveContinuousBlank(std::string* str);
 //
 //    There are also interfaces for STL-like iterator range, the typical usage is to join
 //    repeated string field in protocol buffer message.
-//    See also: thirdparty/protobuf/repeated_field.h
+//    See also: protobuf/repeated_field.h
 std::string JoinStrings(const std::vector<std::string>& components, const StringPiece& delim);
 void JoinStrings(const std::vector<std::string>& components,
                  const StringPiece& delim,

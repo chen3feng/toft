@@ -4,7 +4,7 @@
 
 #include "toft/base/unique_ptr.h"
 
-#include "thirdparty/gtest/gtest.h"
+#include "gtest/gtest.h"
 
 namespace toft {
 
