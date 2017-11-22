@@ -191,7 +191,6 @@ hdfsFS HDFSFileSystem::HDFSFSCache::GetConnection(const std::string& scheme,
 //
 
 const char* HDFSFileSystem::HDFS = "hdfs";
-const char* HDFSFileSystem::AFS  = "afs";
 
 HDFSFileSystem::HDFSFileSystem() {
 }
@@ -212,7 +211,7 @@ hdfsFS HDFSFileSystem::GetHDFSFS(const std::string& file_path,
         return NULL;
     }
     // handle local files
-    if (sections[0] != "hdfs" && sections[0] != "afs") {
+    if (sections[0] != "hdfs") {
        return m_fs_cache.GetLocal();
     }
     std::string cluster_name;
@@ -370,7 +369,6 @@ FileIterator* HDFSFileSystem::Iterate(const std::string& dir,
 
 
 TOFT_REGISTER_FILE_SYSTEM(HDFSFileSystem::HDFS, HDFSFileSystem);
-TOFT_REGISTER_FILE_SYSTEM(HDFSFileSystem::AFS, HDFSFileSystem);
 
 ///////////////////////////////////////////////////////////////////////////////////////////
 //  HDFSFile Implementation
