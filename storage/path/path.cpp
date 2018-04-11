@@ -6,8 +6,10 @@
 #include "toft/storage/path/path.h"
 #include <errno.h>
 #include <stdlib.h>
+#include <unistd.h>
 #include "toft/base/array_size.h"
 #include "toft/base/string/algorithm.h"
+#include "thirdparty/glog/logging.h"
 
 namespace toft {
 
@@ -62,6 +64,52 @@ std::string Path::ToAbsolute(const std::string& filepath)
     char cwd_buf[4096];
     std::string cwd = getcwd(cwd_buf, sizeof(cwd_buf));
     return Normalize(Join(cwd, filepath));
+}
+
+std::string Path::GetCwd() {
+    char cwd_buf[4096];
+    std::string cwd = getcwd(cwd_buf, sizeof(cwd_buf));
+    return cwd;
+}
+
+std::string Path::ToRelative(const std::string& base_directory,
+                             const std::string& file_path) {
+    std::string absolute_base_directory = Path::ToAbsolute(base_directory);
+    std::string absolute_file_path = Path::ToAbsolute(file_path);
+
+    std::vector<std::string> absolute_base_directory_pathes;
+    std::vector<std::string> file_path_pathes;
+
+    SplitString(absolute_base_directory, "/", &absolute_base_directory_pathes);
+    SplitString(absolute_file_path, "/", &file_path_pathes);
+
+    int directory_path_size = static_cast<int>(absolute_base_directory_pathes.size());
+    int file_path_size = static_cast<int>(file_path_pathes.size());
+
+    int i = 0;
+
+    for (; (i < directory_path_size) && (i < file_path_size); ++i) {
+        if (absolute_base_directory_pathes[i] != file_path_pathes[i]) {
+            break;
+        }
+    }
+
+    int rest_size = directory_path_size - i;
+
+    file_path_pathes.erase(file_path_pathes.begin(), file_path_pathes.begin() + i);
+    file_path_pathes.insert(file_path_pathes.begin(), rest_size, "..");
+
+    int size = file_path_pathes.size();
+
+    if (file_path_pathes.empty()) {
+        return "";
+    } else {
+        std::string path = file_path_pathes[0];
+        for (int i = 1; i < size; ++i) {
+            path = Join(path,  file_path_pathes[i]);
+        }
+        return path;
+    }
 }
 
 bool Path::IsAbsolute(const std::string& filepath)

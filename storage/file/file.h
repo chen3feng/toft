@@ -60,7 +60,7 @@ class File {
 protected:
     // You can't construct a File object, you must carete it by the static Open
     // method.
-    File();
+    File(const std::string& file_path, const char* mode);
 
 public:
     virtual ~File();
@@ -92,6 +92,12 @@ public:
     // Read next text line into *line, end of line will be stripped.
     // Read at most max_size if no eol found.
     virtual bool ReadLine(std::string* line, size_t max_size = 65536) = 0;
+    virtual bool ReadLineWithLineEnding(std::string* line, size_t max_size = 65536) = 0;
+
+    virtual bool IsEof() = 0;
+
+    std::string file_path() { return m_file_path; }
+    std::string mode() { return m_mode; }
 
 public:
     // The returned File* object is created by new and can be deleted.
@@ -110,6 +116,9 @@ public:
     // Get times attributes of path
     static bool GetTimes(const std::string& file_path, FileTimes* times);
 
+    // Get size attributes of path
+    static int64_t GetSize(const std::string& file_path);
+
     // Read all bytes into *buffer, at most max_size if file too large.
     static bool ReadAll(const std::string& file_path, std::string* buffer,
                         size_t max_size = 64*1024*1024);
@@ -124,6 +133,16 @@ public:
                                  const std::string& pattern = "*",
                                  int include_type = FileType_All,
                                  int exclude_type = FileType_None);
+
+    // Create new directory
+    static bool Mkdir(const std::string& path, int dir);
+
+    // Remove directory
+    static bool Rmdir(const std::string& dir);
+
+protected:
+    std::string m_file_path;
+    std::string m_mode;
 
 private:
     static FileSystem* GetFileSystemByPath(const std::string& file_path);
@@ -142,6 +161,7 @@ public:
     virtual bool Delete(const std::string& file_path) = 0;
     virtual bool Rename(const std::string& from, const std::string& to) = 0;
     virtual bool GetTimes(const std::string& file_path, FileTimes* times) = 0;
+    virtual int64_t GetSize(const std::string& file_path) = 0;
     virtual bool ReadAll(const std::string& file_path, std::string* buffer,
                          size_t max_size);
     virtual bool ReadLines(const std::string& file_path,
@@ -150,6 +170,9 @@ public:
                                   const std::string& pattern,
                                   int include_types,
                                   int exclude_types) = 0;
+
+    virtual bool Mkdir(const std::string& path, int mode) = 0;
+    virtual bool Rmdir(const std::string& path) = 0;
 };
 
 // Defile the file_system class registry, user can register their own
