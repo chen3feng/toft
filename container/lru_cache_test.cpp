@@ -111,8 +111,9 @@ static void ReadThread(LruCache<int, int> *cache) {
     while (RealtimeClock.MicroSeconds() - now < 500) {
         for (int i = 2; i < 1000; ++i) {
             bool r = cache->Get(i, &value);
-            if (r)
+            if (r) {
                 ASSERT_EQ(0, value % i);
+            }
         }
     }
 }

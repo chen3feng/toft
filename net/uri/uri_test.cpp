@@ -234,8 +234,9 @@ TEST_F(BatchTest, Test)
         {
             bool parse_result = uri.Parse(urls[j]);
             EXPECT_TRUE(parse_result) << urls[j];
-            if (parse_result)
+            if (parse_result) {
                 EXPECT_EQ(urls[j], uri.ToString());
+            }
         }
     }
 }

@@ -27,8 +27,9 @@ TEST(BloomFilter, FalsePositiveRate)
         }
     }
     std::cout << "total_conflicts: " << total_conflicts << "\n";
-    if (total_conflicts > 0)
+    if (total_conflicts > 0) {
         EXPECT_GT(capacity/total_conflicts, 1000) << total_conflicts;
+    }
 }
 
 TEST(BloomFilter, Bitmap)

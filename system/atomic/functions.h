@@ -83,7 +83,8 @@ void EnsureLinkedWithAtomicLibrary();
 template <typename T>
 T AtomicGet(const T* ptr)
 {
-    return __sync_fetch_and_add(const_cast<volatile T*>(ptr), 0);
+    __sync_synchronize();
+    return *ptr;
 }
 
 template <typename T>

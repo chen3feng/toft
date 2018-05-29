@@ -915,7 +915,7 @@ bool URI::WriteToBuffer(char* buffer, size_t buffer_size, size_t* result_size) c
     *result_size = static_cast<size_t>(oss.tellp());
     buffer[*result_size] = '\0';
 
-    return oss;
+    return oss.good();
 }
 
 void URI::Swap(URI* other)

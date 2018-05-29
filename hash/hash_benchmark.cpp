@@ -62,7 +62,7 @@ static void MurmurHash64B(int n) {
 
 static void CRC32(int n) {
     for (int i = 0; i < n; i++) {
-        toft::CRC32(test_str);
+        toft::CRC32::Digest(test_str);
     }
 }
 
