@@ -15,7 +15,7 @@ namespace internal {
 
 bool SemaphoreOps::TryAcquire(sem_t* sem)
 {
-    if (TOFT_EINTR_IGNORED(sem_trywait(sem) == 0))
+    if (TOFT_EINTR_IGNORED(sem_trywait(sem)) == 0)
         return true;
     int error = errno;
     if (error == EAGAIN)

@@ -34,6 +34,7 @@ cc_library(
         ':murmur',
         '//thirdparty/stringencoders:stringencoders'
     ],
+    extra_cppflags = ['-Wno-implicit-fallthrough'],
 )
 
 cc_library(
@@ -52,6 +53,7 @@ cc_library(
         'murmur/MurmurHashAligned2.cpp',
         'murmur/MurmurHashNeutral2.cpp',
     ],
+    extra_cppflags = ['-Wno-implicit-fallthrough'],
 )
 
 cc_test(
