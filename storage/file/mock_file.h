@@ -136,7 +136,7 @@ private:
 ACTION_TEMPLATE(FillArgBuffer,
                 HAS_1_TEMPLATE_PARAMS(int, k),
                 AND_2_VALUE_PARAMS(data, length)) {
-    memcpy(::std::tr1::get<k>(args), data, length);
+    memcpy(::std::get<k>(args), data, length);
 }
 
 } // namespace toft

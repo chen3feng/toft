@@ -205,6 +205,8 @@ std::string Date::ToString() const {
     return std::string(buf, strftime(buf, sizeof(buf), "%F", &tm));
 }
 
+#pragma GCC diagnostic ignored "-Wformat-nonliteral"
+
 std::string Date::Format(const std::string& format) const {
     struct tm tm = {};
     tm.tm_year = m_year - 1900;
