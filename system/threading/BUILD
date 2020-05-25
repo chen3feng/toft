@@ -58,7 +58,8 @@ cc_library(
         '//toft/base:closure',
         '//toft/base/string:string',
         '//toft/system/info:info'
-    ]
+    ],
+    extra_cppflags = ['-faligned-new'],
 )
 
 cc_library(

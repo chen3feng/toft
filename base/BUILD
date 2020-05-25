@@ -39,23 +39,6 @@ cc_library(
 )
 
 cc_library(
-    name = 'benchmark',
-    srcs = 'benchmark.cpp',
-    deps = ['//toft/system/time:time',
-            '//thirdparty/glog:glog',
-            '//thirdparty/perftools:tcmalloc_and_profiler',
-           ]
-)
-
-cc_library(
-    name = 'benchmark_main',
-    srcs = 'benchmark_main.cpp',
-    deps = [':benchmark',
-            '//thirdparty/gflags:gflags',
-           ]
-)
-
-cc_library(
     name = 'int128',
     srcs = 'int128.cpp',
     deps = '//thirdparty/glog:glog',

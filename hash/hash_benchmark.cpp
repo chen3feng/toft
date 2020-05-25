@@ -2,78 +2,78 @@
 // Author: Ye Shunping <yeshunping@gmail.com>
 
 #include "toft/hash/hash.h"
-#include "toft/base/benchmark.h"
+#include "thirdparty/benchmark/benchmark.h"
 
 const std::string test_str = "qwertyuiopasdfghjklmnbvcz";
 
-static void CityHash32(int n) {
-    for (int i = 0; i < n; i++) {
+static void CityHash32(benchmark::State& state) {
+    for (auto _ : state) {
         toft::CityHash32(test_str);
     }
 }
 
-static void CityHash64(int n) {
-    for (int i = 0; i < n; i++) {
+static void CityHash64(benchmark::State& state) {
+    for (auto _ : state) {
         toft::CityHash64(test_str);
     }
 }
 
-static void CityHash128(int n) {
-    for (int i = 0; i < n; i++) {
+static void CityHash128(benchmark::State& state) {
+    for (auto _ : state) {
         toft::CityHash128(test_str);
     }
 }
 
-static void Fingerprint64(int n) {
-    for (int i = 0; i < n; i++) {
+static void Fingerprint64(benchmark::State& state) {
+    for (auto _ : state) {
         toft::Fingerprint64(test_str);
     }
 }
 
-static void Fingerprint32(int n) {
-    for (int i = 0; i < n; i++) {
+static void Fingerprint32(benchmark::State& state) {
+    for (auto _ : state) {
         toft::Fingerprint32(test_str);
     }
 }
 
-static void JenkinsOneAtATimeHash(int n) {
-    for (int i = 0; i < n; i++) {
+static void JenkinsOneAtATimeHash(benchmark::State& state) {
+    for (auto _ : state) {
         toft::JenkinsOneAtATimeHash(test_str);
     }
 }
 
-static void SuperFastHash(int n) {
-    for (int i = 0; i < n; i++) {
+static void SuperFastHash(benchmark::State& state) {
+    for (auto _ : state) {
         toft::SuperFastHash(test_str);
     }
 }
 
-static void MurmurHash64A(int n) {
-    for (int i = 0; i < n; i++) {
+static void MurmurHash64A(benchmark::State& state) {
+    for (auto _ : state) {
         toft::MurmurHash64A(test_str, 0);
     }
 }
 
-static void MurmurHash64B(int n) {
-    for (int i = 0; i < n; i++) {
+static void MurmurHash64B(benchmark::State& state) {
+    for (auto _ : state) {
         toft::MurmurHash64B(test_str.data(), test_str.size(), 0);
     }
 }
 
-static void CRC32(int n) {
-    for (int i = 0; i < n; i++) {
+static void CRC32(benchmark::State& state) {
+    for (auto _ : state) {
         toft::CRC32::Digest(test_str);
     }
 }
 
-TOFT_BENCHMARK(CityHash32)->ThreadRange(1, NumCPUs());
-TOFT_BENCHMARK(CityHash64)->ThreadRange(1, NumCPUs());
-TOFT_BENCHMARK(CityHash128)->ThreadRange(1, NumCPUs());
-TOFT_BENCHMARK(Fingerprint64)->ThreadRange(1, NumCPUs());
-TOFT_BENCHMARK(Fingerprint32)->ThreadRange(1, NumCPUs());
-TOFT_BENCHMARK(JenkinsOneAtATimeHash)->ThreadRange(1, NumCPUs());
-TOFT_BENCHMARK(SuperFastHash)->ThreadRange(1, NumCPUs());
-TOFT_BENCHMARK(MurmurHash64A)->ThreadRange(1, NumCPUs());
-TOFT_BENCHMARK(MurmurHash64B)->ThreadRange(1, NumCPUs());
-TOFT_BENCHMARK(CRC32)->ThreadRange(1, NumCPUs());
+BENCHMARK(CityHash32)->ThreadRange(1, 4);
+BENCHMARK(CityHash64)->ThreadRange(1, 4);
+BENCHMARK(CityHash128)->ThreadRange(1, 4);
+BENCHMARK(Fingerprint64)->ThreadRange(1, 4);
+BENCHMARK(Fingerprint32)->ThreadRange(1, 4);
+BENCHMARK(JenkinsOneAtATimeHash)->ThreadRange(1, 4);
+BENCHMARK(SuperFastHash)->ThreadRange(1, 4);
+BENCHMARK(MurmurHash64A)->ThreadRange(1, 4);
+BENCHMARK(MurmurHash64B)->ThreadRange(1, 4);
+BENCHMARK(CRC32)->ThreadRange(1, 4);
 
