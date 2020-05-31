@@ -48,7 +48,7 @@ cc_test(
         './format:_format',
         '//thirdparty/perftools:profiler'
     ],
-    optimize = 'O3'
+    optimize = '-O3'
 )
 
 cc_test(

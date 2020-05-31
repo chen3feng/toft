@@ -26,7 +26,7 @@ cc_test(
 cc_test(
     name = 'print_test',
     srcs = 'print_test.cpp',
-    optimize = 'O3',
+    optimize = '-O3',
     deps = [
         ':_format',
         '//thirdparty/perftools:profiler'
