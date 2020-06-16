@@ -13,6 +13,43 @@ cc_library(
     link_all_symbols=True
 )
 
+cc_library(
+    name = 'uri_utils',
+    srcs = ['uri_utils.cpp'],
+    deps = [
+        '//toft/base/string:string',
+    ]
+)
+
+cc_library(
+    name = 'hdfs_fs',
+    srcs = 'hdfs_file.cpp',
+    deps = [
+        ':file',
+        ':uri_utils',
+        '//thirdparty/dfs-adapter:dfs'
+    ],
+    extra_cppflags = '-std=c++11',
+    link_all_symbols=True
+)
+
+cc_library(
+    name = 'afs_fs',
+    srcs = 'afs_file.cpp',
+    deps = [
+        ':file',
+        ':uri_utils',
+        '//thirdparty/dfs-adapter:dfs'
+    ],
+    extra_cppflags = '-std=c++11',
+    link_all_symbols=True
+)
+
+cc_test(
+    name = 'uri_utils_test',
+    srcs = 'uri_utils_test.cpp',
+    deps = ':uri_utils',
+)
 cc_test(
     name = 'file_test',
     srcs = 'file_test.cpp',
